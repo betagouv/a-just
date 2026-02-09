@@ -70,6 +70,7 @@
         }
 
         mat-icon {
+          min-width: 18px;
           margin-right: 8px;
         }
 
@@ -227,6 +228,9 @@ aj-speedometer {
     border-radius: 12px;
     border: 1px solid #000;
     width: 75%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
 
     .popin-projection-content-header {
       padding: 29px 72px 15px 72px;
@@ -236,6 +240,17 @@ aj-speedometer {
       display: flex;
       align-items: center;
       justify-content: center;
+
+      .header-title-alert {
+        position: absolute;
+        top: 33px;
+        left: 72px;
+
+        a {
+          color: #000091;
+          font-size: 14px;
+        }
+      }
 
       .switch-bt {
         position: absolute;
@@ -318,7 +333,114 @@ aj-speedometer {
       margin: 20px 72px 20px 72px;
       border: 1px solid #DDD;
       height: 200px;
+      min-height: 200px;
       border-radius: 6px;
+    }
+
+    .popin-alert-content-body {
+      padding: 40px 50px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      height: 100%;
+      overflow: auto;
+      flex: 1;
+
+      >div:first-child {
+        border-right: 1px solid #DDD;
+        padding-right: 50px;
+      }
+
+      >div:last-child {
+        padding-left: 50px;
+      }
+
+      .popin-alert-content-body-top {
+        display: flex;
+        flex-direction: row;
+
+        >p {
+          font-size: 24px;
+          line-height: 19px;
+          font-weight: 700;
+          color: #000;
+          margin-left: 18px;
+          margin-right: 18px;
+        }
+
+        a.documentation-link {
+          font-size: 14px;
+          color: white;
+          font-weight: 700;
+          text-decoration: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 20px;
+          background-color: #000091;
+          margin-top: 2px;
+          line-height: 20px;
+          text-align: center;
+          display: block;
+        }
+
+        button {
+          height: 48px;
+          line-height: 46px;
+        }
+      }
+
+      .popin-alert-content-body-messages {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+
+        >div {
+          padding: 12px;
+          border-radius: 7px;
+
+          &.blue {
+            background-color: #EFF3FE;
+
+            >span {
+              color: #6978EB;
+              background-color: #C9D8FC;
+            }
+          }
+
+          &.orange {
+            background-color: #FEF6EE;
+
+            >span {
+              color: #DE5618;
+              background-color: #F9D5AF;
+            }
+          }
+
+          p {
+            text-align: left;
+            line-height: 36px;
+          }
+
+          >span {
+            font-size: 14px;
+            color: #000091;
+            border-radius: 6px;
+            padding: 8px 12px;
+            float: left;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+
+    .popin-alert-content-body-info {
+      margin-bottom: 24px;
+
+      p {
+        font-size: 14px;
+        color: #000;
+        font-weight: 700;
+        text-align: left;
+      }
     }
 
     .popin-projection-content-footer {

@@ -9,7 +9,7 @@ import {
 import { categoryMappingName, categoryMappingColor } from '../utils/category'
 
 import { fixDecimal } from '../utils/numbers'
-import { decimalToStringDate, decimalToStringDateFloor, getMonthString, getShortMonthString, isDateBiggerThan, month, today } from '../utils/dates'
+import { decimalToStringDate, decimalToStringDateFloor, getMonthString, getShortMonthString, isDateBiggerThan, month, monthDiff, today } from '../utils/dates'
 import { FONCTIONNAIRES, getBgCategoryColor, getCategoryColor, MAGISTRATS } from '../constants/category'
 import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE, VALUE_QUALITY_TO_VERIFY } from '../constants/referentiel'
 import { OPACITY_20, PLACEHOLDER_COLOR } from '../constants/colors'
@@ -415,5 +415,15 @@ export class MainClass {
     const newDate = new Date(date.getTime())
     newDate.setMonth(newDate.getMonth() + monthsToAdd)
     return newDate
+  }
+
+  /**
+   * Calcul le nombre de mois entre deux dates
+   * @param date1
+   * @param date2
+   * @returns
+   */
+  public nbMonthBetween(date1: Date | string | null | undefined = undefined, date2: Date | string | null | undefined = undefined) {
+    return monthDiff(new Date(date1 || ''), new Date(date2 || ''))
   }
 }

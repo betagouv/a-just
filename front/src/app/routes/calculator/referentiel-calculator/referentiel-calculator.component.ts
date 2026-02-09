@@ -1,5 +1,5 @@
 import { CommonModule, DecimalPipe } from '@angular/common'
-import { AfterViewInit, Component, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges } from '@angular/core'
+import { AfterViewInit, Component, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core'
 import { SpeedometerComponent } from '../../../components/speedometer/speedometer.component'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { MainClass } from '../../../libs/main-class'
@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
 import { addMonths } from 'date-fns'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
+import { findHelpCenter } from '../../../utils/help-center'
 
 /**
  * Composant d'une ligne du calculateur
@@ -31,6 +32,26 @@ import { SIMULATOR_DONNEES } from '../../../constants/simulator'
   styleUrls: ['./referentiel-calculator.component.scss'],
 })
 export class ReferentielCalculatorComponent extends MainClass implements AfterViewInit, OnChanges {
+  /**
+   * Service de référentiel
+   */
+  referentielService = inject(ReferentielService)
+  /**
+   * Service de user
+   */
+  userService = inject(UserService)
+  /**
+   * Service de calculateur
+   */
+  calculatorService = inject(CalculatorService)
+  /**
+   * Service de activités
+   */
+  activitiesService = inject(ActivitiesService)
+  /**
+   * Service de KPIs
+   */
+  kpiService = inject(KPIService)
   /**
    * Liste des datas du calculateur
    */
@@ -119,17 +140,35 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Popin projection footer grid
    */
   projectionFooterGrid: { label: string; button: string; link: any; queryParams: any }[] = []
+  /**
+   * Affiche ou non le popin d'erreur
+   */
+  showAlertPopin: boolean = false
+  /**
+   * Affiche ou non le popin de projection
+   */
+  showProjectionPopin: boolean = false
+  /**
+   * Fonction pour trouver le centre d'aide url
+   */
+  findHelpCenter = findHelpCenter
+  /**
+   * Lien de la doc du ventilateur
+   */
+  VENTILATEUR_DOCUMENTATION_URL = this.userService.isCa()
+    ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/quest-ce-que-cest'
+    : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest'
+  /**
+   * Lien de la doc des données d'activité
+   */
+  ACTIVITIES_DOCUMENTATION_URL = this.userService.isCa()
+    ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest'
+    : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/quest-ce-que-cest'
 
   /**
    * Constructor
    */
-  constructor(
-    public userService: UserService,
-    private referentielService: ReferentielService,
-    private calculatorService: CalculatorService,
-    private activitiesService: ActivitiesService,
-    private kpiService: KPIService,
-  ) {
+  constructor() {
     super()
 
     this.watch(

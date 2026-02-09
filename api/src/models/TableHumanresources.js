@@ -199,12 +199,14 @@ export default (sequelizeInstance, Model) => {
                   }
                 : null,
               activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
+                act = act.dataValues
                 return {
                   id: act.id,
                   percent: act.percent,
+                  updatedAt: act.updated_at,
                   contentieux: {
-                    id: act.ContentieuxReferentiel.id,
-                    label: act.ContentieuxReferentiel.label,
+                    id: act.ContentieuxReferentiel.dataValues.id,
+                    label: act.ContentieuxReferentiel.dataValues.label,
                   },
                 }
               }),
@@ -433,7 +435,7 @@ export default (sequelizeInstance, Model) => {
         if (list[i].fonction === 'C CAB CC') {
           // pour CA
           code = 'CHCAB'
-        } else if ( ['C CAB PP','C CAB PG'].includes(list[i].fonction) && Number(config.juridictionType) === 1) {
+        } else if (['C CAB PP', 'C CAB PG'].includes(list[i].fonction) && Number(config.juridictionType) === 1) {
           code = 'CHCAB'
         } else if (list[i].fonction === 'DG') {
           code = 'DG'
@@ -450,7 +452,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         if (list[i].grade.startsWith('DSG')) {
-          if(list[i].fonction === 'DG') code = 'DG'
+          if (list[i].fonction === 'DG') code = 'DG'
           else code = 'DSGJ'
         } else if (list[i].grade.startsWith('SA')) {
           code = 'SA'
@@ -838,7 +840,19 @@ export default (sequelizeInstance, Model) => {
     console.timeEnd('🧩 Pré-formatage / Indexation')
 
     console.time('Calculs cockpit')
-    list = syncCalculatorDatas(indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, selectedFonctionsIds)
+    list = await syncCalculatorDatas(
+      Model.models,
+      indexes,
+      list,
+      nbMonth,
+      activities,
+      dateStart,
+      dateStop,
+      hr,
+      categories,
+      optionsBackups,
+      selectedFonctionsIds,
+    )
     list = list.map((item) => ({
       ...cleanCalculationItemForUser(item, user),
       childrens: (item.childrens || []).map((child) => cleanCalculationItemForUser(child, user)),

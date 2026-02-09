@@ -1,4 +1,3 @@
-import { includes, orderBy } from 'lodash'
 import { Op } from 'sequelize'
 
 /**
@@ -13,11 +12,10 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async (HRActivityId) => {
     let list = await Model.findAll({
-      attributes: ['id', 'percent'],
+      attributes: ['id', 'percent', 'updated_at'],
       where: {
         hr_situation_id: HRActivityId,
       },
-      //order: [['id', 'ASC']],
       include: [
         {
           required: true,
@@ -31,14 +29,14 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         percent: list[i].percent,
+        updated_at: list[i].updated_at,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
       }
+      console.log(list[i])
     }
-
-    //list = orderBy(list, 'id', ['asc'])
 
     return list
   }
