@@ -17,10 +17,17 @@ var sp_options = {
 export const sp = new saml2.ServiceProvider(sp_options)
 
 // Create identity provider
+
+// https://nantes.sso.intranet.justice.gouv.fr
+// nouveau => https://auth.sso.intranet.justice.gouv.fr
+
 var idp_options = {
   sso_login_url: `${config.sso.url}/saml/singleSignOn`,
-  sso_logout_url: `${config.sso.url}/logout`,
-  certificates: [(config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''), (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, '')],
+  sso_logout_url: `${config.sso.url}/saml/singleLogout`,
+  certificates: [
+    (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''),
+    (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''),
+  ],
 }
 export const idp = new saml2.IdentityProvider(idp_options)
 
