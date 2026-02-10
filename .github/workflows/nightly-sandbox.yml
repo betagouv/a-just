@@ -7,7 +7,6 @@ on:
     branches:
       - sandbox
       - dev
-      - e2e-test
     paths-ignore:
       - "site/**"
       - "**/*.md"

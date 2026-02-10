@@ -4,7 +4,6 @@ on:
     branches:
       - sandbox
       - dev
-      - e2e-test
     paths-ignore:
       - "site/**"
       - "**/*.md"
@@ -12,7 +11,6 @@ on:
     branches:
       - dev
       - sandbox
-      - e2e-test
     types:
       - opened
       - synchronize
