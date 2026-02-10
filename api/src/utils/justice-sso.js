@@ -6,7 +6,7 @@ var sp_options = {
   private_key: config.sso.privateKey, //     private_key: fs.readFileSync("key-file.key").toString(),
   certificate: config.sso.publicKey, //     certificate: fs.readFileSync("cert-file.crt").toString(),
   assert_endpoint: `${config.serverUrl}/saml/assert-return`,
-  force_authn: true,
+  force_authn: false,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
   nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
   sign_get_request: true,
