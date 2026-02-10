@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Script d'aide pour lire et anonymiser le dump de test `test_tmp.sql.gz`.
+ * Script d'aide pour lire et anonymiser le dump de test `test_tmp.sql`.
  *
- * Par defaut le script lit `../api/test/db/test_tmp.sql.gz`, le decompresse
- * et applique des regles simples d'anonymisation (emails + nom/prenom). Le
+ * Par defaut le script lit `../api/test/db/test_tmp.sql` ou "../api/test/db/test_tmp.sql.gz", le decompresse si besoins
+ * et applique des regles d'anonymisation. Le
  * resultat est ecrit dans `../api/test/db/test_tmp.anonymized.sql`.
  *
  * Usage :
@@ -17,10 +17,23 @@ const zlib = require("zlib");
 const readline = require("readline");
 const crypto = require("crypto");
 
-const DEFAULT_INPUT = path.resolve(__dirname, "../api/test/db/backup.sql");
+const findInputFile = () => {
+  const dbDir = path.resolve(__dirname, "../api/test/db");
+  const gzFile = path.join(dbDir, "test_tmp.sql.gz");
+  const sqlFile = path.join(dbDir, "test_tmp.sql");
+
+  if (fs.existsSync(gzFile)) {
+    return gzFile;
+  } else if (fs.existsSync(sqlFile)) {
+    return sqlFile;
+  }
+  return gzFile;
+};
+
+const DEFAULT_INPUT = findInputFile();
 const DEFAULT_OUTPUT = path.resolve(
   __dirname,
-  "../api/test/db/test_tmp_anonymized.sql"
+  "../api/test/db/test_tmp_anonymized.sql",
 );
 const DEFAULT_SECRET_KEY =
   process.env.SECRET_KEY || "default-secret-key-change-me";
@@ -50,7 +63,7 @@ const blockThemesToAnonymize = [
   "HumanResources",
   "TJ",
 ];
-const blockThemesToRemoveElems = ["Notifications"];
+const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments"];
 
 const hashName = (originalName, secretKey) => {
   if (!originalName || typeof originalName !== "string") {
@@ -84,21 +97,11 @@ const anonymizeLine = (line, theme, secretKey, hrBackupIds) => {
 
   switch (theme) {
     case "Users":
-      result = result.replace(emailRegex, (match) => {
-        return hashEmail(match, secretKey);
-      });
-      result = result.replace(elements[6], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
-      result = result.replace(elements[7], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
-      result = result.replace(elements[11], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
+      elements[1] = hashEmail(elements[1], secretKey);
+      elements[6] = hashName(elements[6], secretKey);
+      elements[7] = hashName(elements[7], secretKey);
+      elements[11] = hashName(elements[11], secretKey);
+      result = elements.join("\t");
       break;
     case "HRBackups":
       result = result.replace(elements[1], (match, name) => {
@@ -117,33 +120,19 @@ const anonymizeLine = (line, theme, secretKey, hrBackupIds) => {
       break;
     }
     case "HumanResources":
-      result = result.replace(elements[1], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
-      result = result.replace(elements[2], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
-      result = result.replace(elements[11], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
-      result = result.replace(elements[12], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
+      elements[1] = hashName(elements[1], secretKey);
+      elements[2] = hashName(elements[2], secretKey);
+      elements[11] = hashName(elements[11], secretKey);
+      elements[12] = hashName(elements[12], secretKey);
+      result = elements.join("\t");
       break;
     case "TJ":
-      result = result.replace(elements[2], (match, name) => {
-        const hashedName = hashName(match, secretKey);
-        return `${hashedName}`;
-      });
+      elements[2] = hashName(elements[2], secretKey);
+      result = elements.join("\t");
       break;
     default:
       break;
   }
-
   return result;
 };
 
@@ -163,8 +152,14 @@ async function anonymizeDump() {
     console.log(`Ecriture : ${options.output}`);
   }
 
-  const gunzipStream = zlib.createGunzip();
-  const sourceStream = fs.createReadStream(options.input); //.pipe(gunzipStream);
+  const isGzipped = options.input.endsWith(".gz");
+  let sourceStream = fs.createReadStream(options.input);
+
+  if (isGzipped) {
+    const gunzipStream = zlib.createGunzip();
+    sourceStream = sourceStream.pipe(gunzipStream);
+  }
+
   const rl = readline.createInterface({
     input: sourceStream,
     crlfDelay: Infinity,
@@ -183,7 +178,7 @@ async function anonymizeDump() {
   for await (const line of rl) {
     if (line.includes("COPY public.")) {
       shouldAnonymizeCopy = blockThemesToAnonymize.some((t) =>
-        new RegExp(`\\b${t}\\b`, "i").test(line)
+        new RegExp(`\\b${t}\\b`, "i").test(line),
       );
       shouldRemoveCopy = blockThemesToRemoveElems.some((t) => line.includes(t));
       currentTheme = blockThemesToAnonymize.find((t) => line.includes(t));
@@ -202,7 +197,7 @@ async function anonymizeDump() {
         line,
         currentTheme,
         options.secretKey,
-        hrBackupIds
+        hrBackupIds,
       );
       if (isHRBackupBlock) {
         const id = line.split("\t")[0];
@@ -210,7 +205,7 @@ async function anonymizeDump() {
       }
       outputStream.write(`${anonymized}\n`);
     } else if (inCopyBlock && shouldRemoveCopy) {
-      outputStream.write(`\n`);
+      // outputStream.write(`\n`);
     } else {
       outputStream.write(`${line}\n`);
     }
