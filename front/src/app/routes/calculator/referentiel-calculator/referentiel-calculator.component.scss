@@ -435,6 +435,10 @@ aj-speedometer {
     .popin-alert-content-body-info {
       margin-bottom: 24px;
 
+      &.warning span {
+        color: #DE9518;
+      }
+
       p {
         font-size: 14px;
         color: #000;

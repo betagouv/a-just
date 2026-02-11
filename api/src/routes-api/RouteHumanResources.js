@@ -13,12 +13,13 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor, getHoverCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { getCategoriesByUserAccess } from '../utils/hr-catagories'
+import { canHaveUserCategoryAccess, getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
 import { loadOrWarmHR } from '../utils/redis'
+import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
  * Route des fiches
@@ -366,6 +367,50 @@ export default class RouteHumanResources extends Route {
         ['categoryRank', 'fonctionRank', 'lastName'],
       ),
     })
+  }
+
+  /**
+   * Interface de la liste des fiches d'une juridiction
+   * @param {*} backupId
+   * @param {*} date
+   * @param {*} contentieuxId
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      date: Types.date().required(),
+      contentieuxId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async lightFilterList(ctx) {
+    let { backupId, date, contentieuxId } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+
+    date = today(date)
+
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+
+    const preformatedAllHumanResource = preformatHumanResources(hr, date)
+
+    // droits différentiés par catégorie
+    let categories = []
+    if (canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT)) {
+      categories.push(1)
+    }
+    if (canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_GREFFIER)) {
+      categories.push(2)
+    }
+    if (canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_CONTRACTUEL)) {
+      categories.push(3)
+    }
+
+    let list = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, categories, date)
+
+    this.sendOk(ctx, list)
   }
 
   /**

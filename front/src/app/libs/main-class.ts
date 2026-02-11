@@ -424,6 +424,6 @@ export class MainClass {
    * @returns
    */
   public nbMonthBetween(date1: Date | string | null | undefined = undefined, date2: Date | string | null | undefined = undefined) {
-    return monthDiff(new Date(date1 || ''), new Date(date2 || ''))
+    return monthDiff(new Date(date1 || new Date()), new Date(date2 || new Date()))
   }
 }

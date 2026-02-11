@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 999;
+  z-index: 99999999;
   align-items: center;
   justify-content: center;
   background-color: rgba(00, 00, 00, 0.55);
@@ -25,6 +25,7 @@ $s-footer-height: 3rem;
 .cal-loader__plane {
   fill: $c-hilight;
 }
+
 .cal-loader__path {
   stroke: $c-front;
   animation: 1.4s ease-in-out infinite loader-path;
@@ -35,13 +36,16 @@ $s-footer-height: 3rem;
     transform: rotate(360deg);
   }
 }
+
 @keyframes loader-path {
   0% {
     stroke-dasharray: 0, 580, 0, 0, 0, 0, 0, 0, 0;
   }
+
   50% {
     stroke-dasharray: 0, 450, 10, 30, 10, 30, 10, 30, 10;
   }
+
   100% {
     stroke-dasharray: 0, 580, 0, 0, 0, 0, 0, 0, 0;
   }
