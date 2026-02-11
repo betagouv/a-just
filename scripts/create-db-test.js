@@ -62,6 +62,8 @@ const blockThemesToAnonymize = [
   "HRVentilations",
   "HumanResources",
   "TJ",
+  "Logs",
+  "OptionsBackups",
 ];
 const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments"];
 
@@ -101,6 +103,7 @@ const anonymizeLine = (line, theme, secretKey, hrBackupIds) => {
       elements[6] = hashName(elements[6], secretKey);
       elements[7] = hashName(elements[7], secretKey);
       elements[11] = hashName(elements[11], secretKey);
+      elements[12] = hashName(elements[12], secretKey);
       result = elements.join("\t");
       break;
     case "HRBackups":
@@ -122,12 +125,22 @@ const anonymizeLine = (line, theme, secretKey, hrBackupIds) => {
     case "HumanResources":
       elements[1] = hashName(elements[1], secretKey);
       elements[2] = hashName(elements[2], secretKey);
+      elements[9] = hashName(elements[9], secretKey);
       elements[11] = hashName(elements[11], secretKey);
       elements[12] = hashName(elements[12], secretKey);
       result = elements.join("\t");
       break;
     case "TJ":
       elements[2] = hashName(elements[2], secretKey);
+      result = elements.join("\t");
+      break;
+    case "OptionsBackups":
+      elements[1] = hashName(elements[1], secretKey);
+      result = elements.join("\t");
+      break;
+    case "Logs":
+      elements[2] = hashName(elements[2], secretKey);
+      elements[7] = hashName(elements[7], secretKey);
       result = elements.join("\t");
       break;
     default:
