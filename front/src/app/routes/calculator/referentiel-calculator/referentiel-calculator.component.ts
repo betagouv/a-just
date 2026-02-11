@@ -19,6 +19,10 @@ import { RouterModule } from '@angular/router'
 import { addMonths } from 'date-fns'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
 import { findHelpCenter } from '../../../utils/help-center'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { RHActivityInterface } from '../../../interfaces/rh-activity'
+import { sumBy } from 'lodash'
+import { AppService } from '../../../services/app/app.service'
 
 /**
  * Composant d'une ligne du calculateur
@@ -37,6 +41,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    */
   referentielService = inject(ReferentielService)
   /**
+   * Service de l'application
+   */
+  appService = inject(AppService)
+  /**
    * Service de user
    */
   userService = inject(UserService)
@@ -52,6 +60,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Service de KPIs
    */
   kpiService = inject(KPIService)
+  /**
+   * Service de fiches humaines
+   */
+  humanResourceService = inject(HumanResourceService)
   /**
    * Liste des datas du calculateur
    */
@@ -164,6 +176,22 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   ACTIVITIES_DOCUMENTATION_URL = this.userService.isCa()
     ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest'
     : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/quest-ce-que-cest'
+  /**
+   * Cockpit Warning Informations
+   */
+  cockpitWarningInformations = {
+    ventilation: {
+      dataNotUpdatedBefore6Month: false,
+      nbAgentNotCompletedToday: 0,
+      haveIncompleteDatasDuringThisPeriod: false, // is red
+    },
+    activity: {
+      dataNotUpdatedBefore12Month: false,
+      noDataToSubContentieuxDuring12Month: false,
+      lessOneOfDatasToSubContentieux: false, // is red
+      missingDatasToSubContentieuxBefore12Month: false, // is red
+    },
+  }
 
   /**
    * Constructor
@@ -276,6 +304,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         this.currentProjection = null
       }
       this.initValues()
+
+      if (this.showAlertPopin) {
+        this.checkDataCompleteness()
+      }
     }
   }
 
@@ -291,6 +323,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         this.currentProjection = null
       }
       this.initValues()
+
+      if (this.showAlertPopin) {
+        this.checkDataCompleteness()
+      }
     }
   }
 
@@ -376,5 +412,81 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
 
     this.projectionFooterGrid = list
+  }
+
+  /**
+   * Vérifie si les données de ventilation et d'activités sont complètes
+   */
+  async checkDataCompleteness() {
+    if (this.currentProjection) {
+      this.appService.appLoading.next(true)
+      const allHR = await this.humanResourceService.onLightFilterList(
+        this.humanResourceService.backupId.getValue() || 0,
+        new Date(),
+        this.currentProjection.contentieux.id,
+      )
+
+      let nbAgentNotCompletedToday = 0
+      if (allHR.length > 0) {
+        for (const hr of allHR) {
+          const getCurrentVentilation = hr.currentActivities
+          if (getCurrentVentilation && getCurrentVentilation.length > 0) {
+            const activities = getCurrentVentilation.filter(
+              (a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1,
+            )
+            if (this.fixDecimal(sumBy(activities, 'percent'), 100) === 100) {
+              continue
+            }
+          }
+          nbAgentNotCompletedToday++
+        }
+      }
+
+      let currentMonth = month(new Date())
+      let nbMonthChecked = 0
+      let haveIncompleteDatasDuringThisPeriod = false
+      while (nbMonthChecked < 12) {
+        const allHROfTheMonth = await this.humanResourceService.onLightFilterList(
+          this.humanResourceService.backupId.getValue() || 0,
+          currentMonth,
+          this.currentProjection.contentieux.id,
+        )
+
+        if (allHROfTheMonth.length > 0) {
+          for (const hr of allHROfTheMonth) {
+            const getCurrentVentilation = hr.currentActivities
+            if (getCurrentVentilation && getCurrentVentilation.length > 0) {
+              const activities = getCurrentVentilation.filter(
+                (a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1,
+              )
+              if (this.fixDecimal(sumBy(activities, 'percent'), 100) === 100) {
+                continue
+              }
+            }
+            haveIncompleteDatasDuringThisPeriod = true
+            nbMonthChecked = 12 // stop the loop
+            break
+          }
+        }
+
+        currentMonth = addMonths(currentMonth, -1)
+        nbMonthChecked++
+      }
+
+      this.cockpitWarningInformations = {
+        ventilation: {
+          dataNotUpdatedBefore6Month: this.nbMonthBetween(this.currentProjection.lastVentilationUpdatedAt) >= 6,
+          nbAgentNotCompletedToday,
+          haveIncompleteDatasDuringThisPeriod, // is red
+        },
+        activity: {
+          dataNotUpdatedBefore12Month: this.nbMonthBetween(this.currentProjection.lastActivityUpdatedAt) >= 12,
+          noDataToSubContentieuxDuring12Month: true, // TODO
+          lessOneOfDatasToSubContentieux: true, // TODO // is red
+          missingDatasToSubContentieuxBefore12Month: true, // TODO // is red
+        },
+      }
+    }
+    this.appService.appLoading.next(false)
   }
 }

@@ -646,6 +646,24 @@ export class HumanResourceService {
   }
 
   /**
+   * API appel au serveur pour lister les effectifs d'une juridiction à une date précise
+   * @param backupId
+   * @param date
+   * @param contentieuxId
+   */
+  async onLightFilterList(backupId: number, date: Date, contentieuxId: number | null) {
+    return this.serverService
+      .post(`human-resources/light-filter-list`, {
+        backupId,
+        date,
+        contentieuxId,
+      })
+      .then((data) => {
+        return data.data
+      })
+  }
+
+  /**
    * API appel au serveur pour retourner les détails d'une fiche
    * @param hrId
    * @returns
