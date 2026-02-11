@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, OnChanges, Output, ViewChildren, QueryList, Renderer2, OnInit, inject, ElementRef } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output, ViewChildren, QueryList, Renderer2, OnInit, inject, ElementRef, ViewChild } from '@angular/core'
 import { FormGroup, FormsModule } from '@angular/forms'
 import { isNumber, sumBy } from 'lodash'
 import { BackButtonComponent } from '../../../components/back-button/back-button.component'
@@ -19,8 +19,6 @@ import { fixDecimal } from '../../../utils/numbers'
 import { isDateBiggerThan, today } from '../../../utils/dates'
 import { etpLabel } from '../../../utils/referentiel'
 import { MatIconModule } from '@angular/material/icon'
-import { Renderer } from 'xlsx-renderer'
-import { saveAs } from 'file-saver'
 import { ExcelService } from '../../../services/excel/excel.service'
 
 /**
@@ -46,6 +44,8 @@ import { ExcelService } from '../../../services/excel/excel.service'
 export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
   humanResourceService = inject(HumanResourceService)
   excelService = inject(ExcelService)
+  @ViewChild('dateStartCalendar') dateStartCalendar: DateSelectComponent | null = null
+  @ViewChild('dateEndCalendar') dateEndCalendar: DateSelectComponent | null = null
   @ViewChildren('input')
   inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
@@ -197,8 +197,6 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    console.log('ngOnChanges', this.etp)
-
     this.indisponibility = fixDecimal(sumBy(this.indisponibilities, 'percent') / 100)
     if (this.indisponibility > 1) {
       this.indisponibility = 1
@@ -274,9 +272,22 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         value.setHours(12)
       }
 
+      if (nodeName === 'dateStart' && value && this.currentHR && this.currentHR.dateEnd && isDateBiggerThan(today(value), today(this.currentHR.dateEnd))) {
+        alert("La date d'arrivée ne peut être postérieure ou égale à la date de départ dans la juridiction")
+        if (this.dateStartCalendar) {
+          this.dateStartCalendar.value = this.currentHR.dateStart
+        }
+
+        return
+      }
+
       if (nodeName === 'dateEnd' && value && this.currentHR.dateStart && !isDateBiggerThan(today(value), today(this.currentHR.dateStart), false)) {
         alert('La date de départ ne peut être antérieure à la date d’arrivée dans la juridiction')
-        value = this.currentHR.dateEnd || null
+        if (this.dateEndCalendar) {
+          this.dateEndCalendar.value = this.currentHR.dateEnd
+        }
+
+        return
       }
 
       this.currentHR = {
@@ -397,24 +408,5 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   getInputs(): ElementRef[] {
     return this.inputs.toArray()
-  }
-
-  /**
-   * Permet d'exporter la situation
-   */
-  onExportSituation() {
-    const findSituation = this.humanResourceService.findSituation(this.currentHR, today())
-    // @ts-ignore
-    const activities = (findSituation && findSituation.activities) || []
-    console.log('activities', activities)
-
-    this.excelService.generateAgentFile({
-      firstName: this.basicHrInfo?.get('firstName')?.value,
-      lastName: this.basicHrInfo?.get('lastName')?.value,
-      category: this.category?.label || '',
-      fonction: this.fonction?.label || '',
-      etp: this.etp || 0,
-      activities,
-    })
   }
 }

@@ -44,7 +44,7 @@ export class SimulatorService extends MainClass {
   /**
    * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
    */
-  contentieuOrSubContentieuId: BehaviorSubject<Array<number> | null> = new BehaviorSubject<Array<number> | null>(null)
+  contentieuOrSubContentieuId: BehaviorSubject<any | null> = new BehaviorSubject<any | null>(null)
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
@@ -95,32 +95,36 @@ export class SimulatorService extends MainClass {
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null && this.contentieuOrSubContentieuId.getValue()?.length) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null && (value?.parent?.length || value?.child?.length)) {
+          this.getSituation(value)
         }
       }),
     )
 
     this.watch(
       this.selectedFonctionsIds.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue(), this.dateStop.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue(), this.dateStop.getValue())
         }
       }),
     )
 
     this.watch(
       this.dateStart.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue())
         }
       }),
     )
 
     this.watch(
       this.dateStop.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue(), this.dateStop.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue(), this.dateStop.getValue())
         }
       }),
     )
@@ -133,14 +137,16 @@ export class SimulatorService extends MainClass {
    * @param {Date} dateStop optional end date of the situation
    * @returns Situation data interface
    */
-  getSituation(referentielId: Array<number> | null, dateStart?: Date, dateStop?: Date) {
+  getSituation(referentielId: any | null, dateStart?: Date, dateStop?: Date) {
     if (this.selectedCategory.getValue()?.id !== null && this.selectedFonctionsIds.getValue() !== null) {
+      const value = this.contentieuOrSubContentieuId.getValue()
+      if (value ===null||value.lenght === 0 || (value?.parent === null && value?.child === null)) return
       this.isLoading.next(true)
 
       return this.serverService
         .post(`simulator/get-situation`, {
           backupId: this.humanResourceService.backupId.getValue(),
-          referentielId: referentielId,
+          referentielId: this.contentieuOrSubContentieuId.getValue(),
           dateStart: setTimeToMidDay(dateStart),
           dateStop: setTimeToMidDay(dateStop),
           functionIds: this.selectedFonctionsIds.getValue(),
@@ -162,6 +168,7 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
+    console.log('SIMULATION', simulation)
     this.isLoading.next(true)
     const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
     console.log(params)
@@ -193,6 +200,8 @@ export class SimulatorService extends MainClass {
             dateStart: setTimeToMidDay(this.dateStart.getValue()),
             dateStop: setTimeToMidDay(this.dateStop.getValue()),
             selectedCategoryId: this.selectedCategory.getValue()?.id,
+            referentielId: this.contentieuOrSubContentieuId.getValue(),
+            functionIds: this.selectedFonctionsIds.getValue(),
           })
           .then((data) => {
             console.log('simu', data.data)
@@ -249,7 +258,7 @@ export class SimulatorService extends MainClass {
    * @param toCompute specified if the value returned is used afterwards to compute something, then let the value in decimal without unit
    * @returns label value as string or float
    */
-  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): any {
+  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false, decimal = false): any {
     switch (param) {
       case 'etpMag':
         if (data?.etpMag === null) {
@@ -266,6 +275,9 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalOut && data?.totalOut >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.totalOut)
+          }
           return toCompute ? data?.totalOut : Math.round(data?.totalOut)
         } else return '0'
       }
@@ -274,6 +286,9 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalIn && data?.totalIn >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.totalIn)
+          }
           return toCompute ? data?.totalIn : Math.round(data?.totalIn)
         } else return '0'
       }
@@ -283,6 +298,9 @@ export class SimulatorService extends MainClass {
         }
         if (data?.lastStock) {
           //&& data?.lastStock >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.lastStock)
+          }
           return toCompute ? data?.lastStock : Math.round(data?.lastStock)
         } else return '0'
       }

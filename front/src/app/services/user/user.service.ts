@@ -152,6 +152,13 @@ export class UserService implements OnInit {
     return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1 ? true : false
   })
   /**
+   * User can view all referentiel
+   */
+  canViewCompleteReferentiel = computed(() => {
+    const user = this.user.getValue()
+    return user && user.referentielIds === null ? true : false
+  })
+  /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null

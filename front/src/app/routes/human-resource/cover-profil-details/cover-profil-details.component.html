@@ -7,12 +7,7 @@
 
     <button class="primary light small no-print" (click)="onExport()">
       <mat-icon>save</mat-icon>
-      Exporter en PDF
-    </button>
-
-    <button class="primary light small no-print class-export-situation" (click)="onExportSituation()">
-      <img src="/assets/icons/upload-line-white.svg" />
-      Exporter la situation
+      Enregistrer en PDF
     </button>
   </div>
 
@@ -99,7 +94,7 @@
         (valueChange)="updateHuman('dateStart', $event)"
         [ngClass]="{ error: humanResourceService.alertList().includes('startDate') }"
         [readonly]="!userService.canEditHR()"></aj-date-select>
-      <aj-date-select title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
+      <aj-date-select #dateEndCalendar title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
         (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true"
         [readonly]="!userService.canEditHR()"></aj-date-select>
     </div>

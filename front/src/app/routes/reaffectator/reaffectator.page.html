@@ -70,6 +70,8 @@
       <div class="activities">
         @for (ref of referentiel; track ref.id; let index = $index) {
         <div class="sub-item">
+          @if(userService.userS() && (userService.userS()?.referentielIds === null ||
+          userService.userS()?.referentielIds?.indexOf(ref.id) !== -1)) {
           <div class="taux-row">
             @if (referentiel.length > index + 1) {
             <div class="taux"
@@ -113,6 +115,7 @@
           <div class="total-etp-row">
             <p>{{ ref.etpUseToday | number: '.2-2' }}</p>
           </div>
+          }
         </div>
         }
       </div>
