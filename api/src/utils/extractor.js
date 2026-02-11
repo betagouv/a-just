@@ -508,7 +508,7 @@ export const isHumanPresentOnInterval = (human, query) => {
   const qe = timeOr(query.end ?? query.dateStop, +Infinity)
   const hs = timeOr(human.dateStart, -Infinity)
   const he = timeOr(human.dateEnd, +Infinity)
-  return he >= qs && hs <= qe
+  return he >= qs && hs <= qe && human.situations.length
 }
 
 function isolateAbsenteismeAndDelegation(obj) {
@@ -748,12 +748,12 @@ export function generateOnglets({
             const ddgIndisponibilite = indisponibilite * alpha
 
             if (indispo.contentieux.label !== DELEGATION_TJ) {
-              logAccIndip += indisponibilite
-              tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite)
+              logAccIndip += indisponibilite * alpha
+              tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite * alpha)
             }
             if (indispo.contentieux.label !== INDISPO_L3) {
               log.indisponibilites.push({ ctx: indispo.contentieux.label, value: ddgIndisponibilite })
-              tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite)
+              tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite * alpha)
               tmpDdgFlatMapReferentiel.set(indispo.contentieux.id, (tmpDdgFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + ddgIndisponibilite)
             }
             if (![INDISPO_L3, DELEGATION_TJ, ...absLabels].includes(indispo.contentieux.label)) {
@@ -998,13 +998,13 @@ export function pushMissingSegmentLog({ filteredPeriods, human, query, nbOfWorki
   return logs
 }
 
- /**
-   * Construit une liste plate de référentiels en respectant l'ordre hiérarchique
-   * Les parents sont triés par rank, les enfants sont triés par rank et insérés après leur parent
-   * @param {Array} referentiels - Liste des référentiels parents
-   * @returns {Array} Liste plate ordonnée
-   */
- export function _buildOrderedFlatList(referentiels) {
+/**
+  * Construit une liste plate de référentiels en respectant l'ordre hiérarchique
+  * Les parents sont triés par rank, les enfants sont triés par rank et insérés après leur parent
+  * @param {Array} referentiels - Liste des référentiels parents
+  * @returns {Array} Liste plate ordonnée
+  */
+export function _buildOrderedFlatList(referentiels) {
   const flat = []
   for (const parent of referentiels) {
     flat.push(parent)
@@ -1081,12 +1081,12 @@ export function _buildSumTab(activities, flatReferentielsList) {
     const oOut = _sumWithNullCheck(groupedByContentieux[key], 'originalSorties')
     sumTab.push({
       periode: replaceIfZero(lastItem.periode),
-      entrees: aIn!==oIn? aIn:"-",
-      sorties: aOut!==oOut? aOut:"-",
-      stock: lastItem.originalStock!==lastItem.ajustedStock?lastItem.ajustedStock:'-',
+      entrees: aIn !== oIn ? aIn : "-",
+      sorties: aOut !== oOut ? aOut : "-",
+      stock: lastItem.originalStock !== lastItem.ajustedStock ? lastItem.ajustedStock : '-',
       originalEntrees: oIn,
       originalSorties: oOut,
-      originalStock: lastItem.originalStock??'-',
+      originalStock: lastItem.originalStock ?? '-',
       idReferentiel: lastItem.idReferentiel ?? lastItem.contentieux?.id,
       contentieux: {
         id: lastItem.contentieux?.id,

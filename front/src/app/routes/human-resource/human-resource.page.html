@@ -38,7 +38,7 @@
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
       [forceToShowContentieuxDetail]="duringPrint" [category]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      "></actual-panel-situation>}
+      " (exportSituation)="onExportSituation(indexOfTheFuture)"></actual-panel-situation>}
     @if(!duringPrint && currentHR && onEditIndex === null) {
     <div class="new-action text-center">
       @if(userService.canEditHR()){<button class="fill primary small" (click)="onSelectSituationToEdit()">
@@ -62,35 +62,41 @@
       [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
       (alertSet)="onAlertsUpdated($event)"></add-ventilation>
 
-    <div *ngIf="historiesOfTheFutur.length" class="panel-history-group futur">
+    @if(historiesOfTheFutur.length) {<div class="panel-history-group futur">
       <p class="title-history">
         Situation{{ historiesOfTheFutur.length >= 1 ? 's' : '' }} à venir pré-renseignée{{
         historiesOfTheFutur.length >= 1 ? 's' : ''
         }}
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [category]="h.category" [id]="h.id"
-        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      @for(h of historiesOfTheFutur; track i; let i = $index) {<panel-history-ventilation [category]="h.category"
+        [id]="h.id" [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities"
+        [activities]="h.activities" [dateStart]="h.dateStart" [dateStop]="h.dateStop"
+        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
-        [forceToShowContentieuxDetail]="duringPrint" [isPast]="false"></panel-history-ventilation>
-    </div>
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="false"
+        (exportSituation)="onExportSituation(i)"></panel-history-ventilation>
+      }
+    </div>}
 
-    <div *ngIf="historiesOfThePast.length" class="panel-history-group past">
+    @if(historiesOfThePast.length) {<div class="panel-history-group past">
       <p class="title-history">
         Situation{{ historiesOfThePast.length > 1 ? 's' : '' }} antérieure{{ historiesOfThePast.length > 1 ? 's' : '' }}
         <!-- {{
         categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
-        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      @for(h of historiesOfThePast; track i; let i = $index) {<panel-history-ventilation [id]="h.id"
+        [category]="h.category" [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities"
+        [activities]="h.activities" [dateStart]="h.dateStart" [dateStop]="h.dateStop"
+        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
-        [forceToShowContentieuxDetail]="duringPrint" [isPast]="true"></panel-history-ventilation>
-    </div>
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="true"
+        (exportSituation)="onExportSituation(i, historiesOfThePast)"></panel-history-ventilation>
+      }
+    </div>}
 
     @if(userService.canEditHR() && currentHR && onEditIndex === null && histories.length === 0){<div
       class="text-center">

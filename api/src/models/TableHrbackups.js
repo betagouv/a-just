@@ -132,7 +132,7 @@ export default (sequelizeInstance, Model) => {
         latitude: 0,
         longitude: 0,
         population: 0,
-        enabled: true,
+        enabled: false,
         type: 'TGI',
       })
 

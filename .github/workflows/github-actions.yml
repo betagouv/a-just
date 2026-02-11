@@ -26,22 +26,27 @@ on:
         description: "E2E spec globs (comma-separated), e.g. cypress/e2e/login.cy.js,cypress/e2e/activite-suite.cy.ts"
         required: false
         type: string
+      # Permet de filtrer les tests API lors de tests exécutés manuellement
       api_grep:
         description: "Mocha --grep filter for API tests (optional)"
         required: false
         type: string
+      # Permet de sauter les tests E2E lors de tests exécutés manuellement
       skip_e2e:
         description: "Skip E2E tests (run only API tests)"
         required: false
         type: boolean
         default: false
 
-# Prevent concurrent deployments to avoid race conditions
+# Allow concurrent deployments to github-pages
 concurrency:
   group: github-pages-deploy
   cancel-in-progress: false
 
 jobs:
+  ###########################
+  ####### API TESTS ########
+  ###########################
   api-tests:
     runs-on: ubuntu-latest
     steps:
@@ -59,6 +64,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      ### Execute API test with optional --grep
       - name: Run API tests (Mocha + Mochawesome)
         run: |
           set -e
@@ -69,21 +75,28 @@ jobs:
           else
             npm run test:api
           fi
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Debug - List API generated files
         if: always()
         run: |
-          echo "API test directory structure:"
-          find ./api -type f -name "*.json" -o -name "*.html" | head -20
-          echo "API test reports:"
-          ls -la ./api/test/ || echo "API test directory not found"
-          echo "Files in api/test/:"
-          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
-          echo "Mochawesome specific files:"
-          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+          # echo "API test directory structure:"
+          # find ./api -type f -name "*.json" -o -name "*.html"
 
-      - name: Upload Mocha test report
+          echo "Files in api/test/:"
+          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "ERROR: No API test directory found"
+
+          echo -e "\n######################################\n"
+
+          echo "API test reports:"
+          ls -la ./api/test/reports || echo "ERROR: API test report directory not found"
+
+          echo -e "\n######################################\n"
+
+          echo "Mochawesome specific files:"
+          find ./api/ -name "*.json" -o -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+
+      - name: Upload Mocha test reports (.json and .html)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -91,6 +104,9 @@ jobs:
           path: ./api/test/reports
           if-no-files-found: warn
 
+  ###########################
+  ######## E2E TESTS #######
+  ###########################
   e2e-tests:
     if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
@@ -109,45 +125,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run E2E tests (Cypress JSON-only, containerized)
+      ### Ensure E2E artifact directories exist by creating them
+      - name: Ensure E2E artifact directories exist
+        if: always()
         run: |
-          set -e
-          SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
-          
-          echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
-          sleep 30
-          
-          echo "=== Container Status ==="
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml ps
-          echo ""
-          
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm --no-deps \
-            -e CY_JSON_ONLY=1 \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            -e SPEC="$SPEC" \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for front at $CYPRESS_BASE_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
-              echo "Waiting for API at $NG_APP_SERVER_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}" || true
-              echo "=== E2E reports ==="; ls -la cypress/reports || true
-            ' || true
-          
-          echo ""
-          echo "=== API Container Logs (last 500 lines) ==="
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
-          echo "=== End of API Logs ==="
-          
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
-        continue-on-error: true
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+          mkdir -p ./end-to-end/cypress/downloads
+
+      ### Execute E2E test
+      - name: Run E2E tests
+        run: |
+          npm run test:e2e
+        # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
         if: always()
@@ -157,27 +148,56 @@ jobs:
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
-          echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
-          echo "Reports directory content:"
-          ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+
+          echo "Files in end-to-end/:"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null
+
+          echo -e "\n######################################\n"
+
+          echo "E2E test reports:"
+          echo "directory: ./end-to-end/cypress/reports"
+          ls -la ./end-to-end/cypress/reports 2>/dev/null || echo "Reports directory not found"
+
+          echo -e "\n######################################\n"
+
           echo "Fallback mochawesome-report directory content:"
-          ls -la ./end-to-end/mochawesome-report/ || echo "Fallback mochawesome-report directory not found"
+          echo "directory: ./end-to-end/cypress/mochawesome-report"
+          ls -laR ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+
+          echo -e "\n######################################\n"
+
           echo "Videos directory content:"
-          ls -la ./end-to-end/cypress/videos/ || echo "Videos directory not found"
+          echo "directory: ./end-to-end/cypress/videos"
+            
+          ls -la ./end-to-end/cypress/videos/ 2>/dev/null || echo "Videos directory not found"
+
+          echo -e "\n######################################\n" 
+
           echo "Screenshots directory content:"
-          ls -la ./end-to-end/cypress/screenshots/ || echo "Screenshots directory not found"
+          echo "directory: ./end-to-end/cypress/screenshots"
+
+          ls -laR ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize)
         if: always()
         run: |
           set -e
-          mkdir -p ./end-to-end/cypress/reports/.jsons
-          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/.jsons"
-          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          mkdir -p ./end-to-end/cypress/reports/results.jsons
+          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/results.jsons"
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/results.jsons/ \; 2>/dev/null || true
+          find ./end-to-end/cypress/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/results.jsons/ \; 2>/dev/null || true
+
+          echo -e "\n######################################\n" 
+
           echo "Final JSONs to upload:"
-          ls -la ./end-to-end/cypress/reports/.jsons || true
+          ls -la ./end-to-end/cypress/reports/results.jsons 2>/dev/null || true
+
+      - name: Upload Logs if tests failed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-docker-logs
+          path: ./end-to-end/logs
 
       - name: Upload Cypress video
         if: always()
@@ -194,17 +214,18 @@ jobs:
           path: ./end-to-end/cypress/screenshots
           if-no-files-found: warn
 
-      - name: Upload Cypress test reports
+      - name: Upload Cypress test reports and Mochawesome reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-reports
           path: |
-            ./end-to-end/cypress/reports/.jsons/*.json
             ./end-to-end/cypress/reports/*.json
             ./end-to-end/cypress/reports/**/*.json
-            ./end-to-end/mochawesome-report/*.json
-            ./end-to-end/mochawesome-report/**/*.json
+            ./end-to-end/cypress/mochawesome-report/*.json
+            ./end-to-end/cypress/mochawesome-report/**/*.json
+            # ./end-to-end/cypress/mochawesome-report/*.html
+            # ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
@@ -217,12 +238,17 @@ jobs:
             ./end-to-end/cypress/downloads/*.xlsx
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
-  # Non-regression calculation end-to-end tests (requires SANDBOX stack)
+
+  ##########################################################################
+  ## Non-regression calculation end-to-end tests (requires SANDBOX stack) ##
+  ##########################################################################
+
   e2e-nonreg-vs-sandbox-tests:
     if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "E2E NON-REGRESSION TESTS"
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -242,35 +268,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
+      - name: Ensure E2E artifact directories exist (nonreg)
+        if: always()
         run: |
-          set -e
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+          mkdir -p ./end-to-end/cypress/downloads
+
+      - name: Run Non-Regression E2E tests
+        run: |
+          chmod +x ./scripts/run-non-regression-tests.sh
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d --build db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
-            -e CY_JSON_ONLY=1 \
-            -e SANDBOX_CODE_DIR=/work/sandbox-code \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
-              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
-              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
-              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
-              echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
-            '
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
-        continue-on-error: true
+          ./scripts/run-non-regression-tests.sh
+        # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
         if: always()
@@ -280,18 +291,57 @@ jobs:
         if: always()
         run: |
           echo "=== END-TO-END NONREG DEBUG ==="
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
-          ls -la ./end-to-end/cypress/reports/ || true
-          ls -la ./end-to-end/mochawesome-report/ || true
+
+          echo "Files in end-to-end/:"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null || echo "ERROR: No e2E test files found"
+
+          echo -e "\n######################################\n"
+
+          echo "E2E test reports:"
+          echo "directory: ./end-to-end/cypress/reports"
+          ls -la ./end-to-end/cypress/reports 2>/dev/null || echo "Reports directory not found"
+
+          echo -e "\n######################################\n"
+
+          echo "Fallback mochawesome-report directory content:"
+          echo "directory: ./end-to-end/cypress/mochawesome-report"
+          ls -laR ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+
+          echo -e "\n######################################\n"
+
+          echo "Videos directory content:"
+          echo "directory: ./end-to-end/cypress/videos"
+            
+          ls -la ./end-to-end/cypress/videos/ 2>/dev/null || echo "Videos directory not found"
+
+          echo -e "\n######################################\n" 
+
+          echo "Screenshots directory content:"
+          echo "directory: ./end-to-end/cypress/screenshots"
+
+          ls -laR ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize, nonreg)
         if: always()
         run: |
           set -e
-          mkdir -p ./end-to-end/cypress/reports/.jsons
-          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          ls -la ./end-to-end/cypress/reports/.jsons || true
+          mkdir -p ./end-to-end/cypress/reports/results.jsons
+
+          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/results.jsons"
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/results.jsons/ \; 2>/dev/null || true
+          find ./end-to-end/cypress/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/results.jsons/ \; 2>/dev/null || true
+
+          echo -e "\n######################################\n"
+
+          echo "Final JSONs to upload (nonreg):"
+          ls -la ./end-to-end/cypress/reports/results.jsons || true
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-docker-logs
+          path: ./end-to-end/logs
 
       - name: Upload Cypress video (nonreg)
         if: always()
@@ -308,19 +358,24 @@ jobs:
           path: ./end-to-end/cypress/screenshots
           if-no-files-found: warn
 
-      - name: Upload Cypress test reports (nonreg)
+      - name: Upload Cypress test reports and Mochawesome reports (nonreg)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-reports-nonreg
           path: |
-            ./end-to-end/cypress/reports/.jsons/*.json
             ./end-to-end/cypress/reports/*.json
             ./end-to-end/cypress/reports/**/*.json
-            ./end-to-end/mochawesome-report/*.json
-            ./end-to-end/mochawesome-report/**/*.json
+            ./end-to-end/cypress/mochawesome-report/*.json
+            ./end-to-end/cypress/mochawesome-report/**/*.json
+            # ./end-to-end/cypress/mochawesome-report/*.html
+            # ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
+
+  ###########################
+  ####### DEPLOY ###########
+  ###########################
 
   deploy:
     needs: [api-tests, e2e-tests, e2e-nonreg-vs-sandbox-tests]
@@ -429,14 +484,60 @@ jobs:
           set -e
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+
+          # Copy E2E reports (excluding test-contexts.json for now)
+          find cypress-reports -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || echo "No E2E reports to copy"
+
+          # Copy non-reg reports (excluding test-contexts.json for now)
+          find cypress-reports-nonreg -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || true
+
+          # Merge test-contexts.json files from both E2E and non-reg
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            let merged = {};
+            
+            // Read E2E contexts
+            const e2ePaths = [
+              'cypress-reports/test-contexts.json',
+              'cypress-reports/cypress/reports/test-contexts.json',
+              'cypress-reports/.jsons/test-contexts.json'
+            ];
+            for (const p of e2ePaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Read non-reg contexts
+            const nonregPaths = [
+              'cypress-reports-nonreg/test-contexts.json',
+              'cypress-reports-nonreg/cypress/reports/test-contexts.json',
+              'cypress-reports-nonreg/.jsons/test-contexts.json'
+            ];
+            for (const p of nonregPaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Write merged contexts
+            const outPath = 'site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/test-contexts.json';
+            fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+            console.log(\`Wrote \${Object.keys(merged).length} total contexts to \${outPath}\`);
+          " || echo "Failed to merge test-contexts.json"
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/videos
           cp -r cypress-videos/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           cp -r cypress-videos-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
@@ -460,15 +561,15 @@ jobs:
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/combined
             JSONS="$(
-              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json || true
@@ -546,9 +647,14 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
+          DEPLOYMENT_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         with:
           script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            let pageUrl = process.env.DEPLOYMENT_PAGE_URL || 'https://betagouv.github.io/a-just/';
+            // Ensure trailing slash for proper path construction
+            if (!pageUrl.endsWith('/')) {
+              pageUrl += '/';
+            }
             const pr = process.env.PR_NUM;
             const runNum = process.env.RUN_NUM;
             const url = `${pageUrl}pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;

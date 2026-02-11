@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { uniqBy } from 'lodash'
 import { ActionsInterface, PopupComponent } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
 import { NewsComponent } from './news/news.component'
@@ -282,7 +283,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
-        this.hrBackups = backups
+        this.hrBackups = uniqBy(backups, 'id')
+
         this.hrBackup = this.hrBackups.find((b) => b.id === this.hrBackupId)
         if (backups.length) this.appService.appLoading.next(false)
       }),

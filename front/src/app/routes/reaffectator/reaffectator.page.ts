@@ -385,6 +385,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * A l'initialisation chercher les variables globals puis charger
    */
   ngOnInit() {
+    // init referentiel ids
+    this.reaffectatorService.selectedReferentielIds = this.formReferentiel.map((r) => r.id)
+
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
         // Start latency scope for initial load

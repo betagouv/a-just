@@ -723,7 +723,7 @@ export class ExcelService extends MainClass {
       })
       // 5. Use `saveAs` to download on browser site.
       .then((buffer) => {
-        const filename = 'Feuille_de_temps_Modèle'
+        const filename = datas.filename || 'Feuille_de_temps_Modèle'
         return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
       })
       .catch((err) => console.log('Error writing excel export', err))
@@ -847,8 +847,7 @@ export class ExcelService extends MainClass {
    * @returns
    */
   async setDatas(report: any, datas: any) {
-    console.log('datas', datas)
-    report.worksheets[0].getCell('C3').value = datas.firstName + ' ' + datas.lastName
+    report.worksheets[0].getCell('C3').value = datas.lastName + ' ' + datas.firstName
     report.worksheets[0].getCell('C2').value = datas.category.toUpperCase()
     report.worksheets[0].getCell('C4').value = datas.fonction.toUpperCase()
     report.worksheets[0].getCell('E5').value = datas.etp
