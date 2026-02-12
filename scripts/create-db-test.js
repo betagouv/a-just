@@ -40,6 +40,8 @@ const DEFAULT_SECRET_KEY =
 
 const args = process.argv.slice(2);
 
+const userTestEmail = "utilisateurtest@a-just.fr"
+
 const getArgValue = (flag) => {
   const found = args.find((arg) => arg.startsWith(`${flag}=`));
   return found ? found.split("=")[1] : null;
@@ -99,7 +101,7 @@ const anonymizeLine = (line, theme, secretKey, hrBackupIds) => {
 
   switch (theme) {
     case "Users":
-      elements[1] = hashEmail(elements[1], secretKey);
+      elements[1] = elements[1] !== userTestEmail ? hashEmail(elements[1], secretKey) : elements[1];
       elements[6] = hashName(elements[6], secretKey);
       elements[7] = hashName(elements[7], secretKey);
       elements[11] = hashName(elements[11], secretKey);
