@@ -197,6 +197,25 @@ module.exports = function (datas) {
      * Ajout d'une seconde situation pour l'agent
      */
     it('Add a second hr situation', async () => {
+      // Clean up all existing situations before adding new ones
+      console.log('[CLEANUP] Removing existing situations before test...')
+      console.log('[CLEANUP] Current situations count:', current_hr.situations?.length || 0)
+
+      if (current_hr.situations && current_hr.situations.length > 0) {
+        for (const situation of current_hr.situations) {
+          if (situation.id) {
+            console.log('[CLEANUP] Removing situation ID:', situation.id)
+            await onRemoveSituationApi({
+              userToken: datas.adminToken,
+              id: situation.id
+            })
+          }
+        }
+        // Update current_hr to reflect the cleanup
+        current_hr.situations = []
+        console.log('[CLEANUP] All situations removed')
+      }
+
       const activities = [
         {
           percent: 100,
