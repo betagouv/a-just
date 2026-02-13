@@ -16,13 +16,9 @@ import path from 'path'
 console.warn = () => { }
 console.error = () => { }
 
-/*import routeConnexion from './api/RouteConnexion'
-import routeImport from './api/RouteImports.test'
-import routeHR from './api/RouteHR.test'
-import routeActivities from './api/RouteActivities.test'
-import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
+import { onGetAllBackupsApi } from './routes/hr'
 import { JURIDICTION_TEST_NAME } from './constants/juridiction'
 
 const datas = {
@@ -192,20 +188,40 @@ it('Give all accesses to Admin', async () => {
   // Add category access (Magistrat, Greffier, Contractuel)
   accessIds.push(8, 9, 10)
 
+  // Fetch all backups to find the test backup by label
+  const allBackupsResponse = await onGetAllBackupsApi({ userToken: datas.adminToken })
+  const allBackups = allBackupsResponse.data || []
+  const testBackup = allBackups.find(backup => backup.label === JURIDICTION_TEST_NAME)
+
+  if (!testBackup) {
+    throw new Error(`Test backup with label "${JURIDICTION_TEST_NAME}" not found in database. Available backups: ${allBackups.map(b => b.label).join(', ')}`)
+  }
+
+  const testBackupId = testBackup.id
+  console.log(`[TEST SETUP] Found test backup: id=${testBackupId}, label="${testBackup.label}"`)
+
+  // Assign admin to the test backup
   await onUpdateAccountApi({
     userToken: datas.adminToken,
     userId: datas.adminId,
     accessIds: accessIds,
-    ventilations: [],
+    ventilations: [testBackupId],
     referentielIds: null, // null = access to all referentiels
   })
+
   const response = await onGetUserDataApi({ userToken: datas.adminToken })
   datas.adminAccess = response.data.user.access
   datas.adminBackups = response.data.data.backups || []
   datas.adminReferentielIds = response.data.user.referentiel_ids
 
-  // Dynamically lookup backup ID by label
+  // Dynamically lookup backup ID by label (should now succeed)
   datas.adminBackupId = getBackupIdByLabel(JURIDICTION_TEST_NAME)
+
+  if (!datas.adminBackupId) {
+    throw new Error(`Failed to find backup ID after assignment. adminBackups: ${JSON.stringify(datas.adminBackups)}`)
+  }
+
+  console.log(`[TEST SETUP] Admin assigned to backup: id=${datas.adminBackupId}, backups count=${datas.adminBackups.length}`)
 
   // Validate that the backup was found
   assert.isNotNull(datas.adminBackupId, `Backup with label "${JURIDICTION_TEST_NAME}" must exist in test database`)
