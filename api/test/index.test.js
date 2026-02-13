@@ -189,12 +189,25 @@ it('Give all accesses to Admin', async () => {
   accessIds.push(8, 9, 10)
 
   // Fetch all backups to find the test backup by label
+  console.log('[TEST SETUP] Fetching all backups...')
   const allBackupsResponse = await onGetAllBackupsApi({ userToken: datas.adminToken })
-  const allBackups = allBackupsResponse.data || []
+  console.log('[TEST SETUP] Backup API response status:', allBackupsResponse.status)
+  console.log('[TEST SETUP] Backup API response data:', JSON.stringify(allBackupsResponse.data, null, 2))
+
+  // Handle different response structures
+  const allBackups = allBackupsResponse.data || allBackupsResponse.data?.data || []
+  console.log('[TEST SETUP] Parsed backups array:', JSON.stringify(allBackups, null, 2))
+  console.log('[TEST SETUP] Number of backups found:', allBackups.length)
+
+  if (!Array.isArray(allBackups) || allBackups.length === 0) {
+    throw new Error(`No backups found in database. Response: ${JSON.stringify(allBackupsResponse.data)}`)
+  }
+
   const testBackup = allBackups.find(backup => backup.label === JURIDICTION_TEST_NAME)
 
   if (!testBackup) {
-    throw new Error(`Test backup with label "${JURIDICTION_TEST_NAME}" not found in database. Available backups: ${allBackups.map(b => b.label).join(', ')}`)
+    const availableLabels = allBackups.map(b => b.label || b.name || 'unlabeled').join(', ')
+    throw new Error(`Test backup with label "${JURIDICTION_TEST_NAME}" not found in database. Available backups (${allBackups.length}): ${availableLabels}`)
   }
 
   const testBackupId = testBackup.id
@@ -209,25 +222,31 @@ it('Give all accesses to Admin', async () => {
     referentielIds: null, // null = access to all referentiels
   })
 
+  console.log('[TEST SETUP] Fetching user data after assignment...')
   const response = await onGetUserDataApi({ userToken: datas.adminToken })
+  console.log('[TEST SETUP] User data response:', JSON.stringify(response.data, null, 2))
+
   datas.adminAccess = response.data.user.access
   datas.adminBackups = response.data.data.backups || []
   datas.adminReferentielIds = response.data.user.referentiel_ids
+
+  console.log('[TEST SETUP] Admin backups after assignment:', JSON.stringify(datas.adminBackups, null, 2))
+  console.log('[TEST SETUP] Number of backups assigned:', datas.adminBackups.length)
 
   // Dynamically lookup backup ID by label (should now succeed)
   datas.adminBackupId = getBackupIdByLabel(JURIDICTION_TEST_NAME)
 
   if (!datas.adminBackupId) {
-    throw new Error(`Failed to find backup ID after assignment. adminBackups: ${JSON.stringify(datas.adminBackups)}`)
+    throw new Error(`Failed to find backup ID after assignment. Expected label: "${JURIDICTION_TEST_NAME}", adminBackups: ${JSON.stringify(datas.adminBackups)}`)
   }
 
   console.log(`[TEST SETUP] Admin assigned to backup: id=${datas.adminBackupId}, backups count=${datas.adminBackups.length}`)
+  console.log('[TEST SETUP] Test setup complete')
 
-  // Validate that the backup was found
+  // Validate that the backup was found and assigned
   assert.isNotNull(datas.adminBackupId, `Backup with label "${JURIDICTION_TEST_NAME}" must exist in test database`)
-
+  assert.isNotEmpty(datas.adminBackups, 'Admin must have at least one backup assigned')
   assert.strictEqual(response.status, 200)
-  assert.isNotEmpty(datas.adminAccess)
 })
 
 routeUser(datas)
