@@ -67,6 +67,21 @@ export const onGetBackupListHrApi = async ({ userToken }) => {
     })
 }
 
+export const onGetAllBackupsApi = async ({ userToken }) => {
+  return await instanceAxios
+    .get('/juridictions/get-all-backup', {
+      headers: {
+        authorization: userToken,
+      },
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      return err.response
+    })
+}
+
 export const onFilterListHRApi = async ({ userToken, backupId, contentieuxIds, categoriesIds, date = new Date() }) => {
   return await instanceAxios
     .post(
