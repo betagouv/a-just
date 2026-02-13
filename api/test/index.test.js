@@ -23,12 +23,36 @@ import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
+import { JURIDICTION_TEST_NAME } from './constants/juridiction'
 
 const datas = {
   adminId: null,
   adminToken: null,
   userId: null,
   userToken: null,
+}
+
+/**
+ * Find backup ID by label from the admin's backup list
+ * @param {string} label - Backup label to search for (e.g., "24fb8bb550")
+ * @returns {number|null} - Backup ID or null if not found
+ */
+function getBackupIdByLabel(label) {
+  if (!datas.adminBackups || datas.adminBackups.length === 0) {
+    console.warn(`[BACKUP LOOKUP] No backups available for admin`)
+    return null
+  }
+
+  const backup = datas.adminBackups.find(b => b.label === label)
+
+  if (!backup) {
+    console.warn(`[BACKUP LOOKUP] Backup with label "${label}" not found`)
+    console.warn(`[BACKUP LOOKUP] Available backups:`, datas.adminBackups.map(b => b.label))
+    return null
+  }
+
+  console.log(`[BACKUP LOOKUP] Found backup "${label}" with ID: ${backup.id}`)
+  return backup.id
 }
 
 /**
@@ -44,7 +68,7 @@ function buildAJustContext() {
     },
     backup: {
       id: datas.adminBackupId || null,
-      label: datas.adminBackups && datas.adminBackups.length > 0 
+      label: datas.adminBackups && datas.adminBackups.length > 0
         ? datas.adminBackups.find(b => b.id === datas.adminBackupId)?.label || null
         : null,
     },
@@ -61,12 +85,12 @@ function buildAJustContext() {
       const id = acc.id || acc
       const label = accessToString(id)
       if (!label) continue
-      
+
       // Parse tool name and read/write from label (e.g. "Panorama - lecture")
       const parts = label.split(' - ')
       const toolName = parts[0] || label
       const mode = parts[1] || ''
-      
+
       if (!toolMap.has(toolName)) {
         toolMap.set(toolName, { name: toolName, canRead: false, canWrite: false })
       }
@@ -86,16 +110,16 @@ const contextFilePath = path.join(__dirname, 'reports', 'test-contexts.json')
 
 before((done) => {
   console.log('BEFORE WAITING SERVER')
-  
+
   // Ensure reports directory exists
   const reportsDir = path.join(__dirname, 'reports')
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true })
   }
-  
+
   // Initialize empty context file
   fs.writeFileSync(contextFilePath, JSON.stringify({}, null, 2))
-  
+
   server.isReady = function () {
     console.log('config', config)
 
@@ -110,13 +134,13 @@ beforeEach(function () {
     const testFullTitle = this.currentTest.fullTitle()
     // Normalize to lowercase for case-insensitive lookup
     const normalizedKey = testFullTitle.toLowerCase()
-    
+
     // Store in memory
     testContexts[normalizedKey] = ctx
-    
+
     // Write to file (append mode - read, update, write)
     try {
-      const existing = fs.existsSync(contextFilePath) 
+      const existing = fs.existsSync(contextFilePath)
         ? JSON.parse(fs.readFileSync(contextFilePath, 'utf8'))
         : {}
       existing[normalizedKey] = ctx
@@ -167,7 +191,7 @@ it('Give all accesses to Admin', async () => {
   })
   // Add category access (Magistrat, Greffier, Contractuel)
   accessIds.push(8, 9, 10)
-  
+
   await onUpdateAccountApi({
     userToken: datas.adminToken,
     userId: datas.adminId,
@@ -178,8 +202,14 @@ it('Give all accesses to Admin', async () => {
   const response = await onGetUserDataApi({ userToken: datas.adminToken })
   datas.adminAccess = response.data.user.access
   datas.adminBackups = response.data.data.backups || []
-  datas.adminBackupId = datas.adminBackups.length > 0 ? datas.adminBackups[0].id : null
   datas.adminReferentielIds = response.data.user.referentiel_ids
+
+  // Dynamically lookup backup ID by label
+  datas.adminBackupId = getBackupIdByLabel(JURIDICTION_TEST_NAME)
+
+  // Validate that the backup was found
+  assert.isNotNull(datas.adminBackupId, `Backup with label "${JURIDICTION_TEST_NAME}" must exist in test database`)
+
   assert.strictEqual(response.status, 200)
   assert.isNotEmpty(datas.adminAccess)
 })
