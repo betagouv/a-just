@@ -151,11 +151,21 @@ module.exports = function (datas) {
         ...current_hr,
         situations: situatiuons,
       }
+      console.log('[SITUATION DEBUG] Add new hr situation - Request:')
+      console.log('[SITUATION DEBUG] Expected activities:', JSON.stringify(activities, null, 2))
+      console.log('[SITUATION DEBUG] Expected category:', JSON.stringify(category, null, 2))
+      console.log('[SITUATION DEBUG] Expected fonction:', JSON.stringify(fonction, null, 2))
+      console.log('[SITUATION DEBUG] hr.backupId:', hr.backupId)
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
+
+      console.log('[SITUATION DEBUG] Response status:', response.status)
+      console.log('[SITUATION DEBUG] Response situations:', JSON.stringify(response.data.data.situations, null, 2))
+      console.log('[SITUATION DEBUG] Actual activities (raw):', JSON.stringify(response.data.data.situations[0]?.activities, null, 2))
 
       const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
@@ -166,9 +176,14 @@ module.exports = function (datas) {
       // Sort both arrays so that we can compare them
       activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
       tmp_activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
-      
+
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
+
+      console.log('[SITUATION DEBUG] After mapping - tmp_activities:', JSON.stringify(tmp_activities, null, 2))
+      console.log('[SITUATION DEBUG] Comparison - expected vs actual:')
+      console.log('[SITUATION DEBUG]   Expected length:', activities.length)
+      console.log('[SITUATION DEBUG]   Actual length:', tmp_activities.length)
 
       assert.strictEqual(response.status, 200)
       assert.deepEqual(activities, tmp_activities)
@@ -200,7 +215,7 @@ module.exports = function (datas) {
           contentieux: { id: 462, label: 'Protection des majeurs' },
         },
       ]
-      const category = { id: 1, rank: 1, label: 'Magistrat'  }
+      const category = { id: 1, rank: 1, label: 'Magistrat' }
       const dateStart = normalizeDate(new Date())
       dateStart.setDate(dateStart.getDate() + 20)
       const etp = 1
@@ -220,12 +235,20 @@ module.exports = function (datas) {
         ...current_hr,
         situations: situatiuons,
       }
+      console.log('[SITUATION DEBUG] Add second situation - Request:')
+      console.log('[SITUATION DEBUG] Expected activities (4 items):', JSON.stringify(activities, null, 2))
+      console.log('[SITUATION DEBUG] Total situations count:', situatiuons.length)
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
-      const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
+
+      console.log('[SITUATION DEBUG] Response situations count:', response.data.data.situations?.length)
+      console.log('[SITUATION DEBUG] Second situation activities (raw):', JSON.stringify(response.data.data.situations[1]?.activities, null, 2))
+
+      const tmp_activities = response.data.data.situations[1].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
       const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp
@@ -272,11 +295,19 @@ module.exports = function (datas) {
         indisponibilities: indisponibilities,
       }
 
+      console.log('[UNAVAILABILITY DEBUG] Add unavailability - Request:')
+      console.log('[UNAVAILABILITY DEBUG] Expected indisponibilities:', JSON.stringify(indisponibilities, null, 2))
+      console.log('[UNAVAILABILITY DEBUG] hr.backupId:', hr.backupId)
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
+
+      console.log('[UNAVAILABILITY DEBUG] Response status:', response.status)
+      console.log('[UNAVAILABILITY DEBUG] Response indisponibilities:', JSON.stringify(response.data.data.indisponibilities, null, 2))
+      console.log('[UNAVAILABILITY DEBUG] indisponibilities[0] exists?', !!response.data.data.indisponibilities?.[0])
 
       current_hr = response.data.data
 
