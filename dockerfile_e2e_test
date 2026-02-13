@@ -1,4 +1,4 @@
-FROM cypress/base
+FROM cypress/browsers
 
 COPY ./end-to-end /e2e
 COPY ./end-to-end/scripts /scripts
