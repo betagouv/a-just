@@ -20,20 +20,12 @@ module.exports = function (datas) {
      * Ajout de l'admin sur un TJ pour qu'il puisse accéder, modifier des données du TJ
      */
     it('Add admin to a tj', async () => {
-      console.log('[CALCULATOR DEBUG] Adding admin to TJ')
-      console.log('[CALCULATOR DEBUG] datas.adminBackupId:', datas.adminBackupId)
-      console.log('[CALCULATOR DEBUG] datas.adminBackups:', datas.adminBackups)
-      console.log('[CALCULATOR DEBUG] ventilations array:', [datas.adminBackupId])
-
       const response = await onUpdateAccountApi({
         userToken: datas.adminToken,
         userId: datas.adminId,
         accessIds: datas.adminAccess,
         ventilations: [datas.adminBackupId],
       })
-
-      console.log('[CALCULATOR DEBUG] Update account response status:', response.status)
-      console.log('[CALCULATOR DEBUG] Update account response data:', JSON.stringify(response.data, null, 2))
 
       assert.strictEqual(response.status, 200)
     })
@@ -63,13 +55,6 @@ module.exports = function (datas) {
       const backupId = datas.adminBackupId
       const optionBackupId = JURIDICTION_OPTION_BACKUP_ID
 
-      console.log('[CALCULATOR DEBUG] Catch data - Request parameters:')
-      console.log('[CALCULATOR DEBUG] backupId:', backupId)
-      console.log('[CALCULATOR DEBUG] dateStart:', dateStart)
-      console.log('[CALCULATOR DEBUG] dateStop:', dateStop)
-      console.log('[CALCULATOR DEBUG] contentieuxIds:', contentieuxIds)
-      console.log('[CALCULATOR DEBUG] optionBackupId:', optionBackupId)
-
       const response = await onFilterListCalculatorApi({
         userToken: datas.adminToken,
         backupId,
@@ -80,9 +65,6 @@ module.exports = function (datas) {
         categorySelected,
         selectedFonctionsIds: null,
       })
-
-      console.log('[CALCULATOR DEBUG] Response status:', response.status)
-      console.log('[CALCULATOR DEBUG] Response data:', JSON.stringify(response.data, null, 2))
 
       calculatorData = response.data.data.list[0]
 

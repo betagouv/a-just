@@ -16,41 +16,15 @@ module.exports = function (datas) {
     })
 
     it('Get last month activity fron a TJ', async () => {
-      console.log('[ACTIVITIES DEBUG] Get last month - Request:')
-      console.log('[ACTIVITIES DEBUG] hrBackupId:', datas.adminBackupId)
-
       const response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: datas.adminBackupId })
-
-      console.log('[ACTIVITIES DEBUG] Response status:', response.status)
-      console.log('[ACTIVITIES DEBUG] Response data:', JSON.stringify(response.data, null, 2))
 
       if (response.data && response.data.data && response.data.data.date)
         lastMonthActivity = response.data.data.date
-
-      console.log('[ACTIVITIES DEBUG] lastMonthActivity value:', lastMonthActivity)
-      console.log('[ACTIVITIES DEBUG] lastMonthActivity type:', typeof lastMonthActivity)
 
       assert.strictEqual(response.status, 200)
     })
 
     it('Get last data available from a TJ', async () => {
-      console.log('[ACTIVITIES DEBUG] Get data by month - Request:')
-      console.log('[ACTIVITIES DEBUG] hrBackupId:', datas.adminBackupId)
-      console.log('[ACTIVITIES DEBUG] date (lastMonthActivity):', lastMonthActivity)
-      console.log('[ACTIVITIES DEBUG] date type:', typeof lastMonthActivity)
-      console.log('[ACTIVITIES DEBUG] date is null?:', lastMonthActivity === null)
-      console.log('[ACTIVITIES DEBUG] date is undefined?:', lastMonthActivity === undefined)
-
-      if (lastMonthActivity) {
-        console.log('[ACTIVITIES DEBUG] Attempting to create Date object from:', lastMonthActivity)
-        try {
-          const testDate = new Date(lastMonthActivity)
-          console.log('[ACTIVITIES DEBUG] Date object created:', testDate)
-          console.log('[ACTIVITIES DEBUG] Date is valid?:', !isNaN(testDate.getTime()))
-        } catch (e) {
-          console.log('[ACTIVITIES DEBUG] Error creating Date:', e.message)
-        }
-      }
 
       const response = await onGetDataByMonthApi({ userToken: datas.adminToken, hrBackupId: datas.adminBackupId, date: lastMonthActivity })
       let data = null
@@ -69,9 +43,6 @@ module.exports = function (datas) {
             isEmptyStock = false
         })
       }
-      console.log('[ACTIVITIES DEBUG] Response status:', response.status)
-      console.log('[ACTIVITIES DEBUG] Response data:', JSON.stringify(response.data, null, 2))
-      console.log('[ACTIVITIES DEBUG] Data checks - isEmptyIn:', isEmptyIn, 'isEmptyOut:', isEmptyOut, 'isEmptyStock:', isEmptyStock)
 
       assert.strictEqual(response.status, 200)
       assert.isFalse(isEmptyIn && isEmptyOut && isEmptyStock);
