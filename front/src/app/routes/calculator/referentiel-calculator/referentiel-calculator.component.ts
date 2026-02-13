@@ -3,7 +3,7 @@ import { AfterViewInit, Component, EventEmitter, HostBinding, Input, OnChanges, 
 import { SpeedometerComponent } from '../../../components/speedometer/speedometer.component'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { MainClass } from '../../../libs/main-class'
-import { CalculatorInterface } from '../../../interfaces/calculator'
+import { CalculatorInterface, etpAffectedInterface } from '../../../interfaces/calculator'
 import { OPACITY_20 } from '../../../constants/colors'
 import { UserService } from '../../../services/user/user.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
@@ -473,6 +473,43 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         nbMonthChecked++
       }
 
+      // Vérifier s'il y a au moins un sous-contentieux avec des données sur les 12 derniers mois
+      let noDataToSubContentieuxDuring12Month = false
+      currentMonth = month(new Date(), 48)
+      nbMonthChecked = 0
+      while (nbMonthChecked < 12) {
+        const activities = await this.calculatorService.filterList(this.categorySelected, null, currentMonth, currentMonth, true, [
+          this.currentProjection.contentieux.id,
+        ])
+
+        const childrens = activities.list[0].childrens || []
+        if (childrens.length > 0 && childrens.every((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
+          console.log('childrens with no datas', childrens)
+          noDataToSubContentieuxDuring12Month = true
+          nbMonthChecked = 12 // stop the loop
+          break
+        }
+
+        currentMonth = addMonths(currentMonth, -1)
+        nbMonthChecked++
+      }
+
+      let lessOneOfDatasToSubContentieux = false
+      console.log(this.currentProjection)
+      const childrens = this.currentProjection?.childrens || []
+      if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
+        lessOneOfDatasToSubContentieux = true
+      }
+
+      // Vérifier s'il y a des datas manquantes sur les 12 derniers mois
+      let missingDatasToSubContentieuxBefore12Month = false
+      const endMonth = month(new Date(this.currentProjection.lastActivityUpdatedAt || new Date()))
+      const startMonth = month(endMonth, -12)
+      const allMonths = await this.calculatorService.rangeValues(this.currentProjection.contentieux.id, 'stock', startMonth, endMonth)
+      if (allMonths.length !== 12 || allMonths.some((m: any) => m === null)) {
+        missingDatasToSubContentieuxBefore12Month = true
+      }
+
       this.cockpitWarningInformations = {
         ventilation: {
           dataNotUpdatedBefore6Month: this.nbMonthBetween(this.currentProjection.lastVentilationUpdatedAt) >= 6,
@@ -481,9 +518,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         },
         activity: {
           dataNotUpdatedBefore12Month: this.nbMonthBetween(this.currentProjection.lastActivityUpdatedAt) >= 12,
-          noDataToSubContentieuxDuring12Month: true, // TODO
-          lessOneOfDatasToSubContentieux: true, // TODO // is red
-          missingDatasToSubContentieuxBefore12Month: true, // TODO // is red
+          noDataToSubContentieuxDuring12Month,
+          lessOneOfDatasToSubContentieux, // is red
+          missingDatasToSubContentieuxBefore12Month, // is red
         },
       }
     }
