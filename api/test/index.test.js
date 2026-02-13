@@ -195,9 +195,12 @@ it('Give all accesses to Admin', async () => {
   console.log('[TEST SETUP] Backup API response data:', JSON.stringify(allBackupsResponse.data, null, 2))
 
   // Handle different response structures
-  const allBackups = allBackupsResponse.data || allBackupsResponse.data?.data || []
-  console.log('[TEST SETUP] Parsed backups array:', JSON.stringify(allBackups, null, 2))
-  console.log('[TEST SETUP] Number of backups found:', allBackups.length)
+  // API returns: {user: {...}, data: [backups array], date: timestamp}
+  const allBackups = Array.isArray(allBackupsResponse.data?.data)
+    ? allBackupsResponse.data.data
+    : (Array.isArray(allBackupsResponse.data) ? allBackupsResponse.data : [])
+  console.log('[TEST SETUP] Parsed backups array length:', allBackups.length)
+  console.log('[TEST SETUP] First backup sample:', allBackups[0] ? JSON.stringify(allBackups[0]) : 'none')
 
   if (!Array.isArray(allBackups) || allBackups.length === 0) {
     throw new Error(`No backups found in database. Response: ${JSON.stringify(allBackupsResponse.data)}`)
