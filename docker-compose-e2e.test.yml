@@ -17,7 +17,62 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "effective_cache_size=6GB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "checkpoint_completion_target=0.7"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "default_statistics_target=100"
+      - "-c"
+      - "random_page_cost=4"
+      - "-c"
+      - "effective_io_concurrency=2"
+      - "-c"
+      - "work_mem=5242kB"
+      - "-c"
+      - "min_wal_size=1GB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "max_worker_processes=4"
+      - "-c"
+      - "max_parallel_workers_per_gather=2"
+      - "-c"
+      - "max_parallel_workers=4"
+
+  # Dedicated Postgres for Sandbox stack
+  db_sandbox:
+    image: postgres:15.11
+    restart: always
+    cpus: 2.0
+    mem_limit: 4G
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.51
+    ports:
+      - "5436:5432"
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=ajust_sandbox
+      - POSTGRES_USER=ajust-user
+      - POSTGRES_PASSWORD=ajust-pass
+      - TZ=Europe/Paris
+    volumes:
+      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     command:
       - "postgres"
       - "-c"
@@ -88,58 +143,38 @@ services:
   # pointed to by SANDBOX_CODE_DIR. This allows comparing two locally built stacks.
   # The sandbox stack runs on distinct IP/ports.
 
-  # api_sandbox:
-  #   build:
-  #     context: ${SANDBOX_CODE_DIR:-.}
-  #     dockerfile: dockerfile_e2e_api
-  #     args:
-  #       SKIP_FRONT_ADMIN: "1"
-  #   networks:
-  #     ajust_e2e_network:
-  #       ipv4_address: 175.0.0.21
-  #   ports:
-  #     - "8082:8081"
-  #   expose:
-  #     - "8081"
-  #   depends_on:
-  #     - "db_sandbox"
-  #     - "redis_sandbox"
-  #   volumes:
-  #     - "./api/coverage:/home/api/coverage"
-  #   environment:
-  #     - DATABASE_URL=postgres://ajust-user:ajust-pass@db_sandbox:5432/ajust_sandbox
-  #     - NODE_ENV=test
-  #     - JSON_WEB_TOKEN=123456789
-  #     - PORT=8081
-  #     - TYPE_ID=0
-  #     - REDIS_URL=redis://redis_sandbox:6379
-  #     - FRONT_URL=http://175.0.0.31:4200
-  #     - SERVER_URL=http://175.0.0.21:8081/api
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://175.0.0.21:8081/api"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-
-  # front_sandbox:
-  #   build:
-  #     context: ${SANDBOX_CODE_DIR:-.}
-  #     dockerfile: dockerfile_front
-  #   networks:
-  #     ajust_e2e_network:
-  #       ipv4_address: 175.0.0.31
-  #   ports:
-  #     - "4201:4200"
-  #   expose:
-  #     - "4200"
-  #   environment:
-  #     - NG_APP_SERVER_URL=http://175.0.0.21:8081/api/
-  #     - NG_APP_NODE_ENV=test
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://175.0.0.31:4200"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
+  api_sandbox:
+    build:
+      context: ${SANDBOX_CODE_DIR:-.}
+      dockerfile: dockerfile_e2e_api
+      args:
+        SKIP_FRONT_ADMIN: "1"
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.21
+    ports:
+      - "8082:8081"
+    expose:
+      - "8081"
+    depends_on:
+      - "db_sandbox"
+      - "redis_sandbox"
+    volumes:
+      - "./api/coverage:/home/api/coverage"
+    environment:
+      - DATABASE_URL=postgres://ajust-user:ajust-pass@db_sandbox:5432/ajust_sandbox
+      - NODE_ENV=test
+      - JSON_WEB_TOKEN=123456789
+      - PORT=8081
+      - TYPE_ID=0
+      - REDIS_URL=redis://redis_sandbox:6379
+      # - FRONT_URL=http://175.0.0.31:4200
+      # - SERVER_URL=http://175.0.0.21:8081/api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://175.0.0.21:8081/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   front:
     build:
@@ -161,61 +196,25 @@ services:
       timeout: 10s
       retries: 5
 
-  # cypress:
-  #   image: cypress/browsers:node-22.12.0-chrome-131.0.6778.108-1-ff-133.0-edge-131.0.2903.70-1
-  #   networks:
-  #     - ajust_e2e_network
-  #   depends_on:
-  #     - api
-  #     - front
-  #     # - api_sandbox
-  #     # - front_sandbox
-  #     - redis
-  #     # - redis_sandbox
-  #   shm_size: 2gb
-  #   volumes:
-  #     - ./end-to-end:/e2e
-  #     - ./end-to-end/scripts:/scripts
-  #   # working_dir: /e2e
-  #   # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm ci && npx cypress install && npm run cy:run"
-  #   environment:
-  #     - CYPRESS_BASE_URL=http://175.0.0.30:4200
-  #     - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
-  #     # Cypress picks up any env starting with CYPRESS_ and exposes it via Cypress.env()
-  #     # Default both URLs to the two local stacks unless overridden by CI env.
-  #     - CYPRESS_SANDBOX_FRONT_URL=${SANDBOX_FRONT_URL:-http://175.0.0.31:4200}
-  #     - CYPRESS_CANDIDATE_FRONT_URL=${CANDIDATE_FRONT_URL:-http://175.0.0.30:4200}
-  #     # Optional per-spec date overrides for Effectif only
-  #     - CYPRESS_EFFECTIF_START=${CYPRESS_EFFECTIF_START:-}
-  #     - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
-  #     # JSON-only mode toggle passed from CI or local
-  #     - CY_JSON_ONLY
-  #     - SPEC
-
-  cypress:
+  front_sandbox:
     build:
-      context: .
-      dockerfile: dockerfile_e2e_test
+      context: ${SANDBOX_CODE_DIR:-.}
+      dockerfile: dockerfile_front
     networks:
-      - ajust_e2e_network
-    depends_on:
-      - db
-      - api
-      # - api_sandbox
-      - front
-      # - front_sandbox
-      - redis
-      # - redis_sandbox
-    volumes:
-      - ./end-to-end:/e2e
-      - ./end-to-end/scripts:/scripts
-    # working_dir: /e2e
-    # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.31
+    ports:
+      - "4201:4200"
+    expose:
+      - "4200"
     environment:
-      - CYPRESS_BASE_URL=http://175.0.0.30:4200
-      - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
-      # - CYPRESS_SANDBOX_FRONT_URL=${SANDBOX_FRONT_URL:-http://175.0.0.31:4200}
-      # - CYPRESS_CANDIDATE_FRONT_URL=${CANDIDATE_FRONT_URL:-http://175.0.0.30:4200}
+      - NG_APP_SERVER_URL=http://175.0.0.21:8081/api/
+      - NG_APP_NODE_ENV=test
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://175.0.0.31:4200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   # Dedicated Redis for PR stack
   redis:
@@ -229,68 +228,54 @@ services:
       - "6379"
 
   # Dedicated Redis for Sandbox stack
-  # redis_sandbox:
-  #   image: redis:7
-  #   networks:
-  #     ajust_e2e_network:
-  #       ipv4_address: 175.0.0.41
-  #   ports:
-  #     - "6380:6379"
-  #   expose:
-  #     - "6379"
+  redis_sandbox:
+    image: redis:7
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.41
+    ports:
+      - "6380:6379"
+    expose:
+      - "6379"
 
-  # # Dedicated Postgres for Sandbox stack
-  # db_sandbox:
-  #   image: postgres:15.11
-  #   restart: always
-  #   cpus: 2.0
-  #   mem_limit: 4G
-  #   networks:
-  #     ajust_e2e_network:
-  #       ipv4_address: 175.0.0.51
-  #   ports:
-  #     - "5436:5432"
-  #   expose:
-  #     - "5432"
-  #   environment:
-  #     - POSTGRES_DB=ajust_sandbox
-  #     - POSTGRES_USER=ajust-user
-  #     - POSTGRES_PASSWORD=ajust-pass
-  #     - TZ=Europe/Paris
-  #   volumes:
-  #     - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
-  #   command:
-  #     - "postgres"
-  #     - "-c"
-  #     - "max_connections=200"
-  #     - "-c"
-  #     - "shared_buffers=2GB"
-  #     - "-c"
-  #     - "effective_cache_size=6GB"
-  #     - "-c"
-  #     - "maintenance_work_mem=512MB"
-  #     - "-c"
-  #     - "checkpoint_completion_target=0.7"
-  #     - "-c"
-  #     - "wal_buffers=16MB"
-  #     - "-c"
-  #     - "default_statistics_target=100"
-  #     - "-c"
-  #     - "random_page_cost=4"
-  #     - "-c"
-  #     - "effective_io_concurrency=2"
-  #     - "-c"
-  #     - "work_mem=5242kB"
-  #     - "-c"
-  #     - "min_wal_size=1GB"
-  #     - "-c"
-  #     - "max_wal_size=4GB"
-  #     - "-c"
-  #     - "max_worker_processes=4"
-  #     - "-c"
-  #     - "max_parallel_workers_per_gather=2"
-  #     - "-c"
-  #     - "max_parallel_workers=4"
+  cypress:
+    build:
+      context: .
+      dockerfile: dockerfile_e2e_test
+    networks:
+      - ajust_e2e_network
+    depends_on:
+      - db
+      - api
+      - api_sandbox
+      - front
+      - front_sandbox
+      - redis
+      - redis_sandbox
+    shm_size: 2gb
+    mem_limit: 2G
+    volumes:
+      - ./end-to-end:/e2e
+      - ./end-to-end/scripts:/scripts
+      - ./tools:/tools
+      - cypress-cache:/root/.cache/Cypress
+    # working_dir: /e2e
+    # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+    environment:
+      - CYPRESS_BASE_URL=http://175.0.0.30:4200
+      - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
+      # Cypress picks up any env starting with CYPRESS_ and exposes it via Cypress.env()
+      # Default both URLs to the two local stacks unless overridden by CI env.
+      - CYPRESS_SANDBOX_FRONT_URL=${SANDBOX_FRONT_URL:-http://175.0.0.31:4200}
+      - CYPRESS_CANDIDATE_FRONT_URL=${CANDIDATE_FRONT_URL:-http://175.0.0.30:4200}
+      # Optional per-spec date overrides for Effectif only
+      - CYPRESS_EFFECTIF_START=${CYPRESS_EFFECTIF_START:-}
+      - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
+      # JSON-only mode toggle passed from CI or local
+      - CY_JSON_ONLY=1
+      - SPEC
+      # Increase Node.js memory limit for Excel comparison tasks
+      - NODE_OPTIONS=--max-old-space-size=1536
 
 networks:
   ajust_e2e_network:
@@ -298,3 +283,6 @@ networks:
     ipam:
       config:
         - subnet: 175.0.0.0/16
+
+volumes:
+  cypress-cache:
