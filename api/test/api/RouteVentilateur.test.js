@@ -1,6 +1,6 @@
 import { onUpdateAccountApi } from '../routes/user'
 import { onFilterListHRApi } from '../routes/hr'
-import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
+// No longer need JURIDICTION_BACKUP_ID - using datas.adminBackupId instead
 import { EAM_ID, GREFFIER_ID, MAGISTART_ID } from '../constants/hrCategories'
 import { assert } from 'chai'
 
@@ -16,7 +16,7 @@ module.exports = function (datas) {
       let referentiel = []
       const response = await onFilterListHRApi({
         userToken: datas.adminToken,
-        backupId: JURIDICTION_BACKUP_ID,
+        backupId: datas.adminBackupId,
         date: new Date(),
         categoriesIds: [MAGISTART_ID, GREFFIER_ID, EAM_ID],
       })

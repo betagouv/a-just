@@ -166,7 +166,7 @@ module.exports = function (datas) {
       // Sort both arrays so that we can compare them
       activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
       tmp_activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
-      
+
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
 
@@ -200,7 +200,7 @@ module.exports = function (datas) {
           contentieux: { id: 462, label: 'Protection des majeurs' },
         },
       ]
-      const category = { id: 1, rank: 1, label: 'Magistrat'  }
+      const category = { id: 1, rank: 1, label: 'Magistrat' }
       const dateStart = normalizeDate(new Date())
       dateStart.setDate(dateStart.getDate() + 20)
       const etp = 1
@@ -225,7 +225,8 @@ module.exports = function (datas) {
         hr: hr,
         backupId: hr.backupId,
       })
-      const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
+
+      const tmp_activities = response.data.data.situations[1].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
       const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp

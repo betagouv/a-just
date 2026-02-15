@@ -1,6 +1,5 @@
 import { onGetLastMonthApi, onGetDataByMonthApi } from '../routes/activities'
 import { onGetAllContentieuxReferentiels } from '../routes/contentieux'
-import { JURIDICTION_DATA_BACKUP_ID } from '../constants/juridiction'
 import { assert } from 'chai'
 
 module.exports = function (datas) {
@@ -10,41 +9,45 @@ module.exports = function (datas) {
 
   describe('Test Activities', () => {
     it('load Referentiel', async () => {
-      const response = await onGetAllContentieuxReferentiels({ userToken: datas.adminToken, jirs: true})
+      const response = await onGetAllContentieuxReferentiels({ userToken: datas.adminToken, jirs: true })
 
       referentiels = response.data && response.data.data
       assert.isOk(referentiels.length !== 0, 'missing contentieux referentiels')
     })
 
     it('Get last month activity fron a TJ', async () => {
-      const response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: JURIDICTION_DATA_BACKUP_ID })
+      const response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: datas.adminBackupId })
+
       if (response.data && response.data.data && response.data.data.date)
         lastMonthActivity = response.data.data.date
+
       assert.strictEqual(response.status, 200)
     })
 
     it('Get last data available from a TJ', async () => {
-      const response = await onGetDataByMonthApi({ userToken: datas.adminToken, hrBackupId: JURIDICTION_DATA_BACKUP_ID, date: lastMonthActivity })
+
+      const response = await onGetDataByMonthApi({ userToken: datas.adminToken, hrBackupId: datas.adminBackupId, date: lastMonthActivity })
       let data = null
       let isEmptyIn = true
       let isEmptyOut = true
       let isEmptyStock = true
-      
+
       if (response && response.data && response.data.data && response.data.data.list) {
         data = response.data.data.list
         data.map(elem => {
-          if(elem.originalEntrees !== null)
+          if (elem.originalEntrees !== null)
             isEmptyIn = false
-          if(elem.originalSorties !== null)
+          if (elem.originalSorties !== null)
             isEmptyOut = false
-          if(elem.originalStock !== null)
+          if (elem.originalStock !== null)
             isEmptyStock = false
         })
       }
+
       assert.strictEqual(response.status, 200)
       assert.isFalse(isEmptyIn && isEmptyOut && isEmptyStock);
     })
-  
+
     /*it('load Activities', async () => {
       const response = await axios.post(
         `${config.serverUrl}/activities/get-all`,

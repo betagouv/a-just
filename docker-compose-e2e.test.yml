@@ -17,7 +17,8 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     command:
       - "postgres"
       - "-c"
@@ -70,7 +71,8 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     command:
       - "postgres"
       - "-c"
@@ -255,6 +257,8 @@ services:
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
+      - ./tools:/tools
+      - cypress-cache:/root/.cache/Cypress
     # working_dir: /e2e
     # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
     environment:
@@ -270,6 +274,8 @@ services:
       # JSON-only mode toggle passed from CI or local
       - CY_JSON_ONLY=1
       - SPEC
+      # Increase Node.js memory limit for Excel comparison tasks
+      - NODE_OPTIONS=--max-old-space-size=1536
 
 networks:
   ajust_e2e_network:
@@ -277,3 +283,6 @@ networks:
     ipam:
       config:
         - subnet: 175.0.0.0/16
+
+volumes:
+  cypress-cache:

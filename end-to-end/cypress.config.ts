@@ -684,6 +684,10 @@ export default defineConfig({
       on(
         "task",
         Object.assign({}, verifyDownloadTasks as any, {
+          log(message: string) {
+            console.log(message);
+            return null;
+          },
           readContextFile(filePath: string) {
             try {
               const fullPath = path.join(process.cwd(), filePath);
