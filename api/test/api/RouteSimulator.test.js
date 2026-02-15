@@ -4,7 +4,7 @@ import config from 'config'
 //import { createReadStream } from 'fs'
 import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from '../constants/admin'
 import { onGetSituationApi, onGetMonthActivityApi } from '../routes/simulator'
-import { JURIDICTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
+import { SOCIAL_LITIGATION_ID } from '../constants/juridiction'
 import { onGetLastMonthApi } from '../routes/activities'
 import { onFilterListHRApi } from '../routes/hr'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
@@ -14,7 +14,7 @@ module.exports = function (datas) {
 
   describe('Simulator page - Check calcul', () => {
     it('Catch data', async () => {
-      let backupId = JURIDICTION_BACKUP_ID
+      let backupId = datas.adminBackupId
       let categoryId = 1
       let functionIds = [22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39, 36, 56, 35, 57]
       let referentielId = [SOCIAL_LITIGATION_ID]
@@ -32,7 +32,7 @@ module.exports = function (datas) {
 
     it('Check Average monthly inputs', async () => {
       // Get last month on which we have data
-      let response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: JURIDICTION_BACKUP_ID })
+      let response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: datas.adminBackupId })
       let lastMonth = response.data.data.date
       const date = new Date(lastMonth)
 
@@ -41,7 +41,7 @@ module.exports = function (datas) {
       let year = date.getFullYear()
       let day = date.getDay()
 
-      let hrBackupId = JURIDICTION_BACKUP_ID
+      let hrBackupId = datas.adminBackupId
       let monthsData = []
       for (let i = 0; i < 12; i++) {
         if (month === 0) {
