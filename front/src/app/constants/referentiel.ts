@@ -212,7 +212,7 @@ export const DDG_REFERENTIELS_EAM = [
   "JLD pénal".toUpperCase(),
   "COUR D'ASSISES JIRS",
   "COUR D'ASSISES HORS JIRS".toUpperCase(),
-  "cour d’assises".toUpperCase(),
+  "COUR D'ASSISES",
   "cour criminelle".toUpperCase(),
   'COLLÉGIALES JIRS CRIM-ORG',
   'COLLÉGIALES JIRS ECO-FI',
