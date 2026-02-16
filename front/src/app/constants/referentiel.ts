@@ -109,8 +109,8 @@ export const DDG_REFERENTIELS_MAG_CA = [
  * Liste des réferentiels devant être saisi pour les DDG
  */
 export const DDG_REFERENTIELS_MAG = [
-  "JLD pénal".toUpperCase(),
-  "JLD civil".toUpperCase(),
+  'JLD pénal'.toUpperCase(),
+  'JLD civil'.toUpperCase(),
   "COUR D'ASSISES",
   "DÉPARTAGE PRUD'HOMAL",
   'CSM',
@@ -146,7 +146,7 @@ export const DDG_REFERENTIELS_MAG = [
  * Liste des réferentiels devant être saisi pour les DDG pour le TJ
  */
 export const DDG_REFERENTIELS_GREFFE = [
-  "JLD pénal".toUpperCase(),
+  'JLD pénal'.toUpperCase(),
   "DÉPARTAGE PRUD'HOMAL",
   'TUTELLES MINEURS',
   'PROTECTION DES MAJEURS',
@@ -209,11 +209,10 @@ export const DDG_REFERENTIELS_GREFFE_CA = [
  * Liste des réferentiels devant être saisi pour les DDG pour la EAM TJ
  */
 export const DDG_REFERENTIELS_EAM = [
-  "JLD pénal".toUpperCase(),
+  'JLD pénal'.toUpperCase(),
   "COUR D'ASSISES JIRS",
   "COUR D'ASSISES HORS JIRS".toUpperCase(),
-  "COUR D'ASSISES",
-  "cour criminelle".toUpperCase(),
+  'cour criminelle'.toUpperCase(),
   'COLLÉGIALES JIRS CRIM-ORG',
   'COLLÉGIALES JIRS ECO-FI',
   'JIRS ÉCO-FI',

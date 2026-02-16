@@ -6,7 +6,7 @@ var sp_options = {
   private_key: config.sso.privateKey, //     private_key: fs.readFileSync("key-file.key").toString(),
   certificate: config.sso.publicKey, //     certificate: fs.readFileSync("cert-file.crt").toString(),
   assert_endpoint: `${config.serverUrl}/saml/assert-return`,
-  force_authn: true,
+  force_authn: false,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
   nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
   sign_get_request: true,
@@ -17,10 +17,17 @@ var sp_options = {
 export const sp = new saml2.ServiceProvider(sp_options)
 
 // Create identity provider
+
+// https://nantes.sso.intranet.justice.gouv.fr
+// nouveau => https://auth.sso.intranet.justice.gouv.fr
+
 var idp_options = {
   sso_login_url: `${config.sso.url}/saml/singleSignOn`,
-  sso_logout_url: `${config.sso.url}/logout`,
-  certificates: [(config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''), (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, '')],
+  sso_logout_url: `${config.sso.url}/saml/singleLogout`,
+  certificates: [
+    (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''),
+    (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''),
+  ],
 }
 export const idp = new saml2.IdentityProvider(idp_options)
 
@@ -53,10 +60,29 @@ export const logoutSSO = (options) => {
 export const postAssertSSO = (requestBody) => {
   return new Promise((resolve, reject) => {
     sp.post_assert(idp, { request_body: requestBody }, function (err, saml_response) {
-      console.log(JSON.stringify(saml_response))
+      console.log('err', JSON.stringify(err))
+      console.log('saml_response', JSON.stringify(saml_response))
       /**
        * Exemple de retour
-       * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return","in_response_to":"_4096398212cc124d92684962d856aeddab1165ed5a","id":"_EBCBE3560C5AA612F647DA351B07301B"},"type":"authn_response","user":{"name_id":"_C65A794EDBDB5D494116B510D8607B7C","session_index":"QRKbkPL6ucP1gf3vj4p3fsBpZ60NoMaX9g5lH/nXo5yui9gPbJeeoob+r8NM3etGI8umGO2vJ7cT7mb/ESU/KA==","session_not_on_or_after":"2024-02-28T07:44:46Z","attributes":{"roles":["A_JUST_DEV:USER"],"nom":["MONTIGNY"],"affectationOp3":[],"logonId":["francois-xavier.mont"],"affectationOp4":[],"siteDescription":[],"prenom":["François-Xavier"],"igcid":["L0340347"],"affectationOp2":[],"bureauIGC":[],"mail":["francois-xavier.montigny@justice.gouv.fr"]}}}
+       * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return",
+       * "in_response_to":"_4096398212cc124d92684962d856aeddab1165ed5a",
+       * "id":"_EBCBE3560C5AA612F647DA351B07301B"},
+       * "type":"authn_response",
+       * "user":{"name_id":"_C65A794EDBDB5D494116B510D8607B7C",
+       * "session_index":"QRKbkPL6ucP1gf3vj4p3fsBpZ60NoMaX9g5lH/nXo5yui9gPbJeeoob+r8NM3etGI8umGO2vJ7cT7mb/ESU/KA==",
+       * "session_not_on_or_after":"2024-02-28T07:44:46Z",
+       * "attributes":{"roles":["A_JUST_DEV:USER"],
+       * "nom":["MONTIGNY"],
+       * "affectationOp3":[],
+       * "logonId":["francois-xavier.mont"],
+       * "affectationOp4":[],
+       * "siteDescription":[],
+       * "prenom":["François-Xavier"],
+       * "igcid":["L0340347"],
+       * "affectationOp2":[],
+       * "bureauIGC":[],
+       * "mail":["francois-xavier.montigny@justice.gouv.fr"]
+       * }}}
        */
       if (err != null) {
         reject(err)
