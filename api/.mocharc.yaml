@@ -8,7 +8,7 @@ reporter: 'mochawesome'
 reporter-option:
   - reportDir=/home/api/test/reports
   - reportFilename=test-results
-  - html=false
+  - html=true
   - json=true
   - overwrite=true
   - quiet=false

@@ -1,10 +1,32 @@
-import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
+import { cloneDeep, groupBy, meanBy, sortBy, sumBy } from 'lodash'
 import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { calculateETPForContentieux, getEtpByDateAndPerson, getEtpByDateAndPersonOld } from './human-resource'
 import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
+
+/**
+ * Somme les valeurs d'une propriété dans un tableau, retourne null si toutes les valeurs sont null
+ * @param {Array} collection - Le tableau à parcourir
+ * @param {string} iteratee - La propriété à sommer
+ * @returns {number|null} - La somme ou null si toutes les valeurs sont null
+ */
+const sumByOrNull = (collection, iteratee) => {
+  if (!collection || collection.length === 0) return null
+
+  const values = collection.map(item => {
+    const value = typeof iteratee === 'function' ? iteratee(item) : item[iteratee]
+    return value
+  })
+
+  // Si toutes les valeurs sont null ou undefined, retourner null
+  const allNull = values.every(val => val === null || val === undefined)
+  if (allNull) return null
+
+  // Sinon, utiliser sumBy normalement (il ignorera les null/undefined)
+  return sumBy(collection, iteratee)
+}
 
 /**
  * Création d'un tableau vide du calculateur de tous les contentieux et sous-contentieux
@@ -80,35 +102,31 @@ export const syncCalculatorDatas = async (
 ) => {
   const prefilters = groupBy(activities, 'contentieux.id')
 
-  const compute = async (item, isParent) => {
+  const compute = async (item, parentParams = null) => {
     const id = item.contentieux.id
-    const values = await getActivityValues(
-      models,
-      indexes,
-      dateStart,
-      dateStop,
-      prefilters[id] || [],
-      id,
-      nbMonth,
-      hr,
-      categories,
-      optionsBackups,
-      selectedFonctionsIds,
-      false,
-      isParent,
-    )
+    const values = await getActivityValues(models, indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds, parentParams)
     return { ...item, ...values, nbMonth }
   }
 
-  return await Promise.all(
-    list.map(async (parent) => {
-      checkAbort(signal)
-      return {
-        ...(await compute(parent, true)),
-        childrens: await Promise.all((parent.childrens || []).map((child) => compute(child, false))),
-      }
-    }),
-  )
+  return await Promise.all(list.map(async (parent, index) => {
+    checkAbort(signal)
+    let childrens = (parent.childrens || []).map(async (child) => await compute(child))
+    let parentParams = {
+      meanOutBf: sumByOrNull(childrens, 'meanOutBf'),
+      meanOutCs: sumByOrNull(childrens, 'meanOutCs'),
+      totalIn: sumByOrNull(childrens, 'totalIn'),
+      totalOut: sumByOrNull(childrens, 'totalOut'),
+      totalInBf: sumByOrNull(childrens, 'totalInBf'),
+      totalOutBf: sumByOrNull(childrens, 'totalOutBf'),
+      totalInAf: sumByOrNull(childrens, 'totalInAf'),
+      totalOutAf: sumByOrNull(childrens, 'totalOutAf')
+    }
+
+    return {
+      ...(await compute(parent, parentParams)),
+      childrens
+    }
+  }))
 }
 
 /**
@@ -135,8 +153,7 @@ const getActivityValues = async (
   categories,
   optionsBackups,
   selectedFonctionsIds,
-  old = false,
-  isParent = false,
+  parentParams = null,
 ) => {
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     indexes,
@@ -146,14 +163,26 @@ const getActivityValues = async (
     referentielId,
     hr,
     categories,
-    old,
   )
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
-  const totalIn = (activities || []).filter((e) => e.entrees !== null).length !== 0 ? sumBy(activities, 'entrees') / nbMonth : null
+  let filteredIn = (activities || []).filter((e) => e.entrees !== null)
+  let totalIn = filteredIn.length !== 0 ? meanBy(filteredIn, 'entrees') : null
+  let filteredOut = (activities || []).filter((e) => e.sorties !== null)
+  let totalOut = filteredOut.length !== 0 ? meanBy(filteredOut, 'sorties') : null
 
-  const totalOut = (activities || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activities, 'sorties') / nbMonth : null
+  if (parentParams !== null) {
+    meanOutCs = parentParams.meanOutCs
+    meanOutBf = parentParams.meanOutBf
+    totalIn = parentParams.totalIn
+    totalOut = parentParams.totalOut
+    totalInBf = parentParams.totalInBf
+    totalOutBf = parentParams.totalOutBf
+    totalInAf = parentParams.totalInAf
+    totalOutAf = parentParams.totalOutAf
+  }
+
   let lastStock = null
   if (activities.length) {
     const lastActivities = activities[activities.length - 1]
@@ -173,19 +202,17 @@ const getActivityValues = async (
   const realDTESInMonthsStart = lastStockBf !== null && meanOutBf !== null ? fixDecimal(lastStockBf / meanOutBf, 100) : null
 
   // ETP moyen sur la période
-  const etpAffected = old
-    ? getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
-    : calculateETPForContentieux(
-        indexes,
-        {
-          start: dateStart,
-          end: dateStop,
-          category: undefined,
-          fonctions: selectedFonctionsIds,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+  const etpAffected = calculateETPForContentieux(
+    indexes,
+    {
+      start: dateStart,
+      end: dateStop,
+      category: undefined,
+      fonctions: selectedFonctionsIds,
+      contentieux: referentielId,
+    },
+    categories,
+  )
 
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
@@ -205,45 +232,41 @@ const getActivityValues = async (
   oneMonthBeforeEnd.setDate(1)
 
   // ETP début
-  etpAffectedBf = old
-    ? getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
-    : calculateETPForContentieux(
-        indexes,
-        {
-          start: dateStart,
-          end: oneMonthAfterStart,
-          category: undefined,
-          fonctions: selectedFonctionsIds,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+  etpAffectedBf = calculateETPForContentieux(
+    indexes,
+    {
+      start: dateStart,
+      end: oneMonthAfterStart,
+      category: undefined,
+      fonctions: selectedFonctionsIds,
+      contentieux: referentielId,
+    },
+    categories,
+  )
 
   etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 1000) : 0
   etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 1000) : 0
   etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 1000) : 0
 
   // ETP fin
-  etpAffectedAf = old
-    ? getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
-    : calculateETPForContentieux(
-        indexes,
-        {
-          start: oneMonthBeforeEnd,
-          end: dateStop,
-          category: undefined,
-          fonctions: selectedFonctionsIds,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+  etpAffectedAf = calculateETPForContentieux(
+    indexes,
+    {
+      start: oneMonthBeforeEnd,
+      end: dateStop,
+      category: undefined,
+      fonctions: selectedFonctionsIds,
+      contentieux: referentielId,
+    },
+    categories,
+  )
 
   etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 1000) : 0
   etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 1000) : 0
   etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 1000) : 0
 
   let lastVentilationUpdatedAt = null
-  if (isParent) {
+  if (parentParams) {
     // search last agent updated at for this contentieux
     const agents = hr.filter((h) => h.situations.filter((s) => s.activities.filter((a) => a.contentieux.id === referentielId)))
     for (const agent of agents) {
@@ -262,7 +285,7 @@ const getActivityValues = async (
   }
 
   let lastActivityUpdatedAt = null
-  if (isParent && hr.length) {
+  if (parentParams && hr.length) {
     const activitiesByContentieux = await models.Activities.findAll({
       where: {
         contentieux_id: referentielId,
@@ -320,13 +343,16 @@ const getActivityValues = async (
     oneMonthAfterStart,
     lastVentilationUpdatedAt,
     lastActivityUpdatedAt,
+    // Valeurs pour calculs parent
+    meanOutCs,
+    meanOutBf
   }
 }
 
 /**
  *
  */
-const getLastTwelveMonths = (indexes, dateStart, dateStop, activities, referentielId, hr, categories, old) => {
+const getLastTwelveMonths = (indexes, dateStart, dateStop, activities, referentielId, hr, categories) => {
   /**
    * Calcul sur les 12 derniers mois avant date de fin
    */
@@ -362,20 +388,19 @@ const getLastTwelveMonths = (indexes, dateStart, dateStop, activities, referenti
   }
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de fin selectionnée dans le calculateur
-  const meanOutCs = (activitesEnd || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesEnd, 'sorties') / 12 : null
-  const etpByCategory = old
-    ? getHRPositions(models, hr, categories, referentielId, startCs, endCs)
-    : calculateETPForContentieux(
-        indexes,
-        {
-          start: startCs,
-          end: endCs,
-          category: undefined,
-          fonctions: undefined,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+  let filteredOut = (activitesEnd || []).filter((e) => e.sorties !== null)
+  const meanOutCs = filteredOut.length !== 0 ? meanBy(filteredOut, 'sorties') : null
+  const etpByCategory = calculateETPForContentieux(
+    indexes,
+    {
+      start: startCs,
+      end: endCs,
+      category: undefined,
+      fonctions: undefined,
+      contentieux: referentielId,
+    },
+    categories,
+  )
 
   const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 1000) : 0
   const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 1000) : 0
@@ -401,7 +426,8 @@ const getLastTwelveMonths = (indexes, dateStart, dateStop, activities, referenti
   activitesStart = activitesStart.filter((a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime())
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
-  meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
+  let filteredOutBf = (activitesStart || []).filter((e) => e.sorties !== null)
+  meanOutBf = filteredOutBf.length !== 0 ? meanBy(filteredOutBf, 'sorties') : null
 
   if (activitesStart.length) {
     const lastActivities = activitesStart[activitesStart.length - 1]
@@ -771,12 +797,10 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
 
   if (magCalculateTimePerCase) {
     console.log('Calc=>', magEtpAffected, config, magCalculateTimePerCase)
-    magCalculateOut = Math.floor(Math.floor(magEtpAffected * config.nbHoursPerDayAndMagistrat * (config.nbDaysByMagistrat / 12)) / magCalculateTimePerCase)
-    fonCalculateOut = Math.floor(
-      Math.floor(fonEtpAffected * config.nbHoursPerDayAndFonctionnaire * (config.nbDaysByFonctionnaire / 12)) / fonCalculateTimePerCase,
+    magCalculateOut = Math.round(magEtpAffected * config.nbHoursPerDayAndMagistrat * (config.nbDaysByMagistrat / 12) / magCalculateTimePerCase)
+    fonCalculateOut = Math.round(
+      fonEtpAffected * config.nbHoursPerDayAndFonctionnaire * (config.nbDaysByFonctionnaire / 12) / fonCalculateTimePerCase,
     )
-    //magCalculateOut = Math.floor((((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) / 12)
-    //fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
     magCalculateCoverage = fixDecimal(magCalculateOut / (totalIn || 0))
     fonCalculateCoverage = fixDecimal(fonCalculateOut / (totalIn || 0))
     magCalculateDTESInMonths = lastStock === null ? null : fixDecimal(lastStock / magCalculateOut, 100)

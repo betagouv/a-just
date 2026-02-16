@@ -45,6 +45,7 @@ import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.co
 import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../../constants/simulator'
 import { isNaN } from 'lodash'
 import { IntroJSStep } from '../../services/tour/tour.service'
+import { TooltipsComponent } from '../../components/tooltips/tooltips.component'
 
 /**
  * Variable ETP magistrat field name
@@ -87,6 +88,7 @@ export const etpFonToDefine = '[un volume moyen de]'
     PopupComponent,
     TimeSelectorComponent,
     InputPercentageComponent,
+    TooltipsComponent,
     InputAdditionComponent,
     EditableSituationComponent,
     FormsModule,
@@ -633,7 +635,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           this.stopRealValue = findRealValue(this.dateStop)
         }
 
-        if (d && d.length === 0) {
+        if (!d || (d.parent === null && d.child === null)) {
           this.onResetUserAction()
           this.disabled = 'disabled'
           this.simulatorService.disabled.next(this.disabled)
@@ -775,11 +777,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             (this.firstSituationData !== null &&
               !this.hasNoNullValue(this.firstSituationData) &&
               this.simulatorService.dateStop.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0) ||
+              this.simulatorService.contentieuOrSubContentieuId.getValue() !== null) ||
             (isEqualToZero &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0 &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() !== null &&
               (this.firstSituationData as any).countOfCalandarDays === undefined)
           ) {
             alert(
@@ -829,7 +829,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       }),
     )
 
-    if (this.contentieuId) this.simulatorService.getSituation([this.contentieuId])
+    if (this.contentieuId) this.simulatorService.getSituation(null)
 
     this.loadFunctions()
   }
@@ -838,7 +838,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Affichage de la situation de début
    */
   displayBeginSituation() {
-    return this.simulatorService.contentieuOrSubContentieuId.getValue()?.length && this.simulatorService.selectedFonctionsIds.getValue()?.length
+    const value = this.simulatorService.contentieuOrSubContentieuId.getValue()
+    return value !== null && (value?.parent?.length || value?.child?.length) && this.simulatorService.selectedFonctionsIds.getValue()?.length
   }
   /**
    * Formatage du référentiel
@@ -872,7 +873,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -887,8 +888,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
-        else this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
+        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
+        else this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
@@ -965,9 +966,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * @param toCompute valeur calculé ou non
    * @returns valeur à afficher
    */
-  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): string {
+  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false, decimal = false): string {
     if ((this.simulatorService.situationActuelle.getValue() !== null && this.subList.length) || !this.getElementById(this.contentieuId)?.childrens?.length) {
-      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
+      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute, decimal)
     }
     return ''
   }
@@ -1648,6 +1649,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
+      contentieuxIds:[this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds
     }
     const simulation: SimulationInterface = {
       totalIn: null,
@@ -1670,7 +1673,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
       this.logRunSimulator(params)
 
-      this.simulatorService.toSimulate(params, simulation)
+      this.simulatorService.toSimulate(params, simulation, false)
     } else {
       this.simulateButton = ''
       alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux')
@@ -1807,7 +1810,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.resetParams(true)
       this.contentieuId = null
       this.simulatorService.contentieuOrSubContentieuId.next(null)
-
       this.subList = []
       const findCategory =
         this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === this.categorySelected?.toUpperCase()) || null
