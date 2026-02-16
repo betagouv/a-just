@@ -345,15 +345,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    */
   initProjectionFooterGrid() {
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
-    const dateStart = getTime(this.calculatorService.dateStop.value)
-    let nbMonths = monthDiff(new Date(dateStart), today(this.calculatorService.dateStart.value || new Date()))
+    const dateStart = getTime(this.calculatorService.dateStart.value)
+    const dateStop = getTime(this.calculatorService.dateStop.value)
+    let nbMonths = monthDiff(new Date(this.calculatorService.dateStart.value || new Date()), today(this.calculatorService.dateStop.value || new Date()))
     if (nbMonths < 0) {
       nbMonths *= -1
     }
-    const dateStop = addMonths(new Date(dateStart), nbMonths).getTime()
 
     if (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') {
-      // TODO
       if (this.userService.canViewSimulator()) {
         list.push({
           label: 'Visualiser les conséquences d’un changement d’effectif',
@@ -369,7 +368,6 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         })
       }
       if (this.userService.canViewSimulator()) {
-        // TODO
         list.push({
           label: 'Voir les moyens nécessaires pour atteindre mon objectif',
           button: 'Voir les moyens',
@@ -384,7 +382,6 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         })
       }
     } else if (this.currentProjectionType === 'etpt') {
-      // TODO
       if (this.userService.canViewSimulator()) {
         list.push({
           label: 'Visualiser les conséquences d’un changement d’effectif',

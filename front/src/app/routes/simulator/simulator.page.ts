@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, OnInit, HostListener, ViewChild, OnDestroy, inject } from '@angular/core'
+import { Component, OnInit, HostListener, ViewChild, OnDestroy, inject, ElementRef, AfterViewInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { PeriodSelectorComponent } from './period-selector/period-selector.component'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
@@ -26,7 +26,6 @@ import { ContentieuReferentielInterface } from '../../interfaces/contentieu-refe
 import { DocumentationInterface } from '../../interfaces/documentation'
 import { tree } from './simulator.tree'
 import { BackupInterface } from '../../interfaces/backup'
-import { sleep } from '../../utils'
 import { decimalToStringDate, findRealValue, monthDiffList, nbOfDays, stringToDecimalDate, today } from '../../utils/dates'
 import { HumanResourceService } from '../../services/human-resource/human-resource.service'
 import { ReferentielService } from '../../services/referentiel/referentiel.service'
@@ -112,7 +111,7 @@ export const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
+export class SimulatorPage extends MainClass implements OnInit, OnDestroy, AfterViewInit {
   humanResourceService = inject(HumanResourceService)
   referentielService = inject(ReferentielService)
   simulatorService = inject(SimulatorService)
@@ -127,6 +126,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Wrapper de page contenant le simulateur
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  @ViewChild('lastStock') lastStock: ElementRef<HTMLInputElement> | undefined
+  @ViewChild('totalIn') totalIn: ElementRef<HTMLInputElement> | undefined
+  @ViewChild('etpMag') etpMag: ElementRef<HTMLInputElement> | undefined
+  @ViewChild('etpCont') etpCont: ElementRef<HTMLInputElement> | undefined
+  @ViewChild('realDTESInMonths') realDTESInMonths: ElementRef<HTMLInputElement> | undefined
   /**
    * Ouverture de la popup de modification de paramètre
    */
@@ -433,6 +437,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   chooseScreen = true
 
   onReloadAction = false
+  isAutoOpenPopupWithParams = false
   /**
    * Intro JS Steps par défaut
    */
@@ -729,6 +734,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Destruction du composant
    */
   ngOnDestroy(): void {
+    this.isAutoOpenPopupWithParams = false
     this.resetParams()
   }
 
@@ -818,6 +824,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.dateStart.subscribe((date) => {
         this.dateStart = date
         this.startRealValue = findRealValue(this.dateStart)
+        this.checkToAutoOpenPopupWithParams()
       }),
     )
     this.watch(
@@ -825,6 +832,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         if (date !== undefined) {
           this.dateStop = date
           this.stopRealValue = findRealValue(this.dateStop)
+          this.checkToAutoOpenPopupWithParams()
         }
       }),
     )
@@ -834,6 +842,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.loadFunctions()
   }
 
+  ngAfterViewInit(): void {
+    this.checkToAutoOpenPopupWithParams()
+  }
+
   /**
    * Affichage de la situation de début
    */
@@ -841,11 +853,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     const value = this.simulatorService.contentieuOrSubContentieuId.getValue()
     return value !== null && (value?.parent?.length || value?.child?.length) && this.simulatorService.selectedFonctionsIds.getValue()?.length
   }
+
   /**
    * Formatage du référentiel
    */
   formatReferentiel() {
-    console.log('referentiel', this.referentiel)
     this.formReferentiel = this.referentiel.map((r) => ({
       id: r.id,
       value: this.referentielMappingNameByInterface(r.label),
@@ -873,7 +885,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
+        this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: null })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -883,13 +895,13 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.subList = event
       const tmpRefLength = this.referentiel.find((v) => v.id === this.contentieuId)
 
-      console.log('la sublist', this.subList)
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
-        else this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
+        if (event.length === tmpRefLength?.childrens?.length)
+          this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: null })
+        else this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: this.subList })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
@@ -1034,6 +1046,48 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     const date = new Date(this.dateStart)
     date.setDate(this.dateStart.getDate() + 1)
     return date
+  }
+
+  /**
+   * Récupère la valeur d'un champs à afficher
+   */
+  checkToAutoOpenPopupWithParams(): void {
+    if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['t'] && this.dateStart && this.dateStop && !this.isAutoOpenPopupWithParams) {
+      const type = this.route.snapshot.queryParams['t']
+      switch (type) {
+        case 'stock': {
+          if (this.lastStock) {
+            this.openPopupWithParams(this.lastStock.nativeElement)
+            this.isAutoOpenPopupWithParams = true
+          } else {
+            setTimeout(() => {
+              this.checkToAutoOpenPopupWithParams()
+            }, 500)
+          }
+          break
+        }
+        case 'etpt': {
+          if (this.canViewMagistrat && this.etpMag) {
+            this.openPopupWithParams(this.etpMag.nativeElement)
+            this.isAutoOpenPopupWithParams = true
+          } else {
+            setTimeout(() => {
+              this.checkToAutoOpenPopupWithParams()
+            }, 500)
+          }
+
+          if (!this.canViewMagistrat && this.canViewGreffier && this.etpCont) {
+            this.openPopupWithParams(this.etpCont.nativeElement)
+            this.isAutoOpenPopupWithParams = true
+          } else {
+            setTimeout(() => {
+              this.checkToAutoOpenPopupWithParams()
+            }, 500)
+          }
+          break
+        }
+      }
+    }
   }
 
   /**
@@ -1649,8 +1703,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
-      contentieuxIds:[this.contentieuId],
-      fonctionsIds: this.selectedFonctionsIds
+      contentieuxIds: [this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds,
     }
     const simulation: SimulationInterface = {
       totalIn: null,
@@ -2140,7 +2194,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Log du lancement d'une simulation à blanc
    */
   async logOpenSimulator() {
-    history.pushState({}, 'simulateur', '/simulateur')
+    const urlWithParams = this.router.serializeUrl(this.router.createUrlTree(['/simulateur'], { queryParams: this.route.snapshot.queryParams }))
+    history.pushState({}, 'simulateur', urlWithParams)
+
     await this.serverService.post('simulator/log-simulation').then((r) => {
       return r.data
     })
