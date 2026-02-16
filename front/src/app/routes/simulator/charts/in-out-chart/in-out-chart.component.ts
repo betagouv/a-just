@@ -105,8 +105,8 @@ export class InOutChartComponent implements OnDestroy {
     simulatorService.situationSimulated.subscribe((value) => {
       if (this.labels !== null) {
         this.data.projectedIn.values = simulatorService.generateLinearData(
-          simulatorService.getFieldValue('totalIn', simulatorService.situationActuelle.getValue()),
-          simulatorService.getFieldValue('totalIn', simulatorService.situationProjected.getValue()),
+          simulatorService.getFieldValue('totalIn', simulatorService.situationActuelle.getValue(),false,true),
+          simulatorService.getFieldValue('totalIn', simulatorService.situationProjected.getValue(),false,true),
           this.labels.length,
         )
         this.data.simulatedIn.values = simulatorService.generateData(value?.totalIn as number, this.labels.length)
