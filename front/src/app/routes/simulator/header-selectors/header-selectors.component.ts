@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { dataInterface, SelectComponent } from '../../../components/select/select.component'
 import { MainClass } from '../../../libs/main-class'
 import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
@@ -8,6 +8,7 @@ import { HumanResourceService } from '../../../services/human-resource/human-res
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
 import { HRFonctionInterface } from '../../../interfaces/hr-fonction'
+import { ActivatedRoute } from '@angular/router'
 
 @Component({
   selector: 'aj-header-selectors',
@@ -17,6 +18,7 @@ import { HRFonctionInterface } from '../../../interfaces/hr-fonction'
   styleUrls: ['./header-selectors.component.scss'],
 })
 export class HeaderSelectorsComponent extends MainClass {
+  route = inject(ActivatedRoute)
   /**
    * Contentieux selectionné
    */
@@ -87,6 +89,15 @@ export class HeaderSelectorsComponent extends MainClass {
       this.humanResourceService.contentieuxReferentielOnlyFiltered.subscribe((c) => {
         this.referentiel = c.filter((r) => this.referentielService.idsSoutien.indexOf(r.id) === -1)
         this.formatReferentiel()
+
+        if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['r']) {
+          this.contentieuId = +this.route.snapshot.queryParams['r']
+          const fnd = this.referentiel.find((o) => o.id === this.contentieuId)
+          if (fnd) {
+            fnd?.childrens?.map((value) => this.subList.push(value.id))
+            this.updateReferentielSelected('referentiel', [this.contentieuId])
+          }
+        }
       }),
     )
     this.watch(
@@ -97,9 +108,9 @@ export class HeaderSelectorsComponent extends MainClass {
     this.watch(
       this.simulatorService.contentieuOrSubContentieuId.subscribe((values) => {
         if (values === null) {
-          this.contentieuId = null
           this.subList = []
           this.loadFunctions()
+          this.contentieuId = null
         }
       }),
     )
@@ -161,7 +172,7 @@ export class HeaderSelectorsComponent extends MainClass {
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
+        this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: this.subList })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -173,10 +184,11 @@ export class HeaderSelectorsComponent extends MainClass {
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
-        this.simulatorService.contentieuOrSubContentieuId.next({parent:null,child:null})
+        this.simulatorService.contentieuOrSubContentieuId.next({ parent: null, child: null })
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
-        else this.simulatorService.contentieuOrSubContentieuId.next({parent:null,child:this.subList})
+        if (event.length === tmpRefLength?.childrens?.length)
+          this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: this.subList })
+        else this.simulatorService.contentieuOrSubContentieuId.next({ parent: null, child: this.subList })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
