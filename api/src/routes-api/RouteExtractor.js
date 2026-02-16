@@ -360,6 +360,8 @@ export default class RouteExtractor extends Route {
     const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
     console.time('NEW PERF')
 
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
+
     // ------------------------- 1) INITIALISATION -------------------------
     let query = { start: new Date(dateStart), end: new Date(dateStop) }
     let logs = new Array()

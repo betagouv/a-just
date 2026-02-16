@@ -24,12 +24,12 @@ module.exports = {
   corsUrl: [
     process.env.FRONT_URL || 'http://localhost:4200',
     process.env.SERVER_URL,
+    process.env.SSO_URL,
     'http://localhost:4300',
     'https://aide.a-just-ca.beta.gouv.fr',
     'https://aide.a-just.incubateur.net',
     'https://aide.a-just-ca.incubateur.net',
     'https://aide.a-just.beta.gouv.fr',
-    'https://nantes.sso.intranet.justice.gouv.fr',
   ],
   /**
    * Port utilisé pour démarrer le serveur

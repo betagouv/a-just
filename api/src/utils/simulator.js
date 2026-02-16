@@ -176,7 +176,7 @@ export async function getSituation(
   fonctionIds = undefined,
 ) {
   checkAbort(signal)
-  if (Array.isArray(referentielId) === false) referentielId = [referentielId]
+  //if (Array.isArray(referentielId) === false) referentielId = [referentielId]
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
   checkAbort(signal)
@@ -184,12 +184,75 @@ export async function getSituation(
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
-  // calcul des entrées/sorties sur les 12 derniers mois
-  let totalIn = meanBy(summedlastActivities, 'entrees') || 0
-  let totalOut = meanBy(summedlastActivities, 'sorties') || 0
+  //if (referentielId.includes(49))
+  //console.log(summedlastActivities)
+
+  // Calcul de totalIn et totalOut : somme des moyennes par child
+  let totalIn = null
+  let totalOut = null
+
+  if (referentielId.child && referentielId.child.length > 0) {
+    const childIds = referentielId.child
+    let sumOfMeansIn = 0
+    let sumOfMeansOut = 0
+    let countValidIn = 0
+    let countValidOut = 0
+
+    // Pour chaque child, calculer sa moyenne séparément
+    childIds.forEach(childId => {
+      // Filtrer les activités pour ce child uniquement
+      const childActivities = lastActivities.filter(a => a.contentieux.id === childId)
+
+      if (childActivities.length > 0) {
+        // Grouper par période pour ce child
+        const childSummedByPeriod = map(groupBy(childActivities, 'periode'), (val, idx) => {
+          return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
+        })
+
+        // Calculer la moyenne des entrées pour ce child
+        const filteredInChild = childSummedByPeriod.filter(a => a.entrees !== null && a.entrees !== undefined)
+        if (filteredInChild.length > 0) {
+          const meanInChild = meanBy(filteredInChild, 'entrees')
+          if (meanInChild !== null && meanInChild !== undefined) {
+            sumOfMeansIn += meanInChild
+            countValidIn++
+          }
+        }
+
+        // Calculer la moyenne des sorties pour ce child
+        const filteredOutChild = childSummedByPeriod.filter(a => a.sorties !== null && a.sorties !== undefined)
+        if (filteredOutChild.length > 0) {
+          const meanOutChild = meanBy(filteredOutChild, 'sorties')
+          if (meanOutChild !== null && meanOutChild !== undefined) {
+            sumOfMeansOut += meanOutChild
+            countValidOut++
+          }
+        }
+      }
+    })
+
+    // totalIn = somme des moyennes (ou null si aucune moyenne valide)
+    totalIn = countValidIn > 0 ? sumOfMeansIn : null
+    totalOut = countValidOut > 0 ? sumOfMeansOut : null
+  } else {
+    // Fallback si pas de child : calcul global comme avant
+    const filteredIn = summedlastActivities.filter(a => a.entrees !== null && a.entrees !== undefined)
+    totalIn = filteredIn.length ? meanBy(filteredIn, 'entrees') : null
+
+    const filteredOut = summedlastActivities.filter(a => a.sorties !== null && a.sorties !== undefined)
+    totalOut = filteredOut.length ? meanBy(filteredOut, 'sorties') : null
+  }
 
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
+
+  if (referentielId.parent && referentielId.child) {
+    referentielId = referentielId.parent
+  } else if (referentielId.child) {
+    referentielId = referentielId.child
+  } else {
+    referentielId = referentielId.parent
+  }
 
   let realTimePerCase = undefined
   let DTES = undefined
@@ -215,16 +278,16 @@ export async function getSituation(
   // Compute etpAffected & etpMag today (on specific date) to display & output
   etpAffectedToday = useNew
     ? calculateETPForContentieux(
-        indexes,
-        {
-          start: today(),
-          end: today(),
-          category: undefined,
-          fonctions: fonctionIds,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+      indexes,
+      {
+        start: today(),
+        end: today(),
+        category: undefined,
+        fonctions: fonctionIds,
+        contentieux: referentielId,
+      },
+      categories,
+    )
     : await getHRPositions(hr, referentielId, categories, undefined, undefined, undefined, undefined, signal)
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
@@ -234,19 +297,19 @@ export async function getSituation(
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = useNew
       ? calculateETPForContentieux(
-          indexes,
-          {
-            start: new Date(startDateCs),
-            end: new Date(endDateCs),
-            category: undefined,
-            fonctions: fonctionIds,
-            contentieux: referentielId,
-          },
-          categories,
-        )
+        indexes,
+        {
+          start: new Date(startDateCs),
+          end: new Date(endDateCs),
+          category: undefined,
+          fonctions: fonctionIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
       : await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs), undefined, signal)
     checkAbort(signal)
-    ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
+      ; ({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
     //console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
@@ -259,18 +322,18 @@ export async function getSituation(
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = useNew
       ? calculateETPForContentieux(
-          indexes,
-          {
-            start: new Date(endDateCs),
-            end: new Date(),
-            category: undefined,
-            fonctions: fonctionIds,
-            contentieux: referentielId,
-          },
-          categories,
-        )
+        indexes,
+        {
+          start: new Date(endDateCs),
+          end: new Date(),
+          category: undefined,
+          fonctions: fonctionIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
       : await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date(), undefined, signal)
-    ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
+      ; ({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
 
     const countOfCalandarDays = getWorkingDaysCount(endDateCs, new Date())
 
@@ -294,18 +357,18 @@ export async function getSituation(
       // Compute etpAffected & etpMag at dateStart (specific date) to display
       etpAffectedAtStartDate = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: new Date(dateStart),
-              end: new Date(dateStart),
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: new Date(dateStart),
+            end: new Date(dateStart),
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, new Date(dateStart), undefined, undefined, undefined, signal)
-      ;({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
+        ; ({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
 
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
@@ -313,18 +376,18 @@ export async function getSituation(
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: new Date(),
-              end: new Date(dateStart),
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: new Date(),
+            end: new Date(dateStart),
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart), undefined, signal)
-      ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
+        ; ({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
       checkAbort(signal)
 
       // Compute stock, coverage, dtes projection until dateStart
@@ -346,16 +409,16 @@ export async function getSituation(
       // Compute projected etp at stop date (specific date) to display
       const projectedEtpAffected = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: dateStop,
-              end: dateStop,
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: dateStop,
+            end: dateStop,
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, dateStop, undefined, undefined, undefined, signal)
       checkAbort(signal)
 
@@ -365,10 +428,6 @@ export async function getSituation(
       const projectedTotalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMagProjected : etpFonProjected, sufix)
 
       let etpAffectedStartToEndToCompute, monthlyReport
-
-      if (simulatorUse === true) {
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds)
-      }
 
       // Projection of etpAffected between start and stop date to compute stock
       etpAffectedStartToEndToCompute = calculateETPForContentieux(
@@ -402,6 +461,10 @@ export async function getSituation(
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn)
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
 
+      if (simulatorUse === true) {
+        console.log('monthlyReportQuery', DTES, lastStock)
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES }, totalOut: projectedTotalOut }, true)
+      }
       endSituation = {
         totalIn,
         totalOut: projectedTotalOut,
@@ -472,15 +535,20 @@ export function computeDTES(lastStock, totalOut) {
  * @param {*} magRealTimePerCase temps moyen par dossier
  * @param {*} totalIn entrées
  * @param {*} sufix catégorie
+ * @param {*} totalOut sorties (optionnel, si fourni sera utilisé au lieu de recalculer)
  * @returns stock calculé
  */
-function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix, totalOut = null) {
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  let stock =
-    lastStock -
-    (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
-    (countOfCalandarDays / (365 / 12)) * totalIn
+  const periodeEnMois = countOfCalandarDays / (365 / 12)
+
+  // Si totalOut, l'utiliser comme paramètre bloqué
+  const sortiesMensuelles = totalOut !== null
+    ? totalOut
+    : environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase)
+
+  let stock = lastStock - (periodeEnMois * sortiesMensuelles) + (periodeEnMois * totalIn)
 
   return stock
 }
@@ -536,7 +604,7 @@ export function getEtpByCategory(etpAffected, sufix = '') {
  */
 export async function getCSActivities(referentielId, allActivities) {
   if (allActivities.length !== 0) {
-    const filteredByContentieux = allActivities.filter((a) => referentielId.includes(a.contentieux.id))
+    let filteredByContentieux = allActivities.filter((a) => referentielId.child.includes(a.contentieux.id))
 
     const dateStop = filteredByContentieux.reduce((a, b) => {
       return a.periode > b.periode ? a.periode : b.periode
@@ -545,7 +613,7 @@ export async function getCSActivities(referentielId, allActivities) {
 
     const lastActivities = orderBy(
       filteredByContentieux.filter(
-        (a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime() && a.stock !== null,
+        (a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime(),
       ),
       (a) => {
         const p = new Date(a.periode)
@@ -653,7 +721,7 @@ export async function getHRPositions(
     const situations = hr[i].situations || []
 
     if (onPeriod === true && appearOneTimeAtLeast(situations, referentielId)) {
-      ;({ etptAll, monthlyList } = {
+      ; ({ etptAll, monthlyList } = {
         ...(await getHRVentilationOnPeriod(
           hr[i],
           referentielId,
@@ -849,7 +917,8 @@ export async function getHRVentilation(hr, referentielId, categories, date, sign
  * @param {*} sufix catégorie
  * @returns simulation calculée
  */
-export function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx) {
+export async function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx, monthlyParams = null) {
+  console.log('EXEC SIMULATION', params, simulation, dateStart, dateStop, sufix, monthlyParams)
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
@@ -858,7 +927,7 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
     }
   })
 
-  const nbDays = nbOfDays(today(dateStart), today(dateStop))
+  const nbDays = getWorkingDaysCount(today(dateStart), today(dateStop))
 
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
     //@ts-ignore
@@ -981,6 +1050,17 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
       simulation.realCoverage !== undefined
     )
   )
+
+  if (monthlyParams !== null) {
+    if (monthlyParams.referentielId.parent && monthlyParams.referentielId.child) {
+      monthlyParams.referentielId = monthlyParams.referentielId.parent
+    } else if (monthlyParams.referentielId.child) {
+      monthlyParams.referentielId = monthlyParams.referentielId.child
+    }
+
+    //console.log('monthlyParams', monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths } })
+    simulation.monthlyReport = await monthlyReportQuery(monthlyParams.indexes, monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths }, totalOut: [...params.toDisplay, ...params.toCalculate].includes('totalOut') ? simulation.totalOut : null })
+  }
   return simulation
 }
 
@@ -1090,7 +1170,7 @@ export function splitMonthKey(key) {
   throw new Error(`Mois invalide : ${key}`)
 }
 
-export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, signal = null) {
+export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, params = null, projected = false) {
   const monthlyList = getRangeOfMonthsAsObject(dateStart, dateStop, true)
 
   // Initialisation des données
@@ -1107,7 +1187,8 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
   // Traitement rapide par mois
   for (const monthKey of Object.keys(monthlyList)) {
     const [monthLabel, yearSuffix] = splitMonthKey(monthKey) // Ex: "Août25" => ["Août", "25"]
-    const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix) // à implémenter
+    const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix)
+    const nbDays = getWorkingDaysCount(start, end)
     const etps = await calculateETPForContentieux(
       indexes,
       {
@@ -1115,7 +1196,7 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
         end,
         category: undefined,
         fonctions: fonctionIds,
-        contentieux: referentielId[0],
+        contentieux: referentielId,
       },
       categories,
     )
@@ -1136,31 +1217,110 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
       }
 
       monthlyList[monthKey][catId].etpt = parseFloat(totalEtp.toFixed(3))
+      monthlyList[monthKey][catId].nbOfDays = nbDays
     })
   }
 
-  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories)
+  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories, params, projected)
 
   return finalFormatted
 }
-function formatMonthlyListToCategoryArray(monthlyList, categories) {
+function formatMonthlyListToCategoryArray(monthlyList, categories, params = null, projected = false) {
   const formatted = categories.map((category) => ({
     name: category.label,
     values: {},
   }))
 
   const monthKeys = Object.keys(monthlyList)
+  const lastMonthIndex = monthKeys.length - 1
+
+  const computedStockByCategory = categories.reduce((acc, category) => {
+    // Initialiser avec begin.lastStock si disponible pour le premier mois, sinon lastStock
+    acc[category.id] = params?.begin?.lastStock ?? params?.lastStock ?? null
+    return acc
+  }, {})
 
   monthKeys.forEach((monthKey, index) => {
     const categoryValues = monthlyList[monthKey]
+    const isFirstMonth = index === 0
+    const isLastMonth = index === lastMonthIndex
 
     categories.forEach((category) => {
       const categoryData = formatted.find((f) => f.name === category.label)
+      const sufix = 'By' + category.label
+      const rawEtpt = categoryValues[category.id]?.etpt || 0
+      const etptValue = rawEtpt
+      const nbDays =
+        categoryValues[category.id]?.nbOfDays && categoryValues[category.id].nbOfDays > 0
+          ? categoryValues[category.id].nbOfDays
+          : 21 // fallback si non renseigné
+
+      let lastStockValue
+      let dtesValue = null
+      let totalOutToUse = null
+
+      // Déterminer le totalOut UNIQUE pour toute la projection (cohérence)
+      // Si bloqué, utiliser params.totalOut, sinon calculer avec realTimePerCase
+      if (params?.totalOut !== null && params?.totalOut !== undefined) {
+        totalOutToUse = params.totalOut
+      } else if (params?.realTimePerCase) {
+        totalOutToUse = computeTotalOut(params.realTimePerCase, etptValue, sufix)
+      }
+
+      if (projected) {
+        totalOutToUse = computeTotalOut(params.realTimePerCase, etptValue, sufix)
+      }
+
+      // Premier mois : garder le stock de départ mais RECALCULER le DTES avec le totalOut de la projection
+      if (isFirstMonth && params?.begin) {
+        lastStockValue = params.begin.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        // Recalculer le DTES avec le totalOut unique pour avoir une courbe cohérente
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : params.begin.DTES ?? null
+      }
+      // Dernier mois : garder le stock de fin mais RECALCULER le DTES avec le totalOut de la projection
+      else if (isLastMonth && params?.end) {
+        lastStockValue = params.end.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        // Recalculer le DTES avec le totalOut unique pour avoir une courbe cohérente
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : params.end.DTES ?? null
+      }
+      // Mois intermédiaires : calcul progressif
+      else {
+        const previousStock = computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        const totalInMonth = params?.totalIn ?? null
+
+        // Calcul du stock : stock = stock_précédent + (périodeEnMois × totalIn) - (périodeEnMois × totalOut)
+        if (totalOutToUse !== null && nbDays && totalInMonth !== null) {
+          const periodeEnMois = nbDays / (365 / 12)
+          lastStockValue = previousStock + (periodeEnMois * totalInMonth) - (periodeEnMois * totalOutToUse)
+        } else {
+          lastStockValue = previousStock
+        }
+
+        // Calculer le DTES : DTES = stock / totalOut
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : null
+      }
+      if (category.id === 1)
+        console.log(`Mois ${index} (${monthKey}) - Cat ${category.id}:`, {
+          etpt: etptValue,
+          totalOutToUse,
+          previousStock: computedStockByCategory[category.id],
+          lastStockValue,
+          dtesValue,
+          paramsHasTotalOut: params?.totalOut !== null && params?.totalOut !== undefined
+        })
 
       categoryData.values[index.toString()] = {
         name: monthKey,
-        etpt: parseFloat((categoryValues[category.id]?.etpt || 0).toFixed(3)),
+        etpt: etptValue,
+        totalOut: totalOutToUse,
+        totalIn: params?.totalIn ?? null,
+        lastStock: lastStockValue,
+        nbDays,
+        ...(dtesValue !== null && { DTES: dtesValue })
       }
+
+      // Mettre à jour le stock pour le mois suivant
+      computedStockByCategory[category.id] = lastStockValue
     })
   })
 

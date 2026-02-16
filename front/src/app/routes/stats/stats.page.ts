@@ -60,6 +60,7 @@ export class StatsPage {
   }
 
   updateMap() {
+
     mapboxgl.accessToken = this.mapboxToken
     const map = new mapboxgl.Map({
       container: 'map-juridictions',
@@ -67,7 +68,7 @@ export class StatsPage {
       zoom: this.zoom,
       center: this.center,
     })
-
+    
     map.on('style.load', () => {
       this.list.map((j) => {
         const sourceName = `marker-${j.id}`
@@ -108,6 +109,7 @@ export class StatsPage {
         m.setPopup(popup)
       })
     })
+    
   }
 
   callJavascript(obj: any) {

@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MainClass } from '../../libs/main-class';
 import { UserInterface } from '../../interfaces/user-interface';
@@ -26,10 +26,11 @@ interface FormSelection {
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })
-export class UsersPage extends MainClass implements OnInit, OnDestroy {
+export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterViewChecked {
   appService = inject(AppService);
   referentielService = inject(ReferentielService);
   userService = inject(UserService);
+  elementRef = inject(ElementRef);
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
   referentiels: FormSelection[] = [];
@@ -69,6 +70,22 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     this.watcherDestroy();
   }
 
+  ngAfterViewChecked() {
+    this.checkScrollableCells();
+  }
+
+  checkScrollableCells() {
+    const wrappers = this.elementRef.nativeElement.querySelectorAll('.scrollable-wrapper');
+    wrappers.forEach((wrapper: HTMLElement) => {
+      const cell = wrapper.querySelector('.scrollable-cell') as HTMLElement;
+      if (cell && cell.scrollHeight > cell.clientHeight) {
+        wrapper.classList.add('has-scroll');
+      } else {
+        wrapper.classList.remove('has-scroll');
+      }
+    });
+  }
+
   async onLoad() {
     this.appService.isLoading.next(true);
     await this.referentielService
@@ -99,7 +116,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
                   .join(', <br/>'),
           ventilationsName: (u.ventilations || [])
             .map((j) => j.label)
-            .join(', <br/>'),
+            .join('<br/>'),
         }));
         this.datasSource = this.datas.slice();
 

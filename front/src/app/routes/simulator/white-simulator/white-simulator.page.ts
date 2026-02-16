@@ -694,7 +694,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
       }),
     )
 
-    if (this.contentieuId) this.simulatorService.getSituation([this.contentieuId])
+    if (this.contentieuId) this.simulatorService.getSituation(null)
 
     this.loadFunctions()
     this.isLoading = false
@@ -704,7 +704,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * Affichage de la situation de début
    */
   displayBeginSituation() {
-    return this.simulatorService.contentieuOrSubContentieuId.getValue()?.length && this.simulatorService.selectedFonctionsIds.getValue()?.length
+    const value = this.simulatorService.contentieuOrSubContentieuId.getValue()
+    return value !== null && (value?.parent?.length || value?.child?.length) && this.simulatorService.selectedFonctionsIds.getValue()?.length
   }
   /**
    * Formatage du référentiel
@@ -737,7 +738,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number], child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -751,8 +752,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
-        else this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
+        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number], child:null})
+        else this.simulatorService.contentieuOrSubContentieuId.next({parent:null, child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
@@ -1490,6 +1491,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
+      contentieuxIds:[this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds
     }
     const simulation: SimulationInterface = {
       totalIn: null,
