@@ -40,12 +40,12 @@ module.exports = {
       await models.UsersAccess.destroy({
         where: { user_id: testUser.id },
       })
-      
+
       // Delete existing HR backup associations
       await models.UserVentilations.destroy({
         where: { user_id: testUser.id },
       })
-      
+
       // Update user details
       const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
       await testUser.update({
@@ -104,9 +104,9 @@ module.exports = {
       })
     }
 
-    // Associate user with an HR backup (prefer test010, fallback to first available)
+    // Associate user with an HR backup (prefer E2E Test Backup, fallback to first available)
     let targetBackup = await models.HRBackups.findOne({
-      where: { label: 'test010' },
+      where: { label: 'E2E Test Backup' },
     })
 
     if (!targetBackup) {
