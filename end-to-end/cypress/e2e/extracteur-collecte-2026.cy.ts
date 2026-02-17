@@ -387,51 +387,62 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
 
 describe('Extracteur Collecte 2026 - Test de non-régression', () => {
   before(() => {
-    // Ensure user has full permissions before tests run, then do UI login
-    // This prevents redirection to /bienvenue and ensures access to all tools
+    // Clear any cached sessions first to ensure fresh start
+    Cypress.session.clearAllSavedSessions();
+    
+    const user = { email: 'utilisateurtest@a-just.fr', password: '@bUgGD25gX1b' };
+    
+    // First, login via API to get token for subsequent API calls
     return loginApi(user.email, user.password).then((resp) => {
       const userId = resp.body.user.id;
       const token = resp.body.token;
       
-      return getUserDataApi(token).then((resp) => {
-        const backups = resp.body.data.backups;
+      // Get ALL backups in the database (not just user's current backups)
+      return cy.request({
+        method: 'GET',
+        url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
+        headers: { Authorization: token },
+      }).then((allBackupsResp) => {
+        const allBackups = Array.isArray(allBackupsResp.body) ? allBackupsResp.body : (allBackupsResp.body.data || allBackupsResp.body.list || []);
+        const e2eBackup = allBackups.find((b: any) => b.label === BACKUP_LABEL);
         
-        // Log to terminal via cy.task
-        return cy.task('log', `[DB DEBUG] User ID: ${userId}`).then(() => {
-          return cy.task('log', `[DB DEBUG] Found ${backups.length} backups in database:`);
-        }).then(() => {
-          return cy.task('log', `[DB DEBUG] Backups: ${JSON.stringify(backups.map((b: any) => ({ id: b.id, label: b.label })), null, 2)}`);
-        }).then(() => {
+        if (!e2eBackup) {
+          throw new Error(`${BACKUP_LABEL} not found in database`);
+        }
+        
+        // Assign user to E2E Test Backup via API
+        return cy.request({
+          method: 'POST',
+          url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
+          headers: { Authorization: token },
+          body: {
+            userId: userId,
+            access: [], // Will be set by resetToDefaultPermissions
+            ventilations: [e2eBackup.id], // Assign to E2E Test Backup
+            referentielIds: null, // null = access to all referentiels (required for dashboard)
+          },
+        });
+      }).then(() => {
+        // Get user data to verify and set permissions
+        return getUserDataApi(token).then((resp) => {
+          const backups = resp.body.data.backups;
           const ventilations = backups.map((v: any) => v.id);
-          return cy.task('log', `[DB DEBUG] Setting permissions for backup IDs: ${ventilations.join(', ')}`).then(() => {
-            // Check if target backup exists
-            const targetBackup = backups.find((b: any) => b.label === BACKUP_LABEL);
-            if (targetBackup) {
-              return cy.task('log', `[DB DEBUG] ✓ Found ${BACKUP_LABEL} backup with ID: ${targetBackup.id}`);
-            } else {
-              return cy.task('log', `[DB DEBUG] ✗ WARNING: ${BACKUP_LABEL} backup NOT FOUND in database!`).then(() => {
-                return cy.task('log', `[DB DEBUG] Available backups: ${backups.map((b: any) => b.label).join(', ')}`);
-              });
-            }
-          }).then(() => {
-            return resetToDefaultPermissions(userId, ventilations, token);
-          });
+          
+          // Verify target backup exists
+          const targetBackup = backups.find((b: any) => b.label === BACKUP_LABEL);
+          if (!targetBackup) {
+            throw new Error(`${BACKUP_LABEL} not found in user's backups after assignment`);
+          }
+          
+          return resetToDefaultPermissions(userId, ventilations, token);
         });
       });
     }).then(() => {
-      return cy.task('log', '[LOGIN] Starting cy.login()...').then(() => {
-        // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
-        return cy.login();
-      }).then(() => {
-        return cy.task('log', '[LOGIN] cy.login() completed successfully');
-      }).then(() => {
-        // Wait for redirect to /panorama to ensure app is fully initialized (matches effectif-suite.cy.ts)
-        return cy.task('log', '[LOGIN] Waiting for redirect to /panorama...').then(() => {
-          return cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
-        }).then(() => {
-          return cy.task('log', '[LOGIN] Redirected to /panorama, app is ready');
-        });
-      });
+      // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
+      return cy.login();
+    }).then(() => {
+      // Wait for redirect to /panorama to ensure app is fully initialized
+      return cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
     });
   });
 

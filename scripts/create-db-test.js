@@ -132,8 +132,7 @@ const hashEmail = (originalEmail, seed) => {
 
 let isFirstBackup = true; // Track if we're processing the first backup
 let e2eBackupId = null;
-let peopleToReassign = [];
-let situationsToOverride = new Set();
+let attJPeopleFor2025 = []; // Collect real Att. J people with 2025 situations
 
 const anonymizeLine = (line, theme, seed, hrBackupIds) => {
   let result = line;
@@ -156,10 +155,8 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
         result = elements.join("\t");
         isFirstBackup = false;
       } else {
-        result = result.replace(elements[1], (match, name) => {
-          const hashedName = hashName(match, seed);
-          return `${hashedName}`;
-        });
+        elements[1] = hashName(elements[1], seed);
+        result = elements.join("\t");
       }
       break;
     case "HRVentilations": {
@@ -182,13 +179,12 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
 
       const personId = elements[0];
 
-      // Check if this person was marked for reassignment in HRSituations
-      if (peopleToReassign.includes(personId)) {
-        // Reassign to E2E backup
+      // If this person is one of our collected Att. J people, assign to E2E backup
+      if (attJPeopleFor2025.includes(personId)) {
         elements[10] = e2eBackupId;
-        console.log(`Reassigning person ${personId} to E2E backup`);
+        console.log(`Assigning Att. J person ${personId} to E2E test backup`);
       } else if (hrBackupIds && hrBackupIds.length > 0) {
-        // Random assignment for everyone else
+        // Random backup assignment for everyone else
         const randomBackupId = hrBackupIds[Math.floor(seededRandom.next() * hrBackupIds.length)];
         elements[10] = randomBackupId;
       }
@@ -204,20 +200,15 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       result = elements.join("\t");
       break;
     case "HRSituations": {
-      // Find first 10 people with situations starting in 2025 and override their category and function
+      // Collect real Att. J people with situations starting in 2025
       const humanId = elements[1];
+      const fonctionId = elements[4]; // fonction_id is column 4
       const dateStart = elements[5]; // date_start is column 5
 
-      // Check if date_start is in 2025 (starts with "2025")
-      if (dateStart && dateStart.startsWith("2025") && peopleToReassign.length < 10) {
-        // Mark this person for reassignment to E2E backup
-        peopleToReassign.push(humanId);
-        // Override category to 'Autour du magistrat' (column 3)
-        elements[3] = "3";
-        // Override function to 'Att. J' (column 4)
-        elements[4] = "69";
-        result = elements.join("\t");
-        console.log(`Overriding to 'Att. J' for person ${humanId} starting ${dateStart.substring(0, 10)} (${peopleToReassign.length}/10)`);
+      // Check if this is a real Att. J person (fonction_id = 69) with situation starting in 2025
+      if (fonctionId === "69" && dateStart && dateStart.startsWith("2025") && attJPeopleFor2025.length < 10) {
+        attJPeopleFor2025.push(humanId);
+        console.log(`Found Att. J person ${humanId} with 2025 situation (${attJPeopleFor2025.length}/10)`);
       }
       break;
     }
