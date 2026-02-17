@@ -99,17 +99,18 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 // Ce test compare l'extracteur actuel avec un fichier de référence Excel fourni.
 //
 // Configuration:
-// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (default: test010)
-// - START: Date de début (default: 2025-01-01)
-// - STOP: Date de fin (default: 2025-12-31)
-// - REFERENCE_FILE: Chemin vers le fichier de référence (default: extracteur-collecte-2026-reference.xlsx)
+// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (E2E Test Backup - fixed label from anonymization script)
+// - START: Date de début (2025-01-01)
+// - STOP: Date de fin (2025-12-31)
+// - REFERENCE_FILE: Chemin vers le fichier de référence (extracteur-collecte-2026-reference.xlsx)
+// - CATEGORY: Catégorie à exporter (Tous - toutes les catégories)
 //
 // Le fichier de référence doit être placé dans:
 // end-to-end/cypress/fixtures/extracteur-collecte-2026-reference.xlsx
 
-const START = '2023-01-01';
-const STOP = '2023-03-31';
-const BACKUP_LABEL = '24fb8bb550';
+const START = '2025-01-01';
+const STOP = '2025-12-31';
+const BACKUP_LABEL = 'E2E Test Backup'; // Fixed label from anonymization script
 const REFERENCE_FILE = 'extracteur-collecte-2026-reference.xlsx';
 const CATEGORY = 'Tous'; // Toutes les catégories
 

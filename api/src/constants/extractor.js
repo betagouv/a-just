@@ -576,7 +576,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
   {
     category_label: 'Autour du magistrat',
     label: 'ATTACHÉ DE JUSTICE SIEGE CCD',
-    code: 'Att. Siege CCD',
+    code: 'Att. J Siege CCD',
     position: 'Contractuel',
     category_detail: 'C',
     recodedFunction: 'Att.J SIEGE CCD',

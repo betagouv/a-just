@@ -40,6 +40,9 @@ const DEFAULT_OUTPUT = path.resolve(
 // Same seed + same input = same anonymized output
 const ANONYMIZATION_SEED = "ajust-e2e-test-seed-2024";
 
+// Fixed label for the first backup - used by E2E tests
+const E2E_TEST_BACKUP_LABEL = "E2E Test Backup";
+
 const args = process.argv.slice(2);
 
 const userTestEmail = "utilisateurtest@a-just.fr"
@@ -90,6 +93,7 @@ const blockThemesToAnonymize = [
   "HRBackups",
   "HRVentilations",
   "HumanResources",
+  "HRSituations",
   "TJ",
   "Logs",
   "OptionsBackups",
@@ -126,6 +130,11 @@ const hashEmail = (originalEmail, seed) => {
   return hash;
 };
 
+let isFirstBackup = true; // Track if we're processing the first backup
+let e2eBackupId = null;
+let peopleToReassign = [];
+let situationsToOverride = new Set();
+
 const anonymizeLine = (line, theme, seed, hrBackupIds) => {
   let result = line;
   let elements = line.split("\t");
@@ -140,10 +149,18 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       result = elements.join("\t");
       break;
     case "HRBackups":
-      result = result.replace(elements[1], (match, name) => {
-        const hashedName = hashName(match, seed);
-        return `${hashedName}`;
-      });
+      // Keep first backup with fixed label for E2E tests, anonymize others
+      if (isFirstBackup) {
+        elements[1] = E2E_TEST_BACKUP_LABEL;
+        e2eBackupId = elements[0]; // Capture E2E backup ID
+        result = elements.join("\t");
+        isFirstBackup = false;
+      } else {
+        result = result.replace(elements[1], (match, name) => {
+          const hashedName = hashName(match, seed);
+          return `${hashedName}`;
+        });
+      }
       break;
     case "HRVentilations": {
       const lastIndex = elements.length - 1;
@@ -162,6 +179,20 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       elements[9] = hashName(elements[9], seed);
       elements[11] = hashName(elements[11], seed);
       elements[12] = hashName(elements[12], seed);
+
+      const personId = elements[0];
+
+      // Check if this person was marked for reassignment in HRSituations
+      if (peopleToReassign.includes(personId)) {
+        // Reassign to E2E backup
+        elements[10] = e2eBackupId;
+        console.log(`Reassigning person ${personId} to E2E backup`);
+      } else if (hrBackupIds && hrBackupIds.length > 0) {
+        // Random assignment for everyone else
+        const randomBackupId = hrBackupIds[Math.floor(seededRandom.next() * hrBackupIds.length)];
+        elements[10] = randomBackupId;
+      }
+
       result = elements.join("\t");
       break;
     case "TJ":
@@ -172,6 +203,24 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       elements[1] = hashName(elements[1], seed);
       result = elements.join("\t");
       break;
+    case "HRSituations": {
+      // Find first 10 people with situations starting in 2025 and override their category and function
+      const humanId = elements[1];
+      const dateStart = elements[5]; // date_start is column 5
+
+      // Check if date_start is in 2025 (starts with "2025")
+      if (dateStart && dateStart.startsWith("2025") && peopleToReassign.length < 10) {
+        // Mark this person for reassignment to E2E backup
+        peopleToReassign.push(humanId);
+        // Override category to 'Autour du magistrat' (column 3)
+        elements[3] = "3";
+        // Override function to 'Att. J' (column 4)
+        elements[4] = "69";
+        result = elements.join("\t");
+        console.log(`Overriding to 'Att. J' for person ${humanId} starting ${dateStart.substring(0, 10)} (${peopleToReassign.length}/10)`);
+      }
+      break;
+    }
     case "Logs":
       elements[2] = hashName(elements[2], seed);
       elements[7] = hashName(elements[7], seed);
@@ -257,7 +306,7 @@ async function anonymizeDump() {
       }
       outputStream.write(`${anonymized}\n`);
     } else if (inCopyBlock && shouldRemoveCopy) {
-      // outputStream.write(`\n`);
+      // Skip this line
     } else {
       outputStream.write(`${line}\n`);
     }
