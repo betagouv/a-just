@@ -41,10 +41,8 @@ module.exports = {
         where: { user_id: testUser.id },
       })
 
-      // Delete existing HR backup associations
-      await models.UserVentilations.destroy({
-        where: { user_id: testUser.id },
-      })
+      // Note: Do NOT delete UserVentilations here - init-db.sh may have already set up E2E Test Backup access
+      // We'll handle UserVentilations below after checking for E2E Test Backup
 
       // Update user details
       const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
@@ -110,16 +108,50 @@ module.exports = {
     })
 
     if (!targetBackup) {
+      console.log('⚠️  [E2E SEEDER] E2E Test Backup not found, using first available backup')
       targetBackup = await models.HRBackups.findOne({
         order: [['id', 'ASC']],
       })
+    } else {
+      console.log(`✅ [E2E SEEDER] Found E2E Test Backup with ID: ${targetBackup.id}`)
     }
 
     if (targetBackup) {
-      await models.UserVentilations.create({
-        user_id: testUser.id,
-        hr_backup_id: targetBackup.id,
+      // Ensure TJ entry exists for the backup (required for HRBackups.list() visibility)
+      const existingTJ = await models.TJ.findOne({
+        where: { label: targetBackup.label },
       })
+
+      if (!existingTJ) {
+        await models.TJ.create({
+          i_elst: 0,
+          label: targetBackup.label,
+          latitude: 0,
+          longitude: 0,
+          population: 0,
+          enabled: true,
+          type: 'TGI',
+        })
+        console.log(`✅ [E2E SEEDER] Created TJ entry for ${targetBackup.label}`)
+      }
+
+      // Check if UserVentilations entry already exists (may have been created by init-db.sh)
+      const existingVentilation = await models.UserVentilations.findOne({
+        where: {
+          user_id: testUser.id,
+          hr_backup_id: targetBackup.id,
+        },
+      })
+
+      if (!existingVentilation) {
+        await models.UserVentilations.create({
+          user_id: testUser.id,
+          hr_backup_id: targetBackup.id,
+        })
+        console.log(`✅ [E2E SEEDER] Assigned user ${testUser.id} to backup ${targetBackup.id} (${targetBackup.label})`)
+      } else {
+        console.log(`✅ [E2E SEEDER] User ${testUser.id} already assigned to backup ${targetBackup.id} (${targetBackup.label})`)
+      }
     }
 
     console.log('✅ [E2E SEEDER] Test user setup complete')
