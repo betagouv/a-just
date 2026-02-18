@@ -87,7 +87,7 @@ if [ $exitcode -ne 0 ]; then
 fi
 
 # 4) Cleanup
-docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" down
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" down -v
 
 # 5) Show result
 if [ $exitcode -eq 0 ]; then
