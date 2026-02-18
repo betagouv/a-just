@@ -237,7 +237,8 @@ module.exports = function (datas) {
       console.log('\n=============================')
       console.log('REPONSE - ADD SECOND SITUATION:')
       console.log("SITUATIONS:", response.data.data.situations)
-      console.log("ACTIVITIES:", tmp_activities)
+      console.log("ACTIVITIES    :", activities)
+      console.log("ACTIVITIES TMP:", tmp_activities)
       console.log('===============================')
 
 
