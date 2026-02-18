@@ -41,8 +41,8 @@ module.exports = {
         where: { user_id: testUser.id },
       })
 
-      // Note: Do NOT delete UserVentilations here - init-db.sh may have already set up E2E Test Backup access
-      // We'll handle UserVentilations below after checking for E2E Test Backup
+      // Note: Do NOT delete UserVentilations here - init-db.sh may have already set up TJ TEST backup access
+      // We'll handle UserVentilations below after checking for TJ TEST backup
 
       // Update user details
       const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
@@ -102,18 +102,18 @@ module.exports = {
       })
     }
 
-    // Associate user with an HR backup (prefer E2E Test Backup, fallback to first available)
+    // Associate user with an HR backup (prefer TJ TEST backup, fallback to first available)
     let targetBackup = await models.HRBackups.findOne({
-      where: { label: 'E2E Test Backup' },
+      where: { label: 'TJ TEST' },
     })
 
     if (!targetBackup) {
-      console.log('⚠️  [E2E SEEDER] E2E Test Backup not found, using first available backup')
+      console.log('⚠️  [E2E SEEDER] TJ TEST backup not found, using first available backup')
       targetBackup = await models.HRBackups.findOne({
         order: [['id', 'ASC']],
       })
     } else {
-      console.log(`✅ [E2E SEEDER] Found E2E Test Backup with ID: ${targetBackup.id}`)
+      console.log(`✅ [E2E SEEDER] Found TJ TEST backup with ID: ${targetBackup.id}`)
     }
 
     if (targetBackup) {

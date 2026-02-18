@@ -6,19 +6,19 @@ gunzip -c /tmp/test_tmp.sql.gz | psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" 2>&1
 
 echo "Setting up E2E test infrastructure..."
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" <<-EOSQL
-    -- Un-delete E2E Test Backup (clear deleted_at so Sequelize paranoid mode doesn't filter it)
-    UPDATE "HRBackups" SET deleted_at = NULL WHERE label = 'E2E Test Backup';
+    -- Un-delete TJ TEST backup (clear deleted_at so Sequelize paranoid mode doesn't filter it)
+    UPDATE "HRBackups" SET deleted_at = NULL WHERE label = 'TJ TEST';
 
-    -- Ensure TJ entry exists for E2E Test Backup (required for visibility)
+    -- Ensure TJ entry exists for TJ TEST backup (required for visibility)
     INSERT INTO "TJ" (i_elst, label, latitude, longitude, population, enabled, type, created_at, updated_at)
-    SELECT 0, 'E2E Test Backup', 0, 0, 0, true, 'TGI', NOW(), NOW()
-    WHERE NOT EXISTS (SELECT 1 FROM "TJ" WHERE label = 'E2E Test Backup');
+    SELECT 0, 'TJ TEST', 0, 0, 0, true, 'TGI', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM "TJ" WHERE label = 'TJ TEST');
 
-    -- Ensure test user has access to E2E Test Backup
+    -- Ensure test user has access to TJ TEST backup
     INSERT INTO "UserVentilations" (user_id, hr_backup_id)
     SELECT 961, b.id
     FROM "HRBackups" b
-    WHERE b.label = 'E2E Test Backup'
+    WHERE b.label = 'TJ TEST'
     AND NOT EXISTS (
         SELECT 1 FROM "UserVentilations" 
         WHERE user_id = 961 AND hr_backup_id = b.id

@@ -235,6 +235,7 @@ export const getViewModel = async (params) => {
   const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map((x) => x.tprox)
 
   let uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
+
   const uniqueCity = uniqueJur.map((x) => {
     const [first, rest] = x.split(/\s+(.*)/)
     return rest
@@ -244,6 +245,7 @@ export const getViewModel = async (params) => {
     if (rest.length && uniqueCity.includes(rest)) return false
     else return true
   })
+
   uniqueJur = [...uniqueJur, ...isolatedCPH]
   const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
   const tProximite = ['"' + (await uniqueJur.join(',').replaceAll("'", '').replaceAll('(', '').replaceAll(')', '')) + '"']
