@@ -220,6 +220,11 @@ module.exports = function (datas) {
         ...current_hr,
         situations: situatiuons,
       }
+      console.log('\n==============================')
+      console.log('REQUEST BODY - ADD NEW SITUATION')
+      console.log("ACTIVITIES:", hr.situations[1].activities)
+      console.log('================================')
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
