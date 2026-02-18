@@ -9,7 +9,7 @@
  * - Data validation (dropdowns)
  */
 
-import * as xlsx from 'xlsx';
+import xlsx from 'xlsx';
 import * as fs from 'fs';
 
 /**
