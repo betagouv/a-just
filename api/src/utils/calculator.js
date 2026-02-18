@@ -110,7 +110,7 @@ export const syncCalculatorDatas = async (
 
   return await Promise.all(list.map(async (parent, index) => {
     checkAbort(signal)
-    let childrens = (parent.childrens || []).map(async (child) => await compute(child))
+    let childrens = (await Promise.all((parent.childrens || []).map(async (child) => await compute(child))))
     let parentParams = {
       meanOutBf: sumByOrNull(childrens, 'meanOutBf'),
       meanOutCs: sumByOrNull(childrens, 'meanOutCs'),

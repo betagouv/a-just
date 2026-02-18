@@ -1,9 +1,9 @@
 import { CommonModule, DecimalPipe } from '@angular/common'
-import { AfterViewInit, Component, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges, inject } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges, ViewChild, inject } from '@angular/core'
 import { SpeedometerComponent } from '../../../components/speedometer/speedometer.component'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { MainClass } from '../../../libs/main-class'
-import { CalculatorInterface, etpAffectedInterface } from '../../../interfaces/calculator'
+import { CalculatorInterface } from '../../../interfaces/calculator'
 import { OPACITY_20 } from '../../../constants/colors'
 import { UserService } from '../../../services/user/user.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
@@ -16,13 +16,14 @@ import { CALCULATOR_OPEN_CONTENTIEUX } from '../../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
-import { addMonths } from 'date-fns'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
 import { findHelpCenter } from '../../../utils/help-center'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 import { RHActivityInterface } from '../../../interfaces/rh-activity'
 import { sumBy } from 'lodash'
 import { AppService } from '../../../services/app/app.service'
+import { addMonths } from 'date-fns'
+import { Chart, ChartItem } from 'chart.js/auto'
 
 /**
  * Composant d'une ligne du calculateur
@@ -113,6 +114,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    */
   @Output() currentProjectionTypeChange: EventEmitter<'stock' | 'dtes' | 'etpt'> = new EventEmitter<'stock' | 'dtes' | 'etpt'>()
   /**
+   * Chart canvas
+   */
+  @ViewChild('chartjs') chartjs: ElementRef<HTMLElement> | null = null
+  /**
    * Peux voir l'interface magistrat
    */
   canViewMagistrat: boolean = false
@@ -192,6 +197,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       missingDatasToSubContentieuxBefore12Month: false, // is red
     },
   }
+  /**
+   * Chart de projection
+   */
+  projectionChart: any = null
+  /**
+   * Nombre de mois à comparer
+   */
+  nbMonthsToCompare: number = 0
 
   /**
    * Constructor
@@ -285,6 +298,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   round(value: number) {
     return Math.round(value)
   }
+
   /**
    * Indique si la date de fin selectionnée est dans le passé
    */
@@ -307,6 +321,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
 
       if (this.showAlertPopin) {
         this.checkDataCompleteness()
+      } else if (this.showProjectionPopin) {
+        this.showChartJS()
       }
     }
   }
@@ -343,7 +359,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   /**
    * Initialisation du grid de projection footer
    */
-  initProjectionFooterGrid() {
+  async initProjectionFooterGrid() {
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
     const dateStart = getTime(this.calculatorService.dateStart.value)
     const dateStop = getTime(this.calculatorService.dateStop.value)
@@ -351,6 +367,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     if (nbMonths < 0) {
       nbMonths *= -1
     }
+    this.nbMonthsToCompare = nbMonths + 1
 
     if (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') {
       if (this.userService.canViewSimulator()) {
@@ -409,6 +426,201 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
 
     this.projectionFooterGrid = list
+
+    this.showChartJS()
+  }
+
+  /**
+   * Affiche le graphique
+   */
+  async showChartJS() {
+    if (!this.chartjs || !this.chartjs.nativeElement) {
+      setTimeout(() => {
+        this.showChartJS()
+      }, 200)
+      return
+    }
+
+    const mainColor = this.userService.referentielMappingColorActivityByInterface(
+      this.userService.referentielMappingNameByInterface(
+        (this.parentCalculator || this.currentProjection)?.contentieux.label === 'Autres activités'
+          ? 'other'
+          : (this.parentCalculator || this.currentProjection)?.contentieux.label || '',
+      ),
+    )
+    const secondaryColor = this.userService.referentielMappingColorActivityByInterface(
+      this.userService.referentielMappingNameByInterface(
+        (this.parentCalculator || this.currentProjection)?.contentieux.label === 'Autres activités'
+          ? 'other'
+          : (this.parentCalculator || this.currentProjection)?.contentieux.label || '',
+      ),
+      OPACITY_20,
+    )
+
+    let nbMonths = monthDiff(new Date(this.calculatorService.dateStart.value || new Date()), today(this.calculatorService.dateStop.value || new Date()))
+    if (nbMonths < 0) {
+      nbMonths *= -1
+    }
+
+    const datasPast = await this.calculatorService.rangeValues(
+      this.currentProjection?.contentieux.id || 0,
+      this.currentProjectionType,
+      this.calculatorService.dateStart.value,
+      this.calculatorService.dateStop.value,
+      this.calculatorService.selectedFonctionsIds.getValue(),
+      this.categorySelected,
+    )
+    const datasFuturs = await this.calculatorService.rangeValues(
+      this.currentProjection?.contentieux.id || 0,
+      this.currentProjectionType,
+      addMonths(this.calculatorService.dateStop.value || new Date(), +1),
+      addMonths(this.calculatorService.dateStop.value || new Date(), nbMonths + 1),
+      this.calculatorService.selectedFonctionsIds.getValue(),
+      this.categorySelected,
+    )
+
+    let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
+    max *= 2
+
+    const defaultDataset = {
+      cubicInterpolationMode: 'default',
+      tension: 0.4,
+      fill: false,
+      pointStyle: 'circle',
+      pointRadius: 3,
+      pointHoverRadius: 3,
+      borderWidth: 2,
+      hoverBorderWidth: 2,
+      borderColor: mainColor,
+      backgroundColor: mainColor,
+    }
+
+    const labels = []
+    let refDate = new Date(this.calculatorService.dateStart.value || new Date())
+    const endDate = addMonths(refDate, nbMonths * 2 + 1)
+    const lastDatesChartJS = []
+    const nextDatesChartJS = []
+    let index = 0
+    do {
+      labels.push(refDate.getFullYear() + ' ' + this.getShortMonthString(refDate))
+
+      const datasFinded = [...datasPast, ...datasFuturs].find((d) => d && month(d.date).getTime() === month(refDate).getTime())
+
+      if (index < nbMonths) {
+        lastDatesChartJS.push(datasFinded ? datasFinded.value : null)
+        nextDatesChartJS.push(NaN)
+      } else if (index === nbMonths) {
+        lastDatesChartJS.push(datasFinded ? datasFinded.value : null)
+        nextDatesChartJS.push(datasFinded ? datasFinded.value : null)
+      } else {
+        lastDatesChartJS.push(NaN)
+        nextDatesChartJS.push(datasFinded ? datasFinded.value : null)
+      }
+
+      refDate = addMonths(refDate, +1)
+      index++
+    } while (month(refDate).getTime() <= month(endDate).getTime())
+
+    // init chart.js
+    if (!this.projectionChart) {
+      const gradientPlugin = {
+        id: 'chartAreaGradient',
+        beforeDraw(chart: Chart) {
+          const { ctx, chartArea: area } = chart
+          if (!area) return
+          const gradient = ctx.createLinearGradient(0, area.top, 0, area.bottom)
+          gradient.addColorStop(0, secondaryColor)
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
+          ctx.save()
+          ctx.fillStyle = gradient
+          ctx.fillRect(area.left, area.top, area.right - area.left, area.bottom - area.top)
+          ctx.restore()
+        },
+      }
+      const config: any = {
+        type: 'line',
+        data: {
+          label: [],
+          datasets: [],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: { left: 8, right: 8, top: 8, bottom: 8 },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            title: false,
+          },
+        },
+        plugins: [gradientPlugin],
+      }
+      this.projectionChart = new Chart(this.chartjs.nativeElement as ChartItem, config)
+    }
+
+    const options: any = {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 8, top: 8, bottom: 8 },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: false,
+      },
+      scales: {
+        y: {
+          max,
+          min: 0,
+          grid: {
+            display: false,
+          },
+        },
+        x: {
+          display: false,
+        },
+      },
+    }
+    this.projectionChart.config.options = options
+
+    const datasets: {
+      data: number[]
+      backgroundColor: string
+      cubicInterpolationMode: string
+      tension: number
+      fill: any
+      pointStyle: string
+      pointRadius: number
+      pointHoverRadius: number
+    }[] = [
+      {
+        // datas before
+        ...defaultDataset,
+        data: lastDatesChartJS.map((v) => (v === null ? NaN : v)),
+        fill: {
+          target: 'origin',
+          above: secondaryColor, // Area will be red above the origin
+          below: mainColor, // Area will be red above the origin
+        },
+      },
+      {
+        // datas after
+        ...defaultDataset,
+        data: nextDatesChartJS.map((v) => (v === null ? NaN : v)),
+      },
+    ]
+
+    this.projectionChart.config.data = {
+      labels,
+      datasets,
+    }
+    this.projectionChart.update()
+    console.log('projectionChart', this.projectionChart)
   }
 
   /**

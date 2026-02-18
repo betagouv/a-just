@@ -382,6 +382,19 @@
       </div>
     </div>
     <div class="popin-projection-content-body">
+      <canvas #chartjs></canvas>
+      @if(nbMonthsToCompare > 0) {<div class="preview-date-range">
+        <p [ngStyle]="{ color: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ) }">{{nbMonthsToCompare}} dernier{{nbMonthsToCompare > 1 ? 's' : ''}} mois</p>
+        <p [ngStyle]="{ color: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ) }">{{nbMonthsToCompare}} prochain{{nbMonthsToCompare > 1 ? 's' : ''}} mois</p>
+      </div>}
     </div>
     @if(projectionFooterGrid.length) {
     <div class="popin-projection-content-footer"
