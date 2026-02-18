@@ -261,7 +261,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     code: 'Att. J Siege Assises',
     position: 'Contractuel',
     category_detail: 'C',
-    recodedFunction: 'JA/AttJ SIEGE ASSISES',
+    recodedFunction: 'JA/AttJ Siege Assises',
     rank: 2,
   },
   {
@@ -270,7 +270,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     code: 'Att. J Siege CCD',
     position: 'Contractuel',
     category_detail: 'C',
-    recodedFunction: 'Att.J SIEGE CCD',
+    recodedFunction: 'JA/AttJ Siege CCD',
     rank: 2,
   },
   {
