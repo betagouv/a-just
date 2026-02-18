@@ -7,7 +7,7 @@ import user from "../../fixtures/user.json";
 // - SANDBOX_FRONT_URL
 // - CANDIDATE_FRONT_URL
 // Optional:
-// - BACKUP_LABEL (default: 24fb8bb550)
+// - BACKUP_LABEL (default: E2E Test Backup)
 // - START (default: 2023-01-01)
 // - STOP (default: 2024-06-01)
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.
@@ -17,7 +17,7 @@ const START = "2023-01-01";
 const STOP = "2024-06-01";
 const ONLY_PR = !!Cypress.env("ONLY_PR");
 // Hosts defined in-file to remove dependency on env wiring
-const BACKUP_LABEL = "24fb8bb550";
+const BACKUP_LABEL = "E2E Test Backup"; // Fixed label from anonymization script
 const SANDBOX = "http://175.0.0.31:4200";
 const PR = "http://175.0.0.30:4200";
 const KEEP_ARTIFACTS = !!(
