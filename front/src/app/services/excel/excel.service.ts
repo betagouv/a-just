@@ -979,7 +979,7 @@ export class ExcelService extends MainClass {
       showInputMessage: true,
     }
     // DDG CONT
-    const contIndex = this.findIndexByName(report.worksheets, 'ETPT_JUR_ASS_DDG') || 0
+    const contIndex = this.findIndexByName(report.worksheets, 'ETPT_ATTJ_DDG') || 0
     report.worksheets[contIndex].getCell('D' + +5).value = viewModel.uniqueJur[0] || ''
     report.worksheets[contIndex].getCell('D' + +5).dataValidation = {
       type: 'list',
