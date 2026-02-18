@@ -3,6 +3,10 @@ import { verifyDownloadTasks } from "cy-verify-downloads";
 import path from "path";
 import fs from "fs";
 import * as xlsx from "xlsx";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 const jsonOnly = process.env.CY_JSON_ONLY === "1";
 
@@ -684,6 +688,10 @@ export default defineConfig({
       on(
         "task",
         Object.assign({}, verifyDownloadTasks as any, {
+          log(message: string) {
+            console.log(message);
+            return null;
+          },
           readContextFile(filePath: string) {
             try {
               const fullPath = path.join(process.cwd(), filePath);
@@ -705,6 +713,23 @@ export default defineConfig({
             } catch (e) {
               console.warn("[CONTEXT] Failed to read context file:", e);
               return {};
+            }
+          },
+          async dbQuery({ query }: { query: string }) {
+            try {
+              // Execute SQL query via docker-compose exec
+              const cmd = `docker-compose -f docker-compose-e2e.test.yml exec -T db psql -U ajust-user -d ajust -c "${query.replace(/"/g, '\\"')}"`;
+              const { stdout, stderr } = await execAsync(cmd, {
+                cwd: path.join(config.projectRoot, '..'),
+              });
+              if (stderr && !stderr.includes('NOTICE')) {
+                console.warn('[DB QUERY] stderr:', stderr);
+              }
+              console.log('[DB QUERY] Query executed successfully');
+              return { success: true, output: stdout };
+            } catch (e: any) {
+              console.error('[DB QUERY] Failed to execute query:', e.message);
+              return { success: false, error: e.message };
             }
           },
           writeContextFile({

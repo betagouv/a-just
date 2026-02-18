@@ -2,7 +2,7 @@ import { onUpdateAccountApi } from '../routes/user'
 import { onGetLastMonthApi } from '../routes/activities'
 import { onFilterListCalculatorApi } from '../routes/calculator'
 import { onFilterListHRApi } from '../routes/hr'
-import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
+import { JURIDICTION_OPTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
 import { MAGISTART_ID, GREFFIER_ID, EAM_ID } from '../constants/hrCategories'
 import { roundFloat } from '../utils/math'
 import config from 'config'
@@ -24,7 +24,7 @@ module.exports = function (datas) {
         userToken: datas.adminToken,
         userId: datas.adminId,
         accessIds: datas.adminAccess,
-        ventilations: [JURIDICTION_BACKUP_ID],
+        ventilations: [datas.adminBackupId],
       })
 
       assert.strictEqual(response.status, 200)
@@ -37,7 +37,7 @@ module.exports = function (datas) {
       //Récupération du dernier mois pour lequel on a des données d'activités
       let response = await onGetLastMonthApi({
         userToken: datas.adminToken,
-        hrBackupId: JURIDICTION_BACKUP_ID,
+        hrBackupId: datas.adminBackupId,
       })
       lastMonth = response.data.data.date
       assert.strictEqual(response.status, 200)
@@ -52,9 +52,9 @@ module.exports = function (datas) {
 
       const categorySelected = 'magistrats'
       const contentieuxIds = [SOCIAL_LITIGATION_ID]
-      const backupId = JURIDICTION_BACKUP_ID
+      const backupId = datas.adminBackupId
       const optionBackupId = JURIDICTION_OPTION_BACKUP_ID
-      
+
       const response = await onFilterListCalculatorApi({
         userToken: datas.adminToken,
         backupId,
@@ -65,6 +65,7 @@ module.exports = function (datas) {
         categorySelected,
         selectedFonctionsIds: null,
       })
+
       calculatorData = response.data.data.list[0]
 
       assert.strictEqual(response.status, 200)
@@ -213,19 +214,19 @@ module.exports = function (datas) {
      * Vérification du calcul sur le taux de couverture calculé (calcul à revoir)
      */
     it('Theoretical calculated coverage rate', () => {
-    //   console.log('magCalculateOut', calculatorData.magCalculateOut)
-    //   console.log('totalIn', calculatorData.totalIn)
-    //   console.log('magCalculateCoverage', calculatorData.magCalculateCoverage)
-    //   if (calculatorData.magCalculateOut && calculatorData.totalIn && calculatorData.magCalculateCoverage) {
-    //     const totalOut = calculatorData.magCalculateOut
-    //     const totalIn = calculatorData.totalIn
+      //   console.log('magCalculateOut', calculatorData.magCalculateOut)
+      //   console.log('totalIn', calculatorData.totalIn)
+      //   console.log('magCalculateCoverage', calculatorData.magCalculateCoverage)
+      //   if (calculatorData.magCalculateOut && calculatorData.totalIn && calculatorData.magCalculateCoverage) {
+      //     const totalOut = calculatorData.magCalculateOut
+      //     const totalIn = calculatorData.totalIn
 
-    //     const tmp = totalOut / totalIn
-    //     const res = roundFloat(tmp, 3)
-    //     assert.strictEqual(res, calculatorData.magCalculateCoverage)
-    //   } else {
-    //     assert.fail()
-    //   }
+      //     const tmp = totalOut / totalIn
+      //     const res = roundFloat(tmp, 3)
+      //     assert.strictEqual(res, calculatorData.magCalculateCoverage)
+      //   } else {
+      //     assert.fail()
+      //   }
     })
   })
 }

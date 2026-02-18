@@ -1,13 +1,12 @@
 name: Nightly Sandbox Tests
 on:
   # schedule:
-  #   # Run every night at 02:30 UTC
-  #   - cron: "30 2 * * *"
+  # Run every night at 02:30 UTC
+  # - cron: "30 2 * * *"
   push:
     branches:
       - sandbox
       - dev
-      - e2e-test
     paths-ignore:
       - "site/**"
       - "**/*.md"
@@ -211,8 +210,8 @@ jobs:
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
             ./end-to-end/cypress/mochawesome-report/**/*.json
-            # ./end-to-end/cypress/mochawesome-report/*.html
-            # ./end-to-end/cypress/mochawesome-report/**/*.html
+            ./end-to-end/cypress/mochawesome-report/*.html
+            ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
@@ -480,6 +479,8 @@ jobs:
           mkdir -p site/nightly/${REPORT_DATE}/cypress
           cp -r cypress-reports/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/mochawesome-report/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/mochawesome-report/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           cp -r cypress-reports-nonreg/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
@@ -518,6 +519,8 @@ jobs:
               { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/mochawesome-report/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/mochawesome-report -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports-nonreg/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
@@ -525,6 +528,13 @@ jobs:
               { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
+
+            echo "Found JSON files to merge:"
+            echo "$JSONS"
+
+            echo "Folder structure for combined report:"
+            ls -laR site/nightly/${REPORT_DATE}/combined || echo "No combined report directory found"
+
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/nightly/${REPORT_DATE}/combined/merged.json || true
             fi

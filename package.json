@@ -18,7 +18,7 @@
     "start:production": "cd api && npm run start:production",
     "check:vulnerabilities": "npx @aikidosec/safe-chain setup && cd api && npx @aikidosec/safe-chain setup && cd ../front && npx @aikidosec/safe-chain setup && cd ../front-admin && npx @aikidosec/safe-chain setup && cd ..",
     "prepare": "husky",
-    "comparateur-extracteurs": "node tools/comparateur-extracteurs/src/cli.js"
+    "anonymization-db-test": "node scripts/create-db-test.js"
   },
   "dependencies": {
     "axios": "^1.10.0",
