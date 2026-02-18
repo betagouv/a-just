@@ -99,7 +99,7 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 // Ce test compare l'extracteur actuel avec un fichier de référence Excel fourni.
 //
 // Configuration:
-// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (TJ TEST - fixed label from anonymization script)
+// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (E2E Test Backup - fixed label from anonymization script)
 // - START: Date de début (2025-01-01)
 // - STOP: Date de fin (2025-12-31)
 // - REFERENCE_FILE: Chemin vers le fichier de référence (extracteur-collecte-2026-reference.xlsx)
@@ -110,7 +110,7 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 
 const START = '2025-01-01';
 const STOP = '2025-12-31';
-const BACKUP_LABEL = 'TJ TEST'; // Fixed label from anonymization script
+const BACKUP_LABEL = 'E2E Test Backup'; // Fixed label from anonymization script
 const REFERENCE_FILE = 'extracteur-collecte-2026-reference.xlsx';
 const CATEGORY = 'Tous'; // Toutes les catégories
 
@@ -387,12 +387,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
 
 describe('Extracteur Collecte 2026 - Test de non-régression', () => {
   before(() => {
-    // Clear any cached sessions first to ensure fresh start
-    Cypress.session.clearAllSavedSessions();
-    
-    const user = { email: 'utilisateurtest@a-just.fr', password: '@bUgGD25gX1b' };
-    
-    // First, login via API to get token for subsequent API calls
+    // Login and ensure user has access to E2E Test Backup
     return loginApi(user.email, user.password).then((resp) => {
       const userId = resp.body.user.id;
       const token = resp.body.token;
@@ -403,12 +398,22 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
         url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
         headers: { Authorization: token },
       }).then((allBackupsResp) => {
+        cy.task('log', `[DB DEBUG] API response type: ${typeof allBackupsResp.body}`);
+        cy.task('log', `[DB DEBUG] API response keys: ${Object.keys(allBackupsResp.body || {}).join(', ')}`);
+        
         const allBackups = Array.isArray(allBackupsResp.body) ? allBackupsResp.body : (allBackupsResp.body.data || allBackupsResp.body.list || []);
+        cy.task('log', `[DB DEBUG] Found ${allBackups.length} backups total`);
+        cy.task('log', `[DB DEBUG] First 5 backup labels: ${allBackups.slice(0, 5).map((b: any) => b.label).join(', ')}`);
+        
         const e2eBackup = allBackups.find((b: any) => b.label === BACKUP_LABEL);
         
         if (!e2eBackup) {
+          cy.task('log', `[DB DEBUG] ✗ FATAL: ${BACKUP_LABEL} does not exist in database!`);
+          cy.task('log', `[DB DEBUG] All backup labels: ${allBackups.map((b: any) => b.label).join(', ')}`);
           throw new Error(`${BACKUP_LABEL} not found in database`);
         }
+        
+        cy.task('log', `[DB DEBUG] ✓ Found ${BACKUP_LABEL} with ID: ${e2eBackup.id}`);
         
         // Assign user to E2E Test Backup via API
         return cy.request({
@@ -419,30 +424,51 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
             userId: userId,
             access: [], // Will be set by resetToDefaultPermissions
             ventilations: [e2eBackup.id], // Assign to E2E Test Backup
-            referentielIds: null, // null = access to all referentiels (required for dashboard)
+            referentielIds: [],
           },
         });
       }).then(() => {
-        // Get user data to verify and set permissions
+        // Now get user data to verify
         return getUserDataApi(token).then((resp) => {
           const backups = resp.body.data.backups;
+        
+        // Log to terminal via cy.task
+        return cy.task('log', `[DB DEBUG] User ID: ${userId}`).then(() => {
+          return cy.task('log', `[DB DEBUG] Found ${backups.length} backups in database:`);
+        }).then(() => {
+          return cy.task('log', `[DB DEBUG] Backups: ${JSON.stringify(backups.map((b: any) => ({ id: b.id, label: b.label })), null, 2)}`);
+        }).then(() => {
           const ventilations = backups.map((v: any) => v.id);
-          
-          // Verify target backup exists
-          const targetBackup = backups.find((b: any) => b.label === BACKUP_LABEL);
-          if (!targetBackup) {
-            throw new Error(`${BACKUP_LABEL} not found in user's backups after assignment`);
-          }
-          
-          return resetToDefaultPermissions(userId, ventilations, token);
+          return cy.task('log', `[DB DEBUG] Setting permissions for backup IDs: ${ventilations.join(', ')}`).then(() => {
+            // Check if target backup exists
+            const targetBackup = backups.find((b: any) => b.label === BACKUP_LABEL);
+            if (targetBackup) {
+              return cy.task('log', `[DB DEBUG] ✓ Found ${BACKUP_LABEL} backup with ID: ${targetBackup.id}`);
+            } else {
+              return cy.task('log', `[DB DEBUG] ✗ WARNING: ${BACKUP_LABEL} backup NOT FOUND in database!`).then(() => {
+                return cy.task('log', `[DB DEBUG] Available backups: ${backups.map((b: any) => b.label).join(', ')}`);
+              });
+            }
+          }).then(() => {
+            return resetToDefaultPermissions(userId, ventilations, token);
+          });
+        });
         });
       });
     }).then(() => {
-      // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
-      return cy.login();
-    }).then(() => {
-      // Wait for redirect to /panorama to ensure app is fully initialized
-      return cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
+      return cy.task('log', '[LOGIN] Starting cy.login()...').then(() => {
+        // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
+        return cy.login();
+      }).then(() => {
+        return cy.task('log', '[LOGIN] cy.login() completed successfully');
+      }).then(() => {
+        // Wait for redirect to /panorama to ensure app is fully initialized (matches effectif-suite.cy.ts)
+        return cy.task('log', '[LOGIN] Waiting for redirect to /panorama...').then(() => {
+          return cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
+        }).then(() => {
+          return cy.task('log', '[LOGIN] Redirected to /panorama, app is ready');
+        });
+      });
     });
   });
 
@@ -464,7 +490,32 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
     const baseUrl = Cypress.config('baseUrl') || 'http://localhost:4200';
     
     // User is already logged in from before() hook, just select the backup
+    cy.log('[EXTRACTOR] Visiting /dashboard...');
     cy.visit(`${baseUrl}/dashboard`);
+    
+    // Check if we were redirected away from dashboard
+    cy.location('pathname').then((pathname) => {
+      cy.log(`[EXTRACTOR] Current pathname after visit: ${pathname}`);
+      if (pathname !== '/dashboard') {
+        cy.log(`[EXTRACTOR] ⚠️ REDIRECTED from /dashboard to ${pathname}`);
+      }
+    });
+    
+    // Check what's on the page
+    cy.get('body').then(($body) => {
+      const pageText = $body.text();
+      cy.log(`[EXTRACTOR] Page title/heading contains: ${pageText.substring(0, 200)}`);
+      
+      // Check for extractor-specific elements
+      const hasExtractorVentilation = $body.find('aj-extractor-ventilation').length > 0;
+      const hasExtractorActivity = $body.find('aj-extractor-activity').length > 0;
+      const hasBackupSelector = $body.find('h6, [data-cy="backup-name"]').length > 0;
+      
+      cy.log(`[EXTRACTOR] aj-extractor-ventilation present: ${hasExtractorVentilation}`);
+      cy.log(`[EXTRACTOR] aj-extractor-activity present: ${hasExtractorActivity}`);
+      cy.log(`[EXTRACTOR] Backup selector present: ${hasBackupSelector}`);
+    });
+    
     cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
     cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
       .scrollIntoView()

@@ -12,5 +12,8 @@
   },
   "keywords": ["excel", "diff", "comparison", "extracteur"],
   "author": "A-JUST",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
 }

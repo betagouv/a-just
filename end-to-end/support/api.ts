@@ -114,11 +114,13 @@ export const updateUserAccounatApi = ({
   userId,
   accessIds,
   ventilations,
+  referentielIds,
   token,
 }: {
   userId: number;
   accessIds: any;
   ventilations: any;
+  referentielIds?: any;
   token: string;
 }) => {
   const serverUrl =
@@ -134,6 +136,7 @@ export const updateUserAccounatApi = ({
       userId: userId,
       access: accessIds,
       ventilations: ventilations,
+      referentielIds: referentielIds,
     },
   });
 };
@@ -166,6 +169,7 @@ export const resetToDefaultPermissions = (
     userId,
     accessIds: allPermissions,
     ventilations,
+    referentielIds: null, // Set to null for dashboard access (completeReferentielGuard)
     token,
   });
 };

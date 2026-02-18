@@ -309,8 +309,7 @@ export class ExcelService extends MainClass {
             }
             viewModel = { ...viewModel, subtitles1: viewModel.subtitles1.slice(11) }
 
-            const templateUrl = this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx'
-            const tplBuf = await fetch(`${templateUrl}?v=${Date.now()}`).then((resp) =>
+            const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) =>
               resp.arrayBuffer(),
             )
             let report = await new Renderer().renderFromArrayBuffer(tplBuf, viewModel)
@@ -396,8 +395,7 @@ export class ExcelService extends MainClass {
               viewModel = { ...viewModel, subtitles1: viewModel.subtitles1.slice(11) }
 
               try {
-                const templateUrl = this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx'
-                const tplBuf = await fetch(`${templateUrl}?v=${Date.now()}`).then((resp) =>
+                const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) =>
                   resp.arrayBuffer(),
                 )
                 let report = await new Renderer().renderFromArrayBuffer(tplBuf, viewModel)

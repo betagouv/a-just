@@ -40,8 +40,8 @@ const DEFAULT_OUTPUT = path.resolve(
 // Same seed + same input = same anonymized output
 const ANONYMIZATION_SEED = "ajust-e2e-test-seed-2024";
 
-// Fixed label for the first backup - used by E2E tests (matches parent TJ name)
-const E2E_TEST_BACKUP_LABEL = "TJ TEST";
+// Fixed label for the first backup - used by E2E tests
+const E2E_TEST_BACKUP_LABEL = "E2E Test Backup";
 
 const args = process.argv.slice(2);
 
@@ -98,7 +98,7 @@ const blockThemesToAnonymize = [
   "Logs",
   "OptionsBackups",
 ];
-const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments"];
+const blockThemesToRemoveElems = [];
 
 const hashName = (originalName, seed) => {
   if (!originalName || typeof originalName !== "string") {
@@ -132,10 +132,12 @@ const hashEmail = (originalEmail, seed) => {
 
 let isFirstBackup = true; // Track if we're processing the first backup
 let e2eBackupId = null;
+let testUserId = null; // Track test user ID
 let attJPeopleFor2025 = []; // Collect real Att. J people with 2025 situations
 let tjTypeMap = new Map(); // Map TJ id -> type (TGI, TPRX, CPH)
 let nextTjId = 10000; // Start ID for test établissements
 let keptPeopleIds = new Set(); // Track IDs of people we're keeping
+let keptSituationIds = new Set(); // Track IDs of situations for kept people
 
 // Specific people to include in E2E test backup
 const specificPeopleForE2E = [
@@ -157,125 +159,82 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       result = elements.join("\t");
       break;
     case "HRBackups":
-      // Keep ONLY first backup with fixed label for E2E tests, skip all others
+      // Keep first backup with fixed label for E2E tests, anonymize others
       if (isFirstBackup) {
         elements[1] = E2E_TEST_BACKUP_LABEL;
         e2eBackupId = elements[0]; // Capture E2E backup ID
         result = elements.join("\t");
         isFirstBackup = false;
       } else {
-        // Skip all other backups to reduce DB size
-        return null;
+        elements[1] = hashName(elements[1], seed);
+        result = elements.join("\t");
       }
       break;
     case "HRVentilations": {
-      // Only keep ventilations for E2E backup
-      const backupId = elements[elements.length - 1];
-      if (backupId !== e2eBackupId) {
-        return null;
+      const lastIndex = elements.length - 1;
+      if (lastIndex >= 0 && hrBackupIds && hrBackupIds.length > 0) {
+        // Use seeded random for deterministic backup assignment
+        const randomId =
+          hrBackupIds[Math.floor(seededRandom.next() * hrBackupIds.length)];
+        elements[lastIndex] = randomId;
+        result = elements.join("\t");
       }
-      result = elements.join("\t");
       break;
     }
-    case "HumanResources":
+    case "HumanResources": {
       const personId = elements[0];
-      const originalJuridiction = elements[12]; // Capture BEFORE anonymizing
-      const backupId = elements[10]; // backup_id column
 
-      // Only keep people in E2E backup or those we want to assign to it
-      const shouldKeep = backupId === e2eBackupId ||
-        attJPeopleFor2025.includes(personId) ||
-        specificPeopleForE2E.includes(personId);
-
-      if (!shouldKeep) {
-        // Skip all people not in E2E backup to reduce DB size
+      // Only keep people in keptPeopleIds
+      if (!keptPeopleIds.has(personId)) {
         return null;
       }
 
+      // Anonymize names
       elements[1] = hashName(elements[1], seed);
       elements[2] = hashName(elements[2], seed);
       elements[9] = hashName(elements[9], seed);
       elements[11] = hashName(elements[11], seed);
+      elements[12] = hashName(elements[12], seed);
 
       // Assign to E2E backup
       elements[10] = e2eBackupId;
-      keptPeopleIds.add(personId); // Track this person
-      if (specificPeopleForE2E.includes(personId)) {
-        console.log(`Keeping specific person ${personId} in E2E test backup`);
-      }
 
-      // Map juridiction to test établissements
-      if (originalJuridiction && originalJuridiction !== '\\N' && originalJuridiction.trim() !== '') {
-        // Try to determine type from original juridiction
-        let testJuridiction = 'TJ TEST'; // default to TGI
-
-        if (originalJuridiction.includes('TPRX') || originalJuridiction.includes('TPR ')) {
-          testJuridiction = 'TPRX TEST';
-        } else if (originalJuridiction.includes('CPH')) {
-          testJuridiction = 'CPH TEST';
-        }
-
-        elements[12] = testJuridiction;
-        console.log(`Person ${personId} in E2E backup: ${originalJuridiction} -> ${testJuridiction}`);
-      } else {
-        // For NULL juridiction, randomly assign 10% to TPRX, 10% to CPH, 80% to TJ
-        const random = seededRandom.next();
-        let testJuridiction;
-
-        if (random < 0.1) {
-          testJuridiction = 'TPRX TEST';
-        } else if (random < 0.2) {
-          testJuridiction = 'CPH TEST';
-        } else {
-          testJuridiction = 'TJ TEST';
-        }
-
-        elements[12] = testJuridiction;
-        console.log(`Person ${personId} in E2E backup: NULL -> ${testJuridiction} (random=${random.toFixed(3)})`);
-      }
-
-      result = elements.join("\t");
-      break;
-    case "TJ": {
-      const tjId = elements[0];
-      const tjType = elements[10]; // type column (TGI, TPRX, CPH)
-
-      // Track TJ type for later use
-      if (tjId && tjType) {
-        tjTypeMap.set(tjId, tjType);
-      }
-
-      elements[2] = hashName(elements[2], seed);
       result = elements.join("\t");
       break;
     }
+    case "TJ":
+      elements[2] = hashName(elements[2], seed);
+      result = elements.join("\t");
+      break;
     case "OptionsBackups":
       elements[1] = hashName(elements[1], seed);
       result = elements.join("\t");
       break;
     case "HRSituations": {
-      // Collect real Att. J people with situations starting in 2025
+      // Only keep situations for people in keptPeopleIds
       const humanId = elements[1];
-      const fonctionId = elements[4]; // fonction_id is column 4
-      const dateStart = elements[5]; // date_start is column 5
-
-      // Check if this is a real Att. J person (fonction_id = 69) with situation starting in 2025
-      if (fonctionId === "69" && dateStart && dateStart.startsWith("2025") && attJPeopleFor2025.length < 10) {
-        attJPeopleFor2025.push(humanId);
-        console.log(`Found Att. J person ${humanId} with 2025 situation (${attJPeopleFor2025.length}/10)`);
-      }
-
-      // Only keep situations for people in E2E backup
       if (!keptPeopleIds.has(humanId)) {
         return null;
       }
+      result = elements.join("\t");
+      break;
+    }
+    case "Users": {
+      // Only keep the test user
+      const userEmail = elements[1];
+      if (userEmail !== userTestEmail) {
+        return null;
+      }
+      testUserId = elements[0]; // Capture test user ID
+      // Set referentiel_ids to NULL (index 16) for dashboard access
+      // The completeReferentielGuard requires: user.referentielIds === null
+      elements[16] = "\\N";
+      result = elements.join("\t");
       break;
     }
     case "Logs":
-      elements[2] = hashName(elements[2], seed);
-      elements[7] = hashName(elements[7], seed);
-      result = elements.join("\t");
-      break;
+      // Skip all logs (3.1M rows - the main size culprit)
+      return null;
     default:
       break;
   }
@@ -289,7 +248,7 @@ const ensureInputExists = (inputPath) => {
 };
 
 async function collectMetadata() {
-  // First pass: collect E2E backup ID and Att. J people
+  // First pass: collect E2E backup ID, people to keep, and their situation IDs
   console.log("=== PASS 1: Collecting metadata ===");
   ensureInputExists(options.input);
 
@@ -306,53 +265,82 @@ async function collectMetadata() {
     crlfDelay: Infinity,
   });
 
-  let inCopyBlock = false;
-  let currentTheme = null;
-  let isFirstBackup = true;
+  let inHRBackupsBlock = false;
+  let inHumanResourcesBlock = false;
+  let inHRSituationsBlock = false;
+  let backupCount = 0;
+  const situationsLines = []; // Store situation lines for second sub-pass
 
+  // Sub-pass 1: Collect backup ID and people
   for await (const line of rl) {
-    if (line.includes("COPY public.")) {
-      currentTheme = blockThemesToAnonymize.find((t) => line.includes(t));
-      inCopyBlock = true;
-    } else if (inCopyBlock && line.startsWith("\\.")) {
-      inCopyBlock = false;
-      currentTheme = null;
-    } else if (inCopyBlock && currentTheme === "HRBackups") {
-      if (isFirstBackup) {
-        const elements = line.split("\t");
-        e2eBackupId = elements[0];
-        console.log(`Found E2E backup ID: ${e2eBackupId}`);
-        isFirstBackup = false;
-      }
-    } else if (inCopyBlock && currentTheme === "HRSituations") {
-      const elements = line.split("\t");
-      const humanId = elements[1];
-      const fonctionId = elements[4];
-      const dateStart = elements[5];
+    if (line.includes('COPY public."HRBackups"')) {
+      inHRBackupsBlock = true;
+      continue;
+    }
+    if (line.includes('COPY public."HumanResources"')) {
+      inHumanResourcesBlock = true;
+      continue;
+    }
+    if (line.includes('COPY public."HRSituations"')) {
+      inHRSituationsBlock = true;
+      continue;
+    }
+    if (line === '\\.') {
+      inHRBackupsBlock = false;
+      inHumanResourcesBlock = false;
+      inHRSituationsBlock = false;
+      continue;
+    }
 
-      if (fonctionId === "69" && dateStart && dateStart.startsWith("2025") && attJPeopleFor2025.length < 10) {
-        attJPeopleFor2025.push(humanId);
-        console.log(`Found Att. J person ${humanId} with 2025 situation (${attJPeopleFor2025.length}/10)`);
-      }
-    } else if (inCopyBlock && currentTheme === "HumanResources" && e2eBackupId) {
-      const elements = line.split("\t");
+    if (inHRBackupsBlock && backupCount === 0) {
+      // First backup becomes E2E backup
+      const elements = line.split('\t');
+      e2eBackupId = elements[0];
+      console.log(`E2E Backup ID: ${e2eBackupId}`);
+      backupCount++;
+    }
+
+    if (inHumanResourcesBlock && e2eBackupId) {
+      const elements = line.split('\t');
       const personId = elements[0];
-      const backupId = elements[10];
+      const backupId = elements[10]; // backup_id is column 10
 
-      if (backupId === e2eBackupId || attJPeopleFor2025.includes(personId) || specificPeopleForE2E.includes(personId)) {
+      // Keep specific people or people already in first backup
+      if (specificPeopleForE2E.includes(personId) || backupId === e2eBackupId) {
         keptPeopleIds.add(personId);
       }
     }
+
+    if (inHRSituationsBlock) {
+      // Store all situation lines for processing after we have all people
+      situationsLines.push(line);
+    }
   }
 
-  console.log(`Collected ${keptPeopleIds.size} people for E2E backup`);
-  console.log(`Collected ${attJPeopleFor2025.length} Att. J people`);
+  console.log(`Collected ${keptPeopleIds.size} people`);
+
+  // Sub-pass 2: Process situations now that we have all people IDs
+  for (const line of situationsLines) {
+    const elements = line.split('\t');
+    const situationId = elements[0]; // id is column 0
+    const humanId = elements[1]; // human_id is column 1
+
+    // Track situation IDs for kept people
+    if (keptPeopleIds.has(humanId)) {
+      keptSituationIds.add(situationId);
+    }
+  }
+
+  console.log(`Collected ${keptSituationIds.size} situations for those people`);
 }
 
 async function anonymizeDump() {
   // Second pass: filter and anonymize
   console.log("=== PASS 2: Filtering and anonymizing ===");
   ensureInputExists(options.input);
+
+  // Reset isFirstBackup flag for second pass
+  isFirstBackup = true;
 
   // Initialize seeded random for deterministic anonymization
   const seed = seedFromKey(options.seed);
@@ -388,7 +376,6 @@ async function anonymizeDump() {
   let shouldRemoveCopy = false;
   let currentTheme = null;
   let isHRBackupBlock = false;
-  let isTJBlock = false;
 
   for await (const line of rl) {
     if (line.includes("COPY public.")) {
@@ -398,98 +385,14 @@ async function anonymizeDump() {
       shouldRemoveCopy = blockThemesToRemoveElems.some((t) => line.includes(t));
       currentTheme = blockThemesToAnonymize.find((t) => line.includes(t));
       isHRBackupBlock = line.includes(`"HRBackups"`);
-      isTJBlock = line.includes(`"TJ"`);
       inCopyBlock = true;
       outputStream.write(`${line}\n`);
     } else if (inCopyBlock && line.startsWith("\\.")) {
-      // Before closing TJ block, insert test établissements
-      if (isTJBlock && e2eBackupId) {
-        const timestamp = new Date().toISOString();
-        const parentTjId = nextTjId++;
-
-        // Insert parent TJ record (following production naming: backup name = TGI name)
-        const parentTj = [
-          parentTjId,
-          '0',
-          'TJ TEST',
-          '0',
-          '0',
-          '0',
-          't',
-          timestamp,
-          timestamp,
-          '\\N',
-          '\\N',
-          '\\N',
-          '\\N'
-        ].join('\t');
-        outputStream.write(`${parentTj}\n`);
-        console.log('Created parent TJ record: TJ TEST');
-
-        // Insert TJ TEST (TGI type) as child of parent
-        const tjTest = [
-          nextTjId++,
-          '0',
-          'TJ TEST',
-          '0',
-          '0',
-          '0',
-          't',
-          timestamp,
-          timestamp,
-          '\\N',
-          'TGI',
-          parentTjId,
-          e2eBackupId
-        ].join('\t');
-        outputStream.write(`${tjTest}\n`);
-        console.log('Created TJ TEST (TGI) établissement');
-
-        // Insert TPRX TEST as child of parent
-        const tprxTest = [
-          nextTjId++,
-          '0',
-          'TPRX TEST',
-          '0',
-          '0',
-          '0',
-          't',
-          timestamp,
-          timestamp,
-          '\\N',
-          'TPRX',
-          parentTjId,
-          e2eBackupId
-        ].join('\t');
-        outputStream.write(`${tprxTest}\n`);
-        console.log('Created TPRX TEST établissement');
-
-        // Insert CPH TEST as child of parent
-        const cphTest = [
-          nextTjId++,
-          '0',
-          'CPH TEST',
-          '0',
-          '0',
-          '0',
-          't',
-          timestamp,
-          timestamp,
-          '\\N',
-          'CPH',
-          parentTjId,
-          e2eBackupId
-        ].join('\t');
-        outputStream.write(`${cphTest}\n`);
-        console.log('Created CPH TEST établissement');
-      }
-
       inCopyBlock = false;
       shouldAnonymizeCopy = false;
       shouldRemoveCopy = false;
       currentTheme = null;
       isHRBackupBlock = false;
-      isTJBlock = false;
       outputStream.write(`${line}\n`);
     } else if (inCopyBlock && shouldAnonymizeCopy) {
       const anonymized = anonymizeLine(
@@ -502,10 +405,7 @@ async function anonymizeDump() {
         const id = line.split("\t")[0];
         if (id) hrBackupIds.push(id);
       }
-      // Only write if anonymizeLine didn't return null (filtered out)
-      if (anonymized !== null) {
-        outputStream.write(`${anonymized}\n`);
-      }
+      outputStream.write(`${anonymized}\n`);
     } else if (inCopyBlock && shouldRemoveCopy) {
       // Skip this line
     } else {
@@ -516,12 +416,8 @@ async function anonymizeDump() {
   console.log("Anonymisation terminee.");
 }
 
-async function main() {
-  await collectMetadata();
-  await anonymizeDump();
-}
-
-main().catch((err) => {
+// Main execution - no need for collection pass since we only filter Logs
+anonymizeDump().catch((err) => {
   console.error("Erreur lors de l'anonymisation :", err.message || err);
   process.exit(1);
 });
