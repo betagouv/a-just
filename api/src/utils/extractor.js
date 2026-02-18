@@ -396,7 +396,12 @@ export const getJuridictionData = async (models, juridictionName) => {
 }
 
 export const formatFunctions = async (functionList) => {
-  let list = [...functionList, ...(isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR)]
+  const constantsArray = isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR
+  let list = [...functionList, ...constantsArray]
+  
+  // Filter out 'Att. J JLD' (without PÉNAL) as it should not appear in dropdowns
+  list = list.filter((fct) => fct.code !== 'Att. J JLD')
+  
   list = list.map((fct) => {
     return { CONCAT: fct['category_label'] + fct['code'], ...fct }
   })
