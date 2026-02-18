@@ -99,17 +99,18 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 // Ce test compare l'extracteur actuel avec un fichier de référence Excel fourni.
 //
 // Configuration:
-// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (default: test010)
-// - START: Date de début (default: 2025-01-01)
-// - STOP: Date de fin (default: 2025-12-31)
-// - REFERENCE_FILE: Chemin vers le fichier de référence (default: extracteur-collecte-2026-reference.xlsx)
+// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (E2E Test Backup - fixed label from anonymization script)
+// - START: Date de début (2025-01-01)
+// - STOP: Date de fin (2025-12-31)
+// - REFERENCE_FILE: Chemin vers le fichier de référence (extracteur-collecte-2026-reference.xlsx)
+// - CATEGORY: Catégorie à exporter (Tous - toutes les catégories)
 //
 // Le fichier de référence doit être placé dans:
 // end-to-end/cypress/fixtures/extracteur-collecte-2026-reference.xlsx
 
-const START = '2023-01-01';
-const STOP = '2023-03-31';
-const BACKUP_LABEL = '24fb8bb550';
+const START = '2025-01-01';
+const STOP = '2025-12-31';
+const BACKUP_LABEL = 'E2E Test Backup'; // Fixed label from anonymization script
 const REFERENCE_FILE = 'extracteur-collecte-2026-reference.xlsx';
 const CATEGORY = 'Tous'; // Toutes les catégories
 
@@ -386,14 +387,50 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
 
 describe('Extracteur Collecte 2026 - Test de non-régression', () => {
   before(() => {
-    // Ensure user has full permissions before tests run, then do UI login
-    // This prevents redirection to /bienvenue and ensures access to all tools
+    // Login and ensure user has access to E2E Test Backup
     return loginApi(user.email, user.password).then((resp) => {
       const userId = resp.body.user.id;
       const token = resp.body.token;
       
-      return getUserDataApi(token).then((resp) => {
-        const backups = resp.body.data.backups;
+      // Get ALL backups in the database (not just user's current backups)
+      return cy.request({
+        method: 'GET',
+        url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
+        headers: { Authorization: token },
+      }).then((allBackupsResp) => {
+        cy.task('log', `[DB DEBUG] API response type: ${typeof allBackupsResp.body}`);
+        cy.task('log', `[DB DEBUG] API response keys: ${Object.keys(allBackupsResp.body || {}).join(', ')}`);
+        
+        const allBackups = Array.isArray(allBackupsResp.body) ? allBackupsResp.body : (allBackupsResp.body.data || allBackupsResp.body.list || []);
+        cy.task('log', `[DB DEBUG] Found ${allBackups.length} backups total`);
+        cy.task('log', `[DB DEBUG] First 5 backup labels: ${allBackups.slice(0, 5).map((b: any) => b.label).join(', ')}`);
+        
+        const e2eBackup = allBackups.find((b: any) => b.label === BACKUP_LABEL);
+        
+        if (!e2eBackup) {
+          cy.task('log', `[DB DEBUG] ✗ FATAL: ${BACKUP_LABEL} does not exist in database!`);
+          cy.task('log', `[DB DEBUG] All backup labels: ${allBackups.map((b: any) => b.label).join(', ')}`);
+          throw new Error(`${BACKUP_LABEL} not found in database`);
+        }
+        
+        cy.task('log', `[DB DEBUG] ✓ Found ${BACKUP_LABEL} with ID: ${e2eBackup.id}`);
+        
+        // Assign user to E2E Test Backup via API
+        return cy.request({
+          method: 'POST',
+          url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
+          headers: { Authorization: token },
+          body: {
+            userId: userId,
+            access: [], // Will be set by resetToDefaultPermissions
+            ventilations: [e2eBackup.id], // Assign to E2E Test Backup
+            referentielIds: [],
+          },
+        });
+      }).then(() => {
+        // Now get user data to verify
+        return getUserDataApi(token).then((resp) => {
+          const backups = resp.body.data.backups;
         
         // Log to terminal via cy.task
         return cy.task('log', `[DB DEBUG] User ID: ${userId}`).then(() => {
@@ -415,6 +452,7 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
           }).then(() => {
             return resetToDefaultPermissions(userId, ventilations, token);
           });
+        });
         });
       });
     }).then(() => {
@@ -452,7 +490,32 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
     const baseUrl = Cypress.config('baseUrl') || 'http://localhost:4200';
     
     // User is already logged in from before() hook, just select the backup
+    cy.log('[EXTRACTOR] Visiting /dashboard...');
     cy.visit(`${baseUrl}/dashboard`);
+    
+    // Check if we were redirected away from dashboard
+    cy.location('pathname').then((pathname) => {
+      cy.log(`[EXTRACTOR] Current pathname after visit: ${pathname}`);
+      if (pathname !== '/dashboard') {
+        cy.log(`[EXTRACTOR] ⚠️ REDIRECTED from /dashboard to ${pathname}`);
+      }
+    });
+    
+    // Check what's on the page
+    cy.get('body').then(($body) => {
+      const pageText = $body.text();
+      cy.log(`[EXTRACTOR] Page title/heading contains: ${pageText.substring(0, 200)}`);
+      
+      // Check for extractor-specific elements
+      const hasExtractorVentilation = $body.find('aj-extractor-ventilation').length > 0;
+      const hasExtractorActivity = $body.find('aj-extractor-activity').length > 0;
+      const hasBackupSelector = $body.find('h6, [data-cy="backup-name"]').length > 0;
+      
+      cy.log(`[EXTRACTOR] aj-extractor-ventilation present: ${hasExtractorVentilation}`);
+      cy.log(`[EXTRACTOR] aj-extractor-activity present: ${hasExtractorActivity}`);
+      cy.log(`[EXTRACTOR] Backup selector present: ${hasBackupSelector}`);
+    });
+    
     cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
     cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
       .scrollIntoView()

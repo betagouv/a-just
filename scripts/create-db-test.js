@@ -40,6 +40,9 @@ const DEFAULT_OUTPUT = path.resolve(
 // Same seed + same input = same anonymized output
 const ANONYMIZATION_SEED = "ajust-e2e-test-seed-2024";
 
+// Fixed label for the first backup - used by E2E tests
+const E2E_TEST_BACKUP_LABEL = "E2E Test Backup";
+
 const args = process.argv.slice(2);
 
 const userTestEmail = "utilisateurtest@a-just.fr"
@@ -90,11 +93,12 @@ const blockThemesToAnonymize = [
   "HRBackups",
   "HRVentilations",
   "HumanResources",
+  "HRSituations",
   "TJ",
   "Logs",
   "OptionsBackups",
 ];
-const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments"];
+const blockThemesToRemoveElems = [];
 
 const hashName = (originalName, seed) => {
   if (!originalName || typeof originalName !== "string") {
@@ -126,6 +130,21 @@ const hashEmail = (originalEmail, seed) => {
   return hash;
 };
 
+let isFirstBackup = true; // Track if we're processing the first backup
+let e2eBackupId = null;
+let testUserId = null; // Track test user ID
+let attJPeopleFor2025 = []; // Collect real Att. J people with 2025 situations
+let tjTypeMap = new Map(); // Map TJ id -> type (TGI, TPRX, CPH)
+let nextTjId = 10000; // Start ID for test établissements
+let keptPeopleIds = new Set(); // Track IDs of people we're keeping
+let keptSituationIds = new Set(); // Track IDs of situations for kept people
+
+// Specific people to include in E2E test backup
+const specificPeopleForE2E = [
+  '38577', '42830', '42829', '27096', '39168', '37712',
+  '36162', '27435', '35310', '42838', '42836', '38576'
+];
+
 const anonymizeLine = (line, theme, seed, hrBackupIds) => {
   let result = line;
   let elements = line.split("\t");
@@ -140,10 +159,16 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       result = elements.join("\t");
       break;
     case "HRBackups":
-      result = result.replace(elements[1], (match, name) => {
-        const hashedName = hashName(match, seed);
-        return `${hashedName}`;
-      });
+      // Keep first backup with fixed label for E2E tests, anonymize others
+      if (isFirstBackup) {
+        elements[1] = E2E_TEST_BACKUP_LABEL;
+        e2eBackupId = elements[0]; // Capture E2E backup ID
+        result = elements.join("\t");
+        isFirstBackup = false;
+      } else {
+        elements[1] = hashName(elements[1], seed);
+        result = elements.join("\t");
+      }
       break;
     case "HRVentilations": {
       const lastIndex = elements.length - 1;
@@ -156,14 +181,27 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       }
       break;
     }
-    case "HumanResources":
+    case "HumanResources": {
+      const personId = elements[0];
+
+      // Only keep people in keptPeopleIds
+      if (!keptPeopleIds.has(personId)) {
+        return null;
+      }
+
+      // Anonymize names
       elements[1] = hashName(elements[1], seed);
       elements[2] = hashName(elements[2], seed);
       elements[9] = hashName(elements[9], seed);
       elements[11] = hashName(elements[11], seed);
       elements[12] = hashName(elements[12], seed);
+
+      // Assign to E2E backup
+      elements[10] = e2eBackupId;
+
       result = elements.join("\t");
       break;
+    }
     case "TJ":
       elements[2] = hashName(elements[2], seed);
       result = elements.join("\t");
@@ -172,11 +210,31 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       elements[1] = hashName(elements[1], seed);
       result = elements.join("\t");
       break;
-    case "Logs":
-      elements[2] = hashName(elements[2], seed);
-      elements[7] = hashName(elements[7], seed);
+    case "HRSituations": {
+      // Only keep situations for people in keptPeopleIds
+      const humanId = elements[1];
+      if (!keptPeopleIds.has(humanId)) {
+        return null;
+      }
       result = elements.join("\t");
       break;
+    }
+    case "Users": {
+      // Only keep the test user
+      const userEmail = elements[1];
+      if (userEmail !== userTestEmail) {
+        return null;
+      }
+      testUserId = elements[0]; // Capture test user ID
+      // Set referentiel_ids to NULL (index 16) for dashboard access
+      // The completeReferentielGuard requires: user.referentielIds === null
+      elements[16] = "\\N";
+      result = elements.join("\t");
+      break;
+    }
+    case "Logs":
+      // Skip all logs (3.1M rows - the main size culprit)
+      return null;
     default:
       break;
   }
@@ -189,8 +247,100 @@ const ensureInputExists = (inputPath) => {
   }
 };
 
-async function anonymizeDump() {
+async function collectMetadata() {
+  // First pass: collect E2E backup ID, people to keep, and their situation IDs
+  console.log("=== PASS 1: Collecting metadata ===");
   ensureInputExists(options.input);
+
+  const isGzipped = options.input.endsWith(".gz");
+  let sourceStream = fs.createReadStream(options.input);
+
+  if (isGzipped) {
+    const gunzipStream = zlib.createGunzip();
+    sourceStream = sourceStream.pipe(gunzipStream);
+  }
+
+  const rl = readline.createInterface({
+    input: sourceStream,
+    crlfDelay: Infinity,
+  });
+
+  let inHRBackupsBlock = false;
+  let inHumanResourcesBlock = false;
+  let inHRSituationsBlock = false;
+  let backupCount = 0;
+  const situationsLines = []; // Store situation lines for second sub-pass
+
+  // Sub-pass 1: Collect backup ID and people
+  for await (const line of rl) {
+    if (line.includes('COPY public."HRBackups"')) {
+      inHRBackupsBlock = true;
+      continue;
+    }
+    if (line.includes('COPY public."HumanResources"')) {
+      inHumanResourcesBlock = true;
+      continue;
+    }
+    if (line.includes('COPY public."HRSituations"')) {
+      inHRSituationsBlock = true;
+      continue;
+    }
+    if (line === '\\.') {
+      inHRBackupsBlock = false;
+      inHumanResourcesBlock = false;
+      inHRSituationsBlock = false;
+      continue;
+    }
+
+    if (inHRBackupsBlock && backupCount === 0) {
+      // First backup becomes E2E backup
+      const elements = line.split('\t');
+      e2eBackupId = elements[0];
+      console.log(`E2E Backup ID: ${e2eBackupId}`);
+      backupCount++;
+    }
+
+    if (inHumanResourcesBlock && e2eBackupId) {
+      const elements = line.split('\t');
+      const personId = elements[0];
+      const backupId = elements[10]; // backup_id is column 10
+
+      // Keep specific people or people already in first backup
+      if (specificPeopleForE2E.includes(personId) || backupId === e2eBackupId) {
+        keptPeopleIds.add(personId);
+      }
+    }
+
+    if (inHRSituationsBlock) {
+      // Store all situation lines for processing after we have all people
+      situationsLines.push(line);
+    }
+  }
+
+  console.log(`Collected ${keptPeopleIds.size} people`);
+
+  // Sub-pass 2: Process situations now that we have all people IDs
+  for (const line of situationsLines) {
+    const elements = line.split('\t');
+    const situationId = elements[0]; // id is column 0
+    const humanId = elements[1]; // human_id is column 1
+
+    // Track situation IDs for kept people
+    if (keptPeopleIds.has(humanId)) {
+      keptSituationIds.add(situationId);
+    }
+  }
+
+  console.log(`Collected ${keptSituationIds.size} situations for those people`);
+}
+
+async function anonymizeDump() {
+  // Second pass: filter and anonymize
+  console.log("=== PASS 2: Filtering and anonymizing ===");
+  ensureInputExists(options.input);
+
+  // Reset isFirstBackup flag for second pass
+  isFirstBackup = true;
 
   // Initialize seeded random for deterministic anonymization
   const seed = seedFromKey(options.seed);
@@ -257,7 +407,7 @@ async function anonymizeDump() {
       }
       outputStream.write(`${anonymized}\n`);
     } else if (inCopyBlock && shouldRemoveCopy) {
-      // outputStream.write(`\n`);
+      // Skip this line
     } else {
       outputStream.write(`${line}\n`);
     }
@@ -266,6 +416,7 @@ async function anonymizeDump() {
   console.log("Anonymisation terminee.");
 }
 
+// Main execution - no need for collection pass since we only filter Logs
 anonymizeDump().catch((err) => {
   console.error("Erreur lors de l'anonymisation :", err.message || err);
   process.exit(1);
