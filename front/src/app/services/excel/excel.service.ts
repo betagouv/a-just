@@ -1501,7 +1501,7 @@ export class ExcelService extends MainClass {
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: ['"Att. J Siège autres,Att. J Social,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD"'],
+        formulae: ['"Att. J Siège autres,Att. J Siege Assises,Att. J Siege CCD,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD,Att. J JLD PÉNAL"'],
       }
     }
     return report
@@ -1519,7 +1519,7 @@ export class ExcelService extends MainClass {
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: ['"Att. J Siège autres,Att. J Parquet,Att. J Social"'],
+        formulae: ['"Att. J Siège autres,Att. J Siege Assises,Att. J Siege CCD,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD,Att. J JLD PÉNAL"'],
       }
     }
     return report
