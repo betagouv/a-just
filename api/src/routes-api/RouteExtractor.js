@@ -410,8 +410,15 @@ export default class RouteExtractor extends Route {
     onglet1 = onglet1.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
     onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
 
+    onglet1.forEach((a) => {
+      for (const [key, value] of Object.entries(a)) {
+        if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
+      }
+    })
+
     onglet2.forEach((a) => {
       for (const [key, value] of Object.entries(a)) {
+        if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
         if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(a[key])) a[key] = null
       }
     })
