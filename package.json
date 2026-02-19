@@ -21,10 +21,10 @@
     "anonymization-db-test": "node scripts/create-db-test.js"
   },
   "dependencies": {
-    "axios": "^1.10.0",
+    "axios": "^1.13.5",
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "@aikidosec/safe-chain": "^1.1.10"
+    "@aikidosec/safe-chain": "^1.4.2"
   }
 }
