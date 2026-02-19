@@ -411,12 +411,42 @@ export default class RouteExtractor extends Route {
     onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
 
     onglet1.forEach((a) => {
+      // Debug: Log raw values before rounding for specific columns
+      const debugColumns = ['7. TOTAL SIÈGE PÉNAL', '7.51. COUR D\'ASSISES JIRS', '7.52. COUR CRIMINELLE', '7.5. COUR D\'ASSISES HORS JIRS']
+      const debugValues = {}
+      debugColumns.forEach(col => {
+        if (a[col] !== undefined && a[col] !== 0) {
+          debugValues[col] = a[col]
+        }
+      })
+      if (Object.keys(debugValues).length > 0) {
+        console.log('🔍 RAW VALUES BEFORE ROUNDING:', JSON.stringify({
+          person: `${a['Nom']} ${a['Prénom']}`,
+          values: debugValues
+        }))
+      }
+
       for (const [key, value] of Object.entries(a)) {
         if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
       }
     })
 
     onglet2.forEach((a) => {
+      // Debug: Log raw values before rounding for specific columns
+      const debugColumns = ['7. TOTAL SIÈGE PÉNAL', '7.51. COUR D\'ASSISES JIRS', '7.52. COUR CRIMINELLE', '7.5. COUR D\'ASSISES HORS JIRS']
+      const debugValues = {}
+      debugColumns.forEach(col => {
+        if (a[col] !== undefined && a[col] !== 0) {
+          debugValues[col] = a[col]
+        }
+      })
+      if (Object.keys(debugValues).length > 0) {
+        console.log('🔍 RAW VALUES BEFORE ROUNDING (onglet2):', JSON.stringify({
+          person: `${a['Nom']} ${a['Prénom']}`,
+          values: debugValues
+        }))
+      }
+
       for (const [key, value] of Object.entries(a)) {
         if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
         if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(a[key])) a[key] = null
