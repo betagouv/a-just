@@ -98,7 +98,7 @@ jobs:
 
       - name: Upload Mocha test reports (.json and .html)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mocha-report
           path: ./api/test/reports
@@ -201,14 +201,14 @@ jobs:
 
       - name: Upload Cypress video
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
 
       - name: Upload Cypress screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-screenshots
           path: ./end-to-end/cypress/screenshots
@@ -216,7 +216,7 @@ jobs:
 
       - name: Upload Cypress test reports and Mochawesome reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-reports
           path: |
@@ -231,7 +231,7 @@ jobs:
 
       - name: Upload Cypress downloads (Excel files)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-downloads
           path: |
@@ -345,14 +345,14 @@ jobs:
 
       - name: Upload Cypress video (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-video-nonreg
           path: ./end-to-end/cypress/videos
 
       - name: Upload Cypress screenshots (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-screenshots-nonreg
           path: ./end-to-end/cypress/screenshots
@@ -360,7 +360,7 @@ jobs:
 
       - name: Upload Cypress test reports and Mochawesome reports (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-reports-nonreg
           path: |
