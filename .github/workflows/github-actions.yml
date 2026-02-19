@@ -428,49 +428,49 @@ jobs:
           fi
 
       - name: Download Cypress reports artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-reports
           path: ./cypress-reports
 
       - name: Download Cypress reports artifacts (nonreg)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-reports-nonreg
           path: ./cypress-reports-nonreg
 
       - name: Download Cypress videos artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-video
           path: ./cypress-videos
 
       - name: Download Cypress videos artifacts (nonreg)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-video-nonreg
           path: ./cypress-videos-nonreg
 
       - name: Download Cypress screenshots artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-screenshots
           path: ./cypress-screenshots
 
       - name: Download Cypress screenshots artifacts (nonreg)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: cypress-screenshots-nonreg
           path: ./cypress-screenshots-nonreg
 
       - name: Download Mocha report artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           name: mocha-report
