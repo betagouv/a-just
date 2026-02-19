@@ -402,7 +402,7 @@ jobs:
       - name: Find pull request for push event
         id: findpr
         if: ${{ github.event_name == 'push' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const branch = context.ref.replace('refs/heads/','');
@@ -636,7 +636,7 @@ jobs:
 
       - name: Comment PR with Combined report URL
         if: ${{ steps.prnum.outputs.pr != '' && steps.combined_exists.outputs.ok == 'true' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
