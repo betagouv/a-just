@@ -698,17 +698,8 @@ export default defineConfig({
               if (fs.existsSync(fullPath)) {
                 const content = fs.readFileSync(fullPath, "utf8");
                 const contexts = JSON.parse(content);
-                console.log(
-                  `[CONTEXT] Read ${
-                    Object.keys(contexts).length
-                  } context(s) from ${fullPath}`,
-                );
-                console.log(`[CONTEXT] Available keys:`, Object.keys(contexts));
                 return contexts;
               }
-              console.log(
-                `[CONTEXT] File not found: ${fullPath}, returning empty object`,
-              );
               return {};
             } catch (e) {
               console.warn("[CONTEXT] Failed to read context file:", e);
@@ -763,21 +754,12 @@ export default defineConfig({
               // Add new context
               contexts[testTitle] = context;
 
-              // Log what we're writing
-              console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
-              console.log(
-                `[CONTEXT] Context data:`,
-                JSON.stringify(context, null, 2),
-              );
 
               // Write back with explicit fsync to ensure it's flushed to disk
               const fd = fs.openSync(fullPath, "w");
               fs.writeSync(fd, JSON.stringify(contexts, null, 2), 0, "utf8");
               fs.fsyncSync(fd); // Force sync to disk before container exits
               fs.closeSync(fd);
-              console.log(
-                `[CONTEXT] Successfully wrote and synced to ${fullPath}`,
-              );
               return null;
             } catch (e) {
               console.error("[CONTEXT] Failed to write context file:", e);

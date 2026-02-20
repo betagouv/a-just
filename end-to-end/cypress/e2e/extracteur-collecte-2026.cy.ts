@@ -99,7 +99,7 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 // Ce test compare l'extracteur actuel avec un fichier de référence Excel fourni.
 //
 // Configuration:
-// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (E2E Test Backup - fixed label from anonymization script)
+// - BACKUP_LABEL: Nom de la sauvegarde à utiliser (TJ TEST - fixed label from anonymization script)
 // - START: Date de début (2025-01-01)
 // - STOP: Date de fin (2025-12-31)
 // - REFERENCE_FILE: Chemin vers le fichier de référence (extracteur-collecte-2026-reference.xlsx)
@@ -110,7 +110,7 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 
 const START = '2025-01-01';
 const STOP = '2025-12-31';
-const BACKUP_LABEL = 'E2E Test Backup'; // Fixed label from anonymization script
+const BACKUP_LABEL = 'TJ TEST'; // Fixed label from anonymization script
 const REFERENCE_FILE = 'extracteur-collecte-2026-reference.xlsx';
 const CATEGORY = 'Tous'; // Toutes les catégories
 
@@ -387,7 +387,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
 
 describe('Extracteur Collecte 2026 - Test de non-régression', () => {
   before(() => {
-    // Login and ensure user has access to E2E Test Backup
+    // Login and ensure user has access to TJ TEST backup
     return loginApi(user.email, user.password).then((resp) => {
       const userId = resp.body.user.id;
       const token = resp.body.token;
@@ -415,7 +415,7 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
         
         cy.task('log', `[DB DEBUG] ✓ Found ${BACKUP_LABEL} with ID: ${e2eBackup.id}`);
         
-        // Assign user to E2E Test Backup via API
+        // Assign user to TJ TEST backup via API
         return cy.request({
           method: 'POST',
           url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
@@ -423,7 +423,7 @@ describe('Extracteur Collecte 2026 - Test de non-régression', () => {
           body: {
             userId: userId,
             access: [], // Will be set by resetToDefaultPermissions
-            ventilations: [e2eBackup.id], // Assign to E2E Test Backup
+            ventilations: [e2eBackup.id], // Assign to TJ TEST backup
             referentielIds: [],
           },
         });
