@@ -1,5 +1,5 @@
 // Backup label (deterministic from anonymization seed)
-export const JURIDICTION_TEST_NAME = "E2E Test Backup"
+export const JURIDICTION_TEST_NAME = "TJ TEST"
 
 // Stable reference data IDs (not auto-increment)
 export const SOCIAL_LITIGATION_ID = 447

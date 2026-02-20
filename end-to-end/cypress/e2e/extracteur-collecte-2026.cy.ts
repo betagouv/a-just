@@ -110,7 +110,7 @@ function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { 
 
 const START = '2025-01-01';
 const STOP = '2025-12-31';
-const BACKUP_LABEL = 'E2E Test Backup'; // Fixed label from anonymization script
+const BACKUP_LABEL = 'TJ TEST'; // Fixed label from anonymization script
 const REFERENCE_FILE = 'extracteur-collecte-2026-reference.xlsx';
 const CATEGORY = 'Tous'; // Toutes les catégories
 
