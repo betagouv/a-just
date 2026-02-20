@@ -3,6 +3,10 @@ import { verifyDownloadTasks } from "cy-verify-downloads";
 import path from "path";
 import fs from "fs";
 import * as xlsx from "xlsx";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 const jsonOnly = process.env.CY_JSON_ONLY === "1";
 
@@ -694,21 +698,29 @@ export default defineConfig({
               if (fs.existsSync(fullPath)) {
                 const content = fs.readFileSync(fullPath, "utf8");
                 const contexts = JSON.parse(content);
-                console.log(
-                  `[CONTEXT] Read ${
-                    Object.keys(contexts).length
-                  } context(s) from ${fullPath}`,
-                );
-                console.log(`[CONTEXT] Available keys:`, Object.keys(contexts));
                 return contexts;
               }
-              console.log(
-                `[CONTEXT] File not found: ${fullPath}, returning empty object`,
-              );
               return {};
             } catch (e) {
               console.warn("[CONTEXT] Failed to read context file:", e);
               return {};
+            }
+          },
+          async dbQuery({ query }: { query: string }) {
+            try {
+              // Execute SQL query via docker-compose exec
+              const cmd = `docker-compose -f docker-compose-e2e.test.yml exec -T db psql -U ajust-user -d ajust -c "${query.replace(/"/g, '\\"')}"`;
+              const { stdout, stderr } = await execAsync(cmd, {
+                cwd: path.join(config.projectRoot, '..'),
+              });
+              if (stderr && !stderr.includes('NOTICE')) {
+                console.warn('[DB QUERY] stderr:', stderr);
+              }
+              console.log('[DB QUERY] Query executed successfully');
+              return { success: true, output: stdout };
+            } catch (e: any) {
+              console.error('[DB QUERY] Failed to execute query:', e.message);
+              return { success: false, error: e.message };
             }
           },
           writeContextFile({
@@ -742,21 +754,12 @@ export default defineConfig({
               // Add new context
               contexts[testTitle] = context;
 
-              // Log what we're writing
-              console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
-              console.log(
-                `[CONTEXT] Context data:`,
-                JSON.stringify(context, null, 2),
-              );
 
               // Write back with explicit fsync to ensure it's flushed to disk
               const fd = fs.openSync(fullPath, "w");
               fs.writeSync(fd, JSON.stringify(contexts, null, 2), 0, "utf8");
               fs.fsyncSync(fd); // Force sync to disk before container exits
               fs.closeSync(fd);
-              console.log(
-                `[CONTEXT] Successfully wrote and synced to ${fullPath}`,
-              );
               return null;
             } catch (e) {
               console.error("[CONTEXT] Failed to write context file:", e);

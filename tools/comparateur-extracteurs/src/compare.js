@@ -9,26 +9,26 @@
  * - Data validation (dropdowns)
  */
 
-import * as xlsx from 'xlsx';
-import * as fs from 'fs';
+import xlsx from 'xlsx';
+import fs from 'fs';
 
 /**
  * Read and normalize an Excel file to a comparable JSON structure
  */
 export function readAndNormalizeExcel(filePath) {
-  const wb = xlsx.readFile(filePath, { 
-    cellDates: false, 
-    cellNF: true, 
-    cellFormula: true, 
-    cellStyles: true 
+  const wb = xlsx.readFile(filePath, {
+    cellDates: false,
+    cellNF: true,
+    cellFormula: true,
+    cellStyles: true
   });
-  
+
   const out = { sheets: {} };
-  
+
   const getCellAddress = (r, c) => {
     return xlsx.utils.encode_cell({ r, c });
   };
-  
+
   const trimMatrix = (rows) => {
     let maxR = -1, maxC = -1;
     for (let r = 0; r < rows.length; r++) {
@@ -36,8 +36,8 @@ export function readAndNormalizeExcel(filePath) {
       for (let c = 0; c < row.length; c++) {
         const v = row[c];
         if (v !== null && v !== undefined && v !== '') {
-          const hasContent = (typeof v === 'object' && (v.v !== undefined || v.f !== undefined)) || 
-                            (typeof v !== 'object' && String(v).trim() !== '');
+          const hasContent = (typeof v === 'object' && (v.v !== undefined || v.f !== undefined)) ||
+            (typeof v !== 'object' && String(v).trim() !== '');
           if (hasContent) {
             if (r > maxR) maxR = r;
             if (c > maxC) maxC = c;
@@ -48,12 +48,12 @@ export function readAndNormalizeExcel(filePath) {
     if (maxR === -1 || maxC === -1) return [];
     return rows.slice(0, maxR + 1).map((row) => (row || []).slice(0, maxC + 1));
   };
-  
+
   for (const sheetName of wb.SheetNames) {
     const ws = wb.Sheets[sheetName];
     const range = xlsx.utils.decode_range(ws['!ref'] || 'A1');
     const rows = [];
-    
+
     // Extract data validation rules (dropdowns)
     const dataValidations = {};
     if (ws['!dataValidation']) {
@@ -71,22 +71,22 @@ export function readAndNormalizeExcel(filePath) {
         }
       });
     }
-    
+
     // Extract cell data with formulas, formats, styles, and validation
     for (let r = range.s.r; r <= range.e.r; r++) {
       const row = [];
       for (let c = range.s.c; c <= range.e.c; c++) {
         const cellAddr = getCellAddress(r, c);
         const cell = ws[cellAddr];
-        
+
         if (!cell) {
           row.push('');
           continue;
         }
-        
+
         // Build comprehensive cell data
         const cellData = {};
-        
+
         // Value (displayed)
         if (cell.v !== undefined) {
           if (typeof cell.v === 'number') {
@@ -95,26 +95,26 @@ export function readAndNormalizeExcel(filePath) {
             cellData.v = String(cell.v).trim();
           }
         }
-        
+
         // Formula
         if (cell.f) {
           cellData.f = String(cell.f);
         }
-        
+
         // Number format
         if (cell.z) {
           cellData.z = String(cell.z);
         }
-        
+
         // Cell type (n=number, s=string, b=boolean, e=error, d=date)
         if (cell.t) {
           cellData.t = String(cell.t);
         }
-        
+
         // Cell style (font, fill, border, alignment)
         if (cell.s) {
           const style = {};
-          
+
           // Font properties
           if (cell.s.font) {
             style.font = {
@@ -126,7 +126,7 @@ export function readAndNormalizeExcel(filePath) {
               color: cell.s.font.color ? (cell.s.font.color.rgb || cell.s.font.color.theme || '') : ''
             };
           }
-          
+
           // Fill/background color
           if (cell.s.fill) {
             style.fill = {
@@ -135,7 +135,7 @@ export function readAndNormalizeExcel(filePath) {
               patternType: cell.s.fill.patternType || ''
             };
           }
-          
+
           // Border
           if (cell.s.border) {
             style.border = {
@@ -145,7 +145,7 @@ export function readAndNormalizeExcel(filePath) {
               right: cell.s.border.right ? { style: cell.s.border.right.style || '', color: cell.s.border.right.color || '' } : null
             };
           }
-          
+
           // Alignment
           if (cell.s.alignment) {
             style.alignment = {
@@ -154,12 +154,12 @@ export function readAndNormalizeExcel(filePath) {
               wrapText: cell.s.alignment.wrapText || false
             };
           }
-          
+
           if (Object.keys(style).length > 0) {
             cellData.style = style;
           }
         }
-        
+
         // Data validation (dropdown)
         const validationKey = Object.keys(dataValidations).find(key => {
           try {
@@ -172,7 +172,7 @@ export function readAndNormalizeExcel(filePath) {
         if (validationKey) {
           cellData.dv = dataValidations[validationKey];
         }
-        
+
         // If only value exists and it's simple, store it directly for backward compatibility
         if (Object.keys(cellData).length === 1 && cellData.v !== undefined) {
           row.push(cellData.v);
@@ -184,10 +184,10 @@ export function readAndNormalizeExcel(filePath) {
       }
       rows.push(row);
     }
-    
+
     out.sheets[sheetName] = trimMatrix(rows);
   }
-  
+
   return out;
 }
 
@@ -240,23 +240,23 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
   const sheetsRef = Object.keys((reference && reference.sheets) || {});
   const sheetsCand = Object.keys((candidate && candidate.sheets) || {});
   const allSheetNames = Array.from(new Set([...sheetsRef, ...sheetsCand]));
-  
+
   allSheetNames.forEach((sheetName) => {
     const refSheet = (reference && reference.sheets && reference.sheets[sheetName]) || [];
     const candSheet = (candidate && candidate.sheets && candidate.sheets[sheetName]) || [];
     const maxR = Math.max(refSheet.length, candSheet.length);
-    
+
     for (let r = 0; r < maxR; r++) {
       const refRow = refSheet[r] || [];
       const candRow = candSheet[r] || [];
       const maxC = Math.max(refRow.length, candRow.length);
-      
+
       for (let c = 0; c < maxC; c++) {
         const refCell = getCellProps(refRow[c]);
         const candCell = getCellProps(candRow[c]);
-        
+
         const differences = [];
-        
+
         // Compare values
         const refIsNum = typeof refCell.v === 'number';
         const candIsNum = typeof candCell.v === 'number';
@@ -273,21 +273,21 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
             differences.push(`Valeur : "${refStr}" → "${candStr}"`);
           }
         }
-        
+
         // Compare formulas
         const refFormula = refCell.f || '';
         const candFormula = candCell.f || '';
         if (refFormula !== candFormula) {
           differences.push(`Formule : "${refFormula}" → "${candFormula}"`);
         }
-        
+
         // Compare number formats
         const refFormat = refCell.z || '';
         const candFormat = candCell.z || '';
         if (refFormat !== candFormat) {
           differences.push(`Format : "${refFormat}" → "${candFormat}"`);
         }
-        
+
         // Compare cell types
         const refType = refCell.t || '';
         const candType = candCell.t || '';
@@ -297,7 +297,7 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
           const candTypeName = typeNames[candType] || candType;
           differences.push(`Type : ${refTypeName} → ${candTypeName}`);
         }
-        
+
         // Compare styles (font, fill, border, alignment)
         const refStyle = refCell.style;
         const candStyle = candCell.style;
@@ -307,7 +307,7 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
           if (refStyleStr !== candStyleStr) {
             // Detailed style comparison
             const styleDiffs = [];
-            
+
             // Font comparison
             if (refStyle?.font || candStyle?.font) {
               const refFont = refStyle?.font || {};
@@ -323,7 +323,7 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
                 styleDiffs.push(`Police : ${fontChanges.join(', ')}`);
               }
             }
-            
+
             // Fill comparison
             if (refStyle?.fill || candStyle?.fill) {
               const refFill = refStyle?.fill || {};
@@ -334,13 +334,13 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
                 styleDiffs.push(`Remplissage : ${fillChanges.join(', ')}`);
               }
             }
-            
+
             if (styleDiffs.length > 0) {
               differences.push(...styleDiffs);
             }
           }
         }
-        
+
         // Compare data validation (dropdowns)
         const refDv = refCell.dv;
         const candDv = candCell.dv;
@@ -361,7 +361,7 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
             }
           }
         }
-        
+
         if (differences.length > 0) {
           allDiffs.push({
             sheet: sheetName,
@@ -373,7 +373,7 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
       }
     }
   });
-  
+
   // Build structured summary grouped by sheet
   const diffsBySheet = new Map();
   allDiffs.forEach(diff => {
@@ -382,29 +382,29 @@ export function compareExcelFiles(reference, candidate, eps = 1e-6) {
     }
     diffsBySheet.get(diff.sheet).push(diff);
   });
-  
+
   let summary = '';
   if (allDiffs.length > 0) {
     summary = `Trouvé ${allDiffs.length} différence(s) dans ${diffsBySheet.size} feuille(s) :\n\n`;
-    
+
     diffsBySheet.forEach((diffs, sheetName) => {
       summary += `Feuille : "${sheetName}" (${diffs.length} différence(s))\n`;
       summary += '='.repeat(60) + '\n';
-      
+
       diffs.forEach(diff => {
         summary += `  Cellule ${diff.cell} :\n`;
         summary += `    ${diff.new}\n`;
         summary += '\n';
       });
-      
+
       summary += '\n';
     });
   } else {
     summary = 'Aucune différence trouvée. Les fichiers sont identiques.\n';
   }
-  
-  return { 
-    diffs: allDiffs, 
+
+  return {
+    diffs: allDiffs,
     summary,
     identical: allDiffs.length === 0
   };

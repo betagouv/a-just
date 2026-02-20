@@ -190,7 +190,8 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     category_detail: 'C',
     recodedFunction: 'JA/AttJ JLD',
     rank: 3,
-  }, // Att. Justice
+  }, 
+  // Att. Justice
   {
     category_label: 'Autour du magistrat',
     label: 'ATTACHÉ DE JUSTICE pôle Social',
@@ -247,11 +248,29 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
   },
   {
     category_label: 'Autour du magistrat',
-    label: 'ATTACHÉ DE JUSTICE JLD',
-    code: 'Att. J JLD',
+    label: 'ATTACHÉ DE JUSTICE JLD PÉNAL',
+    code: 'Att. J JLD PÉNAL',
     position: 'Contractuel',
     category_detail: 'C',
-    recodedFunction: 'JA/AttJ JLD',
+    recodedFunction: 'JA/AttJ JLD PÉNAL',
+    rank: 2,
+  },
+  {
+    category_label: 'Autour du magistrat',
+    label: 'ATTACHÉ DE JUSTICE SIEGE ASSISES',
+    code: 'Att. J Siege Assises',
+    position: 'Contractuel',
+    category_detail: 'C',
+    recodedFunction: 'JA/AttJ Siege Assises',
+    rank: 2,
+  },
+  {
+    category_label: 'Autour du magistrat',
+    label: 'ATTACHÉ DE JUSTICE SIEGE CCD',
+    code: 'Att. J Siege CCD',
+    position: 'Contractuel',
+    category_detail: 'C',
+    recodedFunction: 'JA/AttJ Siege CCD',
     rank: 2,
   },
   {
@@ -564,15 +583,6 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
     rank: 17,
   },
   // Att. Justice
-  {
-    category_label: 'Autour du magistrat',
-    label: 'ATTACHÉ DE JUSTICE pôle Social',
-    code: 'Att. J Social',
-    position: 'Contractuel',
-    category_detail: 'C',
-    recodedFunction: 'JA/AttJ Social',
-    rank: 2,
-  },
   {
     category_label: 'Autour du magistrat',
     label: 'ATTACHÉ DE JUSTICE JA Siège autres',
