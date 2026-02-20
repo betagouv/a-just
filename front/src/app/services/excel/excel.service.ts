@@ -1514,12 +1514,13 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setDopDownAttJByAgentCA(report: any, indexFctCol: string, indexTab: number) {
-    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
+    const cellValue = report.worksheets[indexTab].getCell(indexFctCol).value
+    if (cellValue === 'Att. J' || cellValue === 'Att. J Siège autres') {
       report.worksheets[indexTab].getCell(indexFctCol).value = 'Att. J Siège autres'
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: ['"Att. J Siège autres,Att. J Siege Assises,Att. J Siege CCD,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD PÉNAL"'],
+        formulae: ['"Att. J Siège autres,Att. J Parquet"'],
       }
     }
     return report
