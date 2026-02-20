@@ -7,7 +7,7 @@ import user from "../../fixtures/user.json";
 // - SANDBOX_FRONT_URL
 // - CANDIDATE_FRONT_URL
 // Optional:
-// - BACKUP_LABEL (default: E2E Test Backup)
+// - BACKUP_LABEL (default: TJ TEST)
 // - START (default: 2023-01-01)
 // - STOP (default: 2024-06-15)
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.

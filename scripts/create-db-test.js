@@ -134,7 +134,7 @@ let isFirstBackup = true; // Track if we're processing the first backup
 let e2eBackupId = null;
 let attJPeopleFor2025 = []; // Collect real Att. J people with 2025 situations
 
-// Specific people to always include in E2E test backup
+// Specific people to always include in TJ TEST backup
 const specificPeopleForE2E = [
   '38577', '42830', '42829', '27096', '39168', '37712',
   '36162', '27435', '35310', '42838', '42836', '38576'
@@ -189,9 +189,9 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       if (attJPeopleFor2025.includes(personId) || specificPeopleForE2E.includes(personId)) {
         elements[10] = e2eBackupId;
         if (attJPeopleFor2025.includes(personId)) {
-          console.log(`Assigning Att. J person ${personId} to E2E test backup`);
+          console.log(`Assigning Att. J person ${personId} to TJ TEST backup`);
         } else {
-          console.log(`Assigning specific person ${personId} to E2E test backup`);
+          console.log(`Assigning specific person ${personId} to TJ TEST backup`);
         }
       } else if (hrBackupIds && hrBackupIds.length > 0) {
         // Random backup assignment for everyone else
