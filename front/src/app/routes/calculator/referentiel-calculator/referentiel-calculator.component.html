@@ -18,10 +18,22 @@
       : userService.referentielMappingNameByInterface(calculator.contentieux.label)
       }}
     </p>
-    <div class="help"
-      (click)="$event.stopPropagation(); this.currentProjection = calculator; checkDataCompleteness(); showAlertPopin = true;">
+    @if(cockpitWarningInformations) {
+    @if(cockpitWarningInformations.ventilation.dataNotUpdatedBefore6Month
+    || cockpitWarningInformations.ventilation.haveIncompleteDatasDuringThisPeriod
+    || cockpitWarningInformations.activity.dataNotUpdatedBefore12Month
+    || cockpitWarningInformations.activity.lessOneOfDatasToSubContentieux
+    || cockpitWarningInformations.activity.missingDatasToSubContentieuxBefore12Month) {
+    <div class="help warning"
+      (click)="$event.stopPropagation(); this.currentProjection = calculator; showAlertPopin = true;">
+      <span>!</span>
+    </div>
+    } @else {
+    <div class="help" (click)="$event.stopPropagation(); this.currentProjection = calculator; showAlertPopin = true;">
       <span>?</span>
     </div>
+    }
+    }
   </div>
   <div [ngClass]="{'dtes': calculator.realDTESInMonths !== null && checkPastDate()}">
     @if (!isSoutien(calculator.contentieux.id)) {
@@ -124,7 +136,7 @@
 </div>
 }
 
-@if(currentProjection && showAlertPopin && appService.appLoading.getValue() === false) {
+@if(currentProjection && showAlertPopin && appService.appLoading.getValue() === false && cockpitWarningInformations) {
 <div class="popin-projection">
   <div class="popin-projection-content" (click)="$event.stopPropagation()">
     <div class="popin-projection-content-header" [ngStyle]="{ backgroundColor: userService.referentielMappingColorActivityByInterface(

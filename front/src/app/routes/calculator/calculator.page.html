@@ -120,6 +120,7 @@
     <div class="content-list">
       @for (r of datasFilted; track r.contentieux.id) {
       <aj-referentiel-calculator [datas]="datasFilted" [calculator]="r" [sortBy]="sortBy.type"
+        [cockpitWarningInformations]="warningInformations['ref' + r.contentieux.id]"
         [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"
         [categoryFiltered]="categoryFiltered" [categoryIdSelected]="categoryIdSelected"
         [currentProjectionType]="currentProjectionType"
