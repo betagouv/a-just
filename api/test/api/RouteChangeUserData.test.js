@@ -220,17 +220,22 @@ module.exports = function (datas) {
         ...current_hr,
         situations: situatiuons,
       }
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
         backupId: hr.backupId,
       })
 
-      const tmp_activities = response.data.data.situations[1].activities.map(activity => { delete activity.id; return activity })
+
+
+      const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
       const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp
       const tmp_fonction = response.data.data.situations[0].fonction
+
+
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data

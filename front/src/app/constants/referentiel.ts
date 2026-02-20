@@ -211,6 +211,7 @@ export const DDG_REFERENTIELS_GREFFE_CA = [
 export const DDG_REFERENTIELS_EAM = [
   'JLD pénal'.toUpperCase(),
   "COUR D'ASSISES JIRS",
+  "COUR D'ASSISES".toUpperCase(),
   "COUR D'ASSISES HORS JIRS".toUpperCase(),
   'cour criminelle'.toUpperCase(),
   'COLLÉGIALES JIRS CRIM-ORG',

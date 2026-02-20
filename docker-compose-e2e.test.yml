@@ -252,8 +252,8 @@ services:
       - front_sandbox
       - redis
       - redis_sandbox
-    shm_size: 2gb
-    mem_limit: 2G
+    shm_size: 4gb
+    mem_limit: 4G
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
@@ -275,7 +275,7 @@ services:
       - CY_JSON_ONLY=1
       - SPEC
       # Increase Node.js memory limit for Excel comparison tasks
-      - NODE_OPTIONS=--max-old-space-size=1536
+      - NODE_OPTIONS=--max-old-space-size=3072
 
 networks:
   ajust_e2e_network:
