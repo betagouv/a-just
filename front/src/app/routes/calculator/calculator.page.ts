@@ -49,6 +49,8 @@ import { PopinGraphsDetailsComponent } from './popin-graphs-details/popin-graphs
 import { NB_DAYS_BY_FONCTIONNAIRE, NB_DAYS_BY_MAGISTRAT, NB_HOURS_PER_DAY_AND_FONCTIONNAIRE, NB_HOURS_PER_DAY_AND_MAGISTRAT } from '../../constants/referentiel'
 import { IntroJSStep } from '../../services/tour/tour.service'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../../constants/user-access'
+import { RHActivityInterface } from '../../interfaces/rh-activity'
+import { addMonths } from 'date-fns'
 
 /**
  * Page du calculateur
@@ -445,6 +447,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Type de projection actuelle
    */
   currentProjectionType: 'stock' | 'dtes' | 'etpt' = 'stock'
+  /**
+   * Object of Warning Informations
+   */
+  warningInformations: {
+    [key: string]: {
+      ventilation: { dataNotUpdatedBefore6Month: boolean; nbAgentNotCompletedToday: number; haveIncompleteDatasDuringThisPeriod: boolean }
+      activity: {
+        dataNotUpdatedBefore12Month: boolean
+        noDataToSubContentieuxDuring12Month: boolean
+        lessOneOfDatasToSubContentieux: boolean
+        missingDatasToSubContentieuxBefore12Month: boolean
+      }
+    }
+  } = {}
 
   /**
    * Constructeur
@@ -763,6 +779,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               }
               this.firstLoading = false
               this.onLoadComparaisons()
+              console.log('list', list)
+              this.refreshWarningInformations(list)
             })
             .catch(() => {
               this.isLoading = false
@@ -1839,5 +1857,111 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
   round2(num: number) {
     return Math.round(num * 100) / 100
+  }
+
+  refreshWarningInformations(list: CalculatorInterface[]) {
+    this.warningInformations = {}
+
+    if (this.tabSelected === 0 && !this.compareTemplates) {
+      for (const line of list) {
+        this.checkDataCompleteness(line)
+      }
+    }
+  }
+
+  /**
+   * Vérifie si les données de ventilation et d'activités sont complètes
+   */
+  async checkDataCompleteness(line: CalculatorInterface) {
+    const referentielId = line.contentieux.id
+    const allHR = await this.humanResourceService.onLightFilterList(this.humanResourceService.backupId.getValue() || 0, new Date(), referentielId)
+
+    let nbAgentNotCompletedToday = 0
+    if (allHR.length > 0) {
+      for (const hr of allHR) {
+        const getCurrentVentilation = hr.currentActivities
+        if (getCurrentVentilation && getCurrentVentilation.length > 0) {
+          const activities = getCurrentVentilation.filter((a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1)
+          if (this.fixDecimal(_.sumBy(activities, 'percent'), 100) === 100) {
+            continue
+          }
+        }
+        nbAgentNotCompletedToday++
+      }
+    }
+
+    let currentMonth = month(new Date())
+    let nbMonthChecked = 0
+    let haveIncompleteDatasDuringThisPeriod = false
+    while (nbMonthChecked < 12) {
+      const allHROfTheMonth = await this.humanResourceService.onLightFilterList(this.humanResourceService.backupId.getValue() || 0, currentMonth, referentielId)
+
+      if (allHROfTheMonth.length > 0) {
+        for (const hr of allHROfTheMonth) {
+          const getCurrentVentilation = hr.currentActivities
+          if (getCurrentVentilation && getCurrentVentilation.length > 0) {
+            const activities = getCurrentVentilation.filter(
+              (a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1,
+            )
+            if (this.fixDecimal(_.sumBy(activities, 'percent'), 100) === 100) {
+              continue
+            }
+          }
+          haveIncompleteDatasDuringThisPeriod = true
+          nbMonthChecked = 12 // stop the loop
+          break
+        }
+      }
+
+      currentMonth = addMonths(currentMonth, -1)
+      nbMonthChecked++
+    }
+
+    // Vérifier s'il y a au moins un sous-contentieux avec des données sur les 12 derniers mois
+    let noDataToSubContentieuxDuring12Month = false
+    currentMonth = month(new Date(), 48)
+    nbMonthChecked = 0
+    while (nbMonthChecked < 12) {
+      const activities = await this.calculatorService.filterList(this.categorySelected || '', null, currentMonth, currentMonth, true, [referentielId])
+
+      const childrens = activities.list[0].childrens || []
+      if (childrens.length > 0 && childrens.every((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
+        noDataToSubContentieuxDuring12Month = true
+        nbMonthChecked = 12 // stop the loop
+        break
+      }
+
+      currentMonth = addMonths(currentMonth, -1)
+      nbMonthChecked++
+    }
+
+    let lessOneOfDatasToSubContentieux = false
+    const childrens = line.childrens || []
+    if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
+      lessOneOfDatasToSubContentieux = true
+    }
+
+    // Vérifier s'il y a des datas manquantes sur les 12 derniers mois
+    let missingDatasToSubContentieuxBefore12Month = false
+    const endMonth = month(new Date(line.lastActivityUpdatedAt || new Date()))
+    const startMonth = month(endMonth, -12)
+    const allMonths = await this.calculatorService.rangeValues(referentielId, 'stock', startMonth, endMonth)
+    if (allMonths.length !== 12 || allMonths.some((m: any) => m === null)) {
+      missingDatasToSubContentieuxBefore12Month = true
+    }
+
+    this.warningInformations['ref' + referentielId] = {
+      ventilation: {
+        dataNotUpdatedBefore6Month: this.nbMonthBetween(line.lastVentilationUpdatedAt) >= 6,
+        nbAgentNotCompletedToday,
+        haveIncompleteDatasDuringThisPeriod, // is red
+      },
+      activity: {
+        dataNotUpdatedBefore12Month: this.nbMonthBetween(line.lastActivityUpdatedAt) >= 12,
+        noDataToSubContentieuxDuring12Month,
+        lessOneOfDatasToSubContentieux, // is red
+        missingDatasToSubContentieuxBefore12Month, // is red
+      },
+    }
   }
 }

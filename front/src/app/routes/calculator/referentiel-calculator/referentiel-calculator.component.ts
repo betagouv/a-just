@@ -106,6 +106,18 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    */
   @Input() currentProjectionType: 'stock' | 'dtes' | 'etpt' = 'stock'
   /**
+   * Cockpit Warning Informations
+   */
+  @Input() cockpitWarningInformations: {
+    ventilation: { dataNotUpdatedBefore6Month: boolean; nbAgentNotCompletedToday: number; haveIncompleteDatasDuringThisPeriod: boolean }
+    activity: {
+      dataNotUpdatedBefore12Month: boolean
+      noDataToSubContentieuxDuring12Month: boolean
+      lessOneOfDatasToSubContentieux: boolean
+      missingDatasToSubContentieuxBefore12Month: boolean
+    }
+  } | null = null
+  /**
    * Connexion au css pour forcer l'affichage des enfants
    */
   @HostBinding('class.show-children') showChildren: boolean = (this.calculator && this.calculator.childIsVisible) || false
@@ -181,22 +193,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   ACTIVITIES_DOCUMENTATION_URL = this.userService.isCa()
     ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest'
     : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/quest-ce-que-cest'
-  /**
-   * Cockpit Warning Informations
-   */
-  cockpitWarningInformations = {
-    ventilation: {
-      dataNotUpdatedBefore6Month: false,
-      nbAgentNotCompletedToday: 0,
-      haveIncompleteDatasDuringThisPeriod: false, // is red
-    },
-    activity: {
-      dataNotUpdatedBefore12Month: false,
-      noDataToSubContentieuxDuring12Month: false,
-      lessOneOfDatasToSubContentieux: false, // is red
-      missingDatasToSubContentieuxBefore12Month: false, // is red
-    },
-  }
+
   /**
    * Chart de projection
    */
@@ -319,9 +316,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       }
       this.initValues()
 
-      if (this.showAlertPopin) {
-        this.checkDataCompleteness()
-      } else if (this.showProjectionPopin) {
+      if (this.showProjectionPopin) {
         this.showChartJS()
       }
     }
@@ -339,10 +334,6 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         this.currentProjection = null
       }
       this.initValues()
-
-      if (this.showAlertPopin) {
-        this.checkDataCompleteness()
-      }
     }
   }
 
@@ -621,118 +612,5 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.projectionChart.update()
     console.log('projectionChart', this.projectionChart)
-  }
-
-  /**
-   * Vérifie si les données de ventilation et d'activités sont complètes
-   */
-  async checkDataCompleteness() {
-    if (this.currentProjection) {
-      this.appService.appLoading.next(true)
-      const allHR = await this.humanResourceService.onLightFilterList(
-        this.humanResourceService.backupId.getValue() || 0,
-        new Date(),
-        this.currentProjection.contentieux.id,
-      )
-
-      let nbAgentNotCompletedToday = 0
-      if (allHR.length > 0) {
-        for (const hr of allHR) {
-          const getCurrentVentilation = hr.currentActivities
-          if (getCurrentVentilation && getCurrentVentilation.length > 0) {
-            const activities = getCurrentVentilation.filter(
-              (a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1,
-            )
-            if (this.fixDecimal(sumBy(activities, 'percent'), 100) === 100) {
-              continue
-            }
-          }
-          nbAgentNotCompletedToday++
-        }
-      }
-
-      let currentMonth = month(new Date())
-      let nbMonthChecked = 0
-      let haveIncompleteDatasDuringThisPeriod = false
-      while (nbMonthChecked < 12) {
-        const allHROfTheMonth = await this.humanResourceService.onLightFilterList(
-          this.humanResourceService.backupId.getValue() || 0,
-          currentMonth,
-          this.currentProjection.contentieux.id,
-        )
-
-        if (allHROfTheMonth.length > 0) {
-          for (const hr of allHROfTheMonth) {
-            const getCurrentVentilation = hr.currentActivities
-            if (getCurrentVentilation && getCurrentVentilation.length > 0) {
-              const activities = getCurrentVentilation.filter(
-                (a: RHActivityInterface) => this.referentielService.mainActivitiesId.indexOf(a.contentieux.id) !== -1,
-              )
-              if (this.fixDecimal(sumBy(activities, 'percent'), 100) === 100) {
-                continue
-              }
-            }
-            haveIncompleteDatasDuringThisPeriod = true
-            nbMonthChecked = 12 // stop the loop
-            break
-          }
-        }
-
-        currentMonth = addMonths(currentMonth, -1)
-        nbMonthChecked++
-      }
-
-      // Vérifier s'il y a au moins un sous-contentieux avec des données sur les 12 derniers mois
-      let noDataToSubContentieuxDuring12Month = false
-      currentMonth = month(new Date(), 48)
-      nbMonthChecked = 0
-      while (nbMonthChecked < 12) {
-        const activities = await this.calculatorService.filterList(this.categorySelected, null, currentMonth, currentMonth, true, [
-          this.currentProjection.contentieux.id,
-        ])
-
-        const childrens = activities.list[0].childrens || []
-        if (childrens.length > 0 && childrens.every((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
-          console.log('childrens with no datas', childrens)
-          noDataToSubContentieuxDuring12Month = true
-          nbMonthChecked = 12 // stop the loop
-          break
-        }
-
-        currentMonth = addMonths(currentMonth, -1)
-        nbMonthChecked++
-      }
-
-      let lessOneOfDatasToSubContentieux = false
-      console.log(this.currentProjection)
-      const childrens = this.currentProjection?.childrens || []
-      if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
-        lessOneOfDatasToSubContentieux = true
-      }
-
-      // Vérifier s'il y a des datas manquantes sur les 12 derniers mois
-      let missingDatasToSubContentieuxBefore12Month = false
-      const endMonth = month(new Date(this.currentProjection.lastActivityUpdatedAt || new Date()))
-      const startMonth = month(endMonth, -12)
-      const allMonths = await this.calculatorService.rangeValues(this.currentProjection.contentieux.id, 'stock', startMonth, endMonth)
-      if (allMonths.length !== 12 || allMonths.some((m: any) => m === null)) {
-        missingDatasToSubContentieuxBefore12Month = true
-      }
-
-      this.cockpitWarningInformations = {
-        ventilation: {
-          dataNotUpdatedBefore6Month: this.nbMonthBetween(this.currentProjection.lastVentilationUpdatedAt) >= 6,
-          nbAgentNotCompletedToday,
-          haveIncompleteDatasDuringThisPeriod, // is red
-        },
-        activity: {
-          dataNotUpdatedBefore12Month: this.nbMonthBetween(this.currentProjection.lastActivityUpdatedAt) >= 12,
-          noDataToSubContentieuxDuring12Month,
-          lessOneOfDatasToSubContentieux, // is red
-          missingDatasToSubContentieuxBefore12Month, // is red
-        },
-      }
-    }
-    this.appService.appLoading.next(false)
   }
 }
