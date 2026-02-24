@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { month, today } from '../utils/date'
+import { getNbMonth, month, today } from '../utils/date'
 import { loadOrWarmHR } from '../utils/redis'
 import { fixDecimal } from '../utils/number'
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
@@ -86,12 +86,94 @@ export default class RouteCalculator extends Route {
     dateStop = today(dateStop)
     let hrList = null
     let indexes = null
-    if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege'].includes(type)) {
-      hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
-      indexes = await generateHRIndexes(hrList)
+    if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege', 'etpt'].includes(type)) {
+      if (type === 'etpt' && categorySelected) {
+        type = categorySelected === 'magistrats' ? 'ETPTSiege' : (categorySelected === 'fonctionnaires' ? 'ETPTGreffe' : 'ETPTEam')
+      }
+    }
+
+    hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+    indexes = await generateHRIndexes(hrList)
+
+    // calcul de l'ETP pour un mois donnée
+    const onCalculateETPT = async (date = dateStart) => {
+      const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
+      const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
+      let newFonctions = fonctionsIds
+      if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
+        newFonctions = null
+      }
+      let endOfTheMonth = today(date)
+      endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
+
+      const categories = await this.models.HRCategories.getAll()
+
+      const etp = calculateETPForContentieux(
+        indexes,
+        {
+          start: date,
+          end: endOfTheMonth,
+          category: undefined,
+          fonctions: newFonctions,
+          contentieux: contentieuxId,
+        },
+        categories,
+      )
+
+      let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
+      return type === 'ETPTSiege' ? etpMag : type === 'ETPTGreffe' ? etpFon : etpCon
+    }
+
+    // calcul du stock pour un mois donnée
+    const onCalculateStock = async (date = dateStart) => {
+      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      if (activites && activites.length) {
+        const acti = activites[0]
+        if (acti.stock !== null) {
+          return acti.stock
+        } else if (acti.originalStock !== null) {
+          return acti.originalStock
+        } else {
+          return null
+        }
+      }
+      return undefined
+    }
+
+    // calcul des entrées pour un mois donnée
+    const onCalculateEntrees = async (date = dateStart) => {
+      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      if (activites && activites.length) {
+        const acti = activites[0]
+        if (acti.entrees !== null) {
+          return acti.entrees
+        } else if (acti.originalEntrees !== null) {
+          return acti.originalEntrees
+        } else {
+          return null
+        }
+      }
+      return undefined
+    }
+
+    // calcul des sorties pour un mois donnée
+    const onCalculateSorties = async (date = dateStart) => {
+      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      if (activites && activites.length) {
+        const acti = activites[0]
+        if (acti.sorties !== null) {
+          return acti.sorties
+        } else if (acti.originalSorties !== null) {
+          return acti.originalSorties
+        } else {
+          return null
+        }
+      }
+      return undefined
     }
 
     const list = []
+
     do {
       let endOfTheMonth = today(dateStart)
       endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
@@ -99,95 +181,64 @@ export default class RouteCalculator extends Route {
       switch (type) {
         case 'entrees':
           {
-            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
-            if (activites.length) {
-              const acti = activites[0]
-              if (acti.entrees !== null) {
-                list.push({ value: acti.entrees, date: today(dateStart) })
-              } else if (acti.originalEntrees !== null) {
-                list.push({
-                  value: acti.originalEntrees,
-                  date: today(dateStart),
-                })
-              } else {
-                list.push({
-                  value: null,
-                  date: today(dateStart),
-                })
-              }
+            const currentEntrees = await onCalculateEntrees()
+            if (currentEntrees !== undefined) {
+              list.push({ value: currentEntrees, date: today(dateStart) })
             }
           }
           break
         case 'sorties':
           {
-            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
-            if (activites.length) {
-              const acti = activites[0]
-              if (acti.sorties !== null) {
-                list.push({ value: acti.sorties, date: today(dateStart) })
-              } else if (acti.originalSorties !== null) {
-                list.push({
-                  value: acti.originalSorties,
-                  date: today(dateStart),
-                })
-              } else {
-                list.push({
-                  value: null,
-                  date: today(dateStart),
-                })
-              }
+            const currentSorties = await onCalculateSorties()
+            if (currentSorties !== undefined) {
+              list.push({ value: currentSorties, date: today(dateStart) })
             }
           }
           break
         case 'stock':
         case 'stocks':
           {
-            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
-            if (activites && activites.length) {
-              const acti = activites[0]
-              if (acti.stock !== null) {
-                list.push({ value: acti.stock, date: today(dateStart) })
-              } else if (acti.originalStock !== null) {
-                list.push({
-                  value: acti.originalStock,
-                  date: today(dateStart),
-                })
+            const currentStock = await onCalculateStock()
+            if (currentStock !== undefined) {
+              list.push({ value: currentStock, date: today(dateStart) })
+            } else if (list.length > 0 && getNbMonth(list[list.length - 1].date, dateStart) === 1) {
+              // le stock passé est bien celui du mois précédent
+              list.push({ value: 1, date: today(dateStart) })
+              console.log('stock passé')
+            } else if (list.length === 0) {
+              const lastMonth = month(dateStart, -1)
+              const lastMonthStock = await onCalculateStock(lastMonth)
+
+              if (lastMonthStock !== undefined) {
+                const lastMonthEntrees = (await onCalculateEntrees(lastMonth)) || 0
+                const lastMonthSorties = (await onCalculateSorties(lastMonth)) || 0
+                const lastMonthETPT = (await onCalculateETPT(lastMonth)) || 0
+
+                let estimateStock = lastMonthStock + lastMonthEntrees
+                if (categorySelected === 'magistrats') {
+                  estimateStock -= lastMonthETPT
+                } else if (categorySelected === 'fonctionnaires') {
+                  estimateStock -= lastMonthETPT
+                } else {
+                  estimateStock = null
+                }
+                list.push({ value: estimateStock, date: today(dateStart) })
+
+                console.log('list vide', lastMonthStock, lastMonthEntrees, lastMonthSorties, lastMonthETPT)
               } else {
-                list.push({
-                  value: null,
-                  date: today(dateStart),
-                })
+                console.log('stock passé du mois précédent n\'existe pas')
               }
+            } else {
+              console.log('stock non passé', list.length > 0)
             }
           }
           break
+        case 'etpt':
         case 'ETPTEam':
         case 'ETPTGreffe':
         case 'ETPTSiege':
           {
-            const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
-            const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
-            let newFonctions = fonctionsIds
-            if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
-              newFonctions = null
-            }
-
-            const categories = await this.models.HRCategories.getAll()
-
-            const etp = calculateETPForContentieux(
-              indexes,
-              {
-                start: dateStart,
-                end: endOfTheMonth,
-                category: undefined,
-                fonctions: newFonctions,
-                contentieux: contentieuxId,
-              },
-              categories,
-            )
-
-            let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
-            list.push({ value: type === 'ETPTSiege' ? etpMag : type === 'ETPTGreffe' ? etpFon : etpCon, date: today(dateStart) })
+            list.push({ value: await onCalculateETPT(), date: today(dateStart) })
           }
           break
         case 'dtes':
