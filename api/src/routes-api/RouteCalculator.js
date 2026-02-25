@@ -348,10 +348,50 @@ export default class RouteCalculator extends Route {
               false,
             )
 
-            list.push({
-              value: datas.list[0].realDTESInMonths,
-              date: today(dateStart),
-            })
+            console.log('datas.list[0].realDTESInMonths', datas.list[0].realDTESInMonths)
+            if (datas.list[0].realDTESInMonths !== null) {
+              list.push({
+                value: datas.list[0].realDTESInMonths,
+                date: today(dateStart),
+              })
+            } else {
+              const lastMonth = month(dateStart, -1)
+              const lastStock = list.length > 0 ? list[list.length - 1].value : await onCalculateStock(lastMonth, true)
+              const lastMonthEntrees = lockEntrees || (await onCalculateEntrees(dateStart, true)) || 0
+              const lastMonthSorties = lockSorties || (await onCalculateSorties(dateStart, true)) || 0
+              const etpt = (await onCalculateETPT()) || 0
+              const tempsMoyen = await onCalculateTempsMoyen()
+
+              // save datas for next month
+              if (lockEntrees === null) {
+                lockEntrees = lastMonthEntrees
+              }
+              if (lockSorties === null) {
+                lockSorties = lastMonthSorties
+              }
+
+              console.log('lastMonthEntrees', lastMonthEntrees)
+              console.log('lastMonthSorties', lastMonthSorties)
+              console.log('etpt', etpt)
+              console.log('tempsMoyen', tempsMoyen)
+              if (tempsMoyen !== Infinity) {
+                let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
+                if (categorySelected === 'magistrats') {
+                  estimateStock -= ((etpt * (config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat || 0) / tempsMoyen || 0)
+                } else if (categorySelected === 'fonctionnaires') {
+                  estimateStock -= ((etpt * (config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire || 0) / tempsMoyen || 0)
+                } else {
+                  estimateStock -= (lastMonthSorties || 0)
+                }
+
+                // control stock ne peut pas être négatif
+                if (estimateStock < 0) {
+                  estimateStock = 0
+                }
+
+                list.push({ value: estimateStock / lastMonthSorties, date: today(dateStart) })
+              }
+            }
           }
           break
         case 'temps-moyen':
