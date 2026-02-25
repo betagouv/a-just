@@ -316,6 +316,8 @@ export default class RouteCalculator extends Route {
                 // control stock ne peut pas être négatif
                 if (estimateStock < 0) {
                   estimateStock = 0
+                } else {
+                  estimateStock = Math.floor(estimateStock)
                 }
 
                 list.push({ value: estimateStock, date: today(dateStart) })
