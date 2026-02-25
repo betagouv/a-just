@@ -1,10 +1,12 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { getNbMonth, month, today } from '../utils/date'
+import { month, today } from '../utils/date'
 import { loadOrWarmHR } from '../utils/redis'
 import { fixDecimal } from '../utils/number'
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getEtpByCategory } from '../utils/simulator'
+import { meanBy } from 'lodash'
+import config from 'config'
 
 /**
  * Route des calculs de la page calcule
@@ -97,7 +99,14 @@ export default class RouteCalculator extends Route {
 
     // calcul de l'ETP pour un mois donnée
     const onCalculateETPT = async (date = dateStart) => {
-      const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
+      let localType = null
+      if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege'].includes(type)) {
+        localType = type
+      } else {
+        localType = categorySelected === 'magistrats' ? 'ETPTSiege' : (categorySelected === 'fonctionnaires' ? 'ETPTGreffe' : 'ETPTEam')
+      }
+
+      const catId = localType === 'ETPTSiege' ? 1 : localType === 'ETPTGreffe' ? 2 : 3
       const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
       let newFonctions = fonctionsIds
       if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
@@ -121,11 +130,11 @@ export default class RouteCalculator extends Route {
       )
 
       let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
-      return type === 'ETPTSiege' ? etpMag : type === 'ETPTGreffe' ? etpFon : etpCon
+      return localType === 'ETPTSiege' ? etpMag : localType === 'ETPTGreffe' ? etpFon : etpCon
     }
 
     // calcul du stock pour un mois donnée
-    const onCalculateStock = async (date = dateStart) => {
+    const onCalculateStock = async (date = dateStart, loop = false) => {
       const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
@@ -137,11 +146,27 @@ export default class RouteCalculator extends Route {
           return null
         }
       }
+
+      if (loop) {
+        let nbMonths = 12
+        let lastMonth = date
+        let valuesSaved = []
+        do {
+          nbMonths--
+          lastMonth = month(lastMonth, -1)
+          const lastMonthStock = await onCalculateStock(lastMonth, false)
+          if (lastMonthStock !== undefined) {
+            valuesSaved.push(lastMonthStock)
+          }
+        } while (nbMonths > 0)
+        return meanBy(valuesSaved) || 0
+      }
+
       return undefined
     }
 
     // calcul des entrées pour un mois donnée
-    const onCalculateEntrees = async (date = dateStart) => {
+    const onCalculateEntrees = async (date = dateStart, loop = false) => {
       const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
@@ -153,11 +178,27 @@ export default class RouteCalculator extends Route {
           return null
         }
       }
+
+      if (loop) {
+        let nbMonths = 12
+        let lastMonth = new Date(date)
+        let valuesSaved = []
+        do {
+          nbMonths--
+          lastMonth = month(lastMonth, -1)
+          const lastMonthEntrees = await onCalculateEntrees(lastMonth)
+          if (lastMonthEntrees !== undefined) {
+            valuesSaved.push(lastMonthEntrees)
+          }
+        } while (nbMonths > 0)
+        return meanBy(valuesSaved) || 0
+      }
+
       return undefined
     }
 
     // calcul des sorties pour un mois donnée
-    const onCalculateSorties = async (date = dateStart) => {
+    const onCalculateSorties = async (date = dateStart, loop = false) => {
       const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
@@ -169,10 +210,51 @@ export default class RouteCalculator extends Route {
           return null
         }
       }
+
+      if (loop) {
+        let nbMonths = 12
+        let lastMonth = date
+        let valuesSaved = []
+        do {
+          nbMonths--
+          lastMonth = month(lastMonth, -1)
+          const lastMonthSorties = await onCalculateSorties(lastMonth, false)
+          if (lastMonthSorties !== undefined) {
+            valuesSaved.push(lastMonthSorties)
+          }
+        } while (nbMonths > 0)
+        return meanBy(valuesSaved) || 0
+      }
+
       return undefined
     }
 
+    // calcul du temps moyen pour un mois donnée
+    const onCalculateTempsMoyen = async () => {
+      let endOfTheMonth = today(dateStart)
+      endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
+
+      const catId = categorySelected === 'magistrats' ? 1 : 2
+      const datas = await this.model.onCalculate(
+        {
+          backupId,
+          dateStart,
+          dateStop: endOfTheMonth,
+          contentieuxIds: [contentieuxId],
+          categorySelected: catId,
+          selectedFonctionsIds: fonctionsIds,
+          loadChildrens: false,
+        },
+        ctx.state.user,
+        false,
+      )
+
+      return datas.list[0].magRealTimePerCase || datas.list[0].fonRealTimePerCase
+    }
+
     const list = []
+    let lockEntrees = null
+    let lockSorties = null
 
     do {
       let endOfTheMonth = today(dateStart)
@@ -201,35 +283,43 @@ export default class RouteCalculator extends Route {
             const currentStock = await onCalculateStock()
             if (currentStock !== undefined) {
               list.push({ value: currentStock, date: today(dateStart) })
-            } else if (list.length > 0 && getNbMonth(list[list.length - 1].date, dateStart) === 1) {
-              // le stock passé est bien celui du mois précédent
-              list.push({ value: 1, date: today(dateStart) })
-              console.log('stock passé')
-            } else if (list.length === 0) {
-              const lastMonth = month(dateStart, -1)
-              const lastMonthStock = await onCalculateStock(lastMonth)
-
-              if (lastMonthStock !== undefined) {
-                const lastMonthEntrees = (await onCalculateEntrees(lastMonth)) || 0
-                const lastMonthSorties = (await onCalculateSorties(lastMonth)) || 0
-                const lastMonthETPT = (await onCalculateETPT(lastMonth)) || 0
-
-                let estimateStock = lastMonthStock + lastMonthEntrees
-                if (categorySelected === 'magistrats') {
-                  estimateStock -= lastMonthETPT
-                } else if (categorySelected === 'fonctionnaires') {
-                  estimateStock -= lastMonthETPT
-                } else {
-                  estimateStock = null
-                }
-                list.push({ value: estimateStock, date: today(dateStart) })
-
-                console.log('list vide', lastMonthStock, lastMonthEntrees, lastMonthSorties, lastMonthETPT)
-              } else {
-                console.log('stock passé du mois précédent n\'existe pas')
-              }
             } else {
-              console.log('stock non passé', list.length > 0)
+              const lastMonth = month(dateStart, -1)
+              const lastStock = list.length > 0 ? list[list.length - 1].value : await onCalculateStock(lastMonth, true)
+              const lastMonthEntrees = lockEntrees || (await onCalculateEntrees(dateStart, true)) || 0
+              const lastMonthSorties = lockSorties || (await onCalculateSorties(dateStart, true)) || 0
+              const etpt = (await onCalculateETPT()) || 0
+              const tempsMoyen = await onCalculateTempsMoyen()
+
+              // save datas for next month
+              if (lockEntrees === null) {
+                lockEntrees = lastMonthEntrees
+              }
+              if (lockSorties === null) {
+                lockSorties = lastMonthSorties
+              }
+
+              if (tempsMoyen === Infinity) {
+                list.push({ value: null, date: today(dateStart) })
+              } else {
+                let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
+                if (categorySelected === 'magistrats') {
+                  estimateStock -= ((etpt * (config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat || 0) / tempsMoyen || 0)
+                } else if (categorySelected === 'fonctionnaires') {
+                  estimateStock -= ((etpt * (config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire || 0) / tempsMoyen || 0)
+                } else {
+                  estimateStock -= (lastMonthSorties || 0)
+                }
+
+                // control stock ne peut pas être négatif
+                if (estimateStock < 0) {
+                  estimateStock = 0
+                } else {
+                  estimateStock = Math.floor(estimateStock)
+                }
+
+                list.push({ value: estimateStock, date: today(dateStart) })
+              }
             }
           }
           break
@@ -266,23 +356,8 @@ export default class RouteCalculator extends Route {
           break
         case 'temps-moyen':
           {
-            const catId = categorySelected === 'magistrats' ? 1 : 2
-            const datas = await this.model.onCalculate(
-              {
-                backupId,
-                dateStart,
-                dateStop: endOfTheMonth,
-                contentieuxIds: [contentieuxId],
-                categorySelected: catId,
-                selectedFonctionsIds: fonctionsIds,
-                loadChildrens: false,
-              },
-              ctx.state.user,
-              false,
-            )
-
             list.push({
-              value: catId === 1 ? datas.list[0].magRealTimePerCase : datas.list[0].fonRealTimePerCase,
+              value: await onCalculateTempsMoyen(),
               date: today(dateStart),
             })
           }
