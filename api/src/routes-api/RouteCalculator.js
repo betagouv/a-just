@@ -299,9 +299,11 @@ export default class RouteCalculator extends Route {
                 lockSorties = lastMonthSorties
               }
 
-              if (tempsMoyen === Infinity) {
-                list.push({ value: null, date: today(dateStart) })
-              } else {
+              console.log('lastMonthEntrees', lastMonthEntrees)
+              console.log('lastMonthSorties', lastMonthSorties)
+              console.log('etpt', etpt)
+              console.log('tempsMoyen', tempsMoyen)
+              if (tempsMoyen !== Infinity) {
                 let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
                 if (categorySelected === 'magistrats') {
                   estimateStock -= ((etpt * (config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat || 0) / tempsMoyen || 0)
@@ -314,8 +316,6 @@ export default class RouteCalculator extends Route {
                 // control stock ne peut pas être négatif
                 if (estimateStock < 0) {
                   estimateStock = 0
-                } else {
-                  estimateStock = Math.floor(estimateStock)
                 }
 
                 list.push({ value: estimateStock, date: today(dateStart) })
