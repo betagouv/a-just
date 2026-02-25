@@ -17,7 +17,7 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/test.sql.gz:/tmp/test.sql.gz:ro
       - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     command:
       - "postgres"
@@ -71,7 +71,7 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz:ro
+      - ./api/test/db/test.sql.gz:/tmp/test.sql.gz:ro
       - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     command:
       - "postgres"

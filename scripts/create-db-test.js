@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Script d'aide pour lire et anonymiser le dump de test `test_tmp.sql`.
+ * Script d'aide pour lire et anonymiser le dump de test `test.sql`.
  *
- * Par defaut le script lit `../api/test/db/test_tmp.sql` ou "../api/test/db/test_tmp.sql.gz", le decompresse si besoins
+ * Par defaut le script lit `../api/test/db/test.sql` ou "../api/test/db/test.sql.gz", le decompresse si besoins
  * et applique des regles d'anonymisation. Le
- * resultat est ecrit dans `../api/test/db/test_tmp.anonymized.sql`.
+ * resultat est ecrit dans `../api/test/db/test_anonymized.sql`.
  *
  * Usage :
  *   node scripts/create-db-test.js
@@ -19,8 +19,8 @@ const crypto = require("crypto");
 
 const findInputFile = () => {
   const dbDir = path.resolve(__dirname, "../api/test/db");
-  const gzFile = path.join(dbDir, "test_tmp.sql.gz");
-  const sqlFile = path.join(dbDir, "test_tmp.sql");
+  const gzFile = path.join(dbDir, "test.sql.gz");
+  const sqlFile = path.join(dbDir, "test.sql");
 
   if (fs.existsSync(gzFile)) {
     return gzFile;
@@ -33,7 +33,7 @@ const findInputFile = () => {
 const DEFAULT_INPUT = findInputFile();
 const DEFAULT_OUTPUT = path.resolve(
   __dirname,
-  "../api/test/db/test_tmp_anonymized.sql",
+  "../api/test/db/test_anonymized.sql",
 );
 
 // Seed for deterministic anonymization - ensures reproducible output
@@ -130,7 +130,7 @@ const hashEmail = (originalEmail, seed) => {
   return hash;
 };
 
-let isFirstBackup = true; // Track if we're processing the first backup
+let isBackupTestSet = false; // Track if we're processing the first backup
 let e2eBackupId = null;
 let attJPeopleFor2025 = []; // Collect real Att. J people with 2025 situations
 
@@ -155,11 +155,11 @@ const anonymizeLine = (line, theme, seed, hrBackupIds) => {
       break;
     case "HRBackups":
       // Keep first backup with fixed label for E2E tests, anonymize others
-      if (isFirstBackup) {
+      if (!isBackupTestSet && elements[4] === '\\N') {
         elements[1] = E2E_TEST_BACKUP_LABEL;
         e2eBackupId = elements[0]; // Capture E2E backup ID
         result = elements.join("\t");
-        isFirstBackup = false;
+        isBackupTestSet = true;
       } else {
         elements[1] = hashName(elements[1], seed);
         result = elements.join("\t");

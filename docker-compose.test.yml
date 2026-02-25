@@ -19,7 +19,7 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./api/test/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-      - ./api/test/db/test_tmp.sql.gz:/tmp/test_tmp.sql.gz
+      - ./api/test/db/test.sql.gz:/tmp/test.sql.gz
     command:
       - "postgres"
       - "-c"
@@ -74,7 +74,7 @@ services:
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
       - PORT=8080
-      
+
 networks:
   ajust_network:
     driver: bridge
