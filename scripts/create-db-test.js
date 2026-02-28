@@ -98,7 +98,7 @@ const blockThemesToAnonymize = [
   "Logs",
   "OptionsBackups",
 ];
-const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments"];
+const blockThemesToRemoveElems = ["Notifications", "Comments", "HRComments", "tokens"];
 
 const hashName = (originalName, seed) => {
   if (!originalName || typeof originalName !== "string") {
