@@ -1520,7 +1520,7 @@ export class ExcelService extends MainClass {
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: ['"Att. J Siège autres,Att. J Parquet"'],
+        formulae: ['"Att. J Siège autres,Att. J Siege Assises,Att. J Siege CCD,Att. J Parquet"'],
       }
     }
     return report
