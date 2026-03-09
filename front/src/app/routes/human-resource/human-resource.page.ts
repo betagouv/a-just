@@ -435,6 +435,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       const findIndispos = this.humanResourceService.findAllIndisponibilities(this.currentHR, currentDate)
       const findSituation = this.humanResourceService.findSituation(this.currentHR, currentDate)
 
+      console.log('--------------------------------')
+      console.log('currentDate', currentDate)
+      console.log('maxDate', maxDate)
+      console.log('findSituation', findSituation)
+      console.log('findIndispos', findIndispos)
+
       delta = findIndispos.map((f) => f.id)
       if (findSituation) {
         delta.push(findSituation.id)
@@ -452,8 +458,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           etp = null
         }
 
-        if (currentDateEnd && currentDateEnd.getTime() <= currentDate.getTime()) {
+        if (currentDateEnd && currentDateEnd.getTime() < currentDate.getTime()) {
           etp = 0
+        } else if (currentDateEnd && currentDateEnd.getTime() === currentDate.getTime()) {
+          etp = findSituation ? findSituation.etp : null
         }
 
         let id = (findSituation && findSituation.id) || -1
