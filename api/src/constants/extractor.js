@@ -516,6 +516,25 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
     recodedFunction: 'JA/AttJ Parquet',
     rank: 3,
   },
+  {
+    category_label: 'Autour du magistrat',
+    label: 'ATTACHÉ DE JUSTICE SIEGE ASSISES',
+    code: 'Att. J Siege Assises',
+    position: 'Contractuel',
+    category_detail: 'C',
+    recodedFunction: 'JA/AttJ Siège Assises',
+    rank: 2,
+  },
+  {
+    category_label: 'Autour du magistrat',
+    label: 'ATTACHÉ DE JUSTICE SIEGE CCD',
+    code: 'Att. J Siege CCD',
+    position: 'Contractuel',
+    category_detail: 'C',
+    recodedFunction: 'JA/AttJ Siège CCD',
+    rank: 2,
+  },
+
 
   {
     // CONT A JP
