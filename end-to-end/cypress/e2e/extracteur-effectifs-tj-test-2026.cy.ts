@@ -8,10 +8,9 @@ import {
   resetToDefaultPermissions,
 } from "../../support/api";
 import user from "../../fixtures/user.json";
-import { ta } from "zod/v4/locales";
 
-const START = "2026-01-01";
-const STOP = "2026-12-31";
+const START = "2025-01-01";
+const STOP = "2025-12-31";
 const BACKUP_LABEL = "TJ TEST";
 const CATEGORY = "Tous";
 
@@ -497,6 +496,17 @@ describe("Extraction effectifs TJ TEST 2026", () => {
         cmo: 0.2,
         absentReintegre: 0.2,
         etptGlobal: 1,
+      });
+    });
+  });
+
+  it("No Activity Period", () => {
+    readSheetContext().then((ctx) => {
+      assertAgentValues(ctx, "No-Activity-Period", "Extracteur", {
+        absent: 0.6705,
+        temps: 0.6705,
+        protection: 0.6705,
+        etptGlobal: 0.6705,
       });
     });
   });
