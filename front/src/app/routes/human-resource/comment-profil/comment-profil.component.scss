@@ -6,7 +6,6 @@
   }
 
   >div {
-    overflow-y: hidden;
     position: relative;
     display: block;
     border-radius: 8px;
@@ -189,5 +188,16 @@
         }
       }
     }
+  }
+}
+
+.info-tooltip {
+  margin-left: 4px;
+  position: relative;
+  display: inline-block;
+
+  aj-tooltips {
+    left: -8px;
+    position: relative;
   }
 }
