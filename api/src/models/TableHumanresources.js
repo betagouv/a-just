@@ -181,22 +181,22 @@ export default (sequelizeInstance, Model) => {
               dateStart: today(dateS),
               category: sit.HRCategory
                 ? {
-                    id: sit.HRCategory.id,
-                    rank: sit.HRCategory.rank,
-                    code: sit.HRCategory.code,
-                    label: sit.HRCategory.label,
-                  }
+                  id: sit.HRCategory.id,
+                  rank: sit.HRCategory.rank,
+                  code: sit.HRCategory.code,
+                  label: sit.HRCategory.label,
+                }
                 : null,
               fonction: sit.HRFonction
                 ? {
-                    id: sit.HRFonction.id,
-                    rank: sit.HRFonction.rank,
-                    code: sit.HRFonction.code,
-                    label: sit.HRFonction.label,
-                    category_detail: sit.HRFonction.category_detail,
-                    position: sit.HRFonction.position,
-                    calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
-                  }
+                  id: sit.HRFonction.id,
+                  rank: sit.HRFonction.rank,
+                  code: sit.HRFonction.code,
+                  label: sit.HRFonction.label,
+                  category_detail: sit.HRFonction.category_detail,
+                  position: sit.HRFonction.position,
+                  calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
+                }
                 : null,
               activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
                 act = act.dataValues
@@ -305,7 +305,7 @@ export default (sequelizeInstance, Model) => {
     const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
     const notImported = ['PPI', 'ADJ', 'MHFNJ', 'MTT', 'MRES']
     const filterNoEtpt = ['AS', 'JA']
-    const privilegedInGreff = ['CONT A JP', 'CONT A VIF JP', 'CONT B JP', 'CONT B VIF JP', 'CONT C JP', 'CONT C VIF JP']
+    const privilegedInGreff = ['CONT A JP', 'CONT A VIF JP', 'ATT-A', 'ATJ', 'AS'] // suppresion de 'CONT B JP', 'CONT B VIF JP', 'CONT C JP', 'CONT C VIF JP' sur demande de Sabine
     const findEAM = await Model.models.HRCategories.findOne({
       where: {
         label: 'Autour du magistrat',
@@ -373,7 +373,9 @@ export default (sequelizeInstance, Model) => {
                 code = list[i].grade
                 break
             }
-          } else situation.category_id = findCategory.id
+          } else {
+            situation.category_id = findCategory.id
+          }
         }
 
         let findHRToDBByMatricule = await Model.findOne({
