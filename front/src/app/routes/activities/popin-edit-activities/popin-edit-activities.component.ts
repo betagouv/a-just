@@ -530,7 +530,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         (((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null) || !this.updates[`${contentieux.id}-stock`]) &&
           contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] || this.updates[`${contentieux.id}-sorties`]) &&
-      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
+      (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY || contentieux.stock !== null)
     ) {
       updateTotal = true
 
@@ -781,8 +781,12 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         } else if (cont.out !== null) return true
         break
       case 'stock':
+        if (cont.label === 'Référés') {
+          console.log('UPDATE:', this.updates[`${cont.id}-${node}`])
+          console.log('Contentieux:', cont)
+        }
         if (this.updates[`${cont.id}-${node}`]) {
-          if (this.updates[`${cont.id}-${node}`].value === null) return false
+          if (this.updates[`${cont.id}-${node}`].value === null /*&& cont.stock === null*/) return false
           return true
         } else if (cont.stock !== null) return true
         break
@@ -802,8 +806,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
       cont.stock !== null &&
       (!cont.activityUpdated ||
         (cont.activityUpdated && !cont.activityUpdated.stock) ||
-        (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) /*||
-      cont.stock === null*/
+        (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null))
     ) {
       return true
     }
@@ -961,42 +964,24 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
           if ((this.total.stock.updated || this.isValueUpdated({ cont, node })) && this.CheckIfChildrenAreUpdated(cont, node)) return true
           return false
         } else if (this.isValueUpdated({ cont, node })) {
-          /*
-           * A supprimer après validation des modifications
-           */
-          // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
-          // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
-          /*if (
-            (this.isValueToVerifySetted({
-              value: this.updates[`${cont.id}-entrees`]
-                ? this.updates[`${cont.id}-entrees`].value
-                : cont.in,
-              contentieux: cont,
-              node: 'entrees',
-            }) ||
-              this.isValueToVerifySetted({
-                value: this.updates[`${cont.id}-sorties`]
-                  ? this.updates[`${cont.id}-sorties`].value
-                  : cont.out,
-                contentieux: cont,
-                node: 'sorties',
-              })) &&
-            this.updates[`${cont.id}-stock`] &&
-            this.updates[`${cont.id}-stock`].value === cont.originalStock &&
-            this.isStockCalculated(cont) &&
-            !isForBulbOrBottom
-          )
-            return true;
-          //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel),
-          // Et que ce n'est pas une valeur de stock saisie (càd: je saisie une valeur de stock égale à la valeur logiciel. Dans ce cas on doit imprimer la valeur en bleu)
-          else */ if (
+          console.log('isForBulbOrBottom:', isForBulbOrBottom)
+          console.log('this.updates=', this.updates[`${cont.id}-stock`])
+          console.log('isStockCalculated:', this.isStockCalculated(cont))
+
+          if (
+            // !isForBulbOrBottom &&
             this.updates[`${cont.id}-stock`] &&
             this.updates[`${cont.id}-stock`].value === cont.originalStock &&
             !this.updates[`${cont.id}-stock`].setted
-          )
+          ) {
+            // if (cont.valueQualityStock === VALUE_QUALITY_TO_VERIFY && this.updates[`${cont.id}-stock`].value === cont.originalStock) {
+            //   return true
+            // }
             return false
-          if (isForBulbOrBottom && this.isStockCalculated(cont)) return false
-          else if (cont.stock !== cont.originalStock) return true
+          }
+          if (isForBulbOrBottom && this.isStockCalculated(cont)) {
+            return false
+          } else if (cont.stock !== cont.originalStock) return true
           return true
         }
         break
