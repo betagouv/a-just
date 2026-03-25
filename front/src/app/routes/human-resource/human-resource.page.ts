@@ -496,7 +496,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories.length &&
       currentDateEnd &&
       !this.histories[this.histories.length - 1].dateStop &&
-      this.histories[this.histories.length - 1].dateStart.getTime() < currentDateEnd.getTime()
+      this.histories[this.histories.length - 1].dateStart.getTime() <= currentDateEnd.getTime()
     ) {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
