@@ -369,6 +369,10 @@ export default (sequelizeInstance, Model) => {
               case 'CONT C VIF JP':
                 code = 'CONT C JP'
                 break
+              case 'ATT-A':
+              case 'ATJ':
+                code = 'Att. J'
+                break
               default:
                 code = list[i].grade
                 break
