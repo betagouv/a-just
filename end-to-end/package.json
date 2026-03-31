@@ -15,12 +15,12 @@
     "cy-verify-downloads": "^0.2.6",
     "dotenv": "^16.4.7",
     "install": "^0.13.0",
-    "npm": "^11.0.0"
+    "npm": "^11.12.1"
   },
   "devDependencies": {
     "cypress": "^13.17.0",
-    "cypress-mochawesome-reporter": "^3.8.2",
-    "xlsx": "^0.18.5",
-    "typescript": "~5.5.2"
+    "cypress-mochawesome-reporter": "^4.0.2",
+    "typescript": "~5.5.2",
+    "xlsx": "^0.18.5"
   }
 }

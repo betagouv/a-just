@@ -48,6 +48,7 @@
     "@compodoc/compodoc": "^1.2.1",
     "@ngx-env/builder": "^21.0.1",
     "@types/jasmine": "~5.1.0",
+    "cypress-mochawesome-reporter": "^4.0.2",
     "jasmine-core": "~5.6.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "~3.2.0",
