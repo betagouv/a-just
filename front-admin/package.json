@@ -12,17 +12,17 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^20.1.2",
+    "@angular/animations": "^21.2.6",
     "@angular/cdk": "^20.1.2",
-    "@angular/common": "^20.1.2",
-    "@angular/compiler": "^20.1.2",
-    "@angular/core": "^20.1.2",
-    "@angular/forms": "^20.1.2",
+    "@angular/common": "^21.2.6",
+    "@angular/compiler": "^21.2.6",
+    "@angular/core": "^21.2.6",
+    "@angular/forms": "^21.2.6",
     "@angular/material": "^20.1.2",
     "@angular/material-moment-adapter": "^20.1.2",
-    "@angular/platform-browser": "^20.1.2",
-    "@angular/platform-browser-dynamic": "^20.1.2",
-    "@angular/router": "^20.1.2",
+    "@angular/platform-browser": "^21.2.6",
+    "@angular/platform-browser-dynamic": "^21.2.6",
+    "@angular/router": "^21.2.6",
     "@types/file-saver": "^2.0.7",
     "@types/lodash": "^4.17.13",
     "file-saver": "^2.0.5",
@@ -42,7 +42,7 @@
     "chokidar": "4.0.3"
   },
   "devDependencies": {
-    "@angular/build": "^20.1.1",
+    "@angular/build": "^21.2.5",
     "@angular/cli": "^21.2.5",
     "@angular/compiler-cli": "^21.2.6",
     "@compodoc/compodoc": "^1.2.1",
@@ -55,6 +55,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "sass-migrator": "^2.3.3",
-    "typescript": "^6.0.2"
+    "typescript": "^5.9.3"
   }
 }
