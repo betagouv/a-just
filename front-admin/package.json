@@ -43,9 +43,10 @@
   },
   "devDependencies": {
     "@angular/build": "^20.1.1",
-    "@angular/cli": "^20.1.1",
-    "@angular/compiler-cli": "^20.1.2",
-    "@ngx-env/builder": "^20.1.0",
+    "@angular/cli": "^21.2.5",
+    "@angular/compiler-cli": "^21.2.6",
+    "@compodoc/compodoc": "^1.2.1",
+    "@ngx-env/builder": "^21.0.1",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
@@ -54,7 +55,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "sass-migrator": "^2.3.3",
-    "typescript": "~5.8.3",
-    "@compodoc/compodoc": "^1.1.26"
+    "typescript": "~5.8.3"
   }
 }
