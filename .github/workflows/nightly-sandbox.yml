@@ -70,7 +70,7 @@ jobs:
 
       - name: Upload Mocha test reports (.json and .html)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mocha-report
           path: ./api/test/reports
@@ -180,21 +180,21 @@ jobs:
 
       - name: Upload Logs if tests failed
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: e2e-docker-logs
           path: ./end-to-end/logs
 
       - name: Upload Cypress video
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
 
       - name: Upload Cypress screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-screenshots
           path: ./end-to-end/cypress/screenshots
@@ -202,7 +202,7 @@ jobs:
 
       - name: Upload Cypress test reports and Mochawesome reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-reports
           path: |
@@ -348,21 +348,21 @@ jobs:
 
       - name: Upload Logs if tests failed (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: e2e-docker-logs
           path: ./end-to-end/logs
 
       - name: Upload Cypress video (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-video-nonreg
           path: ./candidate-code/end-to-end/cypress/videos
 
       - name: Upload Cypress screenshots (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-screenshots-nonreg
           path: ./candidate-code/end-to-end/cypress/screenshots
@@ -370,7 +370,7 @@ jobs:
 
       - name: Upload Cypress test reports (nonreg)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-reports-nonreg
           path: |
@@ -652,7 +652,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./site
 
