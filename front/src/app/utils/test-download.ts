@@ -1,19 +1,19 @@
 // Test-only helper to expose downloaded buffers to Cypress when saveAs is blocked
 // Safe no-op in production.
 
-export function exposeDownloadToCypress(
-  buffer: ArrayBuffer | Uint8Array | Blob,
-  filename: string
-): void {
+export function exposeDownloadToCypress(buffer: any, filename: string): void {
   try {
-    const w = (window as any)
+    const w = window as any
     if (!w || !w.Cypress) return
 
     let blob: Blob
     if (buffer instanceof Blob) {
       blob = buffer
     } else if (buffer instanceof Uint8Array) {
-      blob = new Blob([buffer])
+      // Copy to ensure the underlying buffer is an ArrayBuffer (not SharedArrayBuffer)
+      const safe = new Uint8Array(buffer.byteLength)
+      safe.set(buffer)
+      blob = new Blob([safe])
     } else {
       blob = new Blob([new Uint8Array(buffer)])
     }
@@ -36,7 +36,7 @@ export function exposeDownloadToCypress(
 // Returns the provided defaultMs if nothing is configured.
 export function getE2EExportMaxMs(defaultMs: number): number {
   try {
-    const w = (window as any)
+    const w = window as any
     const fromWin = Number(w && w.__AJ_E2E_EXPORT_MAX_MS)
     if (Number.isFinite(fromWin) && fromWin > 0) return fromWin
   } catch {}
