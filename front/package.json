@@ -16,9 +16,9 @@
     "format:html": "node format-angular-templates.js",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,js,json}\"",
     "format:angular": "node format-angular-templates.js",
-    "compodoc:build": "compodoc -p tsconfig.doc.json",
-    "compodoc:build-and-serve": "compodoc -p tsconfig.doc.json -s",
-    "compodoc:serve": "compodoc -s"
+    "compodoc:build": "npx @compodoc/compodoc -p tsconfig.doc.json",
+    "compodoc:build-and-serve": "npx @compodoc/compodoc -p tsconfig.doc.json -s",
+    "compodoc:serve": "npx @compodoc/compodoc -s"
   },
   "private": true,
   "dependencies": {
@@ -33,7 +33,6 @@
     "@angular/platform-browser": "^21.2.6",
     "@angular/platform-browser-dynamic": "^21.2.6",
     "@angular/router": "^21.2.6",
-    "@compodoc/compodoc": "^1.2.1",
     "@juggle/resize-observer": "^3.4.0",
     "@ngx-env/builder": "^19.0.4",
     "@sentry/browser": "^8.55.0",
@@ -59,6 +58,7 @@
     "rxjs": "~7.8.0",
     "toastr": "^2.1.4",
     "tslib": "^2.3.0",
+    "uninstall": "^0.0.0",
     "uuid": "^11.0.2",
     "xlsx": "^0.18.5",
     "xlsx-renderer": "^2.4.7",
