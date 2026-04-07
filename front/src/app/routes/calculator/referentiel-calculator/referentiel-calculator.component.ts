@@ -19,8 +19,6 @@ import { RouterModule } from '@angular/router'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
 import { findHelpCenter } from '../../../utils/help-center'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
-import { RHActivityInterface } from '../../../interfaces/rh-activity'
-import { sumBy } from 'lodash'
 import { AppService } from '../../../services/app/app.service'
 import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
@@ -490,7 +488,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     let refDate = new Date(this.calculatorService.dateStart.value || new Date())
     const endDate = addMonths(refDate, nbMonths * 2 + 1)
     const lastDatesChartJS = []
-    const nextDatesChartJS = []
+    const nextDatesChartJS: any[] = []
     let index = 0
     do {
       labels.push(refDate.getFullYear() + ' ' + this.getShortMonthString(refDate))
@@ -592,7 +590,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       {
         // datas before
         ...defaultDataset,
-        data: lastDatesChartJS.map((v) => (v === null ? NaN : v)),
+        data: lastDatesChartJS.map((v, index) => (v === null || (nextDatesChartJS.length - 1 > index && nextDatesChartJS[index] === v) ? NaN : v)),
         fill: {
           target: 'origin',
           above: secondaryColor, // Area will be red above the origin
@@ -605,6 +603,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         data: nextDatesChartJS.map((v) => (v === null ? NaN : v)),
       },
     ]
+    console.log('datasets', datasets)
 
     this.projectionChart.config.data = {
       labels,
