@@ -39,8 +39,9 @@
     @if (!isSoutien(calculator.contentieux.id)) {
     <div class="block">
       @if (calculator.realDTESInMonths !== null && checkPastDate()) {
-      @if (calculator.realCoverageBf !==null && calculator.realCoverageAf !== null && calculator.realCoverageBf
-      > calculator.realCoverageAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
+      @if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
+      calculator.realDTESInMonthsStart
+      < calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
       @else { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
       <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
@@ -292,14 +293,15 @@
           @if(cockpitWarningInformations.activity.noDataToSubContentieuxDuring12Month) {
           <div class="blue">
             <span>Fraîcheur</span>
-            <p>Il n'y a aucune donnée renseignée sur ces sous-contentieux de ce contentieux pour les 12 derniers mois.
+            <p>Il n'y a aucune donnée renseignée sur ce contentieux pour les 12 derniers mois.
             </p>
           </div>
           }
           @if(cockpitWarningInformations.activity.lessOneOfDatasToSubContentieux) {
           <div class="orange">
             <span>Hétérogénéité des données</span>
-            <p>Il n'y a aucune donnée, de sortie, de stock dans au moins un des sous-contentieux de ce contentieux.
+            <p>Il n'y a aucune donnée d'entrée, de sortie et de stock dans au moins un des sous-contentieux de ce
+              contentieux pour les 12 derniers mois.
             </p>
           </div>
           }

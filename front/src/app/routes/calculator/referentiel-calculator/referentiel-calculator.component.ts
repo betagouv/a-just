@@ -590,7 +590,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       {
         // datas before
         ...defaultDataset,
-        data: lastDatesChartJS.map((v, index) => (v === null || (nextDatesChartJS.length - 1 > index && nextDatesChartJS[index] === v) ? NaN : v)),
+        data: lastDatesChartJS.map((v) => (v === null ? NaN : v)),
         fill: {
           target: 'origin',
           above: secondaryColor, // Area will be red above the origin
