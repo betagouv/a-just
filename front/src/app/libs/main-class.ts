@@ -188,7 +188,7 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getShortMonthString(date: Date | undefined | null): string {
+  public getShortMonthString(date: Date | undefined | null | string): string {
     return date ? getShortMonthString(date) : ''
   }
 

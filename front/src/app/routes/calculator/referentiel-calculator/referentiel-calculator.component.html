@@ -279,8 +279,9 @@
         </div>
         <div class="popin-alert-content-body-info"
           [ngClass]="{'warning': cockpitWarningInformations.activity.dataNotUpdatedBefore12Month}">
-          <p>Dernière mise à jour : @if(currentProjection.lastActivityUpdatedAt) {<span>{{
-              currentProjection.lastActivityUpdatedAt | date: 'dd/MM/yyyy' }}</span>} @else {<span>Inconnue</span>}</p>
+          <p>Dernier mois disponible : @if(currentProjection.lastActivityUpdatedAt) {<span>{{
+              getShortMonthString(currentProjection.lastActivityUpdatedAt) }} {{
+              currentProjection.lastActivityUpdatedAt | date: 'yyyy' }}</span>} @else {<span>Inconnue</span>}</p>
         </div>
         <div class="popin-alert-content-body-messages">
           @if(!parentCalculator) {
