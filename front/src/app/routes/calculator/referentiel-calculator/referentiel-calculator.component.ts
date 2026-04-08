@@ -430,6 +430,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       return
     }
 
+    console.log('showChartJS', this.chartjs, this.chartjs.nativeElement)
+
     const mainColor = this.userService.referentielMappingColorActivityByInterface(
       this.userService.referentielMappingNameByInterface(
         (this.parentCalculator || this.currentProjection)?.contentieux.label === 'Autres activités'
@@ -511,45 +513,45 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     } while (month(refDate).getTime() <= month(endDate).getTime())
 
     // init chart.js
-    if (!this.projectionChart) {
-      const gradientPlugin = {
-        id: 'chartAreaGradient',
-        beforeDraw(chart: Chart) {
-          const { ctx, chartArea: area } = chart
-          if (!area) return
-          const gradient = ctx.createLinearGradient(0, area.top, 0, area.bottom)
-          gradient.addColorStop(0, secondaryColor)
-          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
-          ctx.save()
-          ctx.fillStyle = gradient
-          ctx.fillRect(area.left, area.top, area.right - area.left, area.bottom - area.top)
-          ctx.restore()
-        },
-      }
-      const config: any = {
-        type: 'line',
-        data: {
-          label: [],
-          datasets: [],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: {
-            padding: { left: 8, right: 8, top: 8, bottom: 8 },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-            title: false,
-          },
-        },
-        plugins: [gradientPlugin],
-      }
-      this.projectionChart = new Chart(this.chartjs.nativeElement as ChartItem, config)
+    const gradientPlugin = {
+      id: 'chartAreaGradient',
+      beforeDraw(chart: Chart) {
+        const { ctx, chartArea: area } = chart
+        if (!area) return
+        const gradient = ctx.createLinearGradient(0, area.top, 0, area.bottom)
+        gradient.addColorStop(0, secondaryColor)
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
+        ctx.save()
+        ctx.fillStyle = gradient
+        ctx.fillRect(area.left, area.top, area.right - area.left, area.bottom - area.top)
+        ctx.restore()
+      },
     }
+    const config: any = {
+      type: 'line',
+      data: {
+        label: [],
+        datasets: [],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: { left: 8, right: 8, top: 8, bottom: 8 },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          title: false,
+        },
+      },
+      plugins: [gradientPlugin],
+    }
+    this.projectionChart?.destroy()
+    this.projectionChart = new Chart(this.chartjs.nativeElement as ChartItem, config)
 
+    const tooltipSeenValues = new Set<string>()
     const options: any = {
       responsive: true,
       maintainAspectRatio: false,
@@ -561,6 +563,21 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           display: false,
         },
         title: false,
+        tooltip: {
+          callbacks: {
+            beforeBody: () => {
+              tooltipSeenValues.clear()
+              return ''
+            },
+            label: (context: any) => {
+              const value = `${context?.formattedValue ?? ''}`.trim()
+              if (!value) return null as any
+              if (tooltipSeenValues.has(value)) return null as any
+              tooltipSeenValues.add(value)
+              return value
+            },
+          },
+        },
       },
       scales: {
         y: {
