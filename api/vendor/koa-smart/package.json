@@ -70,7 +70,7 @@
     "eslint": "^5.16.0",
     "expect": "^24.8.0",
     "mocha": "^6.1.4",
-    "nodemon": "^1.19.2",
+    "nodemon": "^3.1.14",
     "prettier-eslint": "^8.8.2",
     "rimraf": "^2.6.3",
     "source-map-loader": "^0.2.4",
