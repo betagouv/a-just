@@ -288,13 +288,15 @@
           @if(cockpitWarningInformations.activity.dataNotUpdatedBefore12Month) {
           <div class="blue">
             <span>Fraîcheur</span>
-            <p>Il n'y a aucune donnée renseignée sur ce contentieux pour les 12 derniers mois.</p>
+            <p>Il n'y a aucune donnée renseignée sur ce contentieux pour les 12 derniers mois à partir d'aujourd'hui.
+            </p>
           </div>
           }
           @if(cockpitWarningInformations.activity.noDataToSubContentieuxDuring12Month) {
           <div class="blue">
             <span>Fraîcheur</span>
-            <p>Il n'y a aucune donnée renseignée sur ce contentieux pour les 12 derniers mois.
+            <p>Il n'y a aucune donnée renseignée sur ce contentieux pour les 12 derniers mois à partir du dernier mois
+              disponible.
             </p>
           </div>
           }
@@ -302,7 +304,7 @@
           <div class="orange">
             <span>Hétérogénéité des données</span>
             <p>Il n'y a aucune donnée d'entrée, de sortie et de stock dans au moins un des sous-contentieux de ce
-              contentieux pour les 12 derniers mois.
+              contentieux pour les 12 derniers mois à partir du dernier mois disponible.
             </p>
           </div>
           }
@@ -310,7 +312,7 @@
           <div class="orange">
             <span>Hétérogénéité des données</span>
             <p>Des données d'activité manquantes dans l'un des sous-contentieux ont été complétées sur certains des 12
-              derniers mois mis à jour mais pas sur tous.</p>
+              derniers mois à partir du dernier mois disponible mais pas sur tous.</p>
           </div>
           }
           } @else {

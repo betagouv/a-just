@@ -103,7 +103,7 @@ export function today(date: Date | null | undefined = new Date()): Date {
  * @param lastDay prendre le dernier jour du mois
  * @returns
  */
-export function month(date: Date | null = new Date(), monthToAdd?: number, lastDay?: string) {
+export function month(date: Date | null | string = new Date(), monthToAdd?: number, lastDay?: string) {
   date = date ? new Date(date) : new Date()
 
   if (lastDay) {

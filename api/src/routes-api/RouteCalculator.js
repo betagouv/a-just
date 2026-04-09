@@ -46,6 +46,7 @@ export default class RouteCalculator extends Route {
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
       loadChildrens: Types.boolean(),
+      log: Types.boolean(),
     }),
     accesses: [Access.canVewCalculator],
   })
@@ -56,7 +57,9 @@ export default class RouteCalculator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    this.sendOk(ctx, await this.model.onCalculate(this.body(ctx), ctx.state.user))
+    console.log('this.body(ctx)', this.body(ctx))
+
+    this.sendOk(ctx, await this.model.onCalculate(this.body(ctx), ctx.state.user, this.body(ctx).log === false ? false : true))
   }
 
   /**

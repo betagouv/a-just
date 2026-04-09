@@ -818,6 +818,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
     console.time('Calculator-global')
+    console.log('LOG', log)
 
     dateStart = today(dateStart)
     dateStop = today(dateStop)
