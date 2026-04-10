@@ -951,41 +951,60 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-    const update = this.updates[`${cont.id}-${node}`]
     // if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) return false
+    const update = this.updates[`${cont.id}-${node}`]
     switch (node) {
       case 'entrees':
         if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.originalIn === null && update?.value === null) {
+          if (cont.originalIn === null && update && update?.value === null) {
             return false
           }
-          if (cont.in !== null || cont.originalIn !== null || (update && update.value)) return true
-        } else if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.in !== null || update?.value !== null) {
+          if (cont.in !== null || cont.originalIn !== null || (update && update.value)) {
             return true
           }
-        } else if (cont.in !== null) return true
+        } else if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
+          if (update && update?.value === null) {
+            return false
+          }
+          if (cont.in !== null || (update && update.value !== null)) {
+            return true
+          }
+        } else if (cont.in !== null) {
+          return true
+        }
         break
       case 'sorties':
         if (cont.valueQualityOut === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.originalOut === null && update?.value === null) {
+          if (cont.originalOut === null && update && update?.value === null) {
             return false
           }
-          if (cont.out !== null || cont.originalOut !== null || (update && update.value)) return true
+          if (cont.out !== null || cont.originalOut !== null || (update && update.value)) {
+            return true
+          }
         } else if (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.out !== null || update?.value !== null) return true
+          if (update && update?.value === null) {
+            return false
+          }
+          if (cont.out !== null || (update && update.value !== null)) {
+            return true
+          }
         } else if (cont.out !== null) {
           return true
         }
         break
       case 'stock':
         if (cont.valueQualityStock === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.originalStock === null && update?.value === null) {
+          if (cont.originalStock === null && update && update?.value === null) {
             return false
           }
-          if (cont.stock !== null || cont.originalStock !== null || (update && update?.value)) return true
+          if (cont.stock !== null || cont.originalStock !== null || (update && update?.value)) {
+            return true
+          }
         } else if (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.stock !== null || update?.value !== null) {
+          if (update && update?.value === null) {
+            return false
+          }
+          if (cont.stock !== null || (update && update?.value !== null)) {
             return true
           }
         } else if (cont.stock !== null) {
