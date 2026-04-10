@@ -1,5 +1,0 @@
---require ts-node/register
---recursive
---project tsconfig.json
-./test/**/*.spec.ts
---timeout 10000
