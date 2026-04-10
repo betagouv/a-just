@@ -486,19 +486,24 @@ export default (sequelizeInstance, Model) => {
                 currentStock = originalStock
               }
             } else {
-              // Repartir du stock original du mois courant, même s'il vaut null.
+              const isOriginalStockNull = originalStock === null
+
+              // Repartir du stock original du mois courant
               currentStock = originalStock
 
-              if (entrees !== null) {
-                currentStock += entrees || 0
-              } else if (originalEntrees !== null && sorties !== null) {
-                currentStock += originalEntrees || 0
-              }
+              // Si le stock logiciel est null, on ne recalcule pas le stock.
+              if (!isOriginalStockNull) {
+                if (entrees !== null) {
+                  currentStock += entrees || 0
+                } else if (originalEntrees !== null && sorties !== null) {
+                  currentStock += originalEntrees || 0
+                }
 
-              if (sorties !== null) {
-                currentStock -= sorties || 0
-              } else if (originalSorties !== null && entrees !== null) {
-                currentStock -= originalSorties || 0
+                if (sorties !== null) {
+                  currentStock -= sorties || 0
+                } else if (originalSorties !== null && entrees !== null) {
+                  currentStock -= originalSorties || 0
+                }
               }
             }
 
