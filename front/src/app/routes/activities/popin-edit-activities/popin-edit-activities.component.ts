@@ -591,7 +591,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         (((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null) || !this.updates[`${contentieux.id}-stock`]) &&
           contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] || this.updates[`${contentieux.id}-sorties`]) &&
-      (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY || contentieux.stock !== null)
+      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
     ) {
       updateTotal = true
 
@@ -951,32 +951,41 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   }
 
   hasValue(cont: ContentieuReferentielInterface, node: string) {
-    if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) return false
+    const update = this.updates[`${cont.id}-${node}`]
+    // if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) return false
     switch (node) {
       case 'entrees':
         if (cont.valueQualityIn === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.in !== null || cont.originalIn !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value)) return true
+          if (cont.originalIn === null && update?.value === null) {
+            return false
+          }
+          if (cont.in !== null || cont.originalIn !== null || (update && update.value)) return true
         } else if (cont.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.in !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
+          if (cont.in !== null || update?.value !== null) {
             return true
           }
         } else if (cont.in !== null) return true
         break
       case 'sorties':
         if (cont.valueQualityOut === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.out !== null || cont.originalOut !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value)) return true
+          if (cont.originalOut === null && update?.value === null) {
+            return false
+          }
+          if (cont.out !== null || cont.originalOut !== null || (update && update.value)) return true
         } else if (cont.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.out !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) return true
+          if (cont.out !== null || update?.value !== null) return true
         } else if (cont.out !== null) {
           return true
         }
         break
       case 'stock':
         if (cont.valueQualityStock === this.VALUE_QUALITY_TO_COMPLETE) {
-          if (cont.stock !== null || cont.originalStock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value))
-            return true
+          if (cont.originalStock === null && update?.value === null) {
+            return false
+          }
+          if (cont.stock !== null || cont.originalStock !== null || (update && update?.value)) return true
         } else if (cont.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) {
-          if (cont.stock !== null || (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value !== null)) {
+          if (cont.stock !== null || update?.value !== null) {
             return true
           }
         } else if (cont.stock !== null) {
@@ -1025,7 +1034,9 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
           }
           if (isForBulbOrBottom && this.isStockCalculated(cont)) {
             return false
-          } else if (cont.stock !== cont.originalStock) return true
+          } else if (cont.stock !== cont.originalStock) {
+            return true
+          }
           return true
         }
         break
