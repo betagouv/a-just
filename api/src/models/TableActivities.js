@@ -448,6 +448,7 @@ export default (sequelizeInstance, Model) => {
             periode,
             entrees,
             sorties,
+            stock,
             original_entrees: originalEntrees,
             original_sorties: originalSorties,
             original_stock: originalStock,
@@ -461,8 +462,13 @@ export default (sequelizeInstance, Model) => {
           const canAutoUpdateStock = !getUserUpdateStock || getUserUpdateStock.value === null
 
           // do not update if updated by user
-          if (canAutoUpdateStock) {// && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
+          if (canAutoUpdateStock) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(contentieuxId, date, hrBackupId)
+            const isStockToVerify = contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY
+            const hasAdjustedMovements = entrees !== null || sorties !== null
+            const hasCalculatedPreviousStock = previousStockValue?.type === 'calculate'
+
+
 
             if (previousStockValue !== null) {
               // Si il y a un stock sur le mois précédent:
@@ -487,12 +493,13 @@ export default (sequelizeInstance, Model) => {
               }
             } else {
               const isOriginalStockNull = originalStock === null
+              const shouldRecalculateWithoutPreviousStock = !isStockToVerify && !isOriginalStockNull
 
-              // Repartir du stock original du mois courant
+              // Sans stock sur le mois précédent, un stock « à vérifier » ne doit pas être recalculé.
+              // On ne recalcule qu'à partir du stock logiciel si celui-ci existe.
               currentStock = originalStock
 
-              // Si le stock logiciel est null, on ne recalcule pas le stock.
-              if (!isOriginalStockNull) {
+              if (shouldRecalculateWithoutPreviousStock) {
                 if (entrees !== null) {
                   currentStock += entrees || 0
                 } else if (originalEntrees !== null && sorties !== null) {
@@ -506,10 +513,6 @@ export default (sequelizeInstance, Model) => {
                 }
               }
             }
-
-            const isStockToVerify = contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY
-            const hasAdjustedMovements = entrees !== null || sorties !== null
-            const hasCalculatedPreviousStock = previousStockValue?.type === 'calculate'
 
             // Si le stock calculé est égal au stock original, on le remet à null
             // sauf pour les stocks « à vérifier » avec des mouvements (entrées/sorties)
