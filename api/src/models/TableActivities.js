@@ -239,7 +239,6 @@ export default (sequelizeInstance, Model) => {
 
     for (let i = 0; i < activities.length; i++) {
       const periode = new Date(activities[i].periode)
-      //console.log('try =>', i + '/' + activities.length)
 
       const duplicateActivities = await Model.findAll({
         where: {
@@ -442,75 +441,84 @@ export default (sequelizeInstance, Model) => {
 
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
-          let currentStock = findAllChild[i].stock
-          // if exist stock and is updated by user do not get previous stock
-          const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
+          const activity = findAllChild[i]
+          const {
+            id: activityId,
+            contentieux_id: contentieuxId,
+            periode,
+            entrees,
+            sorties,
+            original_entrees: originalEntrees,
+            original_sorties: originalSorties,
+            original_stock: originalStock,
+          } = activity
 
-          const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
+          let currentStock = activity.stock
+          // if exist stock and is updated by user do not get previous stock
+          const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'stock')
+
+          const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(contentieuxId)
+          const canAutoUpdateStock = !getUserUpdateStock || getUserUpdateStock.value === null
+
           // do not update if updated by user
-          // or if stock is 'A_verifier'
-          if ((!getUserUpdateStock || getUserUpdateStock.value === null)) {// && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
-            const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
+          if (canAutoUpdateStock) {// && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
+            const previousStockValue = await Model.checkAndUpdatePreviousStock(contentieuxId, date, hrBackupId)
 
             if (previousStockValue !== null) {
               // Si il y a un stock sur le mois précédent:
               // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)
               // Sinon -> stock N calculé = stock N logiciel (original) + (entrees N ajusté - entrées N logiciel) - (sorties N ajusté - sorties N logiciel)
-              if (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null || previousStockValue.type === 'calculate') {
-                const entrees = preformatActivitiesArray([findAllChild[i]], ['entrees', 'original_entrees'])
-                const sorties = preformatActivitiesArray([findAllChild[i]], ['sorties', 'original_sorties'])
+              const hasAdjustedMovements = entrees !== null || sorties !== null
+              const shouldPropagateCalculatedStock = previousStockValue.type === 'calculate'
 
-                if (previousStockValue.type === 'calculate') {
-                  const stock = previousStockValue.stock ?? 0
-                  currentStock = (stock ?? 0) + (entrees ?? 0) - (sorties ?? 0)
+              if (hasAdjustedMovements || shouldPropagateCalculatedStock) {
+                const formattedEntrees = preformatActivitiesArray([activity], ['entrees', 'original_entrees'])
+                const formattedSorties = preformatActivitiesArray([activity], ['sorties', 'original_sorties'])
+
+                if (shouldPropagateCalculatedStock) {
+                  const previousStock = previousStockValue.stock ?? 0
+                  currentStock = previousStock + (formattedEntrees ?? 0) - (formattedSorties ?? 0)
                 } else {
-                  const stock = preformatActivitiesArray([findAllChild[i]], ['original_stock'])
-                  currentStock = (stock ?? 0) + (entrees - (findAllChild[i].original_entrees ?? 0)) - (sorties - (findAllChild[i].original_sorties ?? 0))
+                  const baseStock = preformatActivitiesArray([activity], ['original_stock'])
+                  currentStock = (baseStock ?? 0) + (formattedEntrees - (originalEntrees ?? 0)) - (formattedSorties - (originalSorties ?? 0))
                 }
               } else {
-                currentStock = findAllChild[i].original_stock
+                currentStock = originalStock
               }
-            } else if (findAllChild[i].original_stock !== null) {
-              // Update stock with original stock ONLY IF not null
-              currentStock = findAllChild[i].original_stock
+            } else {
+              // Repartir du stock original du mois courant, même s'il vaut null.
+              currentStock = originalStock
 
-              if (findAllChild[i].entrees !== null) {
-                currentStock += findAllChild[i].entrees || 0
-              } else if (findAllChild[i].original_entrees !== null && findAllChild[i].sorties !== null) {
-                currentStock += findAllChild[i].original_entrees || 0
+              if (entrees !== null) {
+                currentStock += entrees || 0
+              } else if (originalEntrees !== null && sorties !== null) {
+                currentStock += originalEntrees || 0
               }
 
-              if (findAllChild[i].sorties !== null) {
-                currentStock -= findAllChild[i].sorties || 0
-              } else if (findAllChild[i].original_sorties !== null && findAllChild[i].entrees !== null) {
-                currentStock -= findAllChild[i].original_sorties || 0
+              if (sorties !== null) {
+                currentStock -= sorties || 0
+              } else if (originalSorties !== null && entrees !== null) {
+                currentStock -= originalSorties || 0
               }
             }
 
-            // Si le stock calculé est égal au stock original
-            if (currentStock === findAllChild[i].original_stock) {
-              // Si c'est un stock à vérifier ET qu'il y a des mouvements (entrées/sorties)
-              // alors on garde le stock calculé tel quel
-              if (
-                contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY &&
-                (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)
-              ) {
-                // currentStock reste inchangé (pas d'action nécessaire)
-              }
-              // Sinon, si le stock précédent n'est pas calculé, on remet à null
-              else if (!previousStockValue || previousStockValue.type !== 'calculate') {
-                currentStock = null
-              }
-              // Si previousStockValue.type === 'calculate', currentStock reste inchangé
+            const isStockToVerify = contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY
+            const hasAdjustedMovements = entrees !== null || sorties !== null
+            const hasCalculatedPreviousStock = previousStockValue?.type === 'calculate'
+
+            // Si le stock calculé est égal au stock original, on le remet à null
+            // sauf pour les stocks « à vérifier » avec des mouvements (entrées/sorties)
+            // ou lorsqu'on propage déjà un stock calculé du mois précédent.
+            if (currentStock === originalStock && !(isStockToVerify && hasAdjustedMovements) && !hasCalculatedPreviousStock) {
+              currentStock = null
             }
 
             if (currentStock !== null && currentStock < 0) {
               currentStock = 0
             }
-
             // save to database
-            findAllChild[i].stock = currentStock
-            await Model.updateById(findAllChild[i].id, {
+            activity.stock = currentStock
+            await Model.updateById(activityId, {
               stock: currentStock,
             })
           }
@@ -975,7 +983,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getOneByMonth = async (HRBackupId, contentieuxId, date) => {
-    console.log('GetOneByMonth')
     const year = new Date(date).getFullYear().toString()
     const month = (new Date(date).getMonth() + 1).toString()
     const periode = year + '-' + month
