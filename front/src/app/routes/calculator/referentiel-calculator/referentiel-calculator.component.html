@@ -43,7 +43,10 @@
       calculator.realDTESInMonthsStart
       < calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
-      @else { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      @else if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
+      calculator.realDTESInMonthsStart
+      > calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      @else { <div style="width:28px;"></div> }
       <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
       }
       @else {
@@ -77,7 +80,9 @@
     <div class="block">
       @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
       > calculator.totalOutAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down" class="cockpit-down" />}
-      @else { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
+      < calculator.totalOutAf) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      @else { <div style="width:28px;"></div> }
       <p>{{ calculator.lastStock }}</p>
     </div>
     } @else {
