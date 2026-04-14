@@ -2,7 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AlertInterface } from '../../interfaces/alert';
 
-declare const toastr: any;
+type ToastrLike = {
+  options?: Record<string, unknown>;
+  warning?: (message: string) => void;
+};
 
 /**
  * Service d'outil généraux qui concerne l'APP, chez nous ce n'est que l'alerte
@@ -44,7 +47,14 @@ export class AppService {
     this.initToastrConfig();
   }
 
+  private getToastr(): ToastrLike | undefined {
+    return (globalThis as unknown as { toastr?: ToastrLike }).toastr;
+  }
+
   initToastrConfig() {
+    const toastr = this.getToastr();
+    if (!toastr) return;
+
     toastr.options = {
       closeButton: false,
       debug: false,
@@ -65,6 +75,7 @@ export class AppService {
   }
 
   notification(message: string) {
-    toastr.warning(message);
+    const toastr = this.getToastr();
+    toastr?.warning?.(message);
   }
 }
