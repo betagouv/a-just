@@ -15,13 +15,13 @@ import user from "../../fixtures/user.json";
 // Dates defined in-file for determinism in local and CI runs
 const START = "2023-01-01";
 const STOP = "2024-06-01";
-const ONLY_PR = !!cy.env(["ONLY_PR"]);
+const ONLY_PR = !!Cypress.expose("ONLY_PR");
 // Hosts defined in-file to remove dependency on env wiring
 const BACKUP_LABEL = "TJ TEST"; // Fixed label from anonymization script
 const SANDBOX = "http://175.0.0.31:4200";
 const PR = "http://175.0.0.30:4200";
 const KEEP_ARTIFACTS = !!(
-  cy.env(["KEEP_ARTIFACTS"]) || cy.env(["CYPRESS_KEEP_ARTIFACTS"])
+  Cypress.expose("KEEP_ARTIFACTS") || Cypress.expose("CYPRESS_KEEP_ARTIFACTS")
 );
 
 const FR_MONTHS = [
