@@ -3,11 +3,12 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "lib": ["ES6", "DOM"],
+    "module": "node16",
+    "moduleResolution": "node16",
+    "lib": ["ES6", "dom"],
     "types": ["cypress", "node"],
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "baseUrl": "."
+    "esModuleInterop": true
   },
   "include": ["**/*.ts", "**/*.json"]
 }
