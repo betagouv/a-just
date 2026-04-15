@@ -14,7 +14,11 @@ export default defineConfig({
   // Optimize memory usage for CI environments
   numTestsKeptInMemory: 0,
   experimentalMemoryManagement: true,
-  
+
+  // From Cypress 15.10+ Cypress.env() has been deprecated and will be removed in a future major version.
+  // https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv
+  allowCypressEnv: false,
+
   // Reporter must be top-level in Cypress >=10
   reporter: "cypress-mochawesome-reporter",
   reporterOptions:
@@ -711,15 +715,15 @@ export default defineConfig({
               // Execute SQL query via docker-compose exec
               const cmd = `docker-compose -f docker-compose-e2e.test.yml exec -T db psql -U ajust-user -d ajust -c "${query.replace(/"/g, '\\"')}"`;
               const { stdout, stderr } = await execAsync(cmd, {
-                cwd: path.join(config.projectRoot, '..'),
+                cwd: path.join(config.projectRoot, ".."),
               });
-              if (stderr && !stderr.includes('NOTICE')) {
-                console.warn('[DB QUERY] stderr:', stderr);
+              if (stderr && !stderr.includes("NOTICE")) {
+                console.warn("[DB QUERY] stderr:", stderr);
               }
-              console.log('[DB QUERY] Query executed successfully');
+              console.log("[DB QUERY] Query executed successfully");
               return { success: true, output: stdout };
             } catch (e: any) {
-              console.error('[DB QUERY] Failed to execute query:', e.message);
+              console.error("[DB QUERY] Failed to execute query:", e.message);
               return { success: false, error: e.message };
             }
           },
@@ -753,7 +757,6 @@ export default defineConfig({
 
               // Add new context
               contexts[testTitle] = context;
-
 
               // Write back with explicit fsync to ensure it's flushed to disk
               const fd = fs.openSync(fullPath, "w");
