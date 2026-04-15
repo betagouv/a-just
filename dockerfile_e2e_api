@@ -4,7 +4,7 @@ ARG SKIP_FRONT_ADMIN=0
 COPY ./api /home/api
 WORKDIR /home/api
 
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install fi
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install; fi
 # Copy source and build
 CMD npm run build && \
     npm run start:production
