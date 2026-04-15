@@ -636,7 +636,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
       - name: Comment PR with Combined report URL
         if: ${{ steps.prnum.outputs.pr != '' && steps.combined_exists.outputs.ok == 'true' }}
