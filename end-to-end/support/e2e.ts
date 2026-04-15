@@ -26,19 +26,23 @@ require("cy-verify-downloads").addCustomCommand();
 before(() => {
   cy.clearCookies();
   cy.clearLocalStorage();
-  cy.task('wipeDownloads');
-  cy.task('wipeEffectifArtifacts');
+  cy.task("wipeDownloads");
+  cy.task("wipeEffectifArtifacts");
   cy.reload();
 });
 
 // Always dump DOM after each test for debugging
 afterEach(function () {
-  if (Cypress.env('DISABLE_SNAPSHOT_AFTER_EACH')) {
+  if (cy.env(["DISABLE_SNAPSHOT_AFTER_EACH"])) {
     return;
   }
-  const titleSafe = (this.currentTest && typeof this.currentTest.fullTitle === 'function')
-    ? this.currentTest.fullTitle().replace(/[^a-z0-9-_]+/gi, '_').slice(0, 120)
-    : 'unknown_test';
+  const titleSafe =
+    this.currentTest && typeof this.currentTest.fullTitle === "function"
+      ? this.currentTest
+          .fullTitle()
+          .replace(/[^a-z0-9-_]+/gi, "_")
+          .slice(0, 120)
+      : "unknown_test";
   cy.document().then((doc) => {
     const html = doc.documentElement.outerHTML;
     cy.writeFile(`cypress/reports/dom-after-${titleSafe}.html`, html);
@@ -47,8 +51,8 @@ afterEach(function () {
 
 // Optionally clean artifacts after the whole run, unless KEEP_ARTIFACTS is set
 after(() => {
-  if (!Cypress.env('KEEP_ARTIFACTS')) {
-    cy.task('wipeEffectifArtifacts');
+  if (!cy.env(["KEEP_ARTIFACTS"])) {
+    cy.task("wipeEffectifArtifacts");
   }
 });
 
@@ -56,7 +60,7 @@ after(() => {
 Cypress.on("uncaught:exception", (err, runnable) => {
   if (
     err.message.includes(
-      "ResizeObserver loop completed with undelivered notifications"
+      "ResizeObserver loop completed with undelivered notifications",
     )
   ) {
     return false;

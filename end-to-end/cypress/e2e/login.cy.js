@@ -13,7 +13,7 @@ describe("Login Page", () => {
   });
 
   it("should verify existence of Page Blanche button", () => {
-    const ssoIsActivate = Cypress.env("NG_APP_ENABLE_SSO");
+    const ssoIsActivate = cy.env(["NG_APP_ENABLE_SSO"]);
     if (ssoIsActivate) {
       cy.get("form")
         .should("contain.text", "Vous avez déjà un compte")
