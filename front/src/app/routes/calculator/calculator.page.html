@@ -4,6 +4,21 @@
   @if (categorySelected) {
   <div class="container">
     <div class="sub-main-header">
+      <div class="categories-switch">
+        @if (canViewMagistrat) {
+        <div class="magistrats" [ngClass]="{ selected: categorySelected === MAGISTRATS, alone: !canViewGreffier }"
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS); unselectTemplate()">
+          <p>Siège</p>
+        </div>
+        }
+        @if (canViewGreffier) {
+        <div class="fonctionnaires"
+          [ngClass]="{ selected: categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat }" class="fonctionnaires"
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES); unselectTemplate()">
+          <p>Greffe</p>
+        </div>
+        }
+      </div>
       <aj-select class="large new-fonction" [subTitleTemplate]="subTitleTemplate" title="Choix des fonctions"
         [defaultAllValue]="'Toutes'" [value]="selectedFonctionsIds" [datas]="fonctions"
         (valueChange)="onChangeFonctionsSelected($event)"></aj-select>
@@ -86,7 +101,11 @@
           (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
           @if(!categoryIdSelected) {<div class="etpt">
             <p>ETPT</p>
-            @if (categoryFiltered.length) {
+            @if(categorySelected === MAGISTRATS) {
+            <p>Siège</p>
+            } @else if(categorySelected === FONCTIONNAIRES) {
+            <p>Greffe</p>
+            } @else {
             <p>{{categoryFiltered[0].label}}</p>
             }
           </div>

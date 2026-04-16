@@ -252,7 +252,7 @@ export default class RouteCalculator extends Route {
         false,
       )
 
-      return datas.list[0].magRealTimePerCase || datas.list[0].fonRealTimePerCase
+      return datas.list.length > 0 ? datas.list[0].magRealTimePerCase || datas.list[0].fonRealTimePerCase : null
     }
 
     const list = []

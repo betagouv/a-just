@@ -780,7 +780,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               this.firstLoading = false
               this.onLoadComparaisons()
               console.log('list', list)
-              this.refreshWarningInformations(list)
+              //this.refreshWarningInformations(list)
             })
             .catch(() => {
               this.isLoading = false

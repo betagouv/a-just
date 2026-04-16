@@ -851,3 +851,105 @@ aj-referentiel-calculator:nth-child(even) {
     }
   }
 }
+
+.categories-switch {
+  display: flex;
+  align-items: stretch;
+  height: 32px;
+  background-color: white;
+  border-radius: 4px;
+
+  >div {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    cursor: pointer;
+    border: solid 1px utils.$colors-cgraylightv3;
+
+    &.alone {
+      border-radius: 4px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #3a3a3a;
+    }
+  }
+
+  >.magistrats,
+  .brut {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 0 8px;
+
+    &.selected {
+      border: solid 1px utils.$colors-cbluedark;
+      background-color: utils.$colors-cbluemiddle;
+
+      p {
+        color: utils.$colors-cbluedark;
+      }
+    }
+  }
+
+  >.fonctionnaires {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 0 8px;
+
+    &.selected {
+      border: solid 1px utils.$colors-cpink;
+      background-color: utils.$colors-cpinkmiddle;
+
+      p {
+        color: utils.$colors-cpink;
+      }
+    }
+  }
+
+  >.brut {
+    i {
+      font-size: 24px;
+      margin-right: 8px;
+      color: #666666;
+    }
+
+    &.selected {
+      border: solid 1px #6a6af4;
+      background-color: utils.$colors-cbluemiddle;
+
+      i {
+        color: #6a6af4;
+      }
+
+      p {
+        color: #6a6af4;
+      }
+    }
+  }
+
+  >.analytique {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    i {
+      font-size: 24px;
+      margin-right: 8px;
+      color: #666666;
+    }
+
+    &.selected {
+      border: solid 1px #6a6af4;
+      background-color: utils.$colors-cbluemiddle;
+
+      i {
+        color: #6a6af4;
+      }
+
+      p {
+        color: #6a6af4;
+      }
+    }
+  }
+}
