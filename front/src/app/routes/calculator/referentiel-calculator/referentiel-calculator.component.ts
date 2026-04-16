@@ -116,6 +116,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
   } | null = null
   /**
+   * Peux voir la projection
+   */
+  @Input() canViewProjecter: boolean = true
+  /**
    * Connexion au css pour forcer l'affichage des enfants
    */
   @HostBinding('class.show-children') showChildren: boolean = (this.calculator && this.calculator.childIsVisible) || false

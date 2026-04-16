@@ -108,7 +108,7 @@
     }
   </div>
   <div>
-    <div class="anticipate"
+    @if(canViewProjecter && calculator.contentieux.label !== 'Autres activités') {<div class="anticipate"
       (click)="this.currentProjection = calculator; initProjectionFooterGrid(); showProjectionPopin = true;" [ngStyle]="{ borderColor: userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(
               calculator.contentieux.label === 'Autres activités' ? 'other' : calculator.contentieux.label
@@ -127,6 +127,7 @@
           )" />
       </svg>
     </div>
+    }
   </div>
 </div>
 }
@@ -137,7 +138,8 @@
     [categorySelected]="categorySelected" [categoryFiltered]="categoryFiltered"
     [categoryIdSelected]="categoryIdSelected" [parentCalculator]="calculator"
     [currentProjectionType]="currentProjectionType"
-    (currentProjectionTypeChange)="onCurrentProjectionTypeChange($event)"></aj-referentiel-calculator>
+    (currentProjectionTypeChange)="onCurrentProjectionTypeChange($event)"
+    [canViewProjecter]="calculator.contentieux.label !== 'Autres activités'"></aj-referentiel-calculator>
   }
 </div>
 }
