@@ -362,7 +362,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.nbMonthsToCompare = nbMonths + 1
 
-    if (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') {
+    if (this.currentProjectionType === 'stock') {
       if (this.userService.canViewSimulator()) {
         list.push({
           label: 'Visualiser les conséquences d’un changement d’effectif',
@@ -385,6 +385,35 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'stock',
+            ts: SIMULATOR_DONNEES,
+            dstart: dateStart,
+            dstop: dateStop,
+          },
+        })
+      }
+    } else if (this.currentProjectionType === 'dtes') {
+      if (this.userService.canViewSimulator()) {
+        list.push({
+          label: 'Visualiser les conséquences d’un changement d’effectif',
+          button: 'Estimer l’effectif',
+          link: ['/simulateur'],
+          queryParams: {
+            r: this.currentProjection?.contentieux.id,
+            t: 'etpt',
+            ts: SIMULATOR_DONNEES,
+            dstart: dateStart,
+            dstop: dateStop,
+          },
+        })
+      }
+      if (this.userService.canViewSimulator()) {
+        list.push({
+          label: 'Voir les moyens nécessaires pour atteindre mon objectif',
+          button: 'Voir les moyens',
+          link: ['/simulateur'],
+          queryParams: {
+            r: this.currentProjection?.contentieux.id,
+            t: 'dtes',
             ts: SIMULATOR_DONNEES,
             dstart: dateStart,
             dstop: dateStop,
@@ -632,5 +661,28 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.projectionChart.update()
     console.log('projectionChart', this.projectionChart)
+  }
+
+  /**
+   * Affiche le graphique
+   */
+  onShowDTES() {
+    console.log('on show dtes')
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.currentProjectionType = 'dtes'
+      this.currentProjection = this.calculator
+      this.initProjectionFooterGrid()
+      this.showProjectionPopin = true
+    }
+  }
+
+  onShowStock() {
+    console.log('on show stock')
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.currentProjectionType = 'stock'
+      this.currentProjection = this.calculator
+      this.initProjectionFooterGrid()
+      this.showProjectionPopin = true
+    }
   }
 }

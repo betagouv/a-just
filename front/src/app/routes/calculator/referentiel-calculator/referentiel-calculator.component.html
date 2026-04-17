@@ -37,7 +37,8 @@
   </div>
   <div [ngClass]="{'dtes': calculator.realDTESInMonths !== null && checkPastDate()}">
     @if (!isSoutien(calculator.contentieux.id)) {
-    <div class="block">
+    <div class="block" (click)="onShowDTES()"
+      [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.realDTESInMonths !== null && checkPastDate()) {
       @if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
       calculator.realDTESInMonthsStart
@@ -46,7 +47,7 @@
       @else if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
       calculator.realDTESInMonthsStart
       > calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
-      @else { <div style="width:28px;"></div> }
+      @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
       }
       @else {
@@ -77,12 +78,13 @@
   <div [ngClass]="{'stock': calculator.lastStock !== null && checkPastDate()}">
     @if (!isSoutien(calculator.contentieux.id)) {
     @if (calculator.lastStock !== null && checkPastDate()) {
-    <div class="block">
+    <div class="block" (click)="onShowStock()"
+      [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
       > calculator.totalOutAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down" class="cockpit-down" />}
       @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
       < calculator.totalOutAf) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
-      @else { <div style="width:28px;"></div> }
+      @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.lastStock }}</p>
     </div>
     } @else {

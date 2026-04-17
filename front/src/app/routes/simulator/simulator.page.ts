@@ -1055,6 +1055,17 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
     if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['t'] && this.dateStart && this.dateStop && !this.isAutoOpenPopupWithParams) {
       const type = this.route.snapshot.queryParams['t']
       switch (type) {
+        case 'dtes': {
+          if (this.realDTESInMonths) {
+            this.openPopupWithParams(this.realDTESInMonths.nativeElement)
+            this.isAutoOpenPopupWithParams = true
+          } else {
+            setTimeout(() => {
+              this.checkToAutoOpenPopupWithParams()
+            }, 500)
+          }
+          break
+        }
         case 'stock': {
           if (this.lastStock) {
             this.openPopupWithParams(this.lastStock.nativeElement)
