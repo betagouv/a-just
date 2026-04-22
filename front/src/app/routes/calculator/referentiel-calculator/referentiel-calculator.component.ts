@@ -22,6 +22,7 @@ import { HumanResourceService } from '../../../services/human-resource/human-res
 import { AppService } from '../../../services/app/app.service'
 import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
+import { SimulatorService } from '../../../services/simulator/simulator.service'
 
 /**
  * Composant d'une ligne du calculateur
@@ -63,6 +64,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Service de fiches humaines
    */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Simulator service
+   */
+  simulatorService = inject(SimulatorService)
   /**
    * Liste des datas du calculateur
    */
@@ -669,20 +674,18 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   onShowDTES() {
     console.log('on show dtes')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
-      this.currentProjectionType = 'dtes'
-      this.currentProjection = this.calculator
-      this.initProjectionFooterGrid()
-      this.showProjectionPopin = true
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'DTES'
+      this.calculatorService.showGraphDetailType = 'dtes'
     }
   }
 
   onShowStock() {
     console.log('on show stock')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
-      this.currentProjectionType = 'stock'
-      this.currentProjection = this.calculator
-      this.initProjectionFooterGrid()
-      this.showProjectionPopin = true
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Stock'
+      this.calculatorService.showGraphDetailType = 'stock'
     }
   }
 }

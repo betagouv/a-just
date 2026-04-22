@@ -81,9 +81,9 @@
     <div class="block" (click)="onShowStock()"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
-      > calculator.totalOutAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down" class="cockpit-down" />}
+      < calculator.totalOutAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down" class="cockpit-down" />}
       @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
-      < calculator.totalOutAf) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      > calculator.totalOutAf) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
       @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.lastStock }}</p>
     </div>

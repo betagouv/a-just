@@ -140,7 +140,7 @@ export class SimulatorService extends MainClass {
   getSituation(referentielId: any | null, dateStart?: Date, dateStop?: Date) {
     if (this.selectedCategory.getValue()?.id !== null && this.selectedFonctionsIds.getValue() !== null) {
       const value = this.contentieuOrSubContentieuId.getValue()
-      if (value ===null||value.lenght === 0 || (value?.parent === null && value?.child === null)) return
+      if (value === null || value.lenght === 0 || (value?.parent === null && value?.child === null)) return
       this.isLoading.next(true)
 
       return this.serverService
@@ -167,7 +167,7 @@ export class SimulatorService extends MainClass {
    * @param params containing the object parameters used to compute the simulation
    * @param simulation empty situation object to be filled
    */
-  toSimulate(params: any, simulation: SimulationInterface, white = false) {
+  async toSimulate(params: any, simulation: SimulationInterface, white = false) {
     console.log('SIMULATION', simulation)
     this.isLoading.next(true)
     const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
@@ -178,7 +178,7 @@ export class SimulatorService extends MainClass {
     const startAt = performance.now()
     const run = async () => {
       if (white === true) {
-        await this.serverService
+        return await this.serverService
           .post(`simulator/to-simulate-white`, {
             backupId: this.humanResourceService.backupId.getValue(),
             params: params,
@@ -190,9 +190,10 @@ export class SimulatorService extends MainClass {
           .then((data) => {
             console.log('simu', data.data)
             this.situationSimulated.next(data.data)
+            return data.data
           })
       } else {
-        await this.serverService
+        return await this.serverService
           .post(`simulator/to-simulate`, {
             backupId: this.humanResourceService.backupId.getValue(),
             params: params,
@@ -206,22 +207,49 @@ export class SimulatorService extends MainClass {
           .then((data) => {
             console.log('simu', data.data)
             this.situationSimulated.next(data.data)
+            return data.data
           })
       }
     }
     return run()
-      .then(() => {
+      .then((data) => {
         this.isLoading.next(false)
-        try { l.finish('success') } catch {}
+        try {
+          l.finish('success')
+        } catch {}
+        return data
       })
       .catch((e) => {
         this.isLoading.next(false)
-        try { l.finish('error') } catch {}
+        try {
+          l.finish('error')
+        } catch {}
         throw e
       })
   }
 
-  
+  /**
+   * Function used to compute the simulated situation
+   * @param params containing the object parameters used to compute the simulation
+   * @param simulation empty situation object to be filled
+   */
+  async toSimulateOny(params: any, simulation: SimulationInterface, categoryId: number | null) {
+    return await this.serverService
+      .post(`simulator/to-simulate`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        params: params,
+        simulation: simulation,
+        dateStart: setTimeToMidDay(params.beginSituation),
+        dateStop: setTimeToMidDay(params.endSituation),
+        selectedCategoryId: categoryId,
+        referentielId: params.contentieuxIds[0],
+        functionIds: params.fonctionsIds,
+      })
+      .then((data) => {
+        console.log('simu', data.data)
+        return data.data
+      })
+  }
 
   /**
    * Get the label of a field and return the full text name of the label
@@ -275,7 +303,7 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalOut && data?.totalOut >= 0) {
-          if(decimal) {
+          if (decimal) {
             return toCompute ? data?.totalOut : fixDecimal(data?.totalOut)
           }
           return toCompute ? data?.totalOut : Math.round(data?.totalOut)
@@ -286,7 +314,7 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalIn && data?.totalIn >= 0) {
-          if(decimal) {
+          if (decimal) {
             return toCompute ? data?.totalOut : fixDecimal(data?.totalIn)
           }
           return toCompute ? data?.totalIn : Math.round(data?.totalIn)
@@ -298,7 +326,7 @@ export class SimulatorService extends MainClass {
         }
         if (data?.lastStock) {
           //&& data?.lastStock >= 0) {
-          if(decimal) {
+          if (decimal) {
             return toCompute ? data?.totalOut : fixDecimal(data?.lastStock)
           }
           return toCompute ? data?.lastStock : Math.round(data?.lastStock)
