@@ -365,7 +365,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     if (this.currentProjectionType === 'stock') {
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Visualiser les conséquences d’un changement d’effectif',
+          label: 'Visualiser les conséquences d’un changement d’effectif sur le stock',
           button: 'Estimer l’effectif',
           link: ['/simulateur'],
           queryParams: {
@@ -379,8 +379,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       }
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Voir les moyens nécessaires pour atteindre mon objectif',
-          button: 'Voir les moyens',
+          label: 'Visualiser les moyens nécessaires pour réduire le stock',
+          button: 'Projeter un objectif',
           link: ['/simulateur'],
           queryParams: {
             r: this.currentProjection?.contentieux.id,
@@ -394,7 +394,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     } else if (this.currentProjectionType === 'dtes') {
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Visualiser les conséquences d’un changement d’effectif',
+          label: 'Visualiser les conséquences d’un changement d’effectif sur le DTES',
           button: 'Estimer l’effectif',
           link: ['/simulateur'],
           queryParams: {
@@ -408,8 +408,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       }
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Voir les moyens nécessaires pour atteindre mon objectif',
-          button: 'Voir les moyens',
+          label: 'Visualiser les moyens nécessaires pour réduire le DTES',
+          button: 'Projeter un objectif',
           link: ['/simulateur'],
           queryParams: {
             r: this.currentProjection?.contentieux.id,
