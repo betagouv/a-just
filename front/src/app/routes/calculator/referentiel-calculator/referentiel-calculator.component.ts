@@ -11,7 +11,7 @@ import { CalculatorService } from '../../../services/calculator/calculator.servi
 import { ActivitiesService } from '../../../services/activities/activities.service'
 import { KPIService } from '../../../services/kpi/kpi.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
-import { getTime, month, monthDiff, today } from '../../../utils/dates'
+import { getTime, month, monthDiff, setTimeToMidDay, today } from '../../../utils/dates'
 import { CALCULATOR_OPEN_CONTENTIEUX } from '../../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
@@ -19,6 +19,7 @@ import { RouterModule } from '@angular/router'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
 import { findHelpCenter } from '../../../utils/help-center'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { ServerService } from '../../../services/http-server/server.service'
 import { AppService } from '../../../services/app/app.service'
 import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
@@ -68,6 +69,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Simulator service
    */
   simulatorService = inject(SimulatorService)
+  serverService = inject(ServerService)
   /**
    * Liste des datas du calculateur
    */
@@ -491,22 +493,124 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       nbMonths *= -1
     }
 
-    const datasPast = await this.calculatorService.rangeValues(
-      this.currentProjection?.contentieux.id || 0,
+    const contentieuxId = this.currentProjection?.contentieux.id || 0
+    const childrenIds = this.currentProjection?.childrens?.map((c) => c.contentieux.id) || null
+    const referentielId = { parent: [contentieuxId], child: childrenIds && childrenIds.length > 0 ? childrenIds : null }
+    const categoryId = this.categorySelected === 'magistrats' ? 1 : this.categorySelected === 'fonctionnaires' ? 2 : 3
+    const categoryLabel = this.categorySelected === 'magistrats' ? 'Magistrat' : this.categorySelected === 'fonctionnaires' ? 'Greffe' : 'Autour du magistrat'
+    const fonctionsIds = this.calculatorService.selectedFonctionsIds.getValue()
+    const dateStopValue = this.calculatorService.dateStop.value || new Date()
+    const pivotDate = this.maxDateSelectionDate || dateStopValue
+    const endOfGraph = addMonths(dateStopValue, nbMonths + 1)
+
+    const realDataEnd = new Date(Math.min(pivotDate.getTime(), endOfGraph.getTime()))
+    const datasReal = await this.calculatorService.rangeValues(
+      contentieuxId,
       this.currentProjectionType,
       this.calculatorService.dateStart.value,
-      this.calculatorService.dateStop.value,
-      this.calculatorService.selectedFonctionsIds.getValue(),
+      realDataEnd,
+      fonctionsIds,
       this.categorySelected,
     )
-    const datasFuturs = await this.calculatorService.rangeValues(
-      this.currentProjection?.contentieux.id || 0,
-      this.currentProjectionType,
-      addMonths(this.calculatorService.dateStop.value || new Date(), +1),
-      addMonths(this.calculatorService.dateStop.value || new Date(), nbMonths + 1),
-      this.calculatorService.selectedFonctionsIds.getValue(),
-      this.categorySelected,
-    )
+    const todayDate = new Date()
+    let datasProjected: { value: number; date: Date }[] = []
+
+    const extractMonthlyValues = (monthlyReport: any[], startDate: Date, skipFirst = false) => {
+      const categoryReport = monthlyReport.find((r: any) => r.name === categoryLabel)
+      const result: { value: number; date: Date }[] = []
+      if (categoryReport?.values) {
+        const values = categoryReport.values
+        const keys = Object.keys(values).sort((a, b) => parseInt(a) - parseInt(b))
+        keys.forEach((key, i) => {
+          if (skipFirst && i === 0) return
+          const entry = values[key]
+          let value: number | null = null
+          if (this.currentProjectionType === 'stock') {
+            value = entry.lastStock ?? null
+          } else if (this.currentProjectionType === 'dtes') {
+            value = entry.DTES ?? null
+          } else if (this.currentProjectionType === 'etpt') {
+            value = entry.etpt ?? null
+          }
+          if (value !== null) {
+            result.push({ value, date: addMonths(startDate, i) })
+          }
+        })
+      }
+      return result
+    }
+
+    // Liaison : pivotDate → aujourd'hui (offset sur stock pour raccorder au réel)
+    if (month(addMonths(pivotDate, 1)).getTime() < month(todayDate).getTime()) {
+      const liaisonResponse = await this.serverService.post('simulator/get-situation', {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId,
+        dateStart: setTimeToMidDay(pivotDate),
+        dateStop: setTimeToMidDay(todayDate),
+        functionIds: fonctionsIds,
+        categoryId,
+      })
+      const liaisonSituation = liaisonResponse?.data?.situation || {}
+      const liaisonReport = liaisonSituation?.endSituation?.monthlyReport || []
+      const liaisonCategoryReport = liaisonReport.find((r: any) => r.name === categoryLabel)
+
+      if (liaisonCategoryReport?.values) {
+        const values = liaisonCategoryReport.values
+        const keys = Object.keys(values).sort((a, b) => parseInt(a) - parseInt(b))
+
+        let stockOffset = 0
+        const lastRealValue = datasReal.length > 0 ? datasReal[datasReal.length - 1]?.value : null
+        if (keys.length > 0 && lastRealValue != null) {
+          const startStock = values[keys[0]]?.lastStock ?? null
+          if (startStock != null) {
+            if (this.currentProjectionType === 'stock') {
+              stockOffset = lastRealValue - startStock
+            } else if (this.currentProjectionType === 'dtes') {
+              const startTotalOut = values[keys[0]]?.totalOut ?? null
+              if (startTotalOut != null && startTotalOut !== 0) {
+                stockOffset = lastRealValue * startTotalOut - startStock
+              }
+            }
+          }
+        }
+
+        keys.forEach((key, i) => {
+          if (i === 0 || i === keys.length - 1) return
+          const entry = values[key]
+          let value: number | null = null
+          if (this.currentProjectionType === 'stock') {
+            value = entry.lastStock != null ? entry.lastStock + stockOffset : null
+          } else if (this.currentProjectionType === 'dtes') {
+            const adjustedStock = entry.lastStock != null ? entry.lastStock + stockOffset : null
+            const totalOut = entry.totalOut ?? null
+            value = adjustedStock != null && totalOut != null && totalOut !== 0
+              ? Math.round((adjustedStock / totalOut) * 100) / 100
+              : null
+          } else if (this.currentProjectionType === 'etpt') {
+            value = entry.etpt ?? null
+          }
+          if (value !== null) {
+            datasProjected.push({ value, date: addMonths(pivotDate, i) })
+          }
+        })
+      }
+    }
+    // Projection future : depuis aujourd'hui (identique au simulateur)
+    if (month(todayDate).getTime() <= month(endOfGraph).getTime()) {
+      const situationResponse = await this.serverService.post('simulator/get-situation', {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId,
+        dateStart: setTimeToMidDay(todayDate),
+        dateStop: setTimeToMidDay(endOfGraph),
+        functionIds: fonctionsIds,
+        categoryId,
+      })
+      const situation = situationResponse?.data?.situation || {}
+      const futureReport = situation?.endSituation?.monthlyReport || []
+      datasProjected.push(...extractMonthlyValues(futureReport, todayDate))
+    }
+    const datasPast = datasReal
+    const datasFuturs = datasProjected
 
     let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
     max *= 2
