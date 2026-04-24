@@ -11,6 +11,7 @@
     "rm-build-prod": "rm -rf dist",
     "test": "NODE_ENV=test mocha --config .mocharc.yaml"
   },
+  "type": "module",
   "dependencies": {
     "@babel/cli": "^7.25.9",
     "@babel/plugin-proposal-class-properties": "^7.18.6",

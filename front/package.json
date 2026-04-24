@@ -20,6 +20,7 @@
     "compodoc:build-and-serve": "npx @compodoc/compodoc -p tsconfig.doc.json -s",
     "compodoc:serve": "npx @compodoc/compodoc -s"
   },
+  "type": "module",
   "private": true,
   "dependencies": {
     "@angular/animations": "^21.2.6",

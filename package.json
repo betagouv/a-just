@@ -4,6 +4,7 @@
   "engines": {
     "node": "22"
   },
+  "type": "module",
   "scripts": {
     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
