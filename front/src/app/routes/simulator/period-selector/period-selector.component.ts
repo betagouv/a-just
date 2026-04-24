@@ -84,12 +84,12 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
         }
 
         if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['dstart']) {
-          this.dateStart = new Date(+this.route.snapshot.queryParams['dstart'])
+          this.dateStart = new Date(this.route.snapshot.queryParams['dstart'])
           this.updateDateSelected('dateStart', this.dateStart)
         }
 
         if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['dstop']) {
-          this.dateStop = new Date(+this.route.snapshot.queryParams['dstop'])
+          this.dateStop = new Date(this.route.snapshot.queryParams['dstop'])
           this.updateDateSelected('dateStop', this.dateStop)
         }
       }),

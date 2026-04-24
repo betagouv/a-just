@@ -422,11 +422,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.route.queryParams.subscribe((params) => {
         if (params['dstart']) {
-          const dstartTimestamp = +params['dstart']
-          if (!isNaN(dstartTimestamp)) {
-            this.dateSelected = new Date(dstartTimestamp)
-            this.workforceService.dateSelected.next(this.dateSelected)
-          }
+          const dstartTimestamp = new Date(params['dstart'])
+          this.dateSelected = dstartTimestamp
+          this.workforceService.dateSelected.next(this.dateSelected)
         }
       }),
     )

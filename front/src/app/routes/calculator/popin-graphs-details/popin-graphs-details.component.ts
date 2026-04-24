@@ -106,6 +106,15 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     this.appService.appLoading.next(true)
     if (this.calculatorService.selectedRefGraphDetail) {
       this.ref = this.humanResourceService.contentieuxReferentiel.getValue().find((c) => c.id === this.calculatorService.selectedRefGraphDetail) || null
+      if (this.ref === null) {
+        // find the parent referentiel
+        const parent = this.humanResourceService.contentieuxReferentiel
+          .getValue()
+          .filter((r) => r.childrens?.find((c) => c.id === this.calculatorService.selectedRefGraphDetail))
+        if (parent && parent.length > 0) {
+          this.ref = parent[0]
+        }
+      }
       if (this.ref) {
         this.kpiService.register(
           this.optionDateStart ? CALCULATOR_OPEN_POPIN_GRAPH_DETAILS : CALCULATOR_OPEN_POPIN_GRAPH_DETAILS_ALONE,
@@ -208,10 +217,14 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
             const firstIndexOfLastValues = findLastIndex(this.allValues, (a) => a.first !== null)
 
             if (firstIndexOfFirstValues !== -1 && firstIndexOfLastValues !== -1) {
-              ctx.fillStyle =
-                secondValues === null
-                  ? this.userService.referentielMappingColorByInterface(this.ref?.label || '', OPACITY_20 * 1.001)
-                  : 'rgba(106, 106, 244, 0.2)' // 1.001 pour avoir la transparence car sinon si je mes juste OPACITY_20, il n'y a pas de transparence
+              let color = this.userService.referentielMappingColorByInterface(this.ref?.label || '', OPACITY_20 * 1.001)
+              if (!color) {
+                const parent = this.humanResourceService.contentieuxReferentiel.getValue().filter((r) => r.childrens?.find((c) => c.id === this.ref?.id))
+                if (parent && parent.length > 0) {
+                  color = this.userService.referentielMappingColorByInterface(parent[0].label || '', OPACITY_20 * 1.001)
+                }
+              }
+              ctx.fillStyle = secondValues === null && color ? color : 'rgba(106, 106, 244, 0.2)' // 1.001 pour avoir la transparence car sinon si je mes juste OPACITY_20, il n'y a pas de transparence
               ctx.fillRect(left + firstIndexOfFirstValues * widthOneItem, top, (firstIndexOfLastValues - firstIndexOfFirstValues + 1) * widthOneItem, height)
             }
 

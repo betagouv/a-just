@@ -604,7 +604,7 @@ export function getEtpByCategory(etpAffected, sufix = '') {
  */
 export async function getCSActivities(referentielId, allActivities) {
   if (allActivities.length !== 0) {
-    let filteredByContentieux = allActivities.filter((a) => referentielId.child.includes(a.contentieux.id))
+    let filteredByContentieux = allActivities.filter((a) => (referentielId.child || referentielId.parent || []).includes(a.contentieux.id))
 
     const dateStop = filteredByContentieux.reduce((a, b) => {
       return a.periode > b.periode ? a.periode : b.periode

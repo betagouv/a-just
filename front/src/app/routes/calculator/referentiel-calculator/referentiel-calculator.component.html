@@ -41,12 +41,13 @@
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.realDTESInMonths !== null && checkPastDate()) {
       @if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
-      calculator.realDTESInMonthsStart
-      < calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
+      floor(calculator.realDTESInMonthsStart)
+      < floor(calculator.realDTESInMonths)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
       @else if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
-      calculator.realDTESInMonthsStart
-      > calculator.realDTESInMonths) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      floor(calculator.realDTESInMonthsStart)
+      > floor(calculator.realDTESInMonths)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
+        class="cockpit-up" /> }
       @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
       }
@@ -80,12 +81,14 @@
     @if (calculator.lastStock !== null && checkPastDate()) {
     <div class="block" (click)="onShowStock()"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
-      @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
-      < calculator.totalOutAf) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down" class="cockpit-down" />}
-      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && calculator.totalOutBf
-      > calculator.totalOutAf) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up" class="cockpit-up" /> }
+      @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && floor(calculator.lastStockBf || 0)
+      < floor(calculator.lastStockAf || 0)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
+        class="cockpit-down" />}
+      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && floor(calculator.lastStockBf || 0)
+      > floor(calculator.lastStockAf || 0)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
+        class="cockpit-up" /> }
       @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
-      <p>{{ calculator.lastStock }}</p>
+      <p>{{ calculator.lastStock || 0 }}</p>
     </div>
     } @else {
     <div class="ref-nr">
