@@ -41,12 +41,12 @@
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.realDTESInMonths !== null && checkPastDate()) {
       @if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
-      floor(calculator.realDTESInMonthsStart)
-      < floor(calculator.realDTESInMonths)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
+      fixDecimal(calculator.realDTESInMonthsStart, 100)
+      < fixDecimal(calculator.realDTESInMonths, 100)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
       @else if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
-      floor(calculator.realDTESInMonthsStart)
-      > floor(calculator.realDTESInMonths)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
+      fixDecimal(calculator.realDTESInMonthsStart, 100)
+      > fixDecimal(calculator.realDTESInMonths, 100)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
         class="cockpit-up" /> }
       @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
@@ -81,11 +81,13 @@
     @if (calculator.lastStock !== null && checkPastDate()) {
     <div class="block" (click)="onShowStock()"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
-      @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && floor(calculator.lastStockBf || 0)
-      < floor(calculator.lastStockAf || 0)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
+      @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && fixDecimal(calculator.lastStockBf || 0,
+      100)
+      < fixDecimal(calculator.lastStockAf || 0, 100)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
-      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && floor(calculator.lastStockBf || 0)
-      > floor(calculator.lastStockAf || 0)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
+      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && fixDecimal(calculator.lastStockBf ||
+      0, 100)
+      > fixDecimal(calculator.lastStockAf || 0, 100)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
         class="cockpit-up" /> }
       @else { <img src="/assets/icons/cockpit-equal.svg" alt="cockpit-equal" class="cockpit-equal" /> }
       <p>{{ calculator.lastStock || 0 }}</p>
@@ -107,8 +109,8 @@
       @if(canViewContractuel) {<span>{{ calculator.etpCont | number: '0.2-2' }}</span>}
     </p>}
     @else {
-    @if(canViewMagistrat) {<p>{{ calculator.etpMag | number: '0.2-2' }}</p>}
-    @else if(canViewGreffier) {<p>{{ calculator.etpFon | number: '0.2-2' }}</p>}
+    @if(canViewMagistrat && categorySelected === MAGISTRATS) {<p>{{ calculator.etpMag | number: '0.2-2' }}</p>}
+    @else if(canViewGreffier && categorySelected === FONCTIONNAIRES) {<p>{{ calculator.etpFon | number: '0.2-2' }}</p>}
     @else if(canViewContractuel) {<p>{{ calculator.etpCont | number: '0.2-2' }}</p>}
     }
   </div>

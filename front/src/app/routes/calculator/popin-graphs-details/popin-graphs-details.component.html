@@ -1,23 +1,25 @@
 <aj-popup [titleTemplate]="titleTemplate" class="light-background no-scroll" [closeIcon]="true"
   (onClose)="calculatorService.showGraphDetailType = null">
   <div class="popin-graphs-details">
+    @if(!isParent) {
     <div class="header-popin" [ngStyle]="{
-        'grid-template-columns': 'repeat(' + humanResourceService.mainContentieuxReferentielFiltered().length + ', 1fr)',
-      }">
+          'grid-template-columns': 'repeat(' + humanResourceService.mainContentieuxReferentielFiltered().length + ', 1fr)',
+        }">
       @for (ref of humanResourceService.mainContentieuxReferentielFiltered(); track ref.id) {
       <div class="flex-1" [style.color]="
-            calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
-              ? 'rgba(246, 246, 246, 1)'
-              : userService.referentielMappingColorByInterface(ref.label)
-          " [style.background-color]="
-            calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
-              ? userService.referentielMappingColorByInterface(ref.label)
-              : 'rgba(246, 246, 246, 1)'
-          " (click)="selectReferentiel(ref)">
+              calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
+                ? 'rgba(246, 246, 246, 1)'
+                : userService.referentielMappingColorByInterface(ref.label)
+            " [style.background-color]="
+              calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
+                ? userService.referentielMappingColorByInterface(ref.label)
+                : 'rgba(246, 246, 246, 1)'
+            " (click)="selectReferentiel(ref)">
         {{ userService.referentielMappingNameByInterface(ref.label) }}
       </div>
       }
     </div>
+    }
     <div class="compare-header-popin">
       <div
         [style.background-color]="optionDateStart === null ? userService.referentielMappingColorByInterface(ref?.label || '', OPACITY_20) : '#E8EDFF'">

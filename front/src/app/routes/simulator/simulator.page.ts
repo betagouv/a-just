@@ -45,6 +45,7 @@ import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../..
 import { isNaN } from 'lodash'
 import { IntroJSStep } from '../../services/tour/tour.service'
 import { TooltipsComponent } from '../../components/tooltips/tooltips.component'
+import { MAGISTRATS } from '../../constants/category'
 
 /**
  * Variable ETP magistrat field name
@@ -435,6 +436,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
    * Affichage de l'écran de choix de simulateur
    */
   chooseScreen = true
+  /**
+   * Premier chargement de la page
+   */
+  firstLoading = true
 
   onReloadAction = false
   isAutoOpenPopupWithParams = false
@@ -687,12 +692,21 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
 
     this.watch(
       this.humanResourceService.categories.subscribe(() => {
-        if (this.canViewMagistrat) {
-          this.changeCategorySelected('MAGISTRAT')
-          this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
-        } else if (this.canViewGreffier) {
-          this.changeCategorySelected('GREFFE')
-          this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+        if (this.humanResourceService.categories.getValue().length > 0) {
+          if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['c'] && this.firstLoading) {
+            this.changeCategorySelected(this.route.snapshot.queryParams['c'] === MAGISTRATS ? 'MAGISTRAT' : 'GREFFE')
+            this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+            this.firstLoading = false
+          } else {
+            console.log('second load')
+            if (this.canViewMagistrat) {
+              this.changeCategorySelected('MAGISTRAT')
+              this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+            } else if (this.canViewGreffier) {
+              this.changeCategorySelected('GREFFE')
+              this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+            }
+          }
         }
       }),
     )

@@ -378,8 +378,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getMonth().toISOString(),
+            dstart: this.getToday().toISOString(),
             dstop: this.getMonth(null, 12).toISOString(), // 12 months
           },
         })
@@ -392,8 +393,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'stock',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getMonth().toISOString(),
+            dstart: this.getToday().toISOString(),
             dstop: this.getMonth(null, 12).toISOString(), // 12 months
           },
         })
@@ -407,8 +409,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getMonth().toISOString(),
+            dstart: this.getToday().toISOString(),
             dstop: this.getMonth(null, 12).toISOString(), // 12 months
           },
         })
@@ -421,8 +424,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'dtes',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getMonth().toISOString(),
+            dstart: this.getToday().toISOString(),
             dstop: this.getMonth(null, 12).toISOString(), // 12 months
           },
         })
@@ -436,7 +440,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
-            dstart: this.getMonth().toISOString(),
+            c: this.categorySelected,
+            dstart: this.getToday().toISOString(),
             dstop: this.getMonth(null, 12).toISOString(), // 12 months
           },
         })
@@ -449,6 +454,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           link: ['/reaffectateur'],
           queryParams: {
             dstart: getTime(this.calculatorService.dateStart.value),
+            c: this.categorySelected,
           },
         })
       }

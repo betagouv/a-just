@@ -893,7 +893,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
     this.loadFunctions()
-    this.onLoad(false, true)
     if (this.categorySelected === this.FONCTIONNAIRES) this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
     this.updateFilteredReferentiels()
   }

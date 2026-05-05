@@ -86,6 +86,11 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
    */
   ref: ContentieuReferentielInterface | null = null
   /**
+   * Is parent
+   */
+  isParent = false
+
+  /**
    * Constructor
    */
   constructor() {
@@ -103,6 +108,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
 
   async onLoadDatas() {
     this.ref = null
+    this.isParent = false
     this.appService.appLoading.next(true)
     if (this.calculatorService.selectedRefGraphDetail) {
       this.ref = this.humanResourceService.contentieuxReferentiel.getValue().find((c) => c.id === this.calculatorService.selectedRefGraphDetail) || null
@@ -113,6 +119,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
           .filter((r) => r.childrens?.find((c) => c.id === this.calculatorService.selectedRefGraphDetail))
         if (parent && parent.length > 0) {
           this.ref = parent[0]
+          this.isParent = true
         }
       }
       if (this.ref) {
@@ -474,6 +481,8 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
 
               if (this.calculatorService.showGraphDetailTypeLineTitle === 'Stock' && fixDecimal(value, 1) !== 1 && fixDecimal(value, 1) !== 0) {
                 return fixDecimal(value, 10)
+              } else if (this.calculatorService.showGraphDetailTypeLineTitle === 'Stock') {
+                return fixDecimal(value, 100)
               }
 
               return value
