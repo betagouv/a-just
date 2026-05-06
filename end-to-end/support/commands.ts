@@ -46,9 +46,8 @@ Cypress.Commands.add("login", () => {
   cy.task("log", "[LOGIN] Starting cy.session()...");
   cy.session("login", () => {
     // Wait for backend to be available before attempting login
-    //const serverUrl =
-    //  cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
-    const serverUrl = Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
+    const serverUrl =
+      cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
 
     cy.task(
       "log",
