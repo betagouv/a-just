@@ -211,6 +211,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Nombre de mois à comparer
    */
   nbMonthsToCompare: number = 0
+  /**
+   * Erreur de projection
+   */
+  graphError: string | null = null
 
   /**
    * Constructor
@@ -360,6 +364,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Initialisation du grid de projection footer
    */
   async initProjectionFooterGrid() {
+    this.graphError = null
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
     const dateStart = getTime(this.calculatorService.dateStart.value)
     const dateStop = getTime(this.calculatorService.dateStop.value)
@@ -661,6 +666,15 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       refDate = addMonths(refDate, +1)
       index++
     } while (month(refDate).getTime() <= month(endDate).getTime())
+
+    if (
+      this.currentProjectionType === 'etpt' &&
+      lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
+      nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
+    ) {
+      this.graphError =
+        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, l'ETPT à venir. Vous pouvez affiner vos affectations en accédant au ventilateur"
+    }
 
     // init chart.js
     const gradientPlugin = {
