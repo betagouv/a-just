@@ -6,8 +6,6 @@
     "lib": ["es6", "dom"],
     "sourceMap": true,
     "types": ["cypress", "node"],
-    "resolveJsonModule": true,
-    "moduleResolution": "classic",
     "esModuleInterop": true,
     "baseUrl": "."
   },
