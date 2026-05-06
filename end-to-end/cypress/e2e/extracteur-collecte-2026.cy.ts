@@ -14,6 +14,7 @@ import user from "../../fixtures/user.json";
 
 // Import comparison utilities from effectif-suite to avoid duplication
 // These are defined in effectif-suite.cy.ts but not exported, so we'll inline them here
+// Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
 function colToExcel(col: number): string {
   let result = "";
   let c = col;
@@ -24,6 +25,7 @@ function colToExcel(col: number): string {
   return result;
 }
 
+// Convert row/col to Excel notation (e.g., row=0, col=1 -> "B1")
 function cellToExcel(row: number, col: number): string {
   return `${colToExcel(col)}${row + 1}`;
 }
@@ -165,22 +167,6 @@ function categoryPattern(lbl: string): RegExp {
   if (/^Tous$/i.test(lbl)) return /^(Tous|Toutes|Toutes\s*(cat[eé]gories?)?)$/i;
   const esc = lbl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`^${esc}$`, "i");
-}
-
-// Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
-function colToExcel(col: number): string {
-  let result = "";
-  let c = col;
-  while (c >= 0) {
-    result = String.fromCharCode(65 + (c % 26)) + result;
-    c = Math.floor(c / 26) - 1;
-  }
-  return result;
-}
-
-// Convert row/col to Excel notation (e.g., row=0, col=1 -> "B1")
-function cellToExcel(row: number, col: number): string {
-  return `${colToExcel(col)}${row + 1}`;
 }
 
 // Note: We use the existing comparateur-extracteurs CLI tool instead of duplicating comparison logic
