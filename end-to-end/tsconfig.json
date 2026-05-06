@@ -2,8 +2,9 @@
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es5", "dom"],
+    "target": "es6",
+    "lib": ["es6", "dom"],
+    "sourceMap": true,
     "types": ["cypress", "node"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
