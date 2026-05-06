@@ -369,6 +369,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.nbMonthsToCompare = nbMonths + 1
 
+    const todayDate = this.getToday()
+    const todayDatePlus12Months = addMonths(todayDate, 12)
+
     if (this.currentProjectionType === 'stock') {
       if (this.userService.canViewSimulator()) {
         list.push({
@@ -380,8 +383,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             t: 'etpt',
             c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getToday().toISOString(),
-            dstop: this.getMonth(null, 12).toISOString(), // 12 months
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -395,8 +398,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             t: 'stock',
             c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getToday().toISOString(),
-            dstop: this.getMonth(null, 12).toISOString(), // 12 months
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -411,8 +414,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             t: 'etpt',
             c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getToday().toISOString(),
-            dstop: this.getMonth(null, 12).toISOString(), // 12 months
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -426,8 +429,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             t: 'dtes',
             c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: this.getToday().toISOString(),
-            dstop: this.getMonth(null, 12).toISOString(), // 12 months
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -441,8 +444,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
             c: this.categorySelected,
-            dstart: this.getToday().toISOString(),
-            dstop: this.getMonth(null, 12).toISOString(), // 12 months
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }

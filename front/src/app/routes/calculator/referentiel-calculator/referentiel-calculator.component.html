@@ -81,11 +81,12 @@
     @if (calculator.lastStock !== null && checkPastDate()) {
     <div class="block" (click)="onShowStock()"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
-      @if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && fixDecimal(calculator.lastStockBf || 0,
+      @if (calculator.lastStockBf !==null && calculator.lastStockAf !== null && fixDecimal(calculator.lastStockBf || 0,
       100)
       < fixDecimal(calculator.lastStockAf || 0, 100)) { <img src="/assets/icons/cockpit-down.svg" alt="cockpit-down"
         class="cockpit-down" />}
-      @else if (calculator.totalOutBf !==null && calculator.totalOutAf !== null && fixDecimal(calculator.lastStockBf ||
+      @else if (calculator.lastStockBf !==null && calculator.lastStockAf !== null && fixDecimal(calculator.lastStockBf
+      ||
       0, 100)
       > fixDecimal(calculator.lastStockAf || 0, 100)) { <img src="/assets/icons/cockpit-up.svg" alt="cockpit-up"
         class="cockpit-up" /> }
