@@ -456,7 +456,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           button: 'Réorganiser mes effectifs',
           link: ['/reaffectateur'],
           queryParams: {
-            dstart: getTime(this.calculatorService.dateStart.value),
+            dstart: todayDate.toISOString(),
             c: this.categorySelected,
           },
         })
