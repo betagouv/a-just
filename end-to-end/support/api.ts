@@ -1,9 +1,9 @@
 export const loginApi = (email: string, password: string) => {
   cy.log(`Logging in with email: ${email} and password: ${password}`);
   const serverUrl =
-    Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
+    cy.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
     //cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
-  cy.log("NG_APP_SERVER_URL:", cy.env(["NG_APP_SERVER_URL"]));
+  cy.log("NG_APP_SERVER_URL:", cy.env("NG_APP_SERVER_URL"));
   cy.log("Using server URL:", serverUrl);
 
   return cy.request({
