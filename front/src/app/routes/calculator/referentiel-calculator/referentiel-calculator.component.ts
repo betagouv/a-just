@@ -444,6 +444,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
             c: this.categorySelected,
+            ts: SIMULATOR_DONNEES,
             dstart: todayDate.toISOString(),
             dstop: todayDatePlus12Months.toISOString(),
           },
