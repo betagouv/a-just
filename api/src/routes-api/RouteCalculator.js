@@ -473,21 +473,14 @@ export default class RouteCalculator extends Route {
   })
   async hasError(ctx) {
     let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
-    console.log('type', type)
-    console.log('ctx', this.body(ctx))
 
     switch (type) {
       case COCKPIT_ERROR_NO_ENTRIES_OR_EXITS: {
-        console.log('dateStart', dateStart)
-        console.log('dateStop', dateStop)
-        console.log('contentieuxId', contentieuxId)
-        console.log('backupId', backupId)
 
         if (!dateStart || !dateStop || !contentieuxId || !backupId) {
           this.sendOk(ctx, { status: false })
           return
         }
-        console.log('COCKPIT_ERROR_NO_ENTRIES_OR_EXITS')
         let hasError = false
         dateStart = month(dateStart)
         dateStop = month(dateStop)
@@ -498,7 +491,6 @@ export default class RouteCalculator extends Route {
         }
 
         while (date.getTime() > dateStart.getTime() && !hasError) {
-          console.log('date', date)
           const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
           if (activites && activites.length) {
             const acti = activites[0]

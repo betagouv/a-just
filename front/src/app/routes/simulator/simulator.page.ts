@@ -121,7 +121,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
   router = inject(Router)
   route = inject(ActivatedRoute)
   serverService = inject(ServerService)
-
   @ViewChild('periodSelector') periodSelector: PeriodSelectorComponent | undefined
   /**
    * Wrapper de page contenant le simulateur
@@ -2003,6 +2002,14 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
   }
 
   onReturn() {
+    const hasQueryParams = Object.keys(this.route.snapshot.queryParams || {}).length > 0
+    if (hasQueryParams) {
+      this.router.navigate(['/simulateur'], { queryParams: {}, replaceUrl: true })
+      this.chooseScreen = true
+      this.resetParams()
+      return
+    }
+
     if (this.toDisplaySimulation) {
       this.onUserActionClick(this.action.return)
     } else if (this.projectedSituationData) {
