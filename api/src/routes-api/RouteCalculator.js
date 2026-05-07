@@ -381,10 +381,6 @@ export default class RouteCalculator extends Route {
                 lockSorties = lastMonthSorties
               }
 
-              console.log('lastMonthEntrees', lastMonthEntrees)
-              console.log('lastMonthSorties', lastMonthSorties)
-              console.log('etpt', etpt)
-              console.log('tempsMoyen', tempsMoyen)
               if (tempsMoyen !== Infinity) {
                 let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
                 if (categorySelected === 'magistrats') {

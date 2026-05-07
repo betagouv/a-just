@@ -174,14 +174,15 @@ const getActivityValues = async (
   let totalOut = filteredOut.length !== 0 ? meanBy(filteredOut, 'sorties') : null
 
   if (parentParams !== null) {
-    meanOutCs = parentParams.meanOutCs
+    // on ne veut pas utiliser les valeurs parentes pour le calcul du DTES
+    /*meanOutCs = parentParams.meanOutCs
     meanOutBf = parentParams.meanOutBf
     totalIn = parentParams.totalIn
     totalOut = parentParams.totalOut
     totalInBf = parentParams.totalInBf
     totalOutBf = parentParams.totalOutBf
     totalInAf = parentParams.totalInAf
-    totalOutAf = parentParams.totalOutAf
+    totalOutAf = parentParams.totalOutAf*/
   }
 
   let lastStock = null
