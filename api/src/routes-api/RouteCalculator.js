@@ -7,6 +7,7 @@ import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-re
 import { getEtpByCategory } from '../utils/simulator'
 import { meanBy } from 'lodash'
 import config from 'config'
+import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../constants/cokpit'
 
 /**
  * Route des calculs de la page calcule
@@ -458,5 +459,63 @@ export default class RouteCalculator extends Route {
     } while (dateStart.getTime() <= dateStop.getTime())
 
     this.sendOk(ctx, list)
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      type: Types.string().required(),
+      dateStart: Types.date(),
+      dateStop: Types.date(),
+      contentieuxId: Types.number(),
+      backupId: Types.number(),
+    }),
+    accesses: [Access.canVewCalculator],
+  })
+  async hasError(ctx) {
+    let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
+    console.log('type', type)
+    console.log('ctx', this.body(ctx))
+
+    switch (type) {
+      case COCKPIT_ERROR_NO_ENTRIES_OR_EXITS: {
+        console.log('dateStart', dateStart)
+        console.log('dateStop', dateStop)
+        console.log('contentieuxId', contentieuxId)
+        console.log('backupId', backupId)
+
+        if (!dateStart || !dateStop || !contentieuxId || !backupId) {
+          this.sendOk(ctx, { status: false })
+          return
+        }
+        console.log('COCKPIT_ERROR_NO_ENTRIES_OR_EXITS')
+        let hasError = false
+        dateStart = month(dateStart)
+        dateStop = month(dateStop)
+
+        let date = new Date(dateStop)
+        if (dateStart.getTime() > dateStop.getTime()) {
+          date = new Date(dateStart)
+        }
+
+        while (date.getTime() > dateStart.getTime() && !hasError) {
+          console.log('date', date)
+          const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
+          if (activites && activites.length) {
+            const acti = activites[0]
+            if (acti.entrees === null && acti.originalEntrees === null && acti.sorties === null && acti.originalSorties === null) {
+              hasError = true
+            }
+          }
+
+          date = month(date, -1)
+        }
+
+        this.sendOk(ctx, { status: hasError })
+        return
+      }
+      default:
+        this.sendOk(ctx, { status: false })
+        return
+    }
   }
 }

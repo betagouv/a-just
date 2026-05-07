@@ -138,4 +138,19 @@ export class CalculatorService extends MainClass {
       })
       .then((data) => data.data || [])
   }
+
+  /**
+   * Vérifie si une erreur existe pour un type et des paramètres donnés
+   * @param {type: string, params: any} type - Le type d'erreur à vérifier
+   * @param {any} params - Les paramètres de l'erreur
+   * @returns
+   */
+  async hasError({ type, params }: { type: string; params: any }) {
+    return this.serverService
+      .post(`calculator/has-error`, {
+        type,
+        ...params,
+      })
+      .then((data) => data.data.status || false)
+  }
 }

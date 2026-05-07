@@ -24,6 +24,7 @@ import { AppService } from '../../../services/app/app.service'
 import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
 import { SimulatorService } from '../../../services/simulator/simulator.service'
+import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
 
 /**
  * Composant d'une ligne du calculateur
@@ -347,6 +348,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         this.currentProjection = null
       }
       this.initValues()
+
+      if (this.showProjectionPopin) {
+        this.showChartJS()
+      }
     }
   }
 
@@ -484,6 +489,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       }, 200)
       return
     }
+
+    // init graph error
+    this.graphError = null
 
     console.log('showChartJS', this.chartjs, this.chartjs.nativeElement)
 
@@ -674,6 +682,22 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     ) {
       this.graphError =
         "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, l'ETPT à venir. Vous pouvez affiner vos affectations en accédant au ventilateur"
+    } else if (
+      (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
+      (await this.calculatorService.hasError({
+        type: COCKPIT_ERROR_NO_ENTRIES_OR_EXITS,
+        params: {
+          dateStart: pivotDate,
+          dateStop: endOfGraph,
+          contentieuxId,
+          backupId: this.humanResourceService.backupId.getValue(),
+        },
+      }))
+    ) {
+      // L'entrée et la sortie sont null pour 1 mois ou plus
+
+      this.graphError =
+        "Pour obtenir une projection plus fine, nous vous invitions à compléter vos données d'activité pour l'ensemble des mois de la période concernées."
     }
 
     // init chart.js
