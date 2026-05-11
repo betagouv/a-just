@@ -25,6 +25,7 @@ import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
 import { SimulatorService } from '../../../services/simulator/simulator.service'
 import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
+import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe'
 
 /**
  * Composant d'une ligne du calculateur
@@ -32,7 +33,17 @@ import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
 
 @Component({
   standalone: true,
-  imports: [CommonModule, SpeedometerComponent, ReferentielCalculatorComponent, TooltipsComponent, MatIconModule, MatTooltipModule, DecimalPipe, RouterModule],
+  imports: [
+    CommonModule,
+    SpeedometerComponent,
+    ReferentielCalculatorComponent,
+    TooltipsComponent,
+    MatIconModule,
+    MatTooltipModule,
+    DecimalPipe,
+    RouterModule,
+    SanitizeHtmlPipe,
+  ],
   selector: 'aj-referentiel-calculator',
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
@@ -680,8 +691,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
       nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
     ) {
-      this.graphError =
-        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, l'ETPT à venir. Vous pouvez affiner vos affectations en accédant au ventilateur"
+      this.graphError = `En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur`
     } else if (
       (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
       (await this.calculatorService.hasError({
@@ -697,7 +707,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       // L'entrée et la sortie sont null pour 1 mois ou plus
 
       this.graphError =
-        "Pour obtenir une projection plus fine, nous vous invitions à compléter vos données d'activité pour l'ensemble des mois de la période concernées."
+        "Pour obtenir une projection plus fine, nous vous invitons à compléter vos données d'activité pour l'ensemble des mois de la période concernée."
     }
 
     // init chart.js

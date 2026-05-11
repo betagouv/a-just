@@ -414,7 +414,15 @@
       </div>
     </div>
     @if(graphError) {<div class="popin-projection-content-error">
-      <p>{{ graphError }}</p>
+      <p class="tag-error" [ngStyle]="{ backgroundColor: userService.referentielMappingColorActivityByInterface(
+        userService.referentielMappingNameByInterface(
+        (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+        )
+      , OPACITY_20), color: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ) }" [innerHTML]="graphError | sanitizeHtml"></p>
     </div>}
     <div class="popin-projection-content-body">
       <canvas #chartjs></canvas>
