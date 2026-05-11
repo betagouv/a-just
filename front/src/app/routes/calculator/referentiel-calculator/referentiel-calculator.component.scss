@@ -514,5 +514,10 @@ aj-speedometer {
     margin: 0 72px;
     padding: 12px;
     border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 }

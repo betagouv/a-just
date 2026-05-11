@@ -422,7 +422,11 @@
           userService.referentielMappingNameByInterface(
           (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
           )
-        ) }" [innerHTML]="graphError | sanitizeHtml"></p>
+        ) }"><aj-help-button [canShowChildren]="false" class="fit-content no-cursor" [backgroundColor]="userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        )"></aj-help-button> <span [innerHTML]="graphError | sanitizeHtml"></span></p>
     </div>}
     <div class="popin-projection-content-body">
       <canvas #chartjs></canvas>

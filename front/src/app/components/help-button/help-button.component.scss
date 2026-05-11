@@ -6,6 +6,16 @@
   position: relative;
   z-index: 1;
 
+  &.fit-content {
+    >div {
+      position: relative;
+    }
+  }
+
+  &.no-cursor>div {
+    cursor: default;
+  }
+
   >div {
     background-color: utils.$colors-bgHelper;
     position: absolute;

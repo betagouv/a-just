@@ -26,6 +26,7 @@ import { Chart, ChartItem } from 'chart.js/auto'
 import { SimulatorService } from '../../../services/simulator/simulator.service'
 import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
 import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe'
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
 
 /**
  * Composant d'une ligne du calculateur
@@ -43,6 +44,7 @@ import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pip
     DecimalPipe,
     RouterModule,
     SanitizeHtmlPipe,
+    HelpButtonComponent,
   ],
   selector: 'aj-referentiel-calculator',
   templateUrl: './referentiel-calculator.component.html',
@@ -691,7 +693,11 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
       nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
     ) {
-      this.graphError = `En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur`
+      this.graphError =
+        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+    } else if (nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length) {
+      this.graphError =
+        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
     } else if (
       (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
       (await this.calculatorService.hasError({
@@ -815,7 +821,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       {
         // datas after
         ...defaultDataset,
-        data: nextDatesChartJS.map((v) => (v === null ? NaN : v)),
+        data:
+          nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length
+            ? []
+            : nextDatesChartJS.map((v) => (v === null ? NaN : v)),
       },
     ]
     console.log('datasets', datasets)
