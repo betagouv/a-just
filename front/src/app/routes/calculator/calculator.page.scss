@@ -654,11 +654,22 @@
 
   >div {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 8px;
     position: relative;
+    padding-top: 8px;
+
+    &.etpt-column {
+      padding-bottom: 8px;
+    }
+
+    >div {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
 
     &:not(:first-child) {
       border-left: solid 3px white;
@@ -679,6 +690,20 @@
       align-self: stretch;
       display: flex;
       flex-direction: column;
+
+      .etpt-selected-content {
+        margin-top: 4px;
+        display: flex;
+        width: 100%;
+
+        >div {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+        }
+      }
 
       >div {
         flex: 1;
@@ -711,6 +736,15 @@
             }
           }
         }
+      }
+    }
+
+    .sort-icon {
+      color: utils.$colors-cbluemiddle;
+      cursor: pointer;
+
+      &.selected {
+        color: utils.$colors-cbluedark;
       }
     }
   }

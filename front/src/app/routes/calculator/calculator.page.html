@@ -75,57 +75,98 @@
           <p>Contentieux</p>
         </div>
         <div>
-          <p>
-            DTES
-            <br />
-            instantané
-          </p>
+          <div>
+            <p>
+              DTES
+              <br />
+              instantané
+            </p>
+          </div>
+          <i class="sort-icon" [ngClass]="{
+                    'ri-sort-asc': sortBy.up === true,
+                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realDTESInMonths'),
+                    selected: sortBy.type === 'realDTESInMonths'
+                  }" (click)="onSortBy('realDTESInMonths')"></i>
           <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
             content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
             footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>"></aj-tooltips>
         </div>
         <div>
-          <p>
-            Taux de
-            <br />
-            couverture
-          </p>
+          <div>
+            <p>
+              Taux de
+              <br />
+              couverture
+            </p>
+          </div>
+          <i class="sort-icon" [ngClass]="{
+            'ri-sort-asc': sortBy.up === true,
+            'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage'),
+            selected: sortBy.type === 'realCoverage'
+          }" (click)="onSortBy('realCoverage')"></i>
           <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE"
             content="SORTIES /ENTREES de la période en %"></aj-tooltips>
         </div>
         <div>
-          <p>Stock</p>
+          <div>
+            <p>Stock</p>
+          </div>
+          <i class="sort-icon" [ngClass]="{
+            'ri-sort-asc': sortBy.up === true,
+            'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'lastStock'),
+            selected: sortBy.type === 'lastStock'
+          }" (click)="onSortBy('lastStock')"></i>
           <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
         </div>
-        <div
-          (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
-          @if(!categoryIdSelected) {<div class="etpt">
-            <p>ETPT</p>
-            @if(categorySelected === MAGISTRATS) {
-            <p>Siège</p>
-            } @else if(categorySelected === FONCTIONNAIRES) {
-            <p>Greffe</p>
-            } @else {
-            <p>{{categoryFiltered[0].label}}</p>
+        <div class="etpt-column">
+          @if(!categoryIdSelected) {
+          <div>
+            <div class="etpt"
+              (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
+              <p>ETPT</p>
+              @if(categorySelected === MAGISTRATS) {
+              <p>Siège</p>
+              } @else if(categorySelected === FONCTIONNAIRES) {
+              <p>Greffe</p>
+              } @else {
+              <p>{{categoryFiltered[0].label}}</p>
+              }
+            </div>
+            @if(categoryFiltered.length > 1) {
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none"
+              (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
+                fill="#000091" />
+            </svg>
             }
           </div>
-          @if(categoryFiltered.length > 1) {
-          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
-              fill="#000091" />
-          </svg>
-          }
+          <i class="sort-icon" [ngClass]="{
+            'ri-sort-asc': sortBy.up === true,
+            'ri-sort-desc': !(sortBy.up === true && sortBy.type === (categorySelected === MAGISTRATS ? 'etpMag' : categorySelected === FONCTIONNAIRES ? 'etpFon' : 'etpCont')),
+            selected: sortBy.type === (categorySelected === MAGISTRATS ? 'etpMag' : categorySelected === FONCTIONNAIRES ? 'etpFon' : 'etpCont')
+          }"
+            (click)="onSortBy((categorySelected === MAGISTRATS ? 'etpMag' : categorySelected === FONCTIONNAIRES ? 'etpFon' : 'etpCont'))"></i>
           } @else {
           <div class="etpt-selected">
-            <div>ETPT <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <div
+              (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
+              ETPT <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
-                  fill="#000091" />
+                  fill="#000000" />
               </svg></div>
-            <div>
+            <div class="etpt-selected-content">
               @for(category of categoryFiltered; track category.categoryId) {
-              <span>{{ category.label === "Autres activités" ? "EAM" : category.label }}</span>
+              <div>
+                <span>{{ category.label === "Autres activités" ? "EAM" : category.label }}</span>
+                <i class="sort-icon" [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === (category.categoryId === 1 ? 'etpMag' : category.categoryId === 2 ? 'etpFon' : 'etpCont')),
+                selected: sortBy.type === (category.categoryId === 1 ? 'etpMag' : category.categoryId === 2 ? 'etpFon' : 'etpCont')
+              }"
+                  (click)="onSortBy((category.categoryId === 1 ? 'etpMag' : category.categoryId === 2 ? 'etpFon' : 'etpCont'))"></i>
+              </div>
               }
             </div>
           </div>
