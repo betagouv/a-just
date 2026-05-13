@@ -94,6 +94,26 @@ export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS = 3018
 export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS_ALONE = 3019
 
 /**
+ * Code de se projeter d'un contentieux
+ */
+export const CALCULATOR_OPEN_PROJECT_CONTENTIEUX = 3020
+
+/**
+ * Code de se projeter d'un sous contentieux
+ */
+export const CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX = 3021
+
+/**
+ * Code de affichage de la page vue brut et affichange du graph d'un contentieux
+ */
+export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX = 3022
+
+/**
+ * Code de affichage de la page vue brut et affichange du graph d'un sous contentieux
+ */
+export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX = 3023
+
+/**
  * Code de démarrage de la simulation à blanc
  */
 export const WHITE_SIMULATOR_START = 20000

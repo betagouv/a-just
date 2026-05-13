@@ -37,7 +37,7 @@
   </div>
   <div [ngClass]="{'dtes': calculator.realDTESInMonths !== null && checkPastDate()}">
     @if (!isSoutien(calculator.contentieux.id)) {
-    <div class="block" (click)="onShowDTES()"
+    <div class="block" (click)="onShowDTES(); onLogToOpenGraph('dtes')"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.realDTESInMonths !== null && checkPastDate()) {
       @if (calculator.realDTESInMonths !==null && calculator.realDTESInMonthsStart !== null &&
@@ -79,7 +79,7 @@
   <div [ngClass]="{'stock': calculator.lastStock !== null && checkPastDate()}">
     @if (!isSoutien(calculator.contentieux.id)) {
     @if (calculator.lastStock !== null && checkPastDate()) {
-    <div class="block" (click)="onShowStock()"
+    <div class="block" (click)="onShowStock(); onLogToOpenGraph('stock')"
       [ngStyle]="{ cursor: canViewProjecter && !isSoutien(calculator.contentieux.id) ? 'pointer' : 'default' }">
       @if (calculator.lastStockBf !==null && calculator.lastStockAf !== null && fixDecimal(calculator.lastStockBf || 0,
       100)
@@ -465,7 +465,7 @@
           userService.referentielMappingNameByInterface(
           (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
           )
-        ) }">{{ item.button }}</a>
+        ) }" (click)="onLogEvent(item.button)">{{ item.button }}</a>
       </div>
       }
     </div>

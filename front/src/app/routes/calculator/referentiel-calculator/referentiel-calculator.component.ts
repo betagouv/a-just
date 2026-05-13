@@ -12,7 +12,13 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { KPIService } from '../../../services/kpi/kpi.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
 import { getTime, month, monthDiff, setTimeToMidDay, today } from '../../../utils/dates'
-import { CALCULATOR_OPEN_CONTENTIEUX } from '../../../constants/log-codes'
+import {
+  CALCULATOR_OPEN_CONTENTIEUX,
+  CALCULATOR_OPEN_PROJECT_CONTENTIEUX,
+  CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX,
+  CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX,
+  CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX,
+} from '../../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
@@ -379,9 +385,30 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   }
 
   /**
+   * Log event
+   * @param event
+   */
+  onLogEvent(event: string = 'show') {
+    this.kpiService.register(
+      this.parentCalculator ? CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX : CALCULATOR_OPEN_PROJECT_CONTENTIEUX,
+      this.currentProjectionType,
+      event,
+    )
+  }
+
+  /**
+   * On log to open graph
+   */
+  onLogToOpenGraph(event: string = '') {
+    this.kpiService.register(this.parentCalculator ? CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX : CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX, event)
+  }
+
+  /**
    * Initialisation du grid de projection footer
    */
   async initProjectionFooterGrid() {
+    this.onLogEvent('show')
+
     this.graphError = null
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
     const dateStart = getTime(this.calculatorService.dateStart.value)

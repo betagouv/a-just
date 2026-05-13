@@ -872,7 +872,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * @param type
    */
   onSortBy(type: string) {
-    console.log('type', type)
     if (this.sortBy.type !== type) {
       this.sortBy.up = true
       this.sortBy.type = type
