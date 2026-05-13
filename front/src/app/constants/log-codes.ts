@@ -104,12 +104,12 @@ export const CALCULATOR_OPEN_PROJECT_CONTENTIEUX = 3020
 export const CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX = 3021
 
 /**
- * Code de affichage de la page vue brut et affichange du graph d'un contentieux
+ * Code d'affichage de la page vue brut et affichage du graph d'un contentieux
  */
 export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX = 3022
 
 /**
- * Code de affichage de la page vue brut et affichange du graph d'un sous contentieux
+ * Code d'affichage de la page vue brut et affichage du graph d'un sous contentieux
  */
 export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX = 3023
 
