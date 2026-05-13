@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, SimpleChanges, ViewChild } from '@angular/core'
+import Quill from 'quill'
 import { MainClass } from '../../libs/main-class'
-
-declare const Quill: any
 
 /**
  * Composent de mise en page en mode connecté
@@ -162,12 +161,12 @@ export class TextEditorComponent extends MainClass {
     toolbar.push({ list: 'bullet' })
 
     const dom = this.contener?.nativeElement
-    this.quillEditor = new Quill(dom, {
+    this.quillEditor = new Quill(dom as HTMLElement, {
       readOnly: this.defaultReadOnly,
       modules: {
         toolbar,
       },
-      placeholder: this.defaultReadOnly ? null : this.placeholder,
+      placeholder: this.defaultReadOnly ? undefined : this.placeholder,
       theme: 'snow',
     })
 
