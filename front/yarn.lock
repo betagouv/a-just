@@ -249,7 +249,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/build@^21.2.5", "@angular/build@21.2.7":
+"@angular/build@^21.0.0", "@angular/build@^21.2.5", "@angular/build@21.2.7":
   version "21.2.7"
   resolved "https://registry.npmjs.org/@angular/build/-/build-21.2.7.tgz"
   integrity sha512-FpSkFqpsJtdN1cROekVYkmeV1QepdP+/d7fyYQEuNmlOlyqXSDh9qJmy4iL9VNbAU0rk+vFCtYM86rO7Pt9cSw==
@@ -1286,7 +1286,7 @@
     dotenv-expand "^10.0.0"
     find-up "^5.0.0"
 
-"@dotenv-run/webpack@^1.5.1":
+"@dotenv-run/webpack@^1.5.2":
   version "1.5.2"
   resolved "https://registry.npmjs.org/@dotenv-run/webpack/-/webpack-1.5.2.tgz"
   integrity sha512-dAWppLrRbYM1ollo266PrHvfD6JoJ+uOvbkeOl4DwluL0QFq92qB2V+TXysYNhzjDe0Rtp91Ztv3PCz9Tnm5jA==
@@ -2108,13 +2108,14 @@
   resolved "https://registry.npmjs.org/@ngtools/webpack/-/webpack-21.2.7.tgz"
   integrity sha512-Z4gjCaJbO16VUO8I2QjRNT87uRYxjTKSSImDhzgVgLpV2/stlv/akbLU8dJYa7pK7eIYb/tkNRxGn/AtCiViUQ==
 
-"@ngx-env/builder@^19.1.0":
-  version "19.1.0"
-  resolved "https://registry.npmjs.org/@ngx-env/builder/-/builder-19.1.0.tgz"
-  integrity sha512-dAEFb2Ns63sR2XT71cJkmE3GAl3sCYKADMZrWxGNDRxQSosw25qW+U6yrgSrAxw8ls1TMaiU6rXeFLsk92cpdQ==
+"@ngx-env/builder@^21.0.1":
+  version "21.0.1"
+  resolved "https://registry.npmjs.org/@ngx-env/builder/-/builder-21.0.1.tgz"
+  integrity sha512-bcdiXCzGMikL8qx8xKpC52q2rITSzxP+NMWrbngzFTMA0XdeU1l4sqZFmRgxSXAp+RWaf22Twl0sH9M2MmR4Xg==
   dependencies:
-    "@dotenv-run/webpack" "^1.5.1"
     glob "^10.4.5"
+  optionalDependencies:
+    "@dotenv-run/webpack" "^1.5.2"
 
 "@noble/hashes@^1.8.0 || ^2.0.0", "@noble/hashes@^2.0.1":
   version "2.0.1"
@@ -2882,6 +2883,11 @@
   resolved "https://registry.npmjs.org/@types/jasmine/-/jasmine-5.1.15.tgz"
   integrity sha512-ZAC8KjmV2MJxbNTrwXFN+HKeajpXQZp6KpPiR6Aa4XvaEnjP6qh23lL/Rqb7AYzlp3h/rcwDrQ7Gg7q28cQTQg==
 
+"@types/jquery@*":
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/@types/jquery/-/jquery-4.0.0.tgz"
+  integrity sha512-Z+to+A2VkaHq1DfI2oSwsoCdhCHMpTSgjWzNcbNlRGYzksDBpPUgEcAL+RQjOBJRaLoEAOHXxqDGBVP+BblBwg==
+
 "@types/json-schema@*", "@types/json-schema@^7.0.15", "@types/json-schema@^7.0.9":
   version "7.0.15"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
@@ -2988,6 +2994,13 @@
   integrity sha512-Z0pOY34GDFl3Q6hUFYf3HkTwKEE02e7QgtJppBt+beEAxnyOpJua+voGFvxINBHa06GwLFFym7gRPY2SiKIfIA==
   dependencies:
     "@types/geojson" "*"
+
+"@types/toastr@^2.1.43":
+  version "2.1.43"
+  resolved "https://registry.npmjs.org/@types/toastr/-/toastr-2.1.43.tgz"
+  integrity sha512-sLC2fr2OXeE1iyhUixpQ64wQ2tA26awmLidn4tXTLBz4yP/VhtYUKHpmiIyDtztKkHjucdiTLH8F5uRRyhNi2Q==
+  dependencies:
+    "@types/jquery" "*"
 
 "@types/trusted-types@^2.0.7":
   version "2.0.7"
