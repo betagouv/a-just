@@ -1,18 +1,21 @@
 export const loginApi = (email: string, password: string) => {
   cy.log(`Logging in with email: ${email} and password: ${password}`);
-  const serverUrl =
-    cy.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
-    //cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
-  cy.log("NG_APP_SERVER_URL:", cy.env("NG_APP_SERVER_URL"));
-  cy.log("Using server URL:", serverUrl);
+  let serverUrl: string | null = null;
+  // const serverUrl =
+  //   cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
+  // cy.log("NG_APP_SERVER_URL:", cy.env(["NG_APP_SERVER_URL"]));
+  // cy.log("Using server URL:", serverUrl);
 
-  return cy.request({
-    method: "POST",
-    url: `${serverUrl}/auths/login`,
-    body: {
-      email: email,
-      password: password,
-    },
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "POST",
+      url: `${serverUrl}/auths/login`,
+      body: {
+        email: email,
+        password: password,
+      },
+    });
   });
 };
 
@@ -59,68 +62,76 @@ export const extractorStartApi = (
   });
 };
 
-export const extractorActivitiesApi = (
-  serverUrl: string,
-  params: {
-    backupId: number;
-    dateStart: string; // YYYY-MM-DD
-    dateStop: string; // YYYY-MM-DD
-  },
-) => {
-  return cy.request({
-    method: "POST",
-    url: `${serverUrl}/extractor/filter-list-act`,
-    withCredentials: true,
-    body: params,
-    timeout: 180000,
+export const extractorActivitiesApi = (params: {
+  backupId: number;
+  dateStart: string; // YYYY-MM-DD
+  dateStop: string; // YYYY-MM-DD
+}) => {
+  let serverUrl: string | null = null;
+
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "POST",
+      url: `${serverUrl}/extractor/filter-list-act`,
+      withCredentials: true,
+      body: params,
+      timeout: 180000,
+    });
   });
 };
 
 export const getLastMonthApi = () => {
   const backupId = window.localStorage.getItem("backupId");
   const token = window.localStorage.getItem("token");
-  const serverUrl =
-    cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
+  let serverUrl: string | null = null;
 
-  return cy.request({
-    method: "POST",
-    url: `${serverUrl}/activities/get-last-month`,
-    headers: {
-      Authorization: `${token}`,
-    },
-    body: { hrBackupId: backupId },
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "POST",
+      url: `${serverUrl}/activities/get-last-month`,
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: { hrBackupId: backupId },
+    });
   });
 };
 
 export const updateHumanResourcesApi = (hrData: any) => {
   const backupId = window.localStorage.getItem("backupId");
   const token = window.localStorage.getItem("token");
-  const serverUrl =
-    cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
+  let serverUrl: string | null = null;
 
-  return cy.request({
-    method: "POST",
-    url: `${serverUrl}/human-resources/update-hr`,
-    headers: {
-      Authorization: `${token}`,
-    },
-    body: {
-      backupId: backupId,
-      hr: hrData,
-    },
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "POST",
+      url: `${serverUrl}/human-resources/update-hr`,
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: {
+        backupId: backupId,
+        hr: hrData,
+      },
+    });
   });
 };
 
 export const getUserDataApi = (token: string) => {
-  const serverUrl =
-    cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
+  let serverUrl: string | null = null;
 
-  return cy.request({
-    method: "GET",
-    url: `${serverUrl}/users/get-user-datas`,
-    headers: {
-      Authorization: `${token}`,
-    },
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "GET",
+      url: `${serverUrl}/users/get-user-datas`,
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
   });
 };
 
@@ -137,21 +148,23 @@ export const updateUserAccounatApi = ({
   referentielIds?: any;
   token: string;
 }) => {
-  const serverUrl =
-    cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api";
+  let serverUrl: string = "http://localhost:8081/api";
 
-  return cy.request({
-    method: "POST",
-    url: `${serverUrl}/users/update-account`,
-    headers: {
-      Authorization: `${token}`,
-    },
-    body: {
-      userId: userId,
-      access: accessIds,
-      ventilations: ventilations,
-      referentielIds: referentielIds,
-    },
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    serverUrl = NG_APP_SERVER_URL;
+    return cy.request({
+      method: "POST",
+      url: `${serverUrl}/users/update-account`,
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: {
+        userId: userId,
+        access: accessIds,
+        ventilations: ventilations,
+        referentielIds: referentielIds,
+      },
+    });
   });
 };
 

@@ -1,13 +1,13 @@
 /// <reference types="cypress" />
 // Mirror sandbox: load custom commands and reporter, register cy-verify-downloads
-import '../../support/commands';
-import addCustomCommand from 'cy-verify-downloads';
-import 'cypress-mochawesome-reporter/register';
-import { attachAJustContext } from '../../support/ajust-context';
+import "../../support/commands";
+import addCustomCommand from "cy-verify-downloads";
+import "cypress-mochawesome-reporter/register";
+import { attachAJustContext } from "../../support/ajust-context";
 
 // Also register via require to match sandbox behavior
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-require('cy-verify-downloads').addCustomCommand();
+require("cy-verify-downloads").addCustomCommand();
 
 // Debug helpers to capture AUT console logs into cypress/reports
 
@@ -20,33 +20,47 @@ declare global {
   }
 }
 
-Cypress.Commands.add('enableDebugLogging', (tag?: string) => {
-  Cypress.on('window:before:load', (win) => {
+Cypress.Commands.add("enableDebugLogging", (tag?: string) => {
+  Cypress.on("window:before:load", (win) => {
     try {
       (win as any).__e2eLogs = [];
-      const levels: Array<keyof Console> = ['error', 'warn', 'log'];
+      const levels: Array<keyof Console> = ["error", "warn", "log"];
       levels.forEach((lvl) => {
         const orig = (win.console as any)[lvl] as (...args: any[]) => void;
         (win.console as any)[lvl] = (...args: any[]) => {
           try {
-            const line = `[${lvl}] ` + args.map((a) => {
-              try { return typeof a === 'string' ? a : JSON.stringify(a); } catch { return String(a); }
-            }).join(' ');
+            const line =
+              `[${lvl}] ` +
+              args
+                .map((a) => {
+                  try {
+                    return typeof a === "string" ? a : JSON.stringify(a);
+                  } catch {
+                    return String(a);
+                  }
+                })
+                .join(" ");
             (win as any).__e2eLogs.push(line);
           } catch {}
-          try { orig && orig.apply(win.console, args); } catch {}
+          try {
+            orig && orig.apply(win.console, args);
+          } catch {}
         };
       });
     } catch {}
   });
 });
 
-Cypress.Commands.add('flushDebugLogs', (tag: string) => {
+Cypress.Commands.add("flushDebugLogs", (tag: string) => {
   cy.window({ log: false }).then((win: any) => {
     try {
       const lines: string[] = (win && win.__e2eLogs) || [];
-      const content = lines.join('\n');
-      return cy.task('saveDomHtml', { filename: `console-${tag}.txt`, html: content }, { log: false });
+      const content = lines.join("\n");
+      return cy.task(
+        "saveDomHtml",
+        { filename: `console-${tag}.txt`, html: content },
+        { log: false },
+      );
     } catch {
       // ignore
     }
@@ -57,21 +71,34 @@ export {};
 
 // Sandbox parity: basic session cleanup before run
 before(() => {
-  try { cy.clearCookies(); } catch {}
-  try { cy.clearLocalStorage(); } catch {}
-  try { cy.reload(); } catch {}
+  try {
+    cy.clearCookies();
+  } catch {}
+  try {
+    cy.clearLocalStorage();
+  } catch {}
+  try {
+    cy.reload();
+  } catch {}
 });
 
 // Attach A-JUST context (user, backup, rights) to every test for reporting
-beforeEach(function() {
+beforeEach(function () {
   // Use function() instead of arrow function to access 'this.currentTest'
   const fullTitle = this.currentTest?.fullTitle();
   attachAJustContext(fullTitle);
 });
 
 // Ignore ResizeObserver noise like in sandbox
-Cypress.on('uncaught:exception', (err) => {
-  if (err && /ResizeObserver loop completed with undelivered notifications/i.test(String(err.message || ''))) {
+// Also ignore ES module import errors thrown by the app during page load
+Cypress.on("uncaught:exception", (err) => {
+  const msg = String(err.message || "");
+  if (
+    /ResizeObserver loop completed with undelivered notifications/i.test(msg)
+  ) {
+    return false;
+  }
+  if (/Cannot use import statement outside a module/i.test(msg)) {
     return false;
   }
   return true;

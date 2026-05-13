@@ -13,13 +13,17 @@ describe("Login Page", () => {
   });
 
   it("should verify existence of Page Blanche button", () => {
-    const ssoIsActivate = cy.env(["NG_APP_ENABLE_SSO"]);
-    if (ssoIsActivate) {
-      cy.get("form")
-        .should("contain.text", "Vous avez déjà un compte")
-        .get(".sso-bt")
-        .should("contain.text", "Se connecter avec Pages Blanches");
-    }
+    let enableSSO = null;
+    cy.env(["NG_APP_ENABLE_SSO"]).then(({ NG_APP_ENABLE_SSO }) => {
+      enableSSO = NG_APP_ENABLE_SSO;
+
+      if (enableSSO) {
+        cy.get("form")
+          .should("contain.text", "Vous avez déjà un compte")
+          .get(".sso-bt")
+          .should("contain.text", "Se connecter avec Pages Blanches");
+      }
+    });
   });
 
   it("Try to connect with an invalid email", () => {
