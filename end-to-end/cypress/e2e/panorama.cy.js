@@ -859,4 +859,32 @@ describe("Panorama page", () => {
     // Appelle la fonction pour chercher l'agent dans les pages
     findAgentInPagination("Agent Test dateStop", formattedDepartureDate);
   });
+
+  it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
+    let sousContentieuxName = "", contentieuxName = "";
+
+    ["Les 12 derniers mois disponibles", "Dernier trimestre disponible", "Dernier mois disponible"].forEach((tag) => {
+      cy.contains(".tags", String(tag)).click();
+
+      if (cy.get(".referentiel-row a").first() && cy.get(".referentiel-row a").eq(1)) {
+        cy.get(".referentiel-row a").first().then(($contentieux) => {
+
+          cy.get(".referentiel-row a").first().then(($contentieux) => {
+            contentieuxName = $contentieux.text().replace(/\u00a0/g, ' ').trim();
+
+            cy.get(".referentiel-row a").eq(1).then(($sousContentieux) => {
+              sousContentieuxName = $sousContentieux.text().replace(/\u00a0/g, ' ').trim();
+              cy.get(".referentiel-row a").eq(1).click();
+              cy.url().should("include", "/donnees-d-activite");
+
+              cy.get('.maximize .selectable .label p').should('include.text', contentieuxName)
+              cy.get('.maximize .group .group-item').should('contain.text', sousContentieuxName)
+
+              cy.go("back");
+            });
+          });
+        });
+      }
+    });
+  });
 });
