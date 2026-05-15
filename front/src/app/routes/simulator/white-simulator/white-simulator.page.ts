@@ -12,7 +12,7 @@ import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-r
 import { DocumentationInterface } from '../../../interfaces/documentation'
 import { tree } from '../simulator.tree'
 import { BackupInterface } from '../../../interfaces/backup'
-import { decimalToStringDate, findRealValue, monthDiffList, nbOfDays, setTimeToMidDay, stringToDecimalDate, today } from '../../../utils/dates'
+import { decimalToStringDate, findRealValue, monthDiffList, nbOfDays, nbOfWorkingDays, setTimeToMidDay, stringToDecimalDate, today } from '../../../utils/dates'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
 import { SimulatorService } from '../../../services/simulator/simulator.service'
@@ -580,7 +580,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
     this.simulatorService.dateStop.next(this.dateStop)
     this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart
     this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop
-    this.simulatorService.whiteSimulatorNbOfDays.next(nbOfDays(this.dateStart, this.dateStop))
+    this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop))
     this.stopRealValue = findRealValue(this.dateStop)
   }
   /**
@@ -738,7 +738,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number], child:this.subList})
+        this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: this.subList })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -752,8 +752,9 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number], child:null})
-        else this.simulatorService.contentieuOrSubContentieuId.next({parent:null, child:this.subList})
+        if (event.length === tmpRefLength?.childrens?.length)
+          this.simulatorService.contentieuOrSubContentieuId.next({ parent: [this.contentieuId as number], child: null })
+        else this.simulatorService.contentieuOrSubContentieuId.next({ parent: null, child: this.subList })
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
@@ -1491,8 +1492,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
-      contentieuxIds:[this.contentieuId],
-      fonctionsIds: this.selectedFonctionsIds
+      contentieuxIds: [this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds,
     }
     const simulation: SimulationInterface = {
       totalIn: null,
