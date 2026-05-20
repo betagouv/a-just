@@ -302,6 +302,8 @@ describe("Cockpit", () => {
     });
 
     cy.location("pathname", { timeout: 60000 }).should("include", "/cockpit");
+    cy.get("aj-big-loader", { timeout: 20000 }).should("not.exist");
+
 
     cy.get("aj-popup").within(() => {
       cy.get(".ref-list")
