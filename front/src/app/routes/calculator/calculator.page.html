@@ -87,7 +87,7 @@
                     'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realDTESInMonths'),
                     selected: sortBy.type === 'realDTESInMonths'
                   }" (click)="onSortBy('realDTESInMonths')"></i>
-          <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
+          <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium no-left"
             content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
             footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>"></aj-tooltips>
         </div>
@@ -104,8 +104,8 @@
             'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage'),
             selected: sortBy.type === 'realCoverage'
           }" (click)="onSortBy('realCoverage')"></i>
-          <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE"
-            content="SORTIES /ENTREES de la période en %"></aj-tooltips>
+          <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE" content="SORTIES /ENTREES de la période en %"
+            class="no-left"></aj-tooltips>
         </div>
         <div>
           <div>
@@ -116,7 +116,8 @@
             'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'lastStock'),
             selected: sortBy.type === 'lastStock'
           }" (click)="onSortBy('lastStock')"></i>
-          <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
+          <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"
+            class="no-left"></aj-tooltips>
         </div>
         <div class="etpt-column">
           @if(!categoryIdSelected) {
@@ -147,6 +148,16 @@
             selected: sortBy.type === (categorySelected === MAGISTRATS ? 'etpMag' : categorySelected === FONCTIONNAIRES ? 'etpFon' : 'etpCont')
           }"
             (click)="onSortBy((categorySelected === MAGISTRATS ? 'etpMag' : categorySelected === FONCTIONNAIRES ? 'etpFon' : 'etpCont'))"></i>
+          @if(categorySelected === MAGISTRATS) {
+          <aj-tooltips class="medium no-left" title="ETPT siège"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+          } @else if(categorySelected === FONCTIONNAIRES) {
+          <aj-tooltips class="medium no-left" title="ETPT greffe"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+          } @else {
+          <aj-tooltips class="medium no-left" title="ETPT EAM"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+          }
           } @else {
           <div class="etpt-selected">
             <div
@@ -166,6 +177,16 @@
                 selected: sortBy.type === (category.categoryId === 1 ? 'etpMag' : category.categoryId === 2 ? 'etpFon' : 'etpCont')
               }"
                   (click)="onSortBy((category.categoryId === 1 ? 'etpMag' : category.categoryId === 2 ? 'etpFon' : 'etpCont'))"></i>
+                @if(category.categoryId === 1) {
+                <aj-tooltips class="medium no-left" title="ETPT siège"
+                  content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+                } @else if(category.categoryId === 2) {
+                <aj-tooltips class="medium no-left" title="ETPT greffe"
+                  content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+                } @else {
+                <aj-tooltips class="medium right" title="ETPT EAM"
+                  content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+                }
               </div>
               }
             </div>

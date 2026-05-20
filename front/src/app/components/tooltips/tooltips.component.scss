@@ -108,6 +108,10 @@
     }
   }
 
+  &.no-left .tooltip-text {
+    left: inherit;
+  }
+
   .tooltip-text {
     position: absolute;
     z-index: 1;
