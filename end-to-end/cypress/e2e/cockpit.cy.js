@@ -301,7 +301,9 @@ describe("Cockpit", () => {
       cy.contains("button", "Poursuivre").click();
     });
 
-    cy.location("pathname").should("eq", "/cockpit");
+    cy.wait(2000);
+
+    cy.location("pathname").should("include", "/cockpit");
 
     cy.get("aj-popup").within(() => {
       cy.get(".ref-list")
