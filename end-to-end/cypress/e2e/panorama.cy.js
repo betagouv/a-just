@@ -783,6 +783,7 @@ describe("Panorama page", () => {
     const formattedArrivalDate = `${arrivalDate.getDate()} ${getShortMonthString(
       arrivalDate
     )} ${arrivalDate.getFullYear()}`;
+    const normalizedArrivalDate = Cypress.$(formattedArrivalDate).text().replace(/\u00a0/g, " ").trim();
 
     cy.get(".workforce-change .buttons")
       .find("button")
@@ -791,7 +792,7 @@ describe("Panorama page", () => {
     cy.wait(1000); // Attendre que le filtre soit appliqué
 
     // Appelle la fonction pour chercher l'agent dans les pages
-    findAgentInPagination("Agent Test dateStart", formattedArrivalDate);
+    findAgentInPagination("Agent Test dateStart", normalizedArrivalDate);
   });
 
   it("Should display the newly added agent in the 'Départs' column of 'Changement dans les effectifs'", () => {
@@ -850,6 +851,8 @@ describe("Panorama page", () => {
     const formattedDepartureDate = `${departureDate.getDate()} ${getShortMonthString(
       departureDate
     )} ${departureDate.getFullYear()}`;
+    const normalizedArrivalDate = Cypress.$(formattedDepartureDate).text().replace(/\u00a0/g, " ").trim();
+
 
     cy.get(".workforce-change .buttons")
       .find("button")
@@ -857,8 +860,70 @@ describe("Panorama page", () => {
       .click();
     cy.wait(1000); // Attendre que le filtre soit appliqué
     // Appelle la fonction pour chercher l'agent dans les pages
-    findAgentInPagination("Agent Test dateStop", formattedDepartureDate);
+    findAgentInPagination("Agent Test dateStop", normalizedArrivalDate);
   });
+
+
+  it("Should display contentieux with data to complete (blue)", () => {
+    const tag = "Les 12 derniers mois disponibles";
+    cy.visit("/panorama");
+    cy.contains(".tags", tag).click();
+
+
+    cy.get(".referentiel-row").then(($rows) => {
+      const rowsData = [];
+
+
+      $rows.each((rowIndex, row) => {
+        const linkTexts = [];
+        Cypress.$(row)
+          .find("a")
+          .each((_, link) => {
+
+
+            linkTexts.push(
+              Cypress.$(link).text().replace(/\u00a0/g, " ").trim()
+            );
+          });
+
+
+        if (linkTexts.length) {
+          rowsData.push({ rowIndex, contentieuxName: linkTexts[0] });
+        }
+      });
+
+
+      return rowsData;
+    }).then((rowsData) => {
+      rowsData.forEach(({ rowIndex, contentieuxName }) => {
+        cy.get(".referentiel-row")
+          .eq(rowIndex)
+          .find("a")
+          .eq(0)
+          .click();
+
+
+        cy.url().should("include", "/donnees-d-activite");
+
+
+        cy.log("Checking contentieux: " + contentieuxName);
+
+
+        cy.get(".maximize .selectable .label p").should(
+          "contain.text",
+          contentieuxName
+        );
+
+
+        cy.get(".maximize .completion p").should(
+          "contain.text",
+          "il reste des données à compléter"
+        );
+        cy.go("back");
+      });
+    });
+  });
+
 
   it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
     let sousContentieuxName = "", contentieuxName = "";
@@ -887,4 +952,9 @@ describe("Panorama page", () => {
       }
     });
   });
+
+  // it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
+
+  // });
+
 });
