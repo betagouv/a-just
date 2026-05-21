@@ -85,7 +85,7 @@ export const contentieuxStructure = [
       "Cour criminelle",
       "Tribunal de police",
       "OP contraventionnelles",
-      "Collégiales éco-fi",
+      "Collégiales JIRS éco-fi",
       "Collégiales autres sections spécialisées",
       "Autres siège pénal",
     ],

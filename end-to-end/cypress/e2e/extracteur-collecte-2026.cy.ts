@@ -466,7 +466,7 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
           return cy
             .request({
               method: "GET",
-              url: `${cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api"}/juridictions/get-all-backup`,
+              url: `${serverUrl}/juridictions/get-all-backup`,
               headers: { Authorization: token },
             })
             .then((allBackupsResp) => {
@@ -518,7 +518,7 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
               // Assign user to TJ TEST backup via API
               return cy.request({
                 method: "POST",
-                url: `${cy.env(["NG_APP_SERVER_URL"]) || "http://localhost:8081/api"}/users/update-account`,
+                url: `${serverUrl}/users/update-account`,
                 headers: { Authorization: token },
                 body: {
                   userId: userId,
