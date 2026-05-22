@@ -851,7 +851,7 @@ describe("Panorama page", () => {
     const formattedDepartureDate = `${departureDate.getDate()} ${getShortMonthString(
       departureDate
     )} ${departureDate.getFullYear()}`;
-    const normalizedArrivalDate = Cypress.$(formattedDepartureDate).text().replace(/\u00a0/g, " ").trim();
+    const normalizedDepartureDate = Cypress.$(formattedDepartureDate).text().replace(/\u00a0/g, " ").trim();
 
 
     cy.get(".workforce-change .buttons")
@@ -860,9 +860,8 @@ describe("Panorama page", () => {
       .click();
     cy.wait(1000); // Attendre que le filtre soit appliqué
     // Appelle la fonction pour chercher l'agent dans les pages
-    findAgentInPagination("Agent Test dateStop", normalizedArrivalDate);
+    findAgentInPagination("Agent Test dateStop", normalizedDepartureDate);
   });
-
 
   it("Should display contentieux with data to complete (blue)", () => {
     const tag = "Les 12 derniers mois disponibles";
@@ -924,7 +923,6 @@ describe("Panorama page", () => {
     });
   });
 
-
   it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
     let sousContentieuxName = "", contentieuxName = "";
 
@@ -953,8 +951,27 @@ describe("Panorama page", () => {
     });
   });
 
-  // it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
+  it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
 
-  // });
+
+    // get the first contentieux and sous contentieux
+    // save date on sous contentieux
+    // click on it
+    // should redirect to donnee d'activite route
+    // find the row, click on it
+    // check the "Voir les donnée de : date saved"
+
+    // fill up the .to-complete or .to-verify inputs that are with "-"
+    // click on button "Enregistrer"
+    // click on button "Enregistrer les modifications"
+    // back to /panorama
+    // check if the first contentieux and sous contentieux date is not equal to the saved date
+
+
+  });
+
+  it("Should modify a daata on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
+
+  });
 
 });
