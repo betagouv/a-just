@@ -619,12 +619,82 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
                 .then(() => {
                   return cy.task(
                     "log",
-                    "[LOGIN] Redirected to /panorama, app is ready",
+                    `[DB DEBUG] Backups: ${JSON.stringify(
+                      backups.map((b: any) => ({ id: b.id, label: b.label })),
+                      null,
+                      2,
+                    )}`,
                   );
+                })
+                .then(() => {
+                  const ventilations = backups.map((v: any) => v.id);
+                  return cy
+                    .task(
+                      "log",
+                      `[DB DEBUG] Setting permissions for backup IDs: ${ventilations.join(", ")}`,
+                    )
+                    .then(() => {
+                      // Check if target backup exists
+                      const targetBackup = backups.find(
+                        (b: any) => b.label === BACKUP_LABEL,
+                      );
+                      if (targetBackup) {
+                        return cy.task(
+                          "log",
+                          `[DB DEBUG] ✓ Found ${BACKUP_LABEL} backup with ID: ${targetBackup.id}`,
+                        );
+                      } else {
+                        return cy
+                          .task(
+                            "log",
+                            `[DB DEBUG] ✗ WARNING: ${BACKUP_LABEL} backup NOT FOUND in database!`,
+                          )
+                          .then(() => {
+                            return cy.task(
+                              "log",
+                              `[DB DEBUG] Available backups: ${backups.map((b: any) => b.label).join(", ")}`,
+                            );
+                          });
+                      }
+                    })
+                    .then(() => {
+                      return resetToDefaultPermissions(
+                        userId,
+                        ventilations,
+                        token,
+                      );
+                    });
                 });
             });
-        });
-    });
+          });
+      })
+      .then(() => {
+        return cy
+          .task("log", "[LOGIN] Starting cy.login()...")
+          .then(() => {
+            // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
+            return cy.login();
+          })
+          .then(() => {
+            return cy.task("log", "[LOGIN] cy.login() completed successfully");
+          })
+          .then(() => {
+            // Wait for redirect to /panorama to ensure app is fully initialized (matches effectif-suite.cy.ts)
+            return cy
+              .task("log", "[LOGIN] Waiting for redirect to /panorama...")
+              .then(() => {
+                return cy
+                  .location("pathname", { timeout: 60000 })
+                  .should("include", "/panorama");
+              })
+              .then(() => {
+                return cy.task(
+                  "log",
+                  "[LOGIN] Redirected to /panorama, app is ready",
+                );
+              });
+          });
+      });
   });
 
   it("Convert reference file to JSON", () => {
