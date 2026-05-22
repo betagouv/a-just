@@ -83,10 +83,8 @@ export class CalculatorService extends MainClass {
     dateStop: Date | null = this.dateStop.getValue(),
     loadChildrens: boolean = true,
     contentieuxIds: number[] = this.referentielIds.getValue(),
+    log: boolean = true,
   ) {
-    console.log('FILTER LIST')
-    console.log('BACK Start', dateStart)
-    console.log('BACK Stop', dateStop)
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -97,6 +95,7 @@ export class CalculatorService extends MainClass {
         categorySelected,
         selectedFonctionsIds,
         loadChildrens,
+        log,
       })
       .then((data) => {
         return data.data || []

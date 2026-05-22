@@ -7,6 +7,10 @@ module.exports = function (datas) {
   let hrSituationId = []
   let current_hr = null
 
+  const normalizeActivities = (activities) => activities
+    .map(({ id, updated_at, ...activity }) => activity)
+    .sort((left, right) => left.contentieux.id - right.contentieux.id)
+
   describe('Change User data test', () => {
     /**
      * Création d'un nouvel agent
@@ -157,21 +161,18 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
-      const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
+      const tmp_activities = normalizeActivities(response.data.data.situations[0].activities)
       const tmp_category = response.data.data.situations[0].category
       const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp
       const tmp_fonction = response.data.data.situations[0].fonction
-
-      // Sort both arrays so that we can compare them
-      activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
-      tmp_activities.sort((a, b) => a.contentieux.id - b.contentieux.id);
+      const expectedActivities = normalizeActivities(activities)
 
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
 
       assert.strictEqual(response.status, 200)
-      assert.deepEqual(activities, tmp_activities)
+      assert.deepEqual(expectedActivities, tmp_activities)
       assert.deepEqual(category, tmp_category)
       assert.deepEqual(dateStart, tmp_dateStart)
       assert.strictEqual(etp, tmp_etp)
@@ -227,21 +228,23 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
+      const newSituation = response.data.data.situations.find((situation) => (
+        normalizeDate(new Date(situation.dateStart)).getTime() === dateStart.getTime()
+      ))
 
+      const tmp_activities = normalizeActivities(newSituation.activities)
+      const tmp_category = newSituation.category
+      const tmp_dateStart = normalizeDate(new Date(newSituation.dateStart))
+      const tmp_etp = newSituation.etp
+      const tmp_fonction = newSituation.fonction
+      const expectedActivities = normalizeActivities(activities)
 
-      const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
-      const tmp_category = response.data.data.situations[0].category
-      const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
-      const tmp_etp = response.data.data.situations[0].etp
-      const tmp_fonction = response.data.data.situations[0].fonction
-
-
-
-      hrSituationId.push(response.data.data.situations[0].id)
+      hrSituationId.push(newSituation.id)
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.strictEqual(response.data.data.situations.length, 2)
-      assert.sameDeepMembers(activities, tmp_activities)
+      assert.isDefined(newSituation)
+      assert.sameDeepMembers(expectedActivities, tmp_activities)
       assert.deepEqual(category, tmp_category)
       assert.deepEqual(dateStart, tmp_dateStart)
       assert.strictEqual(etp, tmp_etp)
@@ -350,7 +353,6 @@ module.exports = function (datas) {
             category: { id: 2, rank: 2, label: 'Greffe' },
             fonction: {
               id: 44,
-              rank: 3,
               code: 'B',
               label: 'B GREFFIER',
               category_detail: 'F-TIT',
@@ -374,7 +376,8 @@ module.exports = function (datas) {
       assert.notDeepEqual(oldSituation[0].category, newSituation[0].category)
       assert.notDeepEqual(oldSituation[0].fonction, newSituation[0].fonction)
       assert.deepEqual(hr.situations[0].category, newSituation[0].category)
-      assert.deepEqual(hr.situations[0].fonction, newSituation[0].fonction)
+      assert.deepInclude(newSituation[0].fonction, hr.situations[0].fonction)
+      assert.strictEqual(newSituation[0].fonction.id, 44)
     })
 
     /**

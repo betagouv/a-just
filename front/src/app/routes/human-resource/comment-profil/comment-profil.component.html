@@ -18,7 +18,10 @@
   @if (isEditing) {
   <div class="properties">
     <div class="number-circle">{{ currentUser.initials }}</div>
-    <label>{{ currentUser.firstName + ' ' + currentUser.lastName }}</label>
+    <label>{{ currentUser.firstName + ' ' + currentUser.lastName }} <div class="info-tooltip"><i
+          class="ri-information-line"></i><aj-tooltips class="large"
+          title="En vertu de l'article 6 de la loi informatique et libertés et de l'article 9 du RGPD, ce champ ne doit contenir aucune donnée personnelle sensible (origine raciale ou ethnique, données de santé, coordonnées personnelles etc.)"></aj-tooltips>
+      </div></label>
   </div>
   }
   @if(userService.canEditHR()) {

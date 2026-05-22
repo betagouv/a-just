@@ -1890,7 +1890,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       }
     }
 
-    let currentMonth = month(new Date())
+    let currentMonth = month(line.lastActivityUpdatedAt)
     let nbMonthChecked = 0
     let haveIncompleteDatasDuringThisPeriod = false
     while (nbMonthChecked < 12) {
@@ -1918,36 +1918,34 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     }
 
     // Vérifier s'il y a au moins un sous-contentieux avec des données sur les 12 derniers mois
+    let missingDatasToSubContentieuxBefore12Month = false // Des données d'activité manquantes dans l'un des sous-contentieux ont été complétées sur certains des 12 derniers mois à partir du dernier mois disponible mais pas sur tous.
     let noDataToSubContentieuxDuring12Month = false
-    currentMonth = month(new Date(), 48)
+    let lessOneOfDatasToSubContentieux = false // Il n'y a aucune donnée d'entrée, de sortie et de stock dans au moins un des sous-contentieux de ce contentieux pour les 12 derniers mois à partir du dernier mois disponible.
+    currentMonth = month(line.lastActivityUpdatedAt)
     nbMonthChecked = 0
     while (nbMonthChecked < 12) {
-      const activities = await this.calculatorService.filterList(this.categorySelected || '', null, currentMonth, currentMonth, true, [referentielId])
+      const activities = await this.calculatorService.filterList(this.categorySelected || '', null, currentMonth, currentMonth, true, [referentielId], false)
 
       const childrens = activities.list[0].childrens || []
       if (childrens.length > 0 && childrens.every((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
         noDataToSubContentieuxDuring12Month = true
+      }
+
+      if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
+        lessOneOfDatasToSubContentieux = true
+      }
+
+      if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null || c.totalOut === null || c.lastStock === null)) {
+        missingDatasToSubContentieuxBefore12Month = true
+      }
+
+      if (noDataToSubContentieuxDuring12Month && lessOneOfDatasToSubContentieux) {
         nbMonthChecked = 12 // stop the loop
         break
       }
 
       currentMonth = addMonths(currentMonth, -1)
       nbMonthChecked++
-    }
-
-    let lessOneOfDatasToSubContentieux = false
-    const childrens = line.childrens || []
-    if (childrens.length > 0 && childrens.some((c: CalculatorInterface) => c.totalIn === null && c.totalOut === null && c.lastStock === null)) {
-      lessOneOfDatasToSubContentieux = true
-    }
-
-    // Vérifier s'il y a des datas manquantes sur les 12 derniers mois
-    let missingDatasToSubContentieuxBefore12Month = false
-    const endMonth = month(new Date(line.lastActivityUpdatedAt || new Date()))
-    const startMonth = month(endMonth, -12)
-    const allMonths = await this.calculatorService.rangeValues(referentielId, 'stock', startMonth, endMonth)
-    if (allMonths.length !== 12 || allMonths.some((m: any) => m === null)) {
-      missingDatasToSubContentieuxBefore12Month = true
     }
 
     this.warningInformations['ref' + referentielId] = {

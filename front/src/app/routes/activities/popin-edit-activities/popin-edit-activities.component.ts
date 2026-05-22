@@ -426,12 +426,66 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   }
 
   /**
+   * Retourne la valeur actuellement prise en compte pour un champ
+   * (mise à jour en cours prioritaire, sinon valeur persistée)
+   */
+  getCurrentInputValue(nodeName: string, contentieux: ContentieuReferentielInterface): number | null {
+    const key = `${contentieux.id}-${nodeName}`
+    const currentUpdate = this.updates[key]
+
+    if (currentUpdate) {
+      return isNumber(currentUpdate.value) ? currentUpdate.value : null
+    }
+
+    switch (nodeName) {
+      case 'entrees':
+        return isNumber(contentieux.in) ? contentieux.in : null
+      case 'sorties':
+        return isNumber(contentieux.out) ? contentieux.out : null
+      case 'stock':
+        return isNumber(contentieux.stock) ? contentieux.stock : null
+      default:
+        return null
+    }
+  }
+
+  /**
    * Mise à jours d'une donnée
    * @param newValue
    * @param nodeName
    * @param contentieux
    */
   async onUpdateValue(newValue: string, nodeName: string, contentieux: ContentieuReferentielInterface) {
+    const updateKey = `${contentieux.id}-${nodeName}`
+    const parsedValue: null | number = newValue !== '' && newValue.length > 0 ? +newValue : null
+    const currentValue = this.getCurrentInputValue(nodeName, contentieux)
+    const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
+    let lastMonthData: any = null
+
+    // Ignore le blur si la valeur n'a pas réellement changé.
+    if (parsedValue === currentValue) {
+      return
+    }
+
+    // Pour un stock "A vérifier" calculé depuis le mois précédent,
+    // une suppression (valeur vide) ne doit pas créer de mise à jour ni écraser la valeur calculée.
+    if (nodeName === 'stock' && contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY && parsedValue === null) {
+      lastMonthData = await this.getLastMonthData(contentieux.id).then((resp) => {
+        return resp
+      })
+
+      const isStockCalculatedFromPreviousMonth = lastMonthData && (lastMonthData.stock !== null || lastMonthData.activityUpdated?.stock?.value != null)
+
+      if (isStockCalculatedFromPreviousMonth) {
+        delete this.updates[updateKey]
+        if (stock) {
+          stock.value = currentValue !== null ? currentValue.toString() : ''
+        }
+        this.updateTotal()
+        return
+      }
+    }
+
     let value: null | number = null
     let originalValue: number | null = null
     let isToVerify: boolean = false
@@ -444,28 +498,34 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     switch (nodeName) {
       case 'entrees':
         originalValue = isNumber(contentieux.originalIn) ? contentieux.originalIn : null
-        if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) isToVerify = true
+        if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY) {
+          isToVerify = true
+        }
         break
       case 'sorties':
         originalValue = isNumber(contentieux.originalOut) ? contentieux.originalOut : null
-        if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) isToVerify = true
+        if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY) {
+          isToVerify = true
+        }
         break
       case 'stock':
         originalValue = isNumber(contentieux.originalStock) ? contentieux.originalStock : null
-        if (contentieux.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) isToVerify = true
+        if (contentieux.valueQualityStock === this.VALUE_QUALITY_TO_VERIFY) {
+          isToVerify = true
+        }
         break
     }
 
     if (newValue.length === 0) {
-      delete this.updates[`${contentieux.id}-${nodeName}`]
+      delete this.updates[updateKey]
       updateTotal = true
     }
     if (newValue.length !== 0 && newValue === null) {
-      delete this.updates[`${contentieux.id}-${nodeName}`]
+      delete this.updates[updateKey]
       updateTotal = true
     } else {
       if (newValue.length === 0) {
-        this.updates[`${contentieux.id}-${nodeName}`] = {
+        this.updates[updateKey] = {
           value: null,
           node: nodeName,
           contentieux,
@@ -474,7 +534,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
           sendBack: true,
         }
       } else {
-        this.updates[`${contentieux.id}-${nodeName}`] = {
+        this.updates[updateKey] = {
           value,
           node: nodeName,
           contentieux,
@@ -485,11 +545,12 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
       }
       updateTotal = true
     }
-    const stock = document.getElementById(`contentieux-${contentieux.id}-stock`) as HTMLInputElement
 
-    const lastMonthData = await this.getLastMonthData(contentieux.id).then((resp) => {
-      return resp
-    })
+    if (!lastMonthData) {
+      lastMonthData = await this.getLastMonthData(contentieux.id).then((resp) => {
+        return resp
+      })
+    }
 
     // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents OU que la donnée de stock est null
     // Dans ce cas on remet le stock à son état d'origine
@@ -530,7 +591,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         (((this.updates[`${contentieux.id}-stock`] && this.updates[`${contentieux.id}-stock`].value === null) || !this.updates[`${contentieux.id}-stock`]) &&
           contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] || this.updates[`${contentieux.id}-sorties`]) &&
-      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
+      (contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY || contentieux.stock !== null)
     ) {
       updateTotal = true
 
@@ -724,7 +785,6 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         this.activityMonth = new Date(date)
         this.checkIfNextMonthHasValue()
         this.hasValuesToShow = list.list.length !== 0
-        console.log(list, this.activityMonth)
 
         this.cleanAllInputs()
 
@@ -782,7 +842,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         break
       case 'stock':
         if (this.updates[`${cont.id}-${node}`]) {
-          if (this.updates[`${cont.id}-${node}`].value === null) return false
+          if (this.updates[`${cont.id}-${node}`].value === null /*&& cont.stock === null*/) return false
           return true
         } else if (cont.stock !== null) return true
         break
@@ -802,8 +862,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
       cont.stock !== null &&
       (!cont.activityUpdated ||
         (cont.activityUpdated && !cont.activityUpdated.stock) ||
-        (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) /*||
-      cont.stock === null*/
+        (cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null))
     ) {
       return true
     }
@@ -961,42 +1020,12 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
           if ((this.total.stock.updated || this.isValueUpdated({ cont, node })) && this.CheckIfChildrenAreUpdated(cont, node)) return true
           return false
         } else if (this.isValueUpdated({ cont, node })) {
-          /*
-           * A supprimer après validation des modifications
-           */
-          // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
-          // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
-          /*if (
-            (this.isValueToVerifySetted({
-              value: this.updates[`${cont.id}-entrees`]
-                ? this.updates[`${cont.id}-entrees`].value
-                : cont.in,
-              contentieux: cont,
-              node: 'entrees',
-            }) ||
-              this.isValueToVerifySetted({
-                value: this.updates[`${cont.id}-sorties`]
-                  ? this.updates[`${cont.id}-sorties`].value
-                  : cont.out,
-                contentieux: cont,
-                node: 'sorties',
-              })) &&
-            this.updates[`${cont.id}-stock`] &&
-            this.updates[`${cont.id}-stock`].value === cont.originalStock &&
-            this.isStockCalculated(cont) &&
-            !isForBulbOrBottom
-          )
-            return true;
-          //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel),
-          // Et que ce n'est pas une valeur de stock saisie (càd: je saisie une valeur de stock égale à la valeur logiciel. Dans ce cas on doit imprimer la valeur en bleu)
-          else */ if (
-            this.updates[`${cont.id}-stock`] &&
-            this.updates[`${cont.id}-stock`].value === cont.originalStock &&
-            !this.updates[`${cont.id}-stock`].setted
-          )
+          if (this.updates[`${cont.id}-stock`] && this.updates[`${cont.id}-stock`].value === cont.originalStock && !this.updates[`${cont.id}-stock`].setted) {
             return false
-          if (isForBulbOrBottom && this.isStockCalculated(cont)) return false
-          else if (cont.stock !== cont.originalStock) return true
+          }
+          if (isForBulbOrBottom && this.isStockCalculated(cont)) {
+            return false
+          } else if (cont.stock !== cont.originalStock) return true
           return true
         }
         break

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import config from 'config'
 import jwt from 'jsonwebtoken'
+import { randomInt } from 'node:crypto'
 
 let _instance = null
 /**
@@ -49,7 +50,8 @@ export default class Crypto {
    * @returns mot de passe
    */
   generatePassword () {
-    return Math.random().toString(36).slice(-8)
+    // 8 chars alphanum, CSPRNG-backed
+    return this.random(8)
   }
 
   /**
@@ -71,7 +73,7 @@ export default class Crypto {
     const charactersLength = characters.length
     let counter = 0
     while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      result += characters.charAt(randomInt(0, charactersLength))
       counter += 1
     }
     return result
@@ -124,7 +126,7 @@ export default class Crypto {
   generateRandomNumber (maxLength = 4) {
     let s = ''
     for (let i = 0; i < maxLength; i++) {
-      s += Math.floor(Math.random() * 10)
+      s += randomInt(0, 10)
     }
 
     return s

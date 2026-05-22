@@ -230,8 +230,8 @@ export default (sequelizeInstance, Model) => {
       attributes: ['periode', 'contentieux_id', 'hr_backup_id'],
       where: HRBackupId
         ? {
-            hr_backup_id: HRBackupId,
-          }
+          hr_backup_id: HRBackupId,
+        }
         : {},
       group: ['periode', 'contentieux_id', 'hr_backup_id'],
       raw: true,
@@ -259,9 +259,9 @@ export default (sequelizeInstance, Model) => {
           await duplicateActivities[z].destroy(
             force
               ? {
-                  truncate: true,
-                  force: true,
-                }
+                truncate: true,
+                force: true,
+              }
               : {},
           )
         }
@@ -449,7 +449,7 @@ export default (sequelizeInstance, Model) => {
           const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
           // do not update if updated by user
           // or if stock is 'A_verifier'
-          if ((!getUserUpdateStock || getUserUpdateStock.value === null) && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
+          if ((!getUserUpdateStock || getUserUpdateStock.value === null)) {// && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
 
             if (previousStockValue !== null) {
@@ -746,10 +746,10 @@ export default (sequelizeInstance, Model) => {
         nbComments: await Model.models.Comments.getNbConId(list[i]['ContentieuxReferentiel.id'], HrBackupId),
         updatedBy: details
           ? {
-              entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
-              sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
-              stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
-            }
+            entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
+            sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
+            stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
+          }
           : null,
       }
     }

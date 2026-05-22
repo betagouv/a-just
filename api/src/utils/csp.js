@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
 import config from 'config'
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 import { crypt } from './'
 
 /**

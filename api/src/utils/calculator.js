@@ -104,7 +104,7 @@ export const syncCalculatorDatas = async (
 
   const compute = async (item, parentParams = null) => {
     const id = item.contentieux.id
-    const values = await getActivityValues(models, indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds, parentParams)
+    const values = await getActivityValues(models, indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds, parentParams, (item.childrens || []).map(c => c.contentieux.id))
     return { ...item, ...values, nbMonth }
   }
 
@@ -154,6 +154,7 @@ const getActivityValues = async (
   optionsBackups,
   selectedFonctionsIds,
   parentParams = null,
+  childsReferentielsIds = []
 ) => {
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     indexes,
@@ -268,12 +269,15 @@ const getActivityValues = async (
   let lastVentilationUpdatedAt = null
   if (parentParams) {
     // search last agent updated at for this contentieux
-    const agents = hr.filter((h) => h.situations.filter((s) => s.activities.filter((a) => a.contentieux.id === referentielId)))
+    const agents = hr.filter((h) => h.situations.filter((s) => s.activities.filter((a) => a.contentieux.id === referentielId || childsReferentielsIds.includes(a.contentieux.id))))
     for (const agent of agents) {
       for (const situation of agent.situations || []) {
+        if (agent.id === 43004 && referentielId === 447) {
+          console.log('situation.activities', situation.activities)
+        }
         for (const activity of situation.activities || []) {
           if (
-            activity.contentieux.id === referentielId &&
+            (activity.contentieux.id === referentielId || childsReferentielsIds.includes(activity.contentieux.id)) &&
             activity.percent &&
             (lastVentilationUpdatedAt === null || lastVentilationUpdatedAt < activity.updatedAt)
           ) {
@@ -281,6 +285,10 @@ const getActivityValues = async (
           }
         }
       }
+    }
+
+    if (referentielId === 447) {
+      console.log('lastVentilationUpdatedAt', lastVentilationUpdatedAt)
     }
   }
 

@@ -8,5 +8,6 @@
 	"Bad password": "Bad password",
 	"Accès non autorisé": "Accès non autorisé",
 	"Utilisateur non trouvé": "Utilisateur non trouvé",
-	"Code non valide!": "Code non valide!"
+	"Code non valide!": "Code non valide!",
+	"Information de contact ou code de vérification non valide!": "Information de contact ou code de vérification non valide!"
 }

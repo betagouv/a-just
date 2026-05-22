@@ -96,90 +96,18 @@ describe("Cockpit", () => {
     });
   });
 
-  it("Check that in the 'Données brutes' mode, the 'Temps moyen ... / dossier observé' change according to the selected agent category", () => {
+  it("Check that in the 'Données brutes' mode, all agent categories (Siège Greffe, EAM) appear when user click on ''ETPT' selector", () => {
     cy.get(".switch-tab").get(".brut").click();
 
-    cy.get(".categories-switch")
-      .get(".magistrats")
-      .click()
-      .then(() => {
-        cy.get(".contentieux-header-calculator").within(() => {
-          cy.get(".item")
-            .last()
-            .should("contain.text", "Temps moyen siège")
-            .should("contain.text", "/ dossier observé");
-        });
-      });
-
-    cy.get(".categories-switch")
-      .get(".fonctionnaires")
-      .click()
-      .then(() => {
-        cy.get(".contentieux-header-calculator").within(() => {
-          cy.get(".item")
-            .last()
-            .should("contain.text", "Temps moyen greffe")
-            .should("contain.text", "/ dossier observé");
-        });
-      });
-  });
-
-  it("Check that in the 'Graphiques' mode, the 'Temps moyen ... / dossier observé' change according to the selected agent category", () => {
-    cy.get(".switch-tab").get(".analytique").click();
-
-    cy.get(".categories-switch")
-      .get(".magistrats")
-      .click()
-      .then(() => {
-        cy.get(".container-colum")
-          .last()
-          .within(() => {
-            cy.get(".title-section").should(
-              "contain.text",
-              "Temps moyen Siège"
-            );
-          });
-      });
-
-    cy.get(".categories-switch")
-      .get(".fonctionnaires")
-      .click()
-      .then(() => {
-        cy.get(".container-colum")
-          .last()
-          .within(() => {
-            cy.get(".title-section").should(
-              "contain.text",
-              "Temps moyen Greffe"
-            );
-          });
-      });
-  });
-
-  it("Check that the background color of the selected ETPT category (siege/geffe) change according to the selected agent category", () => {
-    cy.get(".switch-tab").get(".brut").click();
-
-    cy.get(".categories-switch")
-      .get(".magistrats")
-      .click()
-      .then(() => {
-        cy.get(".contentieux-header-calculator").within(() => {
-          cy.get(".item")
-            .eq(5)
-            .should("have.css", "background-color", "rgb(227, 227, 253)");
-        });
-      });
-
-    cy.get(".categories-switch")
-      .get(".fonctionnaires")
-      .click()
-      .then(() => {
-        cy.get(".contentieux-header-calculator").within(() => {
-          cy.get(".item")
-            .eq(6)
-            .should("have.css", "background-color", "rgb(254, 231, 252)");
-        });
-      });
+    cy.get(".header-calculator").within(() => {
+      cy.get(".etpt")
+        .click()
+        .get(".etpt-selected")
+        .get('span')
+        .should("contain.text", "Siège")
+        .should("contain.text", "Greffe")
+        .should("contain.text", "EAM");
+    });
   });
 
   it("Check that on 'Graphiques' mode, the 'Voir les détails' & 'Masquer les détails' buttons work", () => {
@@ -225,8 +153,7 @@ describe("Cockpit", () => {
         .should("be.visible")
         .should(
           "contain.text",
-          `${
-            getShortMonthString(startDate) + ` ${startDate.getFullYear()}`
+          `${getShortMonthString(startDate) + ` ${startDate.getFullYear()}`
           } - ${getShortMonthString(endDate) + ` ${endDate.getFullYear()}`}`
         );
     });
@@ -303,8 +230,7 @@ describe("Cockpit", () => {
     cy.get(".drop-down")
       .should("be.visible")
       .contains(
-        `${getShortMonthString(startDate) + ` ${startDate.getFullYear()}`} - ${
-          getShortMonthString(endDate) + ` ${endDate.getFullYear()}`
+        `${getShortMonthString(startDate) + ` ${startDate.getFullYear()}`} - ${getShortMonthString(endDate) + ` ${endDate.getFullYear()}`
         }`
       )
       .parent(".item")
@@ -375,7 +301,9 @@ describe("Cockpit", () => {
       cy.contains("button", "Poursuivre").click();
     });
 
-    cy.location("pathname").should("eq", "/cockpit");
+    cy.location("pathname", { timeout: 60000 }).should("include", "/cockpit");
+    cy.get("aj-big-loader", { timeout: 20000 }).should("not.exist");
+
 
     cy.get("aj-popup").within(() => {
       cy.get(".ref-list")

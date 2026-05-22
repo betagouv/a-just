@@ -14,6 +14,7 @@ import user from "../../fixtures/user.json";
 
 // Import comparison utilities from effectif-suite to avoid duplication
 // These are defined in effectif-suite.cy.ts but not exported, so we'll inline them here
+// Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
 function colToExcel(col: number): string {
   let result = "";
   let c = col;
@@ -24,6 +25,7 @@ function colToExcel(col: number): string {
   return result;
 }
 
+// Convert row/col to Excel notation (e.g., row=0, col=1 -> "B1")
 function cellToExcel(row: number, col: number): string {
   return `${colToExcel(col)}${row + 1}`;
 }
@@ -449,91 +451,170 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
 
 describe("Extracteur Collecte 2026 - Test de non-régression", () => {
   before(() => {
+    let serverUrl: string | null = null;
+
     // Login and ensure user has access to TJ TEST backup
-    return loginApi(user.email, user.password)
-      .then((resp) => {
-        const userId = resp.body.user.id;
-        const token = resp.body.token;
+    return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+      serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
 
-        // Get ALL backups in the database (not just user's current backups)
-        return cy
-          .request({
-            method: "GET",
-            url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
-            headers: { Authorization: token },
-          })
-          .then((allBackupsResp) => {
-            cy.task(
-              "log",
-              `[DB DEBUG] API response type: ${typeof allBackupsResp.body}`,
-            );
-            cy.task(
-              "log",
-              `[DB DEBUG] API response keys: ${Object.keys(allBackupsResp.body || {}).join(", ")}`,
-            );
+      return loginApi(user.email, user.password)
+        .then((resp) => {
+          const userId = resp.body.user.id;
+          const token = resp.body.token;
 
-            const allBackups = Array.isArray(allBackupsResp.body)
-              ? allBackupsResp.body
-              : allBackupsResp.body.data || allBackupsResp.body.list || [];
-            cy.task(
-              "log",
-              `[DB DEBUG] Found ${allBackups.length} backups total`,
-            );
-            cy.task(
-              "log",
-              `[DB DEBUG] First 5 backup labels: ${allBackups
-                .slice(0, 5)
-                .map((b: any) => b.label)
-                .join(", ")}`,
-            );
-
-            const e2eBackup = allBackups.find(
-              (b: any) => b.label === BACKUP_LABEL,
-            );
-
-            if (!e2eBackup) {
-              cy.task(
-                "log",
-                `[DB DEBUG] ✗ FATAL: ${BACKUP_LABEL} does not exist in database!`,
-              );
-              cy.task(
-                "log",
-                `[DB DEBUG] All backup labels: ${allBackups.map((b: any) => b.label).join(", ")}`,
-              );
-              throw new Error(`${BACKUP_LABEL} not found in database`);
-            }
-
-            cy.task(
-              "log",
-              `[DB DEBUG] ✓ Found ${BACKUP_LABEL} with ID: ${e2eBackup.id}`,
-            );
-
-            // Assign user to TJ TEST backup via API
-            return cy.request({
-              method: "POST",
-              url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
+          // Get ALL backups in the database (not just user's current backups)
+          return cy
+            .request({
+              method: "GET",
+              url: `${serverUrl}/juridictions/get-all-backup`,
               headers: { Authorization: token },
-              body: {
-                userId: userId,
-                access: [], // Will be set by resetToDefaultPermissions
-                ventilations: [e2eBackup.id], // Assign to TJ TEST backup
-                referentielIds: [],
-              },
-            });
-          })
-          .then(() => {
-            // Now get user data to verify
-            return getUserDataApi(token).then((resp) => {
-              const backups = resp.body.data.backups;
+            })
+            .then((allBackupsResp) => {
+              cy.task(
+                "log",
+                `[DB DEBUG] API response type: ${typeof allBackupsResp.body}`,
+              );
+              cy.task(
+                "log",
+                `[DB DEBUG] API response keys: ${Object.keys(allBackupsResp.body || {}).join(", ")}`,
+              );
 
-              // Log to terminal via cy.task
+              const allBackups = Array.isArray(allBackupsResp.body)
+                ? allBackupsResp.body
+                : allBackupsResp.body.data || allBackupsResp.body.list || [];
+              cy.task(
+                "log",
+                `[DB DEBUG] Found ${allBackups.length} backups total`,
+              );
+              cy.task(
+                "log",
+                `[DB DEBUG] First 5 backup labels: ${allBackups
+                  .slice(0, 5)
+                  .map((b: any) => b.label)
+                  .join(", ")}`,
+              );
+
+              const e2eBackup = allBackups.find(
+                (b: any) => b.label === BACKUP_LABEL,
+              );
+
+              if (!e2eBackup) {
+                cy.task(
+                  "log",
+                  `[DB DEBUG] ✗ FATAL: ${BACKUP_LABEL} does not exist in database!`,
+                );
+                cy.task(
+                  "log",
+                  `[DB DEBUG] All backup labels: ${allBackups.map((b: any) => b.label).join(", ")}`,
+                );
+                throw new Error(`${BACKUP_LABEL} not found in database`);
+              }
+
+              cy.task(
+                "log",
+                `[DB DEBUG] ✓ Found ${BACKUP_LABEL} with ID: ${e2eBackup.id}`,
+              );
+
+              // Assign user to TJ TEST backup via API
+              return cy.request({
+                method: "POST",
+                url: `${serverUrl}/users/update-account`,
+                headers: { Authorization: token },
+                body: {
+                  userId: userId,
+                  access: [], // Will be set by resetToDefaultPermissions
+                  ventilations: [e2eBackup.id], // Assign to TJ TEST backup
+                  referentielIds: [],
+                },
+              });
+            })
+            .then(() => {
+              // Now get user data to verify
+              return getUserDataApi(token).then((resp) => {
+                const backups = resp.body.data.backups;
+
+                // Log to terminal via cy.task
+                return cy
+                  .task("log", `[DB DEBUG] User ID: ${userId}`)
+                  .then(() => {
+                    return cy.task(
+                      "log",
+                      `[DB DEBUG] Found ${backups.length} backups in database:`,
+                    );
+                  })
+                  .then(() => {
+                    return cy.task(
+                      "log",
+                      `[DB DEBUG] Backups: ${JSON.stringify(
+                        backups.map((b: any) => ({ id: b.id, label: b.label })),
+                        null,
+                        2,
+                      )}`,
+                    );
+                  })
+                  .then(() => {
+                    const ventilations = backups.map((v: any) => v.id);
+                    return cy
+                      .task(
+                        "log",
+                        `[DB DEBUG] Setting permissions for backup IDs: ${ventilations.join(", ")}`,
+                      )
+                      .then(() => {
+                        // Check if target backup exists
+                        const targetBackup = backups.find(
+                          (b: any) => b.label === BACKUP_LABEL,
+                        );
+                        if (targetBackup) {
+                          return cy.task(
+                            "log",
+                            `[DB DEBUG] ✓ Found ${BACKUP_LABEL} backup with ID: ${targetBackup.id}`,
+                          );
+                        } else {
+                          return cy
+                            .task(
+                              "log",
+                              `[DB DEBUG] ✗ WARNING: ${BACKUP_LABEL} backup NOT FOUND in database!`,
+                            )
+                            .then(() => {
+                              return cy.task(
+                                "log",
+                                `[DB DEBUG] Available backups: ${backups.map((b: any) => b.label).join(", ")}`,
+                              );
+                            });
+                        }
+                      })
+                      .then(() => {
+                        return resetToDefaultPermissions(
+                          userId,
+                          ventilations,
+                          token,
+                        );
+                      });
+                  });
+              });
+            });
+        })
+        .then(() => {
+          return cy
+            .task("log", "[LOGIN] Starting cy.login()...")
+            .then(() => {
+              // @ts-ignore - cy.login() implementation doesn't use parameters despite type definition
+              return cy.login();
+            })
+            .then(() => {
+              return cy.task(
+                "log",
+                "[LOGIN] cy.login() completed successfully",
+              );
+            })
+            .then(() => {
+              // Wait for redirect to /panorama to ensure app is fully initialized (matches effectif-suite.cy.ts)
               return cy
-                .task("log", `[DB DEBUG] User ID: ${userId}`)
+                .task("log", "[LOGIN] Waiting for redirect to /panorama...")
                 .then(() => {
-                  return cy.task(
-                    "log",
-                    `[DB DEBUG] Found ${backups.length} backups in database:`,
-                  );
+                  return cy
+                    .location("pathname", { timeout: 60000 })
+                    .should("include", "/panorama");
                 })
                 .then(() => {
                   return cy.task(

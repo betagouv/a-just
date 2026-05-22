@@ -662,7 +662,17 @@ export const generateStableHRPeriods = (agent) => {
     lastWasIndispoStop = isEndFromIndispoStop // Met à jour la variable pour la prochaine période
 
     const sameDay = comparerDatesJourMoisAnnee(start, end)
-    if (sameDay && (currentSegmentIsOneDayIndispo || lastWasOneDayIndispoStop)) {
+    // Jour ouvré entre une indispo 1j et la suivante (ex. 20/05 entre indispo 19/05 et plage 21–22/05)
+    const hasIndispoStartingThisDay = indisponibilities.some(
+      (i) => i.dateStart && comparerDatesJourMoisAnnee(normalizeDate(i.dateStart), start),
+    )
+    const isWorkingDayBetweenIndispos =
+      sameDay &&
+      lastWasOneDayIndispoStop &&
+      indispoInPeriod.length === 0 &&
+      totalIndispoRate === 0 &&
+      !hasIndispoStartingThisDay
+    if (sameDay && (currentSegmentIsOneDayIndispo || lastWasOneDayIndispoStop) && !isWorkingDayBetweenIndispos) {
       //console.warn(`⚠️ Période ignorée car indispo de 1 successive, cas particulier: ${start.toISOString()} → ${end.toISOString()}`)
       continue
     }

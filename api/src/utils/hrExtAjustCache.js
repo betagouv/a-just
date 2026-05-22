@@ -1,7 +1,7 @@
 import { getRedisClient } from './redis.js'
 import zlib from 'zlib'
 import { promisify } from 'util'
-import { createHash } from 'crypto'
+import { createHash } from 'node:crypto'
 
 // Stockage A-JUST séparé, 1 clé par (backupId, période), format compact "schéma":
 //   Clé : hrExtAjust:{backupId}:{periodHash}  (String)

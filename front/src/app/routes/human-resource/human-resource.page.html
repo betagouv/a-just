@@ -1,23 +1,25 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  @if(contentieuxReferentiel.length) {
+  @if (contentieuxReferentiel.length) {
   <div class="wrapper-content"
     [ngStyle]="{ 'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px' }"
     [class.duringPrint]="duringPrint">
-    @if(currentHR) {
-    <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
-      [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined"
-      [onEditIndex]="onEditIndex" [etp]="currentETP" [indisponibilities]="
-        indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []
-      " [fonction]="
-        indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null
-      " [category]="
-        indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      " [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
+    @if (currentHR) {
+    <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR" [backAnchor]="
+            currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined
+          " [onEditIndex]="onEditIndex" [etp]="currentETP" [indisponibilities]="
+            indexOfTheFuture !== null && histories[indexOfTheFuture]
+              ? histories[indexOfTheFuture].indisponibilities
+              : []
+          " [fonction]="
+            indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null
+          " [category]="
+            indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
+          " [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
       (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
       [class.duringPrint]="duringPrint"></cover-profil-details>
     }
-    @if(histories.length !== 0) {
+    @if (histories.length !== 0) {
     <div id="first-panel" class="first-panel">
       <div id="top-scroll-anchor" class="anchor"></div>
       <indispo-profil [indisponibilities]="currentHR?.indisponibilities || []"
@@ -26,99 +28,113 @@
       <comment-profil id="comment-profil" [currentHR]="currentHR"></comment-profil>
     </div>
     }
-    @if(currentHR && histories.length && showActuelPanel) {
+    @if (currentHR && histories.length && showActuelPanel) {
     <actual-panel-situation [currentHR]="currentHR" [dateStart]="actualHistoryDateStart"
       [dateStop]="actualHistoryDateStop" [canEdit]="!duringPrint && indexOfTheFuture !== null" [canRemoveSituation]="
-        !duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1
-          ? histories[indexOfTheFuture].situationForTheFirstTime
-          : false
-      " [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp || 0 : 0"
+            !duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1
+              ? histories[indexOfTheFuture].situationForTheFirstTime
+              : false
+          " [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp || 0 : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
       [forceToShowContentieuxDetail]="duringPrint" [category]="
-        indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      " (exportSituation)="onExportSituation(indexOfTheFuture)"></actual-panel-situation>}
-    @if(!duringPrint && currentHR && onEditIndex === null) {
+            indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
+          " (exportSituation)="onExportSituation(indexOfTheFuture)"></actual-panel-situation>
+    }
+    @if (!duringPrint && currentHR && onEditIndex === null) {
     <div class="new-action text-center">
-      @if(userService.canEditHR()){<button class="fill primary small" (click)="onSelectSituationToEdit()">
+      @if (userService.canEditHR()) {
+      <button class="fill primary small" (click)="onSelectSituationToEdit()">
         Renseigner une nouvelle situation
-      </button>}
+      </button>
+      }
 
       <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
         text="Qu'est-ce que c'est ?"></aj-help-button>
     </div>
     }
-    <add-ventilation [ngClass]="{ 'existing-agent': histories.length !== 0 }" *ngIf="onEditIndex !== null"
-      #addDomVentilation [human]="currentHR" [activities]="
-        onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
-      " [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
+    @if (onEditIndex !== null) {
+    <add-ventilation [ngClass]="{ 'existing-agent': histories.length !== 0 }" #addDomVentilation [human]="currentHR"
+      [activities]="
+            onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
+          " [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
       [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null" [lastDateStart]="
-        onEditIndex !== -1 ? histories[onEditIndex].dateStart : histories.length ? histories[0].dateStart : null
-      " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
+            onEditIndex !== -1 ? histories[onEditIndex].dateStart : histories.length ? histories[0].dateStart : null
+          " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
       [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
       (alertSet)="onAlertsUpdated($event)"></add-ventilation>
+    }
 
-    @if(historiesOfTheFutur.length) {<div class="panel-history-group futur">
+    @if (historiesOfTheFutur.length) {
+    <div class="panel-history-group futur">
       <p class="title-history">
         Situation{{ historiesOfTheFutur.length >= 1 ? 's' : '' }} à venir pré-renseignée{{
         historiesOfTheFutur.length >= 1 ? 's' : ''
         }}
       </p>
-      @for(h of historiesOfTheFutur; track i; let i = $index) {<panel-history-ventilation [category]="h.category"
-        [id]="h.id" [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities"
-        [activities]="h.activities" [dateStart]="h.dateStart" [dateStop]="h.dateStop"
-        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      @for (h of historiesOfTheFutur; track i; let i = $index) {
+      <panel-history-ventilation [category]="h.category" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
+        [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+        [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
         [forceToShowContentieuxDetail]="duringPrint" [isPast]="false"
         (exportSituation)="onExportSituation(i)"></panel-history-ventilation>
       }
-    </div>}
+    </div>
+    }
 
-    @if(historiesOfThePast.length) {<div class="panel-history-group past">
+    @if (historiesOfThePast.length) {
+    <div class="panel-history-group past">
       <p class="title-history">
-        Situation{{ historiesOfThePast.length > 1 ? 's' : '' }} antérieure{{ historiesOfThePast.length > 1 ? 's' : '' }}
+        Situation{{ historiesOfThePast.length > 1 ? 's' : '' }} antérieure{{
+        historiesOfThePast.length > 1 ? 's' : ''
+        }}
         <!-- {{
-        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
+          categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
       </p>
-      @for(h of historiesOfThePast; track i; let i = $index) {<panel-history-ventilation [id]="h.id"
-        [category]="h.category" [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities"
-        [activities]="h.activities" [dateStart]="h.dateStart" [dateStop]="h.dateStop"
-        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      @for (h of historiesOfThePast; track i; let i = $index) {
+      <panel-history-ventilation [id]="h.id" [category]="h.category" [fonction]="h.fonction" [etp]="h.etp"
+        [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
+        [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
         [forceToShowContentieuxDetail]="duringPrint" [isPast]="true"
         (exportSituation)="onExportSituation(i, historiesOfThePast)"></panel-history-ventilation>
       }
-    </div>}
+    </div>
+    }
 
-    @if(userService.canEditHR() && currentHR && onEditIndex === null && histories.length === 0){<div
-      class="text-center">
+    @if (userService.canEditHR() && currentHR && onEditIndex === null && histories.length === 0) {
+    <div class="text-center">
       <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>
-    </div>}
+    </div>
+    }
 
     <div class="flex-1"></div>
 
-    <div class="sticky-action-footer" *ngIf="onEditIndex !== null && histories.length === 0">
+    @if (onEditIndex !== null && histories.length === 0) {
+    <div class="sticky-action-footer">
       <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>
       <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
     </div>
+    }
   </div>
   }
   <div id="wrapper-printed"></div>
 </aj-wrapper>
 
-@if(updateIndisponiblity) {
+@if (updateIndisponiblity) {
 <aj-popup [actions]="[
-    { id: 'close', content: 'Annuler' },
-    { id: 'modify', content: 'Enregistrer', fill: true },
-  ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
+      { id: 'close', content: 'Annuler' },
+      { id: 'modify', content: 'Enregistrer', fill: true },
+    ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
   (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
   <p class="title">
     {{ updateIndisponiblity.id > 0 ? "Modification de l'indisponibilité" : 'Nouvelle indisponibilité' }}
@@ -128,9 +144,13 @@
       <div class="label-aj">Motif d'indisponibilité</div>
       <mat-form-field>
         <select matNativeControl [(ngModel)]="updateIndisponiblity.contentieux.id">
-          <optgroup *ngFor="let category of groupedIndispo | keyvalue" label="{{ category.key }}">
-            <option *ngFor="let item of category.value" [value]="item.id">{{ item.label }}</option>
+          @for (category of groupedIndispo | keyvalue; track category) {
+          <optgroup label="{{ category.key }}">
+            @for (item of category.value; track item) {
+            <option [value]="item.id">{{ item.label }}</option>
+            }
           </optgroup>
+          }
         </select>
       </mat-form-field>
     </div>
@@ -145,6 +165,8 @@
       <input type="number" id="input-indispo" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />
     </div>
   </div>
-</aj-popup>}
-@if(histories.length && onEditIndex !== null) {
-<div class="black-screen"></div>}
+</aj-popup>
+}
+@if (histories.length && onEditIndex !== null) {
+<div class="black-screen"></div>
+}

@@ -7,6 +7,7 @@ import { HumanResourceInterface } from '../../../interfaces/human-resource-inter
 import { HRCommentService } from '../../../services/hr-comment/hr-comment.service'
 import { UserService } from '../../../services/user/user.service'
 import { MatIconModule } from '@angular/material/icon'
+import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 
 /**
  * Panneau de présentation d'une fiche
@@ -15,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon'
 @Component({
   selector: 'comment-profil',
   standalone: true,
-  imports: [CommonModule, TextEditorComponent, PassedCommentComponent, MatIconModule],
+  imports: [CommonModule, TextEditorComponent, PassedCommentComponent, MatIconModule, TooltipsComponent],
   templateUrl: './comment-profil.component.html',
   styleUrls: ['./comment-profil.component.scss'],
 })

@@ -398,10 +398,10 @@ export const getJuridictionData = async (models, juridictionName) => {
 export const formatFunctions = async (functionList) => {
   const constantsArray = isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR
   let list = [...functionList, ...constantsArray]
-  
+
   // Filter out 'Att. J JLD' (without PÉNAL) as it should not appear in dropdowns
   list = list.filter((fct) => fct.code !== 'Att. J JLD')
-  
+
   list = list.map((fct) => {
     return { CONCAT: fct['category_label'] + fct['code'], ...fct }
   })
@@ -691,7 +691,7 @@ export function generateOnglets({
         let absOnPeriod = 0
 
         // Exclure les période après un départ
-        if (human?.dateEnd && (comparerDatesJourMoisAnnee(today(period.start), hrEndDate) || estApresJourMoisAnnee(today(period.start), hrEndDate))) {
+        if (human?.dateEnd && (comparerDatesJourMoisAnnee(today(period.start, 1), hrEndDate) || estApresJourMoisAnnee(today(period.start), hrEndDate))) {
           return
         }
 

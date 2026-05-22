@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common'
 import { MainClass } from '../../../libs/main-class'
 import { SimulatorService } from '../../../services/simulator/simulator.service'
 import { KPIService } from '../../../services/kpi/kpi.service'
-import { monthDiffList, nbOfDays, setTimeToMidDay } from '../../../utils/dates'
+import { monthDiffList, nbOfWorkingDays, setTimeToMidDay } from '../../../utils/dates'
 import { DATE_WHITE_SIMULATOR, END_DATE_SIMULATOR, START_DATE_SIMULATOR } from '../../../constants/log-codes'
 import { ActivatedRoute } from '@angular/router'
 
@@ -184,7 +184,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
         this.simulatorService.dateStop.next(this.dateStop)
         this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart
         this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop
-        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfDays(this.dateStart, this.dateStop))
+        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop))
         this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
         this.mooveClass = 'present'
         this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '')
