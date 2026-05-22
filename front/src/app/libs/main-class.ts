@@ -50,7 +50,7 @@ export class MainClass {
    * @returns
    */
   fixDecimal(n: number, base?: number): number {
-    return fixDecimal(n)
+    return fixDecimal(n, base)
   }
 
   /**

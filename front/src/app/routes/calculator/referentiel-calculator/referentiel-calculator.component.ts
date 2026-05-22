@@ -11,17 +11,28 @@ import { CalculatorService } from '../../../services/calculator/calculator.servi
 import { ActivitiesService } from '../../../services/activities/activities.service'
 import { KPIService } from '../../../services/kpi/kpi.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
-import { getTime, month, monthDiff, today } from '../../../utils/dates'
-import { CALCULATOR_OPEN_CONTENTIEUX } from '../../../constants/log-codes'
+import { getTime, month, monthDiff, setTimeToMidDay, today } from '../../../utils/dates'
+import {
+  CALCULATOR_OPEN_CONTENTIEUX,
+  CALCULATOR_OPEN_PROJECT_CONTENTIEUX,
+  CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX,
+  CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX,
+  CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX,
+} from '../../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { RouterModule } from '@angular/router'
 import { SIMULATOR_DONNEES } from '../../../constants/simulator'
 import { findHelpCenter } from '../../../utils/help-center'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { ServerService } from '../../../services/http-server/server.service'
 import { AppService } from '../../../services/app/app.service'
 import { addMonths } from 'date-fns'
 import { Chart, ChartItem } from 'chart.js/auto'
+import { SimulatorService } from '../../../services/simulator/simulator.service'
+import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
+import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe'
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
 
 /**
  * Composant d'une ligne du calculateur
@@ -29,7 +40,18 @@ import { Chart, ChartItem } from 'chart.js/auto'
 
 @Component({
   standalone: true,
-  imports: [CommonModule, SpeedometerComponent, ReferentielCalculatorComponent, TooltipsComponent, MatIconModule, MatTooltipModule, DecimalPipe, RouterModule],
+  imports: [
+    CommonModule,
+    SpeedometerComponent,
+    ReferentielCalculatorComponent,
+    TooltipsComponent,
+    MatIconModule,
+    MatTooltipModule,
+    DecimalPipe,
+    RouterModule,
+    SanitizeHtmlPipe,
+    HelpButtonComponent,
+  ],
   selector: 'aj-referentiel-calculator',
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
@@ -63,6 +85,11 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Service de fiches humaines
    */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Simulator service
+   */
+  simulatorService = inject(SimulatorService)
+  serverService = inject(ServerService)
   /**
    * Liste des datas du calculateur
    */
@@ -115,6 +142,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       missingDatasToSubContentieuxBefore12Month: boolean
     }
   } | null = null
+  /**
+   * Peux voir la projection
+   */
+  @Input() canViewProjecter: boolean = true
   /**
    * Connexion au css pour forcer l'affichage des enfants
    */
@@ -200,6 +231,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Nombre de mois à comparer
    */
   nbMonthsToCompare: number = 0
+  /**
+   * Erreur de projection
+   */
+  graphError: string | null = null
 
   /**
    * Constructor
@@ -332,6 +367,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         this.currentProjection = null
       }
       this.initValues()
+
+      if (this.showProjectionPopin) {
+        this.showChartJS()
+      }
     }
   }
 
@@ -346,9 +385,31 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   }
 
   /**
+   * Log event
+   * @param event
+   */
+  onLogEvent(event: string = 'show') {
+    this.kpiService.register(
+      this.parentCalculator ? CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX : CALCULATOR_OPEN_PROJECT_CONTENTIEUX,
+      this.currentProjectionType,
+      event,
+    )
+  }
+
+  /**
+   * On log to open graph
+   */
+  onLogToOpenGraph(event: string = '') {
+    this.kpiService.register(this.parentCalculator ? CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX : CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX, event)
+  }
+
+  /**
    * Initialisation du grid de projection footer
    */
   async initProjectionFooterGrid() {
+    this.onLogEvent('show')
+
+    this.graphError = null
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
     const dateStart = getTime(this.calculatorService.dateStart.value)
     const dateStop = getTime(this.calculatorService.dateStop.value)
@@ -358,32 +419,68 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.nbMonthsToCompare = nbMonths + 1
 
-    if (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') {
+    const todayDate = this.getToday()
+    const todayDatePlus12Months = addMonths(todayDate, 12)
+
+    if (this.currentProjectionType === 'stock') {
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Visualiser les conséquences d’un changement d’effectif',
+          label: 'Visualiser les conséquences d’un changement d’effectif sur le stock',
           button: 'Estimer l’effectif',
           link: ['/simulateur'],
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: dateStart,
-            dstop: dateStop,
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
       if (this.userService.canViewSimulator()) {
         list.push({
-          label: 'Voir les moyens nécessaires pour atteindre mon objectif',
-          button: 'Voir les moyens',
+          label: 'Visualiser les moyens nécessaires pour réduire le stock',
+          button: 'Projeter un objectif',
           link: ['/simulateur'],
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'stock',
+            c: this.categorySelected,
             ts: SIMULATOR_DONNEES,
-            dstart: dateStart,
-            dstop: dateStop,
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
+          },
+        })
+      }
+    } else if (this.currentProjectionType === 'dtes') {
+      if (this.userService.canViewSimulator()) {
+        list.push({
+          label: 'Visualiser les conséquences d’un changement d’effectif sur le DTES',
+          button: 'Estimer l’effectif',
+          link: ['/simulateur'],
+          queryParams: {
+            r: this.currentProjection?.contentieux.id,
+            t: 'etpt',
+            c: this.categorySelected,
+            ts: SIMULATOR_DONNEES,
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
+          },
+        })
+      }
+      if (this.userService.canViewSimulator()) {
+        list.push({
+          label: 'Visualiser les moyens nécessaires pour réduire le DTES',
+          button: 'Projeter un objectif',
+          link: ['/simulateur'],
+          queryParams: {
+            r: this.currentProjection?.contentieux.id,
+            t: 'dtes',
+            c: this.categorySelected,
+            ts: SIMULATOR_DONNEES,
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -396,8 +493,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           queryParams: {
             r: this.currentProjection?.contentieux.id,
             t: 'etpt',
-            dstart: dateStart,
-            dstop: dateStop,
+            c: this.categorySelected,
+            ts: SIMULATOR_DONNEES,
+            dstart: todayDate.toISOString(),
+            dstop: todayDatePlus12Months.toISOString(),
           },
         })
       }
@@ -408,7 +507,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
           button: 'Réorganiser mes effectifs',
           link: ['/reaffectateur'],
           queryParams: {
-            dstart: getTime(this.calculatorService.dateStart.value),
+            dstart: todayDate.toISOString(),
+            c: this.categorySelected,
           },
         })
       }
@@ -429,6 +529,9 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       }, 200)
       return
     }
+
+    // init graph error
+    this.graphError = null
 
     console.log('showChartJS', this.chartjs, this.chartjs.nativeElement)
 
@@ -453,22 +556,122 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       nbMonths *= -1
     }
 
-    const datasPast = await this.calculatorService.rangeValues(
-      this.currentProjection?.contentieux.id || 0,
+    const contentieuxId = this.currentProjection?.contentieux.id || 0
+    const childrenIds = this.currentProjection?.childrens?.map((c) => c.contentieux.id) || null
+    const referentielId = { parent: [contentieuxId], child: childrenIds && childrenIds.length > 0 ? childrenIds : null }
+    const categoryId = this.categorySelected === 'magistrats' ? 1 : this.categorySelected === 'fonctionnaires' ? 2 : 3
+    const categoryLabel = this.categorySelected === 'magistrats' ? 'Magistrat' : this.categorySelected === 'fonctionnaires' ? 'Greffe' : 'Autour du magistrat'
+    const fonctionsIds = this.calculatorService.selectedFonctionsIds.getValue()
+    const dateStopValue = this.calculatorService.dateStop.value || new Date()
+    const pivotDate = this.maxDateSelectionDate || dateStopValue
+    const endOfGraph = addMonths(dateStopValue, nbMonths + 1)
+
+    const realDataEnd = new Date(Math.min(pivotDate.getTime(), endOfGraph.getTime()))
+    const datasReal = await this.calculatorService.rangeValues(
+      contentieuxId,
       this.currentProjectionType,
       this.calculatorService.dateStart.value,
-      this.calculatorService.dateStop.value,
-      this.calculatorService.selectedFonctionsIds.getValue(),
+      realDataEnd,
+      fonctionsIds,
       this.categorySelected,
     )
-    const datasFuturs = await this.calculatorService.rangeValues(
-      this.currentProjection?.contentieux.id || 0,
-      this.currentProjectionType,
-      addMonths(this.calculatorService.dateStop.value || new Date(), +1),
-      addMonths(this.calculatorService.dateStop.value || new Date(), nbMonths + 1),
-      this.calculatorService.selectedFonctionsIds.getValue(),
-      this.categorySelected,
-    )
+    const todayDate = new Date()
+    let datasProjected: { value: number; date: Date }[] = []
+
+    const extractMonthlyValues = (monthlyReport: any[], startDate: Date, skipFirst = false) => {
+      const categoryReport = monthlyReport.find((r: any) => r.name === categoryLabel)
+      const result: { value: number; date: Date }[] = []
+      if (categoryReport?.values) {
+        const values = categoryReport.values
+        const keys = Object.keys(values).sort((a, b) => parseInt(a) - parseInt(b))
+        keys.forEach((key, i) => {
+          if (skipFirst && i === 0) return
+          const entry = values[key]
+          let value: number | null = null
+          if (this.currentProjectionType === 'stock') {
+            value = entry.lastStock ?? null
+          } else if (this.currentProjectionType === 'dtes') {
+            value = entry.DTES ?? null
+          } else if (this.currentProjectionType === 'etpt') {
+            value = entry.etpt ?? null
+          }
+          if (value !== null) {
+            result.push({ value, date: addMonths(startDate, i) })
+          }
+        })
+      }
+      return result
+    }
+
+    // Liaison : pivotDate → aujourd'hui (offset sur stock pour raccorder au réel)
+    if (month(addMonths(pivotDate, 1)).getTime() < month(todayDate).getTime()) {
+      const liaisonResponse = await this.serverService.post('simulator/get-situation', {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId,
+        dateStart: setTimeToMidDay(pivotDate),
+        dateStop: setTimeToMidDay(todayDate),
+        functionIds: fonctionsIds,
+        categoryId,
+      })
+      const liaisonSituation = liaisonResponse?.data?.situation || {}
+      const liaisonReport = liaisonSituation?.endSituation?.monthlyReport || []
+      const liaisonCategoryReport = liaisonReport.find((r: any) => r.name === categoryLabel)
+
+      if (liaisonCategoryReport?.values) {
+        const values = liaisonCategoryReport.values
+        const keys = Object.keys(values).sort((a, b) => parseInt(a) - parseInt(b))
+
+        let stockOffset = 0
+        const lastRealValue = datasReal.length > 0 ? datasReal[datasReal.length - 1]?.value : null
+        if (keys.length > 0 && lastRealValue != null) {
+          const startStock = values[keys[0]]?.lastStock ?? null
+          if (startStock != null) {
+            if (this.currentProjectionType === 'stock') {
+              stockOffset = lastRealValue - startStock
+            } else if (this.currentProjectionType === 'dtes') {
+              const startTotalOut = values[keys[0]]?.totalOut ?? null
+              if (startTotalOut != null && startTotalOut !== 0) {
+                stockOffset = lastRealValue * startTotalOut - startStock
+              }
+            }
+          }
+        }
+
+        keys.forEach((key, i) => {
+          if (i === 0 || i === keys.length - 1) return
+          const entry = values[key]
+          let value: number | null = null
+          if (this.currentProjectionType === 'stock') {
+            value = entry.lastStock != null ? entry.lastStock + stockOffset : null
+          } else if (this.currentProjectionType === 'dtes') {
+            const adjustedStock = entry.lastStock != null ? entry.lastStock + stockOffset : null
+            const totalOut = entry.totalOut ?? null
+            value = adjustedStock != null && totalOut != null && totalOut !== 0 ? Math.round((adjustedStock / totalOut) * 100) / 100 : null
+          } else if (this.currentProjectionType === 'etpt') {
+            value = entry.etpt ?? null
+          }
+          if (value !== null) {
+            datasProjected.push({ value, date: addMonths(pivotDate, i) })
+          }
+        })
+      }
+    }
+    // Projection future : depuis aujourd'hui (identique au simulateur)
+    if (month(todayDate).getTime() <= month(endOfGraph).getTime()) {
+      const situationResponse = await this.serverService.post('simulator/get-situation', {
+        backupId: this.humanResourceService.backupId.getValue(),
+        referentielId,
+        dateStart: setTimeToMidDay(todayDate),
+        dateStop: setTimeToMidDay(endOfGraph),
+        functionIds: fonctionsIds,
+        categoryId,
+      })
+      const situation = situationResponse?.data?.situation || {}
+      const futureReport = situation?.endSituation?.monthlyReport || []
+      datasProjected.push(...extractMonthlyValues(futureReport, todayDate))
+    }
+    const datasPast = datasReal
+    const datasFuturs = datasProjected
 
     let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
     max *= 2
@@ -511,6 +714,34 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       refDate = addMonths(refDate, +1)
       index++
     } while (month(refDate).getTime() <= month(endDate).getTime())
+
+    if (
+      this.currentProjectionType === 'etpt' &&
+      lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
+      nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
+    ) {
+      this.graphError =
+        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+    } else if (nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length) {
+      this.graphError =
+        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+    } else if (
+      (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
+      (await this.calculatorService.hasError({
+        type: COCKPIT_ERROR_NO_ENTRIES_OR_EXITS,
+        params: {
+          dateStart: pivotDate,
+          dateStop: endOfGraph,
+          contentieuxId,
+          backupId: this.humanResourceService.backupId.getValue(),
+        },
+      }))
+    ) {
+      // L'entrée et la sortie sont null pour 1 mois ou plus
+
+      this.graphError =
+        "Pour obtenir une projection plus fine, nous vous invitons à compléter vos données d'activité pour l'ensemble des mois de la période concernée."
+    }
 
     // init chart.js
     const gradientPlugin = {
@@ -617,7 +848,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       {
         // datas after
         ...defaultDataset,
-        data: nextDatesChartJS.map((v) => (v === null ? NaN : v)),
+        data:
+          nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length
+            ? []
+            : nextDatesChartJS.map((v) => (v === null ? NaN : v)),
       },
     ]
     console.log('datasets', datasets)
@@ -628,5 +862,26 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     }
     this.projectionChart.update()
     console.log('projectionChart', this.projectionChart)
+  }
+
+  /**
+   * Affiche le graphique
+   */
+  onShowDTES() {
+    console.log('on show dtes')
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'DTES'
+      this.calculatorService.showGraphDetailType = 'dtes'
+    }
+  }
+
+  onShowStock() {
+    console.log('on show stock')
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Stock'
+      this.calculatorService.showGraphDetailType = 'stock'
+    }
   }
 }

@@ -15,7 +15,7 @@ export class KPIService {
    * @param params
    * @returns
    */
-  register(codeId: number, value: string = ''): Promise<any> {
-    return this.serverService.post('kpi/call', { type: codeId, value })
+  register(codeId: number, value: string = '', value2: string = ''): Promise<any> {
+    return this.serverService.post('kpi/call', { type: codeId, value, value2 })
   }
 }

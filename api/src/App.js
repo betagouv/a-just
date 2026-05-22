@@ -253,7 +253,7 @@ export default class App extends AppBase {
    * Config Koa
    */
   _configureKoa() {
-    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.keys = config.cookie.keys
     this.koaApp.proxy = true
   }
 

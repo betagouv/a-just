@@ -606,6 +606,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const coverage = this.formWhiteSim.controls['realCoverage'].value
     if (coverage?.includes('%')) this.formWhiteSim.controls['realCoverage'].setValue(coverage.replace('%', ''))
   }
+
   generateEndSituation() {
     this.replaceSeparator()
 

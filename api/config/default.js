@@ -265,4 +265,10 @@ module.exports = {
    */
   authPasswordFile: process.env.AUTH_PASSWORD_FILE,
   nbInstances: 1,
+  /**
+   * Cookie sessions
+   */
+  cookie: {
+    keys: process.env.COOKIE_KEY ? [process.env.COOKIE_KEY] : ['qspoqok qdlmfksmdfk sldkflsmkf']
+  }
 }

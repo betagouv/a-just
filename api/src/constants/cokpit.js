@@ -1,0 +1,1 @@
+export const COCKPIT_ERROR_NO_ENTRIES_OR_EXITS = 'cockpit.error.no_entries_or_exits'

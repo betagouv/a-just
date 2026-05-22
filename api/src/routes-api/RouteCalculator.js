@@ -7,6 +7,7 @@ import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-re
 import { getEtpByCategory } from '../utils/simulator'
 import { meanBy } from 'lodash'
 import config from 'config'
+import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../constants/cokpit'
 
 /**
  * Route des calculs de la page calcule
@@ -100,6 +101,10 @@ export default class RouteCalculator extends Route {
     hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     indexes = await generateHRIndexes(hrList)
 
+    const categoriesCache = await this.models.HRCategories.getAll()
+    const fonctionsCache = await this.models.HRFonctions.getAll()
+    const allActivities = type === 'dtes' ? await this.models.Activities.getAll(backupId) : null
+
     // calcul de l'ETP pour un mois donnée
     const onCalculateETPT = async (date = dateStart) => {
       let localType = null
@@ -110,15 +115,13 @@ export default class RouteCalculator extends Route {
       }
 
       const catId = localType === 'ETPTSiege' ? 1 : localType === 'ETPTGreffe' ? 2 : 3
-      const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
+      const fonctions = fonctionsCache.filter((v) => v.categoryId === catId)
       let newFonctions = fonctionsIds
       if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
         newFonctions = null
       }
       let endOfTheMonth = today(date)
       endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
-
-      const categories = await this.models.HRCategories.getAll()
 
       const etp = calculateETPForContentieux(
         indexes,
@@ -129,7 +132,7 @@ export default class RouteCalculator extends Route {
           fonctions: newFonctions,
           contentieux: contentieuxId,
         },
-        categories,
+        categoriesCache,
       )
 
       let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
@@ -252,7 +255,7 @@ export default class RouteCalculator extends Route {
         false,
       )
 
-      return datas.list[0].magRealTimePerCase || datas.list[0].fonRealTimePerCase
+      return datas.list.length > 0 ? datas.list[0].magRealTimePerCase || datas.list[0].fonRealTimePerCase : null
     }
 
     const list = []
@@ -338,25 +341,28 @@ export default class RouteCalculator extends Route {
           break
         case 'dtes':
           {
-            const catId = categorySelected === 'magistrats' ? 1 : 2
-            const datas = await this.model.onCalculate(
-              {
-                backupId,
-                dateStart,
-                dateStop: endOfTheMonth,
-                contentieuxIds: [contentieuxId],
-                categorySelected: catId,
-                selectedFonctionsIds: fonctionsIds,
-                loadChildrens: false,
-              },
-              ctx.state.user,
-              false,
-            )
+            const startCs = month(today(dateStart), -11)
+            const endCs = month(today(dateStart), 0, 'lastday')
+            const activitesForDtes = allActivities
+              .filter((a) => a.contentieux.id === contentieuxId && month(a.periode).getTime() >= month(startCs).getTime() && month(a.periode).getTime() <= month(endCs).getTime())
+              .sort((a, b) => new Date(a.periode).getTime() - new Date(b.periode).getTime())
 
-            console.log('datas.list[0].realDTESInMonths', datas.list[0].realDTESInMonths)
-            if (datas.list[0].realDTESInMonths !== null) {
+            let lastStock = null
+            if (activitesForDtes.length) {
+              const lastAct = activitesForDtes[activitesForDtes.length - 1]
+              if (lastAct.stock !== null && month(lastAct.periode).getTime() === month(endCs).getTime()) {
+                lastStock = lastAct.stock
+              }
+            }
+
+            const filteredOut = activitesForDtes.filter((a) => a.sorties !== null)
+            const meanOutCs = filteredOut.length > 0 ? meanBy(filteredOut, 'sorties') : null
+
+            const dtesValue = lastStock !== null && meanOutCs !== null ? fixDecimal(lastStock / meanOutCs, 100) : null
+
+            if (dtesValue !== null) {
               list.push({
-                value: datas.list[0].realDTESInMonths,
+                value: dtesValue,
                 date: today(dateStart),
               })
             } else {
@@ -375,10 +381,6 @@ export default class RouteCalculator extends Route {
                 lockSorties = lastMonthSorties
               }
 
-              console.log('lastMonthEntrees', lastMonthEntrees)
-              console.log('lastMonthSorties', lastMonthSorties)
-              console.log('etpt', etpt)
-              console.log('tempsMoyen', tempsMoyen)
               if (tempsMoyen !== Infinity) {
                 let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
                 if (categorySelected === 'magistrats') {
@@ -453,5 +455,55 @@ export default class RouteCalculator extends Route {
     } while (dateStart.getTime() <= dateStop.getTime())
 
     this.sendOk(ctx, list)
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      type: Types.string().required(),
+      dateStart: Types.date(),
+      dateStop: Types.date(),
+      contentieuxId: Types.number(),
+      backupId: Types.number(),
+    }),
+    accesses: [Access.canVewCalculator],
+  })
+  async hasError(ctx) {
+    let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
+
+    switch (type) {
+      case COCKPIT_ERROR_NO_ENTRIES_OR_EXITS: {
+
+        if (!dateStart || !dateStop || !contentieuxId || !backupId) {
+          this.sendOk(ctx, { status: false })
+          return
+        }
+        let hasError = false
+        dateStart = month(dateStart)
+        dateStop = month(dateStop)
+
+        let date = new Date(dateStop)
+        if (dateStart.getTime() > dateStop.getTime()) {
+          date = new Date(dateStart)
+        }
+
+        while (date.getTime() > dateStart.getTime() && !hasError) {
+          const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
+          if (activites && activites.length) {
+            const acti = activites[0]
+            if (acti.entrees === null && acti.originalEntrees === null && acti.sorties === null && acti.originalSorties === null) {
+              hasError = true
+            }
+          }
+
+          date = month(date, -1)
+        }
+
+        this.sendOk(ctx, { status: hasError })
+        return
+      }
+      default:
+        this.sendOk(ctx, { status: false })
+        return
+    }
   }
 }

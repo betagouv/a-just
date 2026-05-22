@@ -26,6 +26,26 @@ export const CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL = 3015
 export const CALCULATOR_OPEN_CHARTS_VIEW = 3016
 export const CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW = 3017
 export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS = 3018
+/**
+ * Code de se projeter d'un contentieux
+ */
+export const CALCULATOR_OPEN_PROJECT_CONTENTIEUX = 3020
+
+/**
+ * Code de se projeter d'un sous contentieux
+ */
+export const CALCULATOR_OPEN_PROJECT_SUB_CONTENTIEUX = 3021
+
+/**
+ * Code d'affichage de la page vue brut et affichage du graph d'un contentieux
+ */
+export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_CONTENTIEUX = 3022
+
+/**
+ * Code d'affichage de la page vue brut et affichage du graph d'un sous contentieux
+ */
+export const CALCULATOR_PAGE_BRUT_SHOW_GRAPH_SUB_CONTENTIEUX = 3023
+
 
 export const EXECUTE_SIMULATION = 302
 export const EXECUTE_LAUNCH_SIMULATOR = 310

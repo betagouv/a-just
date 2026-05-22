@@ -53,6 +53,7 @@
       flex-direction: row;
       align-items: center;
       justify-content: center;
+      min-height: 63px;
 
       &:not(:first-child) {
         border-left: 3px solid white;
@@ -502,5 +503,21 @@ aj-speedometer {
         }
       }
     }
+  }
+}
+
+.popin-projection-content-error {
+  margin-top: 16px;
+
+  p {
+    color: #3a3a3a;
+    margin: 0 72px;
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 }
