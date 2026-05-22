@@ -70,10 +70,8 @@
               "src/app/styles/introjs.scss"
             ],
             "scripts": [
-              "node_modules/quill/dist/quill.js",
               "node_modules/mapbox-gl/dist/mapbox-gl.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/toastr/build/toastr.min.js",
               "node_modules/intro.js/minified/intro.min.js"
             ]
           },

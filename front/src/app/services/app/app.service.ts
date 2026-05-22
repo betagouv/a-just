@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import toastr from 'toastr';
 import { AlertInterface } from '../../interfaces/alert';
 
 type ToastrLike = {
@@ -62,11 +63,11 @@ export class AppService {
       progressBar: false,
       positionClass: 'toast-top-center',
       preventDuplicates: false,
-      onclick: null,
-      showDuration: '300',
-      hideDuration: '2000',
-      timeOut: '1000',
-      extendedTimeOut: '1000',
+      onclick: undefined,
+      showDuration: 300,
+      hideDuration: 2000,
+      timeOut: 1000,
+      extendedTimeOut: 1000,
       showEasing: 'swing',
       hideEasing: 'linear',
       showMethod: 'fadeIn',

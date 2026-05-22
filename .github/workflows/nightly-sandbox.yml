@@ -1,4 +1,7 @@
 name: Nightly Sandbox Tests
+permissions:
+  contents: read
+  pull-requests: write
 on:
   # schedule:
   # Run every night at 02:30 UTC
