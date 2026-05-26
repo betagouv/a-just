@@ -952,26 +952,82 @@ describe("Panorama page", () => {
   });
 
   it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
+    let contentieuxName = "", sousContentieuxName = "";
+    let savedMonth = null;
+
+    cy.get(".referentiel-row")
+      .first()
+      .within(() => {
+        cy.get("a")
+          .eq(0)
+          .invoke("text")
+          .then((t) => {
+            contentieuxName = t.replace(/\u00a0/g, " ").trim();
+            cy.log("Contentieux Name " + contentieuxName);
+          });
 
 
-    // get the first contentieux and sous contentieux
-    // save date on sous contentieux
-    // click on it
-    // should redirect to donnee d'activite route
-    // find the row, click on it
-    // check the "Voir les donnée de : date saved"
-
-    // fill up the .to-complete or .to-verify inputs that are with "-"
-    // click on button "Enregistrer"
-    // click on button "Enregistrer les modifications"
-    // back to /panorama
-    // check if the first contentieux and sous contentieux date is not equal to the saved date
+        cy.get("a")
+          .eq(1)
+          .invoke("text")
+          .then((t) => {
+            sousContentieuxName = t.replace(/\u00a0/g, " ").trim();
+            cy.log("sousContentieuxName Name " + sousContentieuxName);
+          });
 
 
+        // extract month query param from href
+        cy.get("a")
+          .eq(1)
+          .invoke("attr", "href")
+          .then((href) => {
+            const m = href && href.match(/month=([^&]+)/);
+            savedMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+            // click the sous-contentieux link to go to activities page
+            cy.get("a").eq(1).click();
+          });
+      }).then(() => {
+        cy.url().should("include", "/donnees-d-activite");
+
+        cy.contains('.group .group-item .label p', sousContentieuxName).click();
+
+        cy.get(".item-template-new")
+          .find('input[placeholder="-"]')
+          .each(($input) => {
+            const randomValue = Cypress._.random(0, 10);
+
+            cy.wrap($input)
+              .clear()
+              .type(`${randomValue} {enter}`);
+          }).then(() => {
+            cy.contains("button", "Enregistrer").click();
+
+            cy.wait(2000);
+
+            cy.get('body').then(($b) => {
+              if ($b.find("button:contains('Enregistrer les modifications')").length) {
+                cy.contains('button', 'Enregistrer les modifications').click({ force: true });
+              }
+            });
+
+            cy.go("back");
+            cy.contains(".tags", "Les 12 derniers mois disponibles").click();
+
+
+            cy.get('.referentiel-row')
+              .first()
+              .within(() => {
+                cy.get('a').eq(1).invoke('attr', 'href').then((href) => {
+                  const m = href && href.match(/month=([^&]+)/);
+                  const newMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+                  expect(newMonth).to.not.equal(savedMonth);
+                });
+              });
+
+          });
+      });
   });
 
-  it("Should modify a daata on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
-
-  });
-
+  // it("Should modify a data on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
+  // });
 });
