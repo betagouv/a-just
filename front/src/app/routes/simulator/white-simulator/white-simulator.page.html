@@ -40,7 +40,7 @@
 
   <!-- SIMULATEUR BLANC - SITUATION DEBUT + PROJETE-->
   @if (dateStop !== null && dateStop !== undefined) {
-  <aj-editable-situation [@fadeInOut] [category]="categorySelected"
+  <aj-editable-situation [@fadeInOut] [category]="categorySelected" [startRealValue]="startRealValue"
     [endDateToDisplay]="stopRealValue"></aj-editable-situation>
   }
   <!-- SIMULATEUR BLANC - AJUSTEMENT-->
