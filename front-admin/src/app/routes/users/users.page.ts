@@ -1,4 +1,11 @@
-import { AfterViewChecked, Component, ElementRef, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MainClass } from '../../libs/main-class';
 import { UserInterface } from '../../interfaces/user-interface';
@@ -7,7 +14,6 @@ import { PopupComponent } from '../../components/popup/popup.component';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 
 import { FormsModule } from '@angular/forms';
-import { PageAccessInterface } from '../../interfaces/page-access-interface';
 import { BackupInterface } from '../../interfaces/backup';
 import { compare } from '../../utils/array';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
@@ -26,7 +32,10 @@ interface FormSelection {
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })
-export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterViewChecked {
+export class UsersPage
+  extends MainClass
+  implements OnInit, OnDestroy, AfterViewChecked
+{
   appService = inject(AppService);
   referentielService = inject(ReferentielService);
   userService = inject(UserService);
@@ -58,7 +67,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterView
     super();
 
     this.watch(
-      this.userService.user.subscribe((u) => (this.userConnected = u))
+      this.userService.user.subscribe((u) => (this.userConnected = u)),
     );
   }
 
@@ -75,7 +84,9 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterView
   }
 
   checkScrollableCells() {
-    const wrappers = this.elementRef.nativeElement.querySelectorAll('.scrollable-wrapper');
+    const wrappers = this.elementRef.nativeElement.querySelectorAll(
+      '.scrollable-wrapper',
+    );
     wrappers.forEach((wrapper: HTMLElement) => {
       const cell = wrapper.querySelector('.scrollable-cell') as HTMLElement;
       if (cell && cell.scrollHeight > cell.clientHeight) {
@@ -110,7 +121,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterView
               ? 'Tous'
               : (u.referentielIds || [])
                   .map(
-                    (id) => this.referentiels.find((r) => r.id === id)?.label
+                    (id) => this.referentiels.find((r) => r.id === id)?.label,
                   )
                   .filter((label) => label !== 'Indisponibilité')
                   .join(', <br/>'),
@@ -132,7 +143,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterView
             : {
                 active: 'id',
                 direction: 'desc',
-              }
+              },
         );
       })
       .finally(() => {
@@ -177,7 +188,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy, AfterView
       this.userConnected.role !== this.USER_ROLE_SUPER_ADMIN
     ) {
       alert(
-        "Vous n'avez pas le droit de modifier les droits d'un super administrateur."
+        "Vous n'avez pas le droit de modifier les droits d'un super administrateur.",
       );
       return;
     }
