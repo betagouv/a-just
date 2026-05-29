@@ -46,8 +46,10 @@
           (onClose)="removeAlertItem('lastName')"></aj-alert-small>
         }
       </div>
+      @if(!userService.canEditHR()) {
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
+      }
     </div>
     <div class="last-row">
       <div class="matricule input-wrapper">
