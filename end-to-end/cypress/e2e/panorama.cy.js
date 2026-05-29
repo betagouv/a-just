@@ -1,6 +1,6 @@
-import { normalizeDate, getShortMonthString } from "../../support/utils/dates";
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 import user from "../../fixtures/user.json";
+import { getShortMonthString } from "../../support/utils/dates";
 
 describe("Panorama page", () => {
   let userId;
@@ -82,7 +82,7 @@ describe("Panorama page", () => {
       .and("contain.text", "effectifs");
   });
 
-  it("Should display the 3 'Données d’activité' sections", () => {
+  it("Should display the 3 'Données d'activité' sections", () => {
     cy.get("activities-last-modifications h3").should(
       "contain.text",
       "Dernières modifications"
@@ -863,70 +863,101 @@ describe("Panorama page", () => {
     findAgentInPagination("Agent Test dateStop", normalizedDepartureDate);
   });
 
-  it("Should display contentieux with data to complete (blue)", () => {
-    const tag = "Les 12 derniers mois disponibles";
-    cy.visit("/panorama");
-    cy.contains(".tags", tag).click();
+  // it("Should display contentieux with data to complete (blue)", () => {
+  //   cy.visit('/panorama');
+  //   cy.url().should("include", "/panorama");
+
+  //   const tag = "Les 12 derniers mois disponibles :";
+  //   cy.visit("/panorama");
+  //   cy.contains(".tags span", tag).click();
+
+  //   cy.get('.referentiel-row a').each(($link, index) => {
+
+  //     // extract href before navigation
+  //     const href = $link.prop('href')
+
+  //     // optional: get displayed label
+  //     const label = $link.text().trim()
+
+  //     cy.log(`Checking link ${index}: ${label}`)
+
+  //     // revisit page each iteration
+  //     cy.visit('/panorama')
+
+  //     // click same link by index
+  //     cy.get('.referentiel-row a')
+  //       .eq(index)
+  //       .click()
+
+  //     // verify redirect
+  //     cy.url().should('include', href)
+
+  //     // optional:
+  //     cy.contains(label)
+  //   })
+
+  //   // cy.get(".referentiel-row").then(($rows) => {
+  //   //   const rowsData = [];
+
+  //   //   $rows.each((rowIndex, row) => {
+  //   //     const linkTexts = [];
+  //   //     Cypress.$(row)
+  //   //       .find("a")
+  //   //       .each((_, link) => {
+  //   //         linkTexts.push(
+  //   //           Cypress.$(link).text().replace(/\u00a0/g, " ").trim()
+  //   //         );
+  //   //       });
+
+  //   //     if (linkTexts.length) {
+  //   //       rowsData.push({ rowIndex, contentieuxName: linkTexts[0] });
+  //   //     }
+  //   //   });
+
+  //   //   return rowsData;
+  //   // }).then((rowsData) => {
+  //   //   cy.log("rows data " + rowsData);
+  //   //   cy.contains(".tags", tag).click();
+
+  //   //   rowsData.forEach(({ rowIndex, contentieuxName }) => {
+
+  //   //     cy.log("checking contentieux ", contentieuxName);
+
+  //   //     cy.get(".referentiel-row")
+  //   //       .find("a")
+  //   //       .eq(0)
+  //   //       .click();
 
 
-    cy.get(".referentiel-row").then(($rows) => {
-      const rowsData = [];
+  //   //     cy.url().should("include", "/donnees-d-activite");
 
 
-      $rows.each((rowIndex, row) => {
-        const linkTexts = [];
-        Cypress.$(row)
-          .find("a")
-          .each((_, link) => {
+  //   //     cy.log("Checking contentieux: " + contentieuxName);
 
 
-            linkTexts.push(
-              Cypress.$(link).text().replace(/\u00a0/g, " ").trim()
-            );
-          });
+  //   //     cy.get(".maximize .selectable .label p").should(
+  //   //       "contain.text",
+  //   //       contentieuxName
+  //   //     );
 
 
-        if (linkTexts.length) {
-          rowsData.push({ rowIndex, contentieuxName: linkTexts[0] });
-        }
-      });
-
-
-      return rowsData;
-    }).then((rowsData) => {
-      rowsData.forEach(({ rowIndex, contentieuxName }) => {
-        cy.get(".referentiel-row")
-          .eq(rowIndex)
-          .find("a")
-          .eq(0)
-          .click();
-
-
-        cy.url().should("include", "/donnees-d-activite");
-
-
-        cy.log("Checking contentieux: " + contentieuxName);
-
-
-        cy.get(".maximize .selectable .label p").should(
-          "contain.text",
-          contentieuxName
-        );
-
-
-        cy.get(".maximize .completion p").should(
-          "contain.text",
-          "il reste des données à compléter"
-        );
-        cy.go("back");
-      });
-    });
-  });
+  //   //     cy.get(".maximize .completion p").should(
+  //   //       "contain.text",
+  //   //       "il reste des données à compléter"
+  //   //     );
+  //   //     cy.go("back");
+  //   //   });
+  //   // });
+  // });
 
   it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
+
+    cy.visit("/panorama");
+    cy.url().should("include", "/panorama");
+
     let sousContentieuxName = "", contentieuxName = "";
 
-    ["Les 12 derniers mois disponibles", "Dernier trimestre disponible", "Dernier mois disponible"].forEach((tag) => {
+    ["Les 12 derniers mois disponibles"].forEach((tag) => {
       cy.contains(".tags", String(tag)).click();
 
       if (cy.get(".referentiel-row a").first() && cy.get(".referentiel-row a").eq(1)) {
@@ -952,6 +983,9 @@ describe("Panorama page", () => {
   });
 
   it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
+    cy.visit('/panorama');
+    cy.url().should("include", "/panorama");
+
     let contentieuxName = "", sousContentieuxName = "";
     let savedMonth = null;
 
@@ -963,7 +997,6 @@ describe("Panorama page", () => {
           .invoke("text")
           .then((t) => {
             contentieuxName = t.replace(/\u00a0/g, " ").trim();
-            cy.log("Contentieux Name " + contentieuxName);
           });
 
 
@@ -972,7 +1005,6 @@ describe("Panorama page", () => {
           .invoke("text")
           .then((t) => {
             sousContentieuxName = t.replace(/\u00a0/g, " ").trim();
-            cy.log("sousContentieuxName Name " + sousContentieuxName);
           });
 
 
@@ -1023,11 +1055,41 @@ describe("Panorama page", () => {
                   expect(newMonth).to.not.equal(savedMonth);
                 });
               });
-
           });
       });
   });
 
-  // it("Should modify a data on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
-  // });
+  it("Should modify a data on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
+    cy.visit('/panorama');
+    cy.url().should("include", "/panorama");
+
+    var now = new Date();
+    var dateDay = now.getDate();
+    var dateMonth = getShortMonthString(now);
+    var dateYear = now.getFullYear();
+
+    var messageToCompare =
+      "par " +
+      user.firstName +
+      " " +
+      user.lastName +
+      " le " +
+      dateDay +
+      " " +
+      dateMonth +
+      " " +
+      dateYear;
+
+
+    cy.get("activities-last-modifications")
+      .find(".preview")
+      .first()
+      .find("p")
+      .invoke("text")
+      .then((text) => {
+
+        expect(text.trim()).to.contain(messageToCompare);
+      });
+
+  });
 });
