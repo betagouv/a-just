@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core'
 import { Title } from '@angular/platform-browser'
+import mapboxgl from 'mapbox-gl'
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
 import { BackButtonComponent } from '../../components/back-button/back-button.component'
 import { JuridictionInterface } from '../../interfaces/juridiction'
@@ -7,7 +8,6 @@ import { JuridictionsService } from '../../services/juridictions/juridictions.se
 import { UserService } from '../../services/user/user.service'
 
 declare let iframe: any
-declare const mapboxgl: any
 
 /**
  * Page de qui sommes nous
@@ -34,7 +34,7 @@ export class StatsPage {
   /**
    * Zoom of mapbox
    */
-  zoom: [number] = [4.7]
+  zoom = 4.7
   /**
    * Liste juridictions
    */
@@ -79,6 +79,7 @@ export class StatsPage {
             features: [
               {
                 type: 'Feature',
+                properties: {},
                 geometry: {
                   type: 'Point',
                   coordinates: [j.longitude || 0, j.latitude || 0],

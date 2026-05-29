@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
+import mapboxgl from 'mapbox-gl';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
-
-declare const mapboxgl: any;
 
 /**
  * Page de la liste des juridictions
@@ -27,7 +26,7 @@ export class JuridictionsInstalledPage {
   /**
    * Zoom of mapbox
    */
-  zoom: [number] = [5];
+  zoom = 5;
   /**
    * Liste juridictions
    */
@@ -63,6 +62,7 @@ export class JuridictionsInstalledPage {
             features: [
               {
                 type: 'Feature',
+                properties: {},
                 geometry: {
                   type: 'Point',
                   coordinates: [j.longitude || 0, j.latitude || 0],
