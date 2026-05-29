@@ -50,8 +50,10 @@
       </button>
       }
 
+      @if(userService.canEditHR()){
       <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
         text="Qu'est-ce que c'est ?"></aj-help-button>
+      }
     </div>
     }
     @if (onEditIndex !== null) {
