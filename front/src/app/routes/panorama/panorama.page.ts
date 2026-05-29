@@ -159,7 +159,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       target: '#wrapper-contener',
       title: 'Panorama',
       intro:
-        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace ' +
+        `Cette page vous offre un aperçu en un coup d'œil de la mise à jour des informations enregistrées dans l'espace ` +
         (this.isTJ() ? 'du TJ' : 'de la CA') +
         '.',
     },
@@ -169,7 +169,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       intro:
         "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " +
         (this.isTJ() ? 'juridiction' : "cour d'appel") +
-        ' et les éventuels changements dans les 15 derniers et 15 prochains jours.',
+        ' et les éventuels changements dans les 3 derniers et 3 prochains mois.',
     },
     {
       target: '.wordforce-composition',
@@ -180,7 +180,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       target: '.records-update',
       title: 'Pourcentage et date de mise à jour',
       intro:
-        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' +
+        `Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d'une vision précise et fine de la mobilisation des ressources humaines dans la ` +
         (this.isTJ() ? 'juridiction' : "cour d'appel") +
         '.',
     },
@@ -188,7 +188,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       target: 'workforce-change',
       title: 'Changements récents',
       intro:
-        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
+        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d'indisponibilité ou d'arrivée et la modifier si vous découvrez qu'elle a évolué.",
     },
   ]
 
@@ -202,19 +202,19 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       target: 'activities-last-disponibilities',
       title: 'Dernières données disponibles',
       intro:
-        'Visualisez en un coup d’œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l’un ou l’autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l’outil.',
+        `Visualisez en un coup d'œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l'un ou l'autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l'outil.`,
     },
     {
       target: 'activities-to-complete',
       title: 'Données à compléter',
       intro:
-        'Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n’est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.',
+        `Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n'est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.`,
     },
     {
       target: 'activities-last-modifications',
       title: 'Dernières modifications',
       intro:
-        'Effectuées sur vos données d’activité par les différents agents de la ' + (this.isTJ() ? 'juridiction' : "cour d'appel") + " utilisateurs d'A-JUST.",
+        `Effectuées sur vos données d'activité par les différents agents de la ` + (this.isTJ() ? 'juridiction' : "cour d'appel") + " utilisateurs d'A-JUST. ",
     },
   ]
 
