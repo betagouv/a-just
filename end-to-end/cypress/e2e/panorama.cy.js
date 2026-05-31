@@ -1,6 +1,7 @@
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 import user from "../../fixtures/user.json";
 import { getShortMonthString } from "../../support/utils/dates";
+import { normalizeDate } from "../../support/utils/dates";
 
 describe("Panorama page", () => {
   let userId;
