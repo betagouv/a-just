@@ -717,6 +717,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       index++
     } while (month(refDate).getTime() <= month(endDate).getTime())
 
+    console.log('lastDatesChartJS', lastDatesChartJS)
+    console.log('nextDatesChartJS', nextDatesChartJS)
     if (
       this.currentProjectionType === 'etpt' &&
       lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
