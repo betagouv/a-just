@@ -89,7 +89,7 @@ export default class RouteCalculator extends Route {
     let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
 
     dateStart = today(dateStart)
-    dateStop = today(dateStop)
+    dateStop = month(dateStop, 0, 'lastday')
     let hrList = null
     let indexes = null
     if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege', 'etpt'].includes(type)) {
