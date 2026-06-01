@@ -115,6 +115,7 @@ const cspConfig = {
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
         "'sha256-7ZHILzwrPOtuEc8fFrW3q+2DMmiMh6VwC/wBhNbTuUY='",
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
+        "'sha256-Py7iYO/FJTBjoV1wvetfC0VkvWdnaaQiCelsNLzXp6s='",
       ],
       'worker-src': ['blob:'],
       'object-src': ["'self'"],
@@ -343,17 +344,17 @@ export default class App extends AppBase {
     super.addMiddlewares([
       config.corsUrl
         ? cors({
-            origin: (ctx) => {
-              const requestOrigin = ctx.request.header.origin || config.frontUrl
-              if (config.corsUrl.includes(requestOrigin)) {
-                return requestOrigin
-              } else {
-                console.log('Not allowed by CORS', requestOrigin)
-                throw new Error('Not allowed by CORS')
-              }
-            },
-            credentials: true,
-          })
+          origin: (ctx) => {
+            const requestOrigin = ctx.request.header.origin || config.frontUrl
+            if (config.corsUrl.includes(requestOrigin)) {
+              return requestOrigin
+            } else {
+              console.log('Not allowed by CORS', requestOrigin)
+              throw new Error('Not allowed by CORS')
+            }
+          },
+          credentials: true,
+        })
         : cors({ credentials: true }),
     ])
   }
@@ -383,7 +384,7 @@ export default class App extends AppBase {
 
     await db.migrations()
     await db.seeders()
-    
+
     if (process.env.NODE_ENV !== 'test') {
       startCrons(this)
       console.log('--- IS READY ---', config.port)
@@ -418,7 +419,7 @@ export default class App extends AppBase {
     }
   }
 
-  isReady() {}
+  isReady() { }
 
   /**
    * Envoie du signal de fermeture du serveur
@@ -436,7 +437,7 @@ export default class App extends AppBase {
         if (this.dbInstance) {
           this.dbInstance.close()
         }
-      } catch (e) {}
+      } catch (e) { }
       return
     }
     process.exit()

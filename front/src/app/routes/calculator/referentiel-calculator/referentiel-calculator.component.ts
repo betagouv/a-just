@@ -656,19 +656,21 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
         })
       }
     }
+
+    const dateSwitch = month(addMonths(pivotDate, 1))
     // Projection future : depuis aujourd'hui (identique au simulateur)
-    if (month(todayDate).getTime() <= month(endOfGraph).getTime()) {
+    if (month(dateSwitch).getTime() <= month(endOfGraph).getTime()) {
       const situationResponse = await this.serverService.post('simulator/get-situation', {
         backupId: this.humanResourceService.backupId.getValue(),
         referentielId,
-        dateStart: setTimeToMidDay(todayDate),
+        dateStart: setTimeToMidDay(dateSwitch),
         dateStop: setTimeToMidDay(endOfGraph),
         functionIds: fonctionsIds,
         categoryId,
       })
       const situation = situationResponse?.data?.situation || {}
       const futureReport = situation?.endSituation?.monthlyReport || []
-      datasProjected.push(...extractMonthlyValues(futureReport, todayDate))
+      datasProjected.push(...extractMonthlyValues(futureReport, dateSwitch))
     }
     const datasPast = datasReal
     const datasFuturs = datasProjected
@@ -721,10 +723,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
     ) {
       this.graphError =
-        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+        "En l'absence de ventilation de vos ETPT sur ce " +
+        (this.parentCalculator ? 'sous-contentieux' : 'contentieux') +
+        ", nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
     } else if (nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length) {
       this.graphError =
-        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+        "En l'absence de ventilation de vos ETPT sur ce " +
+        (this.parentCalculator ? 'sous-contentieux' : 'contentieux') +
+        ", nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
     } else if (
       (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
       (await this.calculatorService.hasError({
