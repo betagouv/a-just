@@ -96,7 +96,6 @@ const cspConfig = {
         "'sha256-A+0b+HOyTgrPPZgW1Tcb6UJIvj7fs09WPLWFtyqq1ks='",
         "'sha256-ErSGQ5RkfdaGFyDT7yi/vnakQoxNloHzsJR8SRc4ISE='",
         "'sha256-7ZHILzwrPOtuEc8fFrW3q+2DMmiMh6VwC/wBhNbTuUY='",
-        "'sha256-Py7iYO/FJTBjoV1wvetfC0VkvWdnaaQiCelsNLzXp6s='",
         //...scriptSha1Generate([`${__dirname}/front/index.html`]),
         'https://client.crisp.chat',
         'https://settings.crisp.chat',
