@@ -1,6 +1,6 @@
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 import user from "../../fixtures/user.json";
-import { getShortMonthString } from "../../support/utils/dates";
+import { getShortMonthString, normalizeDate } from "../../support/utils/dates";
 
 describe("Panorama page", () => {
   let userId;
@@ -863,92 +863,44 @@ describe("Panorama page", () => {
     findAgentInPagination("Agent Test dateStop", normalizedDepartureDate);
   });
 
-  // it("Should display contentieux with data to complete (blue)", () => {
-  //   cy.visit('/panorama');
-  //   cy.url().should("include", "/panorama");
+  it("Should display contentieux with data to complete (blue)", () => {
+    cy.visit('/panorama')
 
-  //   const tag = "Les 12 derniers mois disponibles :";
-  //   cy.visit("/panorama");
-  //   cy.contains(".tags span", tag).click();
+    const tag = "Les 12 derniers mois disponibles :"
 
-  //   cy.get('.referentiel-row a').each(($link, index) => {
+    cy.contains(".tags span", tag).click()
 
-  //     // extract href before navigation
-  //     const href = $link.prop('href')
+    cy.get('.referentiel-row').then(($rows) => {
+      const count = $rows.length
 
-  //     // optional: get displayed label
-  //     const label = $link.text().trim()
+      for (let i = 0; i < count; i++) {
 
-  //     cy.log(`Checking link ${index}: ${label}`)
+        cy.get('.referentiel-row')
+          .eq(i)
+          .find('a')
+          .first()
+          .then(($a) => {
 
-  //     // revisit page each iteration
-  //     cy.visit('/panorama')
+            const label = $a.text().trim()
 
-  //     // click same link by index
-  //     cy.get('.referentiel-row a')
-  //       .eq(index)
-  //       .click()
+            cy.wrap($a).click()
 
-  //     // verify redirect
-  //     cy.url().should('include', href)
+            // wait for navigation
+            cy.url().should('include', '/donnees-d-activite')
 
-  //     // optional:
-  //     cy.contains(label)
-  //   })
+            cy.get(".maximize .selectable .label p")
+              .should("contain.text", label)
 
-  //   // cy.get(".referentiel-row").then(($rows) => {
-  //   //   const rowsData = [];
+            cy.get(".maximize .completion p")
+              .should("contain.text", "il reste des données à compléter")
 
-  //   //   $rows.each((rowIndex, row) => {
-  //   //     const linkTexts = [];
-  //   //     Cypress.$(row)
-  //   //       .find("a")
-  //   //       .each((_, link) => {
-  //   //         linkTexts.push(
-  //   //           Cypress.$(link).text().replace(/\u00a0/g, " ").trim()
-  //   //         );
-  //   //       });
+            cy.go("back")
 
-  //   //     if (linkTexts.length) {
-  //   //       rowsData.push({ rowIndex, contentieuxName: linkTexts[0] });
-  //   //     }
-  //   //   });
-
-  //   //   return rowsData;
-  //   // }).then((rowsData) => {
-  //   //   cy.log("rows data " + rowsData);
-  //   //   cy.contains(".tags", tag).click();
-
-  //   //   rowsData.forEach(({ rowIndex, contentieuxName }) => {
-
-  //   //     cy.log("checking contentieux ", contentieuxName);
-
-  //   //     cy.get(".referentiel-row")
-  //   //       .find("a")
-  //   //       .eq(0)
-  //   //       .click();
-
-
-  //   //     cy.url().should("include", "/donnees-d-activite");
-
-
-  //   //     cy.log("Checking contentieux: " + contentieuxName);
-
-
-  //   //     cy.get(".maximize .selectable .label p").should(
-  //   //       "contain.text",
-  //   //       contentieuxName
-  //   //     );
-
-
-  //   //     cy.get(".maximize .completion p").should(
-  //   //       "contain.text",
-  //   //       "il reste des données à compléter"
-  //   //     );
-  //   //     cy.go("back");
-  //   //   });
-  //   // });
-  // });
+            cy.url().should('include', '/panorama')
+          })
+      }
+    })
+  })
 
   it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
 
