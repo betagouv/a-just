@@ -715,16 +715,24 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       index++
     } while (month(refDate).getTime() <= month(endDate).getTime())
 
+    console.log('lastDatesChartJS', lastDatesChartJS)
+    console.log('nextDatesChartJS', nextDatesChartJS)
     if (
       this.currentProjectionType === 'etpt' &&
       lastDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v)) &&
       nextDatesChartJS.every((v) => v === null || v === 0 || Number.isNaN(v))
     ) {
       this.graphError =
-        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+        "En l'absence de ventilation de vos ETPT sur ce " + this.parentCalculator
+          ? 'sous-contentieux'
+          : 'contentieux' +
+            ", nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
     } else if (nextDatesChartJS.slice(nbMonths).filter((v) => v !== null && v !== 0 && !Number.isNaN(v)).length !== nextDatesChartJS.slice(nbMonths).length) {
       this.graphError =
-        "En l'absence de ventilation de vos ETPT sur ce sous-contentieux, nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
+        "En l'absence de ventilation de vos ETPT sur ce " + this.parentCalculator
+          ? 'sous-contentieux'
+          : 'contentieux' +
+            ", nous ne pouvons calculer le stock, le DTES, et l'ETPT à venir.<br/>Vous pouvez affiner vos affectations en accédant au ventilateur"
     } else if (
       (this.currentProjectionType === 'stock' || this.currentProjectionType === 'dtes') &&
       (await this.calculatorService.hasError({
