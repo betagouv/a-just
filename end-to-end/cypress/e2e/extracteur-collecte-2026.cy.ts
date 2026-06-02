@@ -12,6 +12,8 @@ import {
 } from "../../support/api";
 import user from "../../fixtures/user.json";
 
+const SANDBOX_API_URL = 'http://175.0.0.21:8081/api';
+
 // Import comparison utilities from effectif-suite to avoid duplication
 // These are defined in effectif-suite.cy.ts but not exported, so we'll inline them here
 // Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
@@ -435,7 +437,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string) {
     "waitForDownloadedExcel",
     { timeoutMs: 1200000 },
     { timeout: 1220000 },
-  ).then((fileName: string) => {
+  ).then((fileName) => {
     const targetBase = `extracteur-collecte-2026-current`;
     snapshot("collecte2026", "step11-download-detected");
     return cy
@@ -454,8 +456,9 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
     let serverUrl: string | null = null;
 
     // Login and ensure user has access to TJ TEST backup
-    return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
-      serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.env(["NG_APP_SERVER_URL"])
+    .then(({ NG_APP_SERVER_URL }) => {
+      serverUrl = SANDBOX_API_URL || "http://localhost:8081/api";
 
       return loginApi(user.email, user.password)
         .then((resp) => {
@@ -667,8 +670,8 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
                 });
             });
           });
-      })
-      .then(() => {
+    })
+    .then(() => {
         return cy
           .task("log", "[LOGIN] Starting cy.login()...")
           .then(() => {
@@ -694,7 +697,7 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
                 );
               });
           });
-      });
+    });
   });
 
   it("Convert reference file to JSON", () => {

@@ -742,7 +742,7 @@ export default defineConfig({
               fs.mkdirSync(dir, { recursive: true });
 
               // Read existing contexts
-              let contexts = {};
+              let contexts: any = {};
               if (fs.existsSync(fullPath)) {
                 try {
                   const content = fs.readFileSync(fullPath, "utf8");

@@ -13,6 +13,7 @@ const START = "2025-01-01";
 const STOP = "2025-12-31";
 const BACKUP_LABEL = "TJ TEST";
 const CATEGORY = "Tous";
+const SANDBOX_API_URL = 'http://175.0.0.21:8081/api';
 
 // Installe des hooks navigateur pour capturer le fichier exporté
 // (nom + contenu base64), même si l'app utilise un lien blob ou saveAs.
@@ -271,59 +272,59 @@ describe("Extraction effectifs TJ TEST 2026", () => {
     // 3) réapplication des permissions par défaut,
     // 4) login UI pour démarrer le test déjà authentifié.
     return loginApi(user.email, user.password)
-      .then((resp) => {
-        const userId = resp.body.user.id;
-        const token = resp.body.token;
+        .then((resp) => {
+          const userId = resp.body.user.id;
+          const token = resp.body.token;
 
-        return cy
-          .request({
-            method: "GET",
-            url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
-            headers: { Authorization: token },
-          })
-          .then((allBackupsResp) => {
-            const allBackups = Array.isArray(allBackupsResp.body)
-              ? allBackupsResp.body
-              : allBackupsResp.body.data || allBackupsResp.body.list || [];
-            const backup = allBackups.find(
-              (b: any) => b.label === BACKUP_LABEL,
-            );
+          return cy
+            .request({
+              method: "GET",
+              url: `${SANDBOX_API_URL}/juridictions/get-all-backup`,
+              headers: { Authorization: token },
+            })
+            .then((allBackupsResp) => {
+              const allBackups = Array.isArray(allBackupsResp.body)
+                ? allBackupsResp.body
+                : allBackupsResp.body.data || allBackupsResp.body.list || [];
+              const backup = allBackups.find(
+                (b: any) => b.label === BACKUP_LABEL,
+              );
 
-            if (!backup) {
-              throw new Error(`${BACKUP_LABEL} introuvable en base`);
-            }
+              if (!backup) {
+                throw new Error(`${BACKUP_LABEL} introuvable en base`);
+              }
 
-            return cy
-              .request({
-                method: "POST",
-                url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
-                headers: { Authorization: token },
-                body: {
-                  userId,
-                  access: [],
-                  ventilations: [backup.id],
-                  referentielIds: [],
-                },
-              })
-              .then(() => getUserDataApi(token))
-              .then((userDataResp) => {
-                const ventilations = (userDataResp.body.data.backups || []).map(
-                  (v: any) => v.id,
-                );
-                return resetToDefaultPermissions(userId, ventilations, token);
-              });
-          });
-      })
-      .then(() => {
-        // @ts-ignore command signature in declarations is outdated
-        return cy.login();
-      })
-      .then(() => {
-        cy.location("pathname", { timeout: 60000 }).should(
-          "include",
-          "/panorama",
-        );
-      });
+              return cy
+                .request({
+                  method: "POST",
+                  url: `${SANDBOX_API_URL}/users/update-account`,
+                  headers: { Authorization: token },
+                  body: {
+                    userId,
+                    access: [],
+                    ventilations: [backup.id],
+                    referentielIds: [],
+                  },
+                })
+                .then(() => getUserDataApi(token))
+                .then((userDataResp) => {
+                  const ventilations = (userDataResp.body.data.backups || []).map(
+                    (v: any) => v.id,
+                  );
+                  return resetToDefaultPermissions(userId, ventilations, token);
+                });
+            });
+        })
+        .then(() => {
+          // @ts-ignore command signature in declarations is outdated
+          return cy.login();
+        })
+        .then(() => {
+          cy.location("pathname", { timeout: 60000 }).should(
+            "include",
+            "/panorama",
+          );
+        });
   });
 
   before(() => {
@@ -388,7 +389,7 @@ describe("Extraction effectifs TJ TEST 2026", () => {
       "waitForDownloadedExcel",
       { timeoutMs: 1200000 },
       { timeout: 1220000 },
-    ).then((fileName: string) => {
+    ).then((fileName) => {
       expect(fileName).to.match(/\.xlsx$/i);
       const targetBase = "extracteur-effectifs-tj-test-2026";
       return cy
