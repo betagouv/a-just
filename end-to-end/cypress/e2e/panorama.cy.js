@@ -938,77 +938,72 @@ describe("Panorama page", () => {
     cy.visit('/panorama');
     cy.url().should("include", "/panorama");
 
-    let contentieuxName = "", sousContentieuxName = "";
+    let sousContentieuxName = "";
     let savedMonth = null;
 
-    cy.get(".referentiel-row")
-      .first()
-      .within(() => {
-        cy.get("a")
-          .eq(0)
-          .invoke("text")
-          .then((t) => {
-            contentieuxName = t.replace(/\u00a0/g, " ").trim();
-          });
+    cy.get(".referentiel-row").first().within(() => {
 
-
-        cy.get("a")
-          .eq(1)
-          .invoke("text")
-          .then((t) => {
-            sousContentieuxName = t.replace(/\u00a0/g, " ").trim();
-          });
-
-
-        // extract month query param from href
-        cy.get("a")
-          .eq(1)
-          .invoke("attr", "href")
-          .then((href) => {
-            const m = href && href.match(/month=([^&]+)/);
-            savedMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
-            // click the sous-contentieux link to go to activities page
-            cy.get("a").eq(1).click();
-          });
-      }).then(() => {
-        cy.url().should("include", "/donnees-d-activite");
-
-        cy.contains('.group .group-item .label p', sousContentieuxName).click();
-
-        cy.get(".item-template-new")
-          .find('input[placeholder="-"]')
-          .each(($input) => {
-            const randomValue = Cypress._.random(0, 10);
-
-            cy.wrap($input)
-              .clear()
-              .type(`${randomValue} {enter}`);
-          }).then(() => {
-            cy.contains("button", "Enregistrer").click();
-
-            cy.wait(2000);
-
-            cy.get('body').then(($b) => {
-              if ($b.find("button:contains('Enregistrer les modifications')").length) {
-                cy.contains('button', 'Enregistrer les modifications').click({ force: true });
-              }
-            });
-
-            cy.go("back");
-            cy.contains(".tags", "Les 12 derniers mois disponibles").click();
-
-
-            cy.get('.referentiel-row')
-              .first()
-              .within(() => {
-                cy.get('a').eq(1).invoke('attr', 'href').then((href) => {
-                  const m = href && href.match(/month=([^&]+)/);
-                  const newMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
-                  expect(newMonth).to.not.equal(savedMonth);
-                });
-              });
-          });
+      cy.get("a").eq(1).invoke("text").then((t) => {
+        sousContentieuxName = t.replace(/\u00a0/g, " ").trim();
+        cy.log("Sous contentieux founded: ", sousContentieuxName);
       });
+
+      cy.get("a")
+        .eq(1)
+        .invoke("attr", "href")
+        .then((href) => {
+          const m = href && href.match(/month=([^&]+)/);
+          savedMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+
+          cy.log("Saved month ", savedMonth);
+
+          cy.get("a").eq(1).click();
+        });
+    }).then(() => {
+      cy.url().should("include", "/donnees-d-activite");
+
+      cy.contains('.group .group-item .label p', sousContentieuxName).click();
+
+      cy.get('.contentieux-item')
+        .filter((_, el) => {
+          return Cypress.$(el)
+            .find('.contentieux-item-label p')
+            .text()
+            .trim() === sousContentieuxName;
+        })
+        .within(() => {
+          cy.get(".item-template-new")
+            .find('input[placeholder="-"]')
+            .each(($input) => {
+              const randomValue = Cypress._.random(0, 10);
+
+              cy.wrap($input)
+                .clear()
+                .type(`${randomValue}{enter}`);
+            })
+        }).then(() => {
+          cy.contains("button", "Enregistrer").click();
+
+          cy.get('body').then(($b) => {
+            if ($b.find("button:contains('Enregistrer les modifications')").length) {
+              cy.contains('button', 'Enregistrer les modifications').click({ force: true });
+            }
+          });
+
+          cy.go("back");
+          cy.contains(".tags", "Les 12 derniers mois disponibles").click();
+
+          cy.get('.referentiel-row')
+            .first()
+            .within(() => {
+              cy.get('a').eq(1).invoke('attr', 'href').then((href) => {
+                const m = href && href.match(/month=([^&]+)/);
+                const newMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+                expect(newMonth).to.not.equal(savedMonth);
+              });
+            });
+        });
+    });
   });
 
   it("Should modify a data on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
