@@ -13,7 +13,6 @@ const START = "2025-01-01";
 const STOP = "2025-12-31";
 const BACKUP_LABEL = "TJ TEST";
 const CATEGORY = "Tous";
-const SANDBOX_API_URL = 'http://175.0.0.21:8081/api';
 
 // Installe des hooks navigateur pour capturer le fichier exporté
 // (nom + contenu base64), même si l'app utilise un lien blob ou saveAs.
@@ -271,7 +270,13 @@ describe("Extraction effectifs TJ TEST 2026", () => {
     // 2) rattachement au backup TJ TEST,
     // 3) réapplication des permissions par défaut,
     // 4) login UI pour démarrer le test déjà authentifié.
-    return loginApi(user.email, user.password)
+
+    let serverUrl: string | null = null;
+
+    return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+      serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+
+      return loginApi(user.email, user.password)
         .then((resp) => {
           const userId = resp.body.user.id;
           const token = resp.body.token;
@@ -279,7 +284,7 @@ describe("Extraction effectifs TJ TEST 2026", () => {
           return cy
             .request({
               method: "GET",
-              url: `${SANDBOX_API_URL}/juridictions/get-all-backup`,
+              url: `${serverUrl}/juridictions/get-all-backup`,
               headers: { Authorization: token },
             })
             .then((allBackupsResp) => {
@@ -297,7 +302,7 @@ describe("Extraction effectifs TJ TEST 2026", () => {
               return cy
                 .request({
                   method: "POST",
-                  url: `${SANDBOX_API_URL}/users/update-account`,
+                  url: `${serverUrl}/users/update-account`,
                   headers: { Authorization: token },
                   body: {
                     userId,
@@ -308,9 +313,9 @@ describe("Extraction effectifs TJ TEST 2026", () => {
                 })
                 .then(() => getUserDataApi(token))
                 .then((userDataResp) => {
-                  const ventilations = (userDataResp.body.data.backups || []).map(
-                    (v: any) => v.id,
-                  );
+                  const ventilations = (
+                    userDataResp.body.data.backups || []
+                  ).map((v: any) => v.id);
                   return resetToDefaultPermissions(userId, ventilations, token);
                 });
             });
@@ -325,6 +330,7 @@ describe("Extraction effectifs TJ TEST 2026", () => {
             "/panorama",
           );
         });
+    });
   });
 
   before(() => {
@@ -389,7 +395,7 @@ describe("Extraction effectifs TJ TEST 2026", () => {
       "waitForDownloadedExcel",
       { timeoutMs: 1200000 },
       { timeout: 1220000 },
-    ).then((fileName) => {
+    ).then((fileName: string) => {
       expect(fileName).to.match(/\.xlsx$/i);
       const targetBase = "extracteur-effectifs-tj-test-2026";
       return cy
