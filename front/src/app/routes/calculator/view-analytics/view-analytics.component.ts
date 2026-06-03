@@ -17,6 +17,7 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
 import { isDateBiggerThan, month } from '../../../utils/dates'
 import { CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW } from '../../../constants/log-codes'
+import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 
 /**
  * Composant de la page en vue analytique
@@ -25,7 +26,7 @@ import { CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW } from '../../../constants/log-c
 @Component({
   selector: 'aj-view-analytics',
   standalone: true,
-  imports: [CommonModule, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent],
+  imports: [CommonModule, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent, TooltipsComponent],
   templateUrl: './view-analytics.component.html',
   styleUrls: ['./view-analytics.component.scss'],
 })

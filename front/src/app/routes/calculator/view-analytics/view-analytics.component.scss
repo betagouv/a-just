@@ -111,6 +111,9 @@
             font-size: 14px;
             font-weight: bold;
             color: utils.$colors-cblack;
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
         }
 
         >p.description-section {
@@ -203,4 +206,18 @@
             color: utils.$colors-cblack;
         }
     }
+}
+
+.help-icon {
+    width: 16px;
+    height: 16px;
+    background-color: utils.$colors-cblue;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: utils.$colors-white;
+    font-size: 12px;
+    line-height: 12px;
+    cursor: pointer;
 }
