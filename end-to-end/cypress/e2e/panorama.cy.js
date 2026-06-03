@@ -938,6 +938,8 @@ describe("Panorama page", () => {
     cy.visit('/panorama');
     cy.url().should("include", "/panorama");
 
+    cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
+
     let sousContentieuxName = "";
     let savedMonth = null;
 
@@ -982,6 +984,7 @@ describe("Panorama page", () => {
                 .type(`${randomValue}{enter}`);
             })
         }).then(() => {
+
           cy.contains("button", "Enregistrer").click();
 
           cy.get('body').then(($b) => {
@@ -990,8 +993,10 @@ describe("Panorama page", () => {
             }
           });
 
+          cy.wait(2000);
+
           cy.go("back");
-          cy.contains(".tags", "Les 12 derniers mois disponibles").click();
+          cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
 
           cy.get('.referentiel-row')
             .first()

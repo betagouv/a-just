@@ -12,7 +12,7 @@ const jsonOnly = process.env.CY_JSON_ONLY === "1";
 
 export default defineConfig({
   // Optimize memory usage for CI environments
-  numTestsKeptInMemory: 0,
+  numTestsKeptInMemory: 8,
   experimentalMemoryManagement: true,
 
   // From Cypress 15.10+ Cypress.env() has been deprecated and will be removed in a future major version.
