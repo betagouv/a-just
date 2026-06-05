@@ -111,9 +111,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
   formatList() {
     const listReturn: listFormatedInterface[] = this.listFormated
     this.listFormatedFiltered = listReturn
-      .filter(
-        (category: any) => this.categoriesFiltered === null || (this.categoriesFiltered && this.categoriesFiltered.indexOf(category.categoryId) !== -1),
-      )
+      .filter((category: any) => this.categoriesFiltered === null || (this.categoriesFiltered && this.categoriesFiltered.indexOf(category.categoryId) !== -1))
       .map((category: any) => {
         const listAgent = category.hr || []
         let etpt = 0
@@ -179,10 +177,9 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
     }
 
     if (value) {
-      const value = (document.getElementById('cle-' + category.categoryId) as HTMLInputElement).value
       this.onTimeoutLoad[index] = setTimeout(() => {
         this.onTimeoutLoad[index] = null
-        const res = this.serverService
+        this.serverService
           .put('juridictions-details/update-cle', {
             juridictionId: this.humanResourceService.backupId.getValue(),
             categoryId: category.categoryId,

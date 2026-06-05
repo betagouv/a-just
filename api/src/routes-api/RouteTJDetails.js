@@ -44,7 +44,7 @@ export default class RouteJuridictionsDetails extends Route {
       categoryId: Types.number().required(),
       value: Types.any().required(),
     }),
-    accesses: [Access.canEditReaffectator],
+    accesses: [Access.isLogin],
   })
   async updateCle(ctx) {
     const { juridictionId, categoryId, value } = this.body(ctx)
