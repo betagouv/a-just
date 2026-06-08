@@ -11,7 +11,7 @@ describe("Ajout d'un agent", () => {
       .should("be.visible")
       .should("contain.text", "Ajouter un agent")
       .click();
-    cy.wait(20000);
+    cy.wait(5000);
     cy.location("pathname").should("include", "/resource-humaine");
   });
 
@@ -180,6 +180,7 @@ describe("Ajout d'un agent", () => {
 
     cy.get(".bottom-container")
       .get(".date-start")
+      .get(".date-start-content")
       .within(() => {
         cy.get("aj-date-select").click().get("mat-datepicker");
       }) //select Year
