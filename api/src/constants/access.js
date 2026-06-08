@@ -136,10 +136,10 @@ export const accessList = [
         id: USER_ACCESS_DASHBOARD_READER,
         label: 'Lecture',
       },
-      /*{
+      {
         id: USER_ACCESS_DASHBOARD_WRITER,
         label: 'Écriture',
-      },*/
+      },
     ],
   },
   {
