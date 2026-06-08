@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import * as _ from 'lodash'
 import { orderBy } from 'lodash'
@@ -207,8 +207,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
-          intro:
-            `<p>Le cockpit vous permet de visualiser en un coup d'œil quelques <b>indicateurs simples, calculés à partir des données d'effectifs et d'activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit.mp4" type="video/mp4" /></video>`,
+          intro: `<p>Le cockpit vous permet de visualiser en un coup d'œil quelques <b>indicateurs simples, calculés à partir des données d'effectifs et d'activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit.mp4" type="video/mp4" /></video>`,
         },
         {
           target: '.sub-main-header',
@@ -219,8 +218,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.switch-tab .brut',
           title: 'Les données brutes',
-          intro:
-            `
+          intro: `
             <p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p>
             <ul>
               <li>le taux de couverture moyen</li>
@@ -240,10 +238,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.anticipate-tour',
           title: 'Se Projeter',
-          intro:
-            `
+          intro: `
               <p>Pour chaque contentieux et sous-contentieux, vous pouvez cliquer sur <b>"Se projeter"</b> afin de visualiser l'évolution de l'activité sur les douze derniers mois en fonction de la période sélectionnée ainsi que sur les mois à venir, si rien ne change.</p>
-            `
+            `,
         },
         {
           target: '.switch-tab .analytique',
@@ -262,8 +259,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.compare', //.drop-down',
           title: 'Comparez votre juridiction',
-          intro:
-            `<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d'une autre période ou d'un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>`,
+          intro: `<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d'une autre période ou d'un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>`,
           /*beforeLoad: async (intro: any) => {
         intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
@@ -280,8 +276,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
-          intro:
-            `<p>Le cockpit vous permet de visualiser en un coup d'œil quelques <b>indicateurs simples, calculés à partir des données d'effectifs et d'activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>`,
+          intro: `<p>Le cockpit vous permet de visualiser en un coup d'œil quelques <b>indicateurs simples, calculés à partir des données d'effectifs et d'activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>`,
         },
         {
           target: '.sub-main-header',
@@ -292,8 +287,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.switch-tab .brut',
           title: 'Les données brutes',
-          intro:
-            `
+          intro: `
             <p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p>
             <ul>
               <li>le taux de couverture moyen</li>
@@ -313,10 +307,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.anticipate-tour',
           title: 'Se Projeter',
-          intro:
-            `
+          intro: `
               <p>Pour chaque contentieux et sous-contentieux, vous pouvez cliquer sur <b>"Se projeter"</b> afin de visualiser l'évolution de l'activité sur les douze derniers mois en fonction de la période sélectionnée ainsi que sur les mois à venir, si rien ne change.</p>
-            `
+            `,
         },
         {
           target: '.switch-tab .analytique',
@@ -335,8 +328,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         {
           target: '.compare', //.drop-down',
           title: 'Comparez votre juridiction',
-          intro:
-            `<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d'une autre période ou d'un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonction-de-comparaison-du-cockpit-3-mp4-480p.mp4" type="video/mp4" /></video>`,
+          intro: `<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d'une autre période ou d'un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonction-de-comparaison-du-cockpit-3-mp4-480p.mp4" type="video/mp4" /></video>`,
           /*beforeLoad: async (intro: any) => {
         intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
@@ -473,6 +465,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Catégorie sélectionnée
    */
   categoryIdSelected: number | null = null
+  /**
+   * Catégorie TMD sélectionnée
+   */
+  categoryTmdSelected = signal<boolean>(false)
   /**
    * Type de projection actuelle
    */

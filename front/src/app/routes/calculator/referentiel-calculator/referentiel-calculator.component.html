@@ -116,6 +116,20 @@
     }
   </div>
   <div>
+    @if (!isSoutien(calculator.contentieux.id)) {
+    @if(canViewMagistrat && categorySelected === MAGISTRATS) {<p>{{
+      calculator.magRealTimePerCase === null
+      ? 'N/R'
+      : decimalToStringDate(calculator.magRealTimePerCase)
+      }}</p>}
+    @else if(canViewGreffier && categorySelected === FONCTIONNAIRES) {<p>{{
+      calculator.fonRealTimePerCase === null
+      ? 'N/R'
+      : decimalToStringDate(calculator.fonRealTimePerCase)
+      }}</p>}
+    }
+  </div>
+  <div>
     @if(canViewProjecter && calculator.contentieux.label !== 'Autres activités') {<div class="anticipate"
       (click)="this.currentProjection = calculator; initProjectionFooterGrid(); showProjectionPopin = true;" [ngStyle]="{ borderColor: userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(

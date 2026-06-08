@@ -113,6 +113,10 @@ body {
 	height: 80px;
 }
 
+.rotate-90 {
+	transform: rotate(90deg);
+}
+
 // FOR WINDOWS ONLY
 
 body:not(.iIOS) .window-scrool-width-margin {

@@ -648,7 +648,7 @@
 
 .contentieux-header-calculator {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   min-height: 80px;
   font-weight: 500;
 
@@ -682,6 +682,24 @@
     .etpt {
       margin-left: 2px;
       cursor: pointer;
+    }
+
+    .tmd {
+      flex-direction: column;
+    }
+
+    .tmd-selected-content {
+      margin-top: 4px;
+      display: flex;
+      width: 100%;
+
+      >div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
     }
 
     .etpt-selected {
