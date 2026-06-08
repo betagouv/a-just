@@ -31,6 +31,7 @@ import {
   USER_ACCESS_AVERAGE_TIME_WRITER,
   USER_ACCESS_ACTIVITIES_WRITER,
   USER_ACCESS_VENTILATIONS_WRITER,
+  USER_ACCESS_DASHBOARD_WRITER,
 } from '../../constants/user-access'
 
 /**
@@ -57,6 +58,13 @@ export class UserService implements OnInit {
    * User infos to signal
    */
   userS = signal<UserInterface | null>(null)
+  /**
+   * User can edit panorama
+   */
+  canEditPanorama = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_WRITER) !== -1 ? true : false
+  })
   /**
    * User can view simulator
    */
