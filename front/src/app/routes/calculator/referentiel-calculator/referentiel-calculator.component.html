@@ -63,6 +63,7 @@
   </div>
   <div>
     @if (!isSoutien(calculator.contentieux.id)) {
+    @if(!categoryTmdSelected()) {
     <div class="block">
       @if (checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null) {
       <aj-speedometer [percent]="round((calculator.realCoverage || 0) * 100)"></aj-speedometer>
@@ -74,6 +75,16 @@
       </div>
       }
     </div>
+    } @else {
+    <p class="etpt-selected">
+      @if(calculator.totalIn !== null) {<span>{{
+        calculator.totalIn | number: '0.0-0' }}</span>}
+      @else {<span>N/R</span>}
+      @if(calculator.totalOut !== null) {<span>{{
+        calculator.totalOut | number: '0.0-0' }}</span>}
+      @else {<span>N/R</span>}
+    </p>
+    }
     }
   </div>
   <div [ngClass]="{'stock': calculator.lastStock !== null && checkPastDate()}">
@@ -161,7 +172,7 @@
     [categorySelected]="categorySelected" [categoryFiltered]="categoryFiltered"
     [categoryIdSelected]="categoryIdSelected" [parentCalculator]="calculator"
     [currentProjectionType]="currentProjectionType"
-    (currentProjectionTypeChange)="onCurrentProjectionTypeChange($event)"
+    (currentProjectionTypeChange)="onCurrentProjectionTypeChange($event)" [categoryTmdSelected]="categoryTmdSelected"
     [canViewProjecter]="calculator.contentieux.label !== 'Autres activités'"></aj-referentiel-calculator>
   }
 </div>

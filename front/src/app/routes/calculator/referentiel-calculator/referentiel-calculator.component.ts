@@ -891,7 +891,6 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Affiche le graphique
    */
   onShowDTES() {
-    console.log('on show dtes')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
       this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
       this.calculatorService.showGraphDetailTypeLineTitle = 'DTES'
@@ -900,11 +899,26 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   }
 
   onShowStock() {
-    console.log('on show stock')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
       this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
       this.calculatorService.showGraphDetailTypeLineTitle = 'Stock'
       this.calculatorService.showGraphDetailType = 'stock'
+    }
+  }
+
+  onShowEntrees() {
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Entrées'
+      this.calculatorService.showGraphDetailType = 'entrees'
+    }
+  }
+
+  onShowSorties() {
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Sorties'
+      this.calculatorService.showGraphDetailType = 'sorties'
     }
   }
 }
