@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnChanges } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
-import { map, pairwise, startWith } from 'rxjs'
+import { pairwise, startWith } from 'rxjs'
 import { MainClass } from '../../../libs/main-class'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { CommonModule } from '@angular/common'
@@ -33,6 +33,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   nbOfDays: number = 0
 
   @Input() endDateToDisplay: string = ''
+  @Input() startRealValue: string = ''
 
   @Input()
   set category(value: string | null) {

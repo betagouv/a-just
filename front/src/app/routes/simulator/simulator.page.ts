@@ -1888,6 +1888,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
       this.resetParams(true)
       this.contentieuId = null
       this.simulatorService.contentieuOrSubContentieuId.next(null)
+      this.disabled = ''
+      this.simulatorService.disabled.next(this.disabled)
       this.subList = []
       const findCategory =
         this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === this.categorySelected?.toUpperCase()) || null

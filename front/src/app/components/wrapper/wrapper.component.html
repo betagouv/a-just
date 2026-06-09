@@ -217,13 +217,13 @@
   @if (helpSectionVisible) {
   <div class="help-content animate__animated animate__fadeIn">
     <div class="help-content-header">
-      <p>Bonjour, comment l’équipe A-JUST peut vous aider ?</p>
+      <p>Bonjour, comment l'équipe A-JUST peut vous aider ?</p>
       <p (click)="helpSectionVisible = false">x</p>
     </div>
     <div class="help-content-body">
       <div>
         <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
-          alt="Nous contacter" target="_blank">⏺️ Echanger avec l'équipe</a>
+          alt="Nous contacter" target="_blank">⏺️ Échanger avec l'équipe</a>
         <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')"
           alt="Être rappelé" target="_blank">📞 Être rappelé</a>
         <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"

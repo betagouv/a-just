@@ -45,7 +45,7 @@
 
   >.main-referentiel {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     border-top: solid 1px #f6f6f6;
 
     >div {
@@ -180,6 +180,7 @@ p {
 }
 
 .anticipate {
+  position: relative;
   border: 1px solid #0063CB;
   display: flex;
   flex-direction: row;
@@ -191,6 +192,12 @@ p {
   height: 38px;
   cursor: pointer;
   margin: 12px;
+
+  >.anticipate-tour {
+    content: " ";
+    position: absolute;
+    inset: 0;
+  }
 
   p {
     position: relative;

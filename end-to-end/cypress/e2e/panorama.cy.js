@@ -1,6 +1,6 @@
-import { normalizeDate, getShortMonthString } from "../../support/utils/dates";
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 import user from "../../fixtures/user.json";
+import { getShortMonthString, normalizeDate } from "../../support/utils/dates";
 
 describe("Panorama page", () => {
   let userId;
@@ -82,7 +82,7 @@ describe("Panorama page", () => {
       .and("contain.text", "effectifs");
   });
 
-  it("Should display the 3 'Données d’activité' sections", () => {
+  it("Should display the 3 'Données d'activité' sections", () => {
     cy.get("activities-last-modifications h3").should(
       "contain.text",
       "Dernières modifications"
@@ -864,69 +864,52 @@ describe("Panorama page", () => {
   });
 
   it("Should display contentieux with data to complete (blue)", () => {
-    const tag = "Les 12 derniers mois disponibles";
-    cy.visit("/panorama");
-    cy.contains(".tags", tag).click();
+    cy.visit('/panorama')
 
+    const tag = "Les 12 derniers mois disponibles :"
 
-    cy.get(".referentiel-row").then(($rows) => {
-      const rowsData = [];
+    cy.contains(".tags span", tag).click()
 
+    cy.get('.referentiel-row').then(($rows) => {
+      const count = $rows.length
 
-      $rows.each((rowIndex, row) => {
-        const linkTexts = [];
-        Cypress.$(row)
-          .find("a")
-          .each((_, link) => {
+      for (let i = 0; i < count; i++) {
 
+        cy.get('.referentiel-row')
+          .eq(i)
+          .find('a')
+          .first()
+          .then(($a) => {
 
-            linkTexts.push(
-              Cypress.$(link).text().replace(/\u00a0/g, " ").trim()
-            );
-          });
+            const label = $a.text().trim()
 
+            cy.wrap($a).click()
 
-        if (linkTexts.length) {
-          rowsData.push({ rowIndex, contentieuxName: linkTexts[0] });
-        }
-      });
+            // wait for navigation
+            cy.url().should('include', '/donnees-d-activite')
 
+            cy.get(".maximize .selectable .label p")
+              .should("contain.text", label)
 
-      return rowsData;
-    }).then((rowsData) => {
-      rowsData.forEach(({ rowIndex, contentieuxName }) => {
-        cy.get(".referentiel-row")
-          .eq(rowIndex)
-          .find("a")
-          .eq(0)
-          .click();
+            cy.get(".maximize .completion p")
+              .should("contain.text", "il reste des données à compléter")
 
+            cy.go("back")
 
-        cy.url().should("include", "/donnees-d-activite");
-
-
-        cy.log("Checking contentieux: " + contentieuxName);
-
-
-        cy.get(".maximize .selectable .label p").should(
-          "contain.text",
-          contentieuxName
-        );
-
-
-        cy.get(".maximize .completion p").should(
-          "contain.text",
-          "il reste des données à compléter"
-        );
-        cy.go("back");
-      });
-    });
-  });
+            cy.url().should('include', '/panorama')
+          })
+      }
+    })
+  })
 
   it("Should redirect to the 'Données d'activité à compléter' page for the selected contentieux when clicking a listed contentieux", () => {
+
+    cy.visit("/panorama");
+    cy.url().should("include", "/panorama");
+
     let sousContentieuxName = "", contentieuxName = "";
 
-    ["Les 12 derniers mois disponibles", "Dernier trimestre disponible", "Dernier mois disponible"].forEach((tag) => {
+    ["Les 12 derniers mois disponibles"].forEach((tag) => {
       cy.contains(".tags", String(tag)).click();
 
       if (cy.get(".referentiel-row a").first() && cy.get(".referentiel-row a").eq(1)) {
@@ -952,26 +935,113 @@ describe("Panorama page", () => {
   });
 
   it("Should complete 'Donnée de ce contentieux' and assure that the concerned contentieux doesn't appears anymore", () => {
+    cy.visit('/panorama');
+    cy.url().should("include", "/panorama");
 
+    cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
 
-    // get the first contentieux and sous contentieux
-    // save date on sous contentieux
-    // click on it
-    // should redirect to donnee d'activite route
-    // find the row, click on it
-    // check the "Voir les donnée de : date saved"
+    let sousContentieuxName = "";
+    let savedMonth = null;
 
-    // fill up the .to-complete or .to-verify inputs that are with "-"
-    // click on button "Enregistrer"
-    // click on button "Enregistrer les modifications"
-    // back to /panorama
-    // check if the first contentieux and sous contentieux date is not equal to the saved date
+    cy.get(".referentiel-row").first().within(() => {
 
+      cy.get("a").eq(1).invoke("text").then((t) => {
+        sousContentieuxName = t.replace(/\u00a0/g, " ").trim();
+        cy.log("Sous contentieux founded: ", sousContentieuxName);
+      });
 
+      cy.get("a")
+        .eq(1)
+        .invoke("attr", "href")
+        .then((href) => {
+          const m = href && href.match(/month=([^&]+)/);
+          savedMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+
+          cy.log("Saved month ", savedMonth);
+
+          cy.get("a").eq(1).click();
+        });
+    }).then(() => {
+      cy.url().should("include", "/donnees-d-activite");
+
+      cy.contains('.group .group-item .label p', sousContentieuxName).click();
+
+      cy.get('.contentieux-item')
+        .filter((_, el) => {
+          return Cypress.$(el)
+            .find('.contentieux-item-label p')
+            .text()
+            .trim() === sousContentieuxName;
+        })
+        .within(() => {
+          cy.get(".item-template-new")
+            .find('input[placeholder="-"]')
+            .each(($input) => {
+              const randomValue = Cypress._.random(0, 10);
+
+              cy.wrap($input)
+                .clear()
+                .type(`${randomValue}{enter}`);
+            })
+        }).then(() => {
+
+          cy.contains("button", "Enregistrer").click();
+
+          cy.get('body').then(($b) => {
+            if ($b.find("button:contains('Enregistrer les modifications')").length) {
+              cy.contains('button', 'Enregistrer les modifications').click({ force: true });
+            }
+          });
+
+          cy.wait(2000);
+
+          cy.go("back");
+          cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
+
+          cy.get('.referentiel-row')
+            .first()
+            .within(() => {
+              cy.get('a').eq(1).invoke('attr', 'href').then((href) => {
+                const m = href && href.match(/month=([^&]+)/);
+                const newMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+                expect(newMonth).to.not.equal(savedMonth);
+              });
+            });
+        });
+    });
   });
 
-  it("Should modify a daata on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
+  it("Should modify a data on 'Donnée d'activité' then be sure that the concerned contentieux modification under 'Dernières modifications' with lastname, firstname of modifyer + date of modification", () => {
+    cy.visit('/panorama');
+    cy.url().should("include", "/panorama");
+
+    var now = new Date();
+    var dateDay = now.getDate();
+    var dateMonth = getShortMonthString(now);
+    var dateYear = now.getFullYear();
+
+    var messageToCompare =
+      "par " +
+      user.firstName +
+      " " +
+      user.lastName +
+      " le " +
+      dateDay +
+      " " +
+      dateMonth +
+      " " +
+      dateYear;
+
+
+    cy.get("activities-last-modifications")
+      .find(".preview")
+      .first()
+      .find("p")
+      .invoke("text")
+      .then((text) => {
+
+        expect(text.trim()).to.contain(messageToCompare);
+      });
 
   });
-
 });

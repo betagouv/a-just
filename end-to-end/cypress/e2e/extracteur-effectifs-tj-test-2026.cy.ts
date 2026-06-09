@@ -270,60 +270,67 @@ describe("Extraction effectifs TJ TEST 2026", () => {
     // 2) rattachement au backup TJ TEST,
     // 3) réapplication des permissions par défaut,
     // 4) login UI pour démarrer le test déjà authentifié.
-    return loginApi(user.email, user.password)
-      .then((resp) => {
-        const userId = resp.body.user.id;
-        const token = resp.body.token;
 
-        return cy
-          .request({
-            method: "GET",
-            url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/juridictions/get-all-backup`,
-            headers: { Authorization: token },
-          })
-          .then((allBackupsResp) => {
-            const allBackups = Array.isArray(allBackupsResp.body)
-              ? allBackupsResp.body
-              : allBackupsResp.body.data || allBackupsResp.body.list || [];
-            const backup = allBackups.find(
-              (b: any) => b.label === BACKUP_LABEL,
-            );
+    let serverUrl: string | null = null;
 
-            if (!backup) {
-              throw new Error(`${BACKUP_LABEL} introuvable en base`);
-            }
+    return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+      serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
 
-            return cy
-              .request({
-                method: "POST",
-                url: `${Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api"}/users/update-account`,
-                headers: { Authorization: token },
-                body: {
-                  userId,
-                  access: [],
-                  ventilations: [backup.id],
-                  referentielIds: [],
-                },
-              })
-              .then(() => getUserDataApi(token))
-              .then((userDataResp) => {
-                const ventilations = (userDataResp.body.data.backups || []).map(
-                  (v: any) => v.id,
-                );
-                return resetToDefaultPermissions(userId, ventilations, token);
-              });
-          });
-      })
-      .then(() => {
-        // @ts-ignore command signature in declarations is outdated
-        return cy.login();
-      })
-      .then(() => {
-        cy.location("pathname", { timeout: 60000 }).should(
-          "include",
-          "/panorama",
-        );
-      });
+      return loginApi(user.email, user.password)
+        .then((resp) => {
+          const userId = resp.body.user.id;
+          const token = resp.body.token;
+
+          return cy
+            .request({
+              method: "GET",
+              url: `${serverUrl}/juridictions/get-all-backup`,
+              headers: { Authorization: token },
+            })
+            .then((allBackupsResp) => {
+              const allBackups = Array.isArray(allBackupsResp.body)
+                ? allBackupsResp.body
+                : allBackupsResp.body.data || allBackupsResp.body.list || [];
+              const backup = allBackups.find(
+                (b: any) => b.label === BACKUP_LABEL,
+              );
+
+              if (!backup) {
+                throw new Error(`${BACKUP_LABEL} introuvable en base`);
+              }
+
+              return cy
+                .request({
+                  method: "POST",
+                  url: `${serverUrl}/users/update-account`,
+                  headers: { Authorization: token },
+                  body: {
+                    userId,
+                    access: [],
+                    ventilations: [backup.id],
+                    referentielIds: [],
+                  },
+                })
+                .then(() => getUserDataApi(token))
+                .then((userDataResp) => {
+                  const ventilations = (
+                    userDataResp.body.data.backups || []
+                  ).map((v: any) => v.id);
+                  return resetToDefaultPermissions(userId, ventilations, token);
+                });
+            });
+        })
+        .then(() => {
+          // @ts-ignore command signature in declarations is outdated
+          return cy.login();
+        })
+        .then(() => {
+          cy.location("pathname", { timeout: 60000 }).should(
+            "include",
+            "/panorama",
+          );
+        });
+    });
   });
 
   before(() => {

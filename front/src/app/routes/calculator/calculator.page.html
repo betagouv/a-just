@@ -92,20 +92,49 @@
             footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>"></aj-tooltips>
         </div>
         <div>
-          <div>
+          <div class="cursor-pointer" (click)="categoryTmdSelected.set(!categoryTmdSelected())">
             <p>
               Taux de
               <br />
               couverture
             </p>
+            <p><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none"
+                [ngClass]="{ 'rotate-90': categoryTmdSelected() }">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
+                  fill="#000000" />
+              </svg></p>
           </div>
+          @if(!categoryTmdSelected()) {
           <i class="sort-icon" [ngClass]="{
             'ri-sort-asc': sortBy.up === true,
             'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage'),
             selected: sortBy.type === 'realCoverage'
           }" (click)="onSortBy('realCoverage')"></i>
-          <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE" content="SORTIES /ENTREES de la période en %"
+          <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE" content="SORTIES / ENTREES de la période en %"
             class="no-left"></aj-tooltips>
+          } @else {
+          <div class="tmd-selected-content">
+            <div>
+              <span>Entrées</span>
+              <i class="sort-icon" [ngClass]="{
+                  'ri-sort-asc': sortBy.up === true,
+                  'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalIn'),
+                  selected: sortBy.type === 'totalIn',
+                }" (click)="onSortBy('totalIn')"></i>
+              <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
+            </div>
+            <div>
+              <span>Sorties</span>
+              <i class="sort-icon" [ngClass]="{
+                  'ri-sort-asc': sortBy.up === true,
+                  'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalOut'),
+                  selected: sortBy.type === 'totalOut',
+                }" (click)="onSortBy('totalOut')"></i>
+              <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
+            </div>
+          </div>
+          }
         </div>
         <div>
           <div>
@@ -194,6 +223,27 @@
           }
         </div>
         <div>
+          <div class="tmd">
+            <p>TMD</p>
+            @if(categorySelected === MAGISTRATS) {
+            <p>Siège</p>
+            } @else if(categorySelected === FONCTIONNAIRES) {
+            <p>Greffe</p>
+            } @else {
+            <p>{{categoryFiltered[0].label}}</p>
+            }
+          </div>
+          <i class="sort-icon" [ngClass]="{
+            'ri-sort-asc': sortBy.up === true,
+            'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'lastStock'),
+            selected: sortBy.type === 'lastStock'
+          }" (click)="onSortBy('lastStock')"></i>
+          <aj-tooltips
+            content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
+            [footer]="categorySelected === MAGISTRATS ? 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. / SORTIES</b>' : categorySelected === FONCTIONNAIRES ? 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT GREF. / SORTIES</b>' : 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT EAM. / SORTIES</b>'"
+            class="no-left"></aj-tooltips>
+        </div>
+        <div>
           <p>Anticiper</p>
         </div>
       </div>
@@ -204,7 +254,7 @@
         [cockpitWarningInformations]="warningInformations['ref' + r.contentieux.id]"
         [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"
         [categoryFiltered]="categoryFiltered" [categoryIdSelected]="categoryIdSelected"
-        [currentProjectionType]="currentProjectionType"
+        [currentProjectionType]="currentProjectionType" [categoryTmdSelected]="categoryTmdSelected"
         (currentProjectionTypeChange)="currentProjectionType = $event"></aj-referentiel-calculator>
       }
     </div>

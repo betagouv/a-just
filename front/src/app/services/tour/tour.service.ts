@@ -1,9 +1,9 @@
 import { HostListener, inject, Injectable } from '@angular/core'
+import introJs from 'intro.js'
 import { KPIService } from '../kpi/kpi.service'
 import { HELP_AUTOSTART, HELP_AUTOSTART_AND_STOP, HELP_START, HELP_STOP } from '../../constants/log-codes'
 import { today } from '../../utils/dates'
 
-declare const introJs: any
 declare const window: any
 
 export interface IntroJSStep {
@@ -112,7 +112,7 @@ export class TourService {
         nextLabel: 'Suivant',
         prevLabel: 'Précédent',
         doneLabel: 'Terminer la présentation',
-        steps: allStep,
+        steps: allStep as Parameters<ReturnType<typeof introJs>['setOptions']>[0]['steps'],
       })
       this.intro.onchange(() => {
         const currentStep = allStep[this.intro.currentStep()]

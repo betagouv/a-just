@@ -21,6 +21,10 @@
               "moment",
               "file-saver",
               "lodash",
+              "mapbox-gl",
+              "intro.js",
+              "toastr",
+              "jquery",
               "core-js/modules/es.promise.js",
               "core-js/modules/es.string.match.js",
               "core-js/modules/es.string.replace.js",
@@ -68,11 +72,6 @@
               "src/app/styles/toastr.scss",
               "src/app/styles/design-system-gouv.scss",
               "src/app/styles/introjs.scss"
-            ],
-            "scripts": [
-              "node_modules/mapbox-gl/dist/mapbox-gl.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/intro.js/minified/intro.min.js"
             ]
           },
           "configurations": {

@@ -1,5 +1,18 @@
 import { CommonModule, DecimalPipe } from '@angular/common'
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges, ViewChild, inject } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+  inject,
+  signal,
+} from '@angular/core'
 import { SpeedometerComponent } from '../../../components/speedometer/speedometer.component'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { MainClass } from '../../../libs/main-class'
@@ -130,6 +143,10 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Type de projection actuelle
    */
   @Input() currentProjectionType: 'stock' | 'dtes' | 'etpt' = 'stock'
+  /**
+   * Catégorie TMD sélectionnée
+   */
+  @Input() categoryTmdSelected = signal<boolean>(false)
   /**
    * Cockpit Warning Informations
    */
@@ -874,7 +891,6 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Affiche le graphique
    */
   onShowDTES() {
-    console.log('on show dtes')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
       this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
       this.calculatorService.showGraphDetailTypeLineTitle = 'DTES'
@@ -883,11 +899,26 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   }
 
   onShowStock() {
-    console.log('on show stock')
     if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
       this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
       this.calculatorService.showGraphDetailTypeLineTitle = 'Stock'
       this.calculatorService.showGraphDetailType = 'stock'
+    }
+  }
+
+  onShowEntrees() {
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Entrées'
+      this.calculatorService.showGraphDetailType = 'entrees'
+    }
+  }
+
+  onShowSorties() {
+    if (this.canViewProjecter && !this.isSoutien(this.calculator?.contentieux.id || 0)) {
+      this.calculatorService.selectedRefGraphDetail = this.calculator?.contentieux.id || 0
+      this.calculatorService.showGraphDetailTypeLineTitle = 'Sorties'
+      this.calculatorService.showGraphDetailType = 'sorties'
     }
   }
 }

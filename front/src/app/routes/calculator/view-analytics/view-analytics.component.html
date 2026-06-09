@@ -18,7 +18,11 @@
   @if (!dateEndIsPast()) {
   <div>
     <div class="container-colum">
-      <p class="title-section">DTES</p>
+      <p class="title-section">DTES <!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="DTES À LA FIN DE PÉRIODE"
+            content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
+            footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>"></aj-tooltips>
+        </span>--></p>
       <p class="description-section">de la période</p>
       <p class="info-section">(calculé sur les 12 mois précédents)</p>
       <div class="flex-1"></div>
@@ -57,7 +61,10 @@
   @if (!dateEndIsPast()) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Taux de couverture</p>
+      <p class="title-section">Taux de couverture<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE"
+            content="SORTIES / ENTREES de la période en %"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">moyens sur la période</p>
       <button class="details no-print" (click)="showDetailCover = !showDetailCover; logOpenDetails(showDetailCover)">
         <i [class]="showDetailCover ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
@@ -112,7 +119,10 @@
   @if (!dateEndIsPast()) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Stock</p>
+      <p class="title-section">Stock<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="Stock"
+            content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -170,7 +180,10 @@
   @if (!dateEndIsPast()) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Entrées</p>
+      <p class="title-section">Entrées<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="Entrées"
+            content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -238,7 +251,10 @@
   @if (!dateEndIsPast()) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Sorties</p>
+      <p class="title-section">Sorties<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="Sorties"
+            content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -306,7 +322,10 @@
   @if (canViewMagistrat) {
   <div>
     <div class="container-colum">
-      <p class="title-section">ETPT Siège</p>
+      <p class="title-section">ETPT Siège<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="ETPT siège"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -382,7 +401,10 @@
   @if (canViewGreffier) {
   <div>
     <div class="container-colum">
-      <p class="title-section">ETPT Greffe</p>
+      <p class="title-section">ETPT Greffe<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="ETPT greffe"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -458,7 +480,10 @@
   @if (canViewContractuel) {
   <div>
     <div class="container-colum">
-      <p class="title-section">ETPT EAM</p>
+      <p class="title-section">ETPT EAM<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-top-left" title="ETPT EAM"
+            content="Moyenne des ETPT travaillés sur la période par les agents concernés affectés au contentieux"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
@@ -535,7 +560,11 @@
   @if (categorySelected === MAGISTRATS) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Temps moyen Siège</p>
+      <p class="title-section">Temps moyen Siège<!--     <span class="help-icon">?
+          <aj-tooltips class="medium arrow-bottom-left" title="Temps moyen Siège"
+            content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
+            footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. / SORTIES</b>"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">par dossier observé</p>
       <div class="flex-1"></div>
       <div class="middle-empty-block">
@@ -568,7 +597,11 @@
   @if (categorySelected === FONCTIONNAIRES) {
   <div>
     <div class="container-colum">
-      <p class="title-section">Temps moyen Greffe</p>
+      <p class="title-section">Temps moyen Greffe<!-- <span class="help-icon">?
+          <aj-tooltips class="medium arrow-bottom-left" title="Temps moyen Greffe"
+            content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
+            footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT GREF. / SORTIES</b>"></aj-tooltips>
+        </span>--></p>
       <p class="details-section">par dossier observé</p>
       <div class="flex-1"></div>
       <div class="middle-empty-block">

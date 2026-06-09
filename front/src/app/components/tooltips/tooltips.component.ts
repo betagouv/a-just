@@ -49,6 +49,10 @@ export class TooltipsComponent implements AfterViewInit {
    * Variable tempo pour laisser un delai avant affichage du tooltips
    */
   timeoutBeforeShow: any = null
+  /**
+   * Variable tempo pour laisser un delai avant masquage du tooltips
+   */
+  timeoutBeforeHide: any = null
 
   /**
    * A l'initialisation préparation des événements de type click ou mouse pour l'apparition du tooltips
@@ -82,6 +86,10 @@ export class TooltipsComponent implements AfterViewInit {
         if (this.timeoutBeforeShow) {
           clearTimeout(this.timeoutBeforeShow)
         }
+        if (this.timeoutBeforeHide) {
+          clearTimeout(this.timeoutBeforeHide)
+          this.timeoutBeforeHide = null
+        }
 
         this.timeoutBeforeShow = setTimeout(() => {
           this.timeoutBeforeShow = null
@@ -93,14 +101,24 @@ export class TooltipsComponent implements AfterViewInit {
           clearTimeout(this.timeoutBeforeShow)
           this.timeoutBeforeShow = null
         }
+        if (this.timeoutBeforeHide) {
+          clearTimeout(this.timeoutBeforeHide)
+          this.timeoutBeforeHide = null
+        }
       })
       parent?.addEventListener('mouseleave', (e: any) => {
         if (this.timeoutBeforeShow) {
           clearTimeout(this.timeoutBeforeShow)
           this.timeoutBeforeShow = null
         }
+        if (this.timeoutBeforeHide) {
+          clearTimeout(this.timeoutBeforeHide)
+        }
 
-        this.changeVisibility(false)
+        this.timeoutBeforeHide = setTimeout(() => {
+          this.timeoutBeforeHide = null
+          this.changeVisibility(false)
+        }, 200)
       })
       this.elementRef.nativeElement?.addEventListener('click', (e: any) => {
         e.stopPropagation()

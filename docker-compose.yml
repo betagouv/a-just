@@ -104,6 +104,7 @@ services:
 
   redis:
     image: redis:alpine
+    restart: always
     ports:
       - "6379:6379"
 
