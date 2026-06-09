@@ -256,6 +256,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         resolve(true)
       } else {
         if (this.checkIfHasUpdates()) {
+          this.appService.appLoading.next(false)
           if (close) {
             this.appService.alert.next({
               classPopin: 'width-600',
