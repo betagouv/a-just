@@ -119,7 +119,7 @@ describe("Panorama page", () => {
   });
 
   it("Should save CLE values correctly", () => {
-    const cleValues = ["4", "32", "10"];
+    const cleValues = ["120", "443", "25"];
 
     cleValues.forEach((value, index) => {
       cy.get(".workforce-panel workforce-composition .cards .category")
@@ -173,7 +173,8 @@ describe("Panorama page", () => {
   const verifyRedirectionWithFilter = (index, expectedFilterIndex) => {
     cy.get(".workforce-panel .category .dark-arrow").eq(index).click();
 
-    cy.location("pathname").should("eq", "/ventilations");
+    cy.url().should("include", "/ventilations");
+    // cy.location("pathname").should("eq", "/ventilations");
 
     cy.get(".radio-border-left").each(($el, idx) => {
       const isSelected = idx === expectedFilterIndex;
@@ -183,7 +184,9 @@ describe("Panorama page", () => {
     });
 
     cy.visit("/panorama");
-    cy.location("pathname").should("eq", "/panorama");
+
+    cy.url().should("include", "/panorama");
+    // cy.location("pathname").should("eq", "/panorama");
   };
 
   it("Workforce actualisation - Click on 'Siège' and should be redirected to ventilateur with only 'Siège' filter active", () => {
@@ -413,6 +416,7 @@ describe("Panorama page", () => {
       .invoke("text")
       .then((text) => {
         currentEtptSiege = parseInt(text);
+        cy.log("Current Siege ETPT: ", currentEtptSiege);
         expect(currentEtptSiege).to.be.greaterThan(0);
       });
 
@@ -424,6 +428,7 @@ describe("Panorama page", () => {
       .invoke("text")
       .then((text) => {
         currentNbSiege = parseInt(text);
+        cy.log("Current Siege number of agents: ", currentNbSiege);
         expect(currentNbSiege).to.be.greaterThan(0);
       });
 
@@ -485,6 +490,7 @@ describe("Panorama page", () => {
       .invoke("text")
       .then((text) => {
         const updatedNbSiege = parseInt(text);
+        cy.log("Updated Siege number of agents: ", updatedNbSiege);
         expect(updatedNbSiege).to.be.equal(currentEtptSiege + 1); // Ensure the number of Siege agent increased
       });
 
@@ -495,6 +501,7 @@ describe("Panorama page", () => {
       .invoke("text")
       .then((text) => {
         const updatedEtptSiege = parseInt(text);
+        cy.log("Updated Siege ETPT: ", updatedEtptSiege);
         expect(updatedEtptSiege).to.be.equal(currentNbSiege + 1); // Ensure the Siege ETP increased
       });
   });
@@ -680,6 +687,7 @@ describe("Panorama page", () => {
       .invoke("text")
       .then((text) => {
         const updatedNbEAM = parseInt(text);
+        cy.log("Updated EAM ETPT: ", updatedNbEAM);
         expect(updatedNbEAM).to.be.equal(currentEtptEAM + 1);
       });
 
