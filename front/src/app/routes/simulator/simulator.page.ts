@@ -129,6 +129,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
   @ViewChild('lastStock') lastStock: ElementRef<HTMLInputElement> | undefined
   @ViewChild('totalIn') totalIn: ElementRef<HTMLInputElement> | undefined
   @ViewChild('etpMag') etpMag: ElementRef<HTMLInputElement> | undefined
+  @ViewChild('etpFon') etpFon: ElementRef<HTMLInputElement> | undefined
   @ViewChild('etpCont') etpCont: ElementRef<HTMLInputElement> | undefined
   @ViewChild('realDTESInMonths') realDTESInMonths: ElementRef<HTMLInputElement> | undefined
   /**
@@ -1091,22 +1092,26 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
           break
         }
         case 'etpt': {
-          if (this.canViewMagistrat && this.etpMag) {
-            this.openPopupWithParams(this.etpMag.nativeElement)
-            this.isAutoOpenPopupWithParams = true
-          } else {
-            setTimeout(() => {
-              this.checkToAutoOpenPopupWithParams()
-            }, 500)
+          if (this.categorySelected === 'MAGISTRAT' && this.canViewMagistrat) {
+            if (this.etpMag) {
+              this.openPopupWithParams(this.etpMag.nativeElement)
+              this.isAutoOpenPopupWithParams = true
+            } else {
+              setTimeout(() => {
+                this.checkToAutoOpenPopupWithParams()
+              }, 500)
+            }
           }
 
-          if (!this.canViewMagistrat && this.canViewGreffier && this.etpCont) {
-            this.openPopupWithParams(this.etpCont.nativeElement)
-            this.isAutoOpenPopupWithParams = true
-          } else {
-            setTimeout(() => {
-              this.checkToAutoOpenPopupWithParams()
-            }, 500)
+          if (this.categorySelected === 'GREFFE' && this.canViewGreffier) {
+            if (this.canViewGreffier && this.etpFon) {
+              this.openPopupWithParams(this.etpFon.nativeElement)
+              this.isAutoOpenPopupWithParams = true
+            } else {
+              setTimeout(() => {
+                this.checkToAutoOpenPopupWithParams()
+              }, 500)
+            }
           }
           break
         }
@@ -1118,13 +1123,24 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
    * Ouverture de popup avec le paramètre correspondant
    * @param button bouton clické
    */
-  openPopupWithParams(button: any): void {
+  openPopupWithParams(button: any, retry = 0): void {
     this.buttonSelected = button
     let buttonToFind = button.id
 
     const treeToUse = this.categorySelected === 'MAGISTRAT' ? this.decisionTreeMag : this.decisionTreeFon
 
     const find = treeToUse.find((item: any) => item.label === buttonToFind)
+
+    if (!find) {
+      setTimeout(() => {
+        if (retry > 3) {
+          return
+        }
+
+        this.openPopupWithParams(button, retry + 1)
+      }, 300)
+      return
+    }
 
     if (this.paramsToAjust.param1.input === 0) {
       this.currentNode = find
