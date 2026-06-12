@@ -67,4 +67,34 @@ openssl x509 -pubkey -noout -in sso-recette.crt > sso-recette.pem -> pem => (SSO
 // Attention, la ligne ne fonctionnera pas du premier coup. Vérifier le nom des images dockers lors du premier test.
 npm run deploy:production
 
+## Synchronisation des origines Git
+
+Le script `scripts/sync-remotes.sh` permet de synchroniser toutes les branches d'une origine git vers une autre (par exemple GitHub vers un miroir).
+
+```bash
+# Ajouter la seconde origine
+git remote add miroir git@github.com:mon-org/a-just-miroir.git
+
+# Simuler la synchronisation
+./scripts/sync-remotes.sh origin miroir --dry-run
+
+# Synchroniser toutes les branches
+./scripts/sync-remotes.sh origin miroir
+
+# Synchroniser les branches et les tags, en excluant dependabot
+./scripts/sync-remotes.sh origin miroir --tags --exclude 'dependabot/*'
+```
+
+Options disponibles :
+
+| Option | Description |
+|--------|-------------|
+| `--dry-run` | Affiche les opérations sans pousser |
+| `--tags` | Synchronise aussi les tags |
+| `--force` | Force le push (`--force-with-lease`) |
+| `--exclude PATTERN` | Exclut certaines branches (répétable) |
+| `--include PATTERN` | Ne synchronise que certaines branches (répétable) |
+
+La synchronisation est unidirectionnelle (source → destination). Les branches présentes uniquement sur la destination ne sont pas supprimées. Pour synchroniser dans l'autre sens, relancer le script en inversant les origines.
+
 # test 2
