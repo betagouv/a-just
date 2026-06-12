@@ -750,6 +750,13 @@ export class HumanResourceService {
     if (index !== -1) {
       this.alertList.update((list) => list.filter((t) => t !== tag))
     }
-    console.log('this.alertList', this.alertList())
+  }
+
+  async copyPerson(agentId: number) {
+    return this.serverService
+      .post(`human-resources/copy-agent`, {
+        agentId,
+      })
+      .then((response) => response.data)
   }
 }

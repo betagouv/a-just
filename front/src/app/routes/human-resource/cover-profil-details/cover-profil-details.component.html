@@ -5,10 +5,25 @@
       <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" />
     </div>
 
-    <button class="primary light small no-print" (click)="onExport()">
-      <mat-icon>save</mat-icon>
-      Enregistrer en PDF
-    </button>
+    <div class="drop-down-container no-print" (click)="$event.stopPropagation()">
+      <label class="drop-down" (click)="toggleDropDown = !toggleDropDown">
+        Dupliquer
+        <mat-icon>
+          {{ toggleDropDown === false ? 'expand_more' : 'expand_less' }}
+        </mat-icon>
+      </label>
+      <div class="drop-down-content animate__animated animate__fadeIn"
+        [ngStyle]="{ display: toggleDropDown === false ? 'none' : 'flex' }">
+        <button (click)="toggleDropDown = false; onExport()" class="medium strict-border">
+          <i class="ri-upload-line"></i>
+          Exporter la situation
+        </button>
+        <button class="medium strict-border" (click)="toggleDropDown = false; onCopyAgent()">
+          <i class="ri-file-copy-2-line"></i>
+          Copier la situation sur A-JUST
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="disk-etp">

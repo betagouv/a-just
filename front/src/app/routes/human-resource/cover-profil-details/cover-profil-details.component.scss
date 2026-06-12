@@ -89,7 +89,6 @@
 
 .group-first-row {
   height: 85px;
-  overflow: hidden;
   position: relative;
 
   .disk-etp {
@@ -261,4 +260,51 @@ input#lastName:-internal-autofill-selected {
   background-color: inherit !important;
   background-image: inherit !important;
   color: inherit !important;
+}
+
+.drop-down-container {
+  position: relative;
+
+  >.drop-down {
+    display: flex;
+    border-radius: 4px;
+    border: 1px solid #dddddd;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 4px;
+    font-size: 14px;
+    line-height: 24px;
+    cursor: pointer;
+  }
+
+  >.drop-down-content {
+    position: absolute;
+    top: 44px;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    z-index: 100;
+
+    button {
+      text-align: right;
+      background-color: transparent;
+      border-bottom: solid 1px lightgray;
+      line-height: 32px;
+      font-size: 14px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
 }

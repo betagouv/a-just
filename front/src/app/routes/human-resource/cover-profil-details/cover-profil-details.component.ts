@@ -1,5 +1,19 @@
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, OnChanges, Output, ViewChildren, QueryList, Renderer2, OnInit, inject, ElementRef, ViewChild } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+  ViewChildren,
+  QueryList,
+  Renderer2,
+  OnInit,
+  inject,
+  ElementRef,
+  ViewChild,
+} from '@angular/core'
 import { FormGroup, FormsModule } from '@angular/forms'
 import { isNumber, sumBy } from 'lodash'
 import { BackButtonComponent } from '../../../components/back-button/back-button.component'
@@ -20,6 +34,8 @@ import { isDateBiggerThan, today } from '../../../utils/dates'
 import { etpLabel } from '../../../utils/referentiel'
 import { MatIconModule } from '@angular/material/icon'
 import { ExcelService } from '../../../services/excel/excel.service'
+import { Router } from '@angular/router'
+import { AppService } from '../../../services/app/app.service'
 
 /**
  * Panneau de présentation d'une fiche
@@ -42,14 +58,15 @@ import { ExcelService } from '../../../services/excel/excel.service'
   styleUrls: ['./cover-profil-details.component.scss'],
 })
 export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
+  router = inject(Router)
   humanResourceService = inject(HumanResourceService)
   excelService = inject(ExcelService)
+  appService = inject(AppService)
   @ViewChild('dateStartCalendar') dateStartCalendar: DateSelectComponent | null = null
   @ViewChild('dateEndCalendar') dateEndCalendar: DateSelectComponent | null = null
   @ViewChildren('input')
   inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
-
   userService = inject(UserService)
   referentielService = inject(ReferentielService)
   /**
@@ -126,13 +143,24 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * ETP des indispo
    */
   indisponibility: number = 0
-
   /**
    * Taille des champs d'inputs (firstName et LastName)
    */
   inputsWidth: { firstName: number; lastName: number } = {
     firstName: 120,
     lastName: 120,
+  }
+  /**
+   * Drop down duplicate agent / export agent
+   */
+  toggleDropDown: boolean = false
+
+  /**
+   * Ferme le menu déroulant lors d'un clic en dehors
+   */
+  @HostListener('document:click', [])
+  closeDropDown() {
+    this.toggleDropDown = false
   }
 
   /**
@@ -408,5 +436,22 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   getInputs(): ElementRef[] {
     return this.inputs.toArray()
+  }
+
+  /**
+   * Permet de copier un agent
+   */
+  async onCopyAgent() {
+    if (this.currentHR) {
+      this.appService.appLoading.next(true)
+      try {
+        const newHR = await this.humanResourceService.copyPerson(this.currentHR.id)
+        console.log('newHR', newHR)
+        if (newHR) {
+          this.router.navigate(['/resource-humaine', newHR.id])
+        }
+      } catch (error) {}
+      this.appService.appLoading.next(false)
+    }
   }
 }

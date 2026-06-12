@@ -113,7 +113,13 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['currentHR'].firstChange && this.currentComment === '') {
+    const hrChange = changes['currentHR']
+    if (!hrChange) return
+
+    const previousId = hrChange.previousValue?.id ?? null
+    const currentId = hrChange.currentValue?.id ?? null
+
+    if (currentId !== null && currentId !== previousId) {
       this.onLoadComment()
     }
   }

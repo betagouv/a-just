@@ -921,5 +921,23 @@ export default (sequelizeInstance, Model) => {
     console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
+  Model.copyAgent = async (agentId) => {
+    const agent = await Model.getHr(agentId)
+    if (agent) {
+
+      return await Model.updateHR({
+        ...agent,
+        firstName: agent.firstName + ' - COPY',
+        lastName: agent.lastName + ' - COPY',
+        matricule: '',
+        registration_number: null,
+        dateEnd: null,
+        id: null,
+        indisponibilities: []
+      }, agent.backupId)
+    }
+    return null
+  }
+
   return Model
 }

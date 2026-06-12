@@ -544,4 +544,23 @@ export default class RouteHumanResources extends Route {
     await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, ...changes })
     this.sendOk(ctx, 'Ok')
   }
+
+  /**
+   * Interface de suppression d'une situation d'une fiche (For test only)
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      agentId: Types.number().required(),
+    }),
+    accesses: [Access.canEditHR],
+  })
+  async copyAgent(ctx) {
+    const { agentId } = this.body(ctx)
+
+    if (await this.model.haveAccess(agentId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.copyAgent(agentId))
+    } else {
+      this.sendOk(ctx, null)
+    }
+  }
 }
