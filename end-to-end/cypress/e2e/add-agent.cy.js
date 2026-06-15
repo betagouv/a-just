@@ -1,4 +1,13 @@
-import { getShortMonthString } from "../../support/utils/dates";
+/**
+ * Convertit une date en suite de chiffres JJMMAAAA à saisir dans le champ
+ * manuel (manualInput) du composant aj-date-select. Le masque interne ajoute
+ * automatiquement les "/" : on ne tape donc que les chiffres.
+ */
+const toInputDate = (d) =>
+  `${(d.getDate() + "").padStart(2, "0")}${(d.getMonth() + 1 + "").padStart(
+    2,
+    "0"
+  )}${d.getFullYear()}`;
 
 describe("Ajout d'un agent", () => {
   before(() => {
@@ -38,54 +47,27 @@ describe("Ajout d'un agent", () => {
 
   it("Select incoming date", () => {
     const now = new Date();
-
-    const month = now.getMonth() - 3;
-    const date = new Date(now.setMonth(month));
+    const date = new Date(now.setMonth(now.getMonth() - 3));
 
     cy.get(".dates")
-      .get("aj-date-select")
+      .find("aj-date-select")
       .first()
-      .click()
-      .get("mat-datepicker")
-      //select Year
-      .get('button[aria-label="Choose month and year"]')
-      .click()
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getFullYear())
-      .click()
-      //select month
-      .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(date).toUpperCase())
-      .click()
-      //select date
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getDay())
-      .click();
+      .find("input.manual-input")
+      .clear()
+      .type(toInputDate(date))
+      .blur();
   });
 
   it("Select leaving date", () => {
     const date = new Date();
 
     cy.get(".dates")
-      .get("aj-date-select")
+      .find("aj-date-select")
       .eq(1)
-      .click()
-      .get("mat-datepicker")
-      //   //select Year
-      .get("mat-datepicker")
-      .get('button[aria-label="Choose month and year"]')
-      .click()
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getFullYear())
-      .click()
-      //select month
-      .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(date).toUpperCase())
-      .click()
-      //select date
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getDate())
-      .click();
+      .find("input.manual-input")
+      .clear()
+      .type(toInputDate(date))
+      .blur();
   });
 
   it("Select Catégorie", () => {
@@ -175,104 +157,47 @@ describe("Ajout d'un agent", () => {
 
   it("Check if we can add a start date to the situation", () => {
     const now = new Date();
-    const month = now.getMonth() - 3;
-    const date = new Date(now.setMonth(month));
+    const date = new Date(now.setMonth(now.getMonth() - 3));
 
     cy.get(".bottom-container")
-      .get(".date-start")
-      .get(".date-start-content")
-      .within(() => {
-        cy.get("aj-date-select").click().get("mat-datepicker");
-      }) //select Year
-      .get('button[aria-label="Choose month and year"]')
-      .click()
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getFullYear())
-      .click()
-      //select month
-      .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(date).toUpperCase())
-      .click()
-      //select date
-      .get(".mat-calendar-body-cell-content")
-      .contains(date.getDay())
-      .click();
+      .find(".date-start .date-start-content aj-date-select")
+      .find("input.manual-input")
+      .clear()
+      .type(toInputDate(date))
+      .blur();
   });
 
   it("Checking that we can add unavailabilities", () => {
     const startDate = new Date();
     const endDate = new Date();
 
-    const startMonth = startDate.getMonth() - 1;
-    const endMonth = endDate.getMonth();
-
-    startDate.setMonth(startMonth);
-    endDate.setMonth(endMonth);
+    startDate.setMonth(startDate.getMonth() - 1);
 
     cy.get(".bottom-container")
-      .get(".indisponibilities")
-      .within(() => {
-        cy.get(".indispo-header").get("button").click();
-      })
-      .get("aj-popup")
-      .within(() => {
-        cy.get(".content")
-          .get(".form")
-          .get("select")
-          .select("Décharge syndicale")
-          .get(".grid-double")
-          .get("aj-date-select")
-          .first()
-          .click()
-          .get("mat-datepicker");
-      })
-      .get('button[aria-label="Choose month and year"]')
-      .click()
-      .get(".mat-calendar-body-cell-content")
-      .contains(startDate.getFullYear())
-      .click()
-      //select month
-      .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(startDate).toUpperCase())
-      .click()
-      //select date
-      .get(".mat-calendar-body-cell-content")
-      .contains(startDate.getDate())
-      .click()
+      .find(".indisponibilities .indispo-header button")
+      .click();
 
-      .get("aj-popup")
-      .within(() => {
-        cy.get(".content")
-          .get(".grid-double")
-          .get("aj-date-select")
-          .eq(1)
-          .click()
-          .get("mat-datepicker");
-      })
-      .get('button[aria-label="Choose month and year"]')
-      .click()
-      .get(".mat-calendar-body-cell-content")
-      .contains(endDate.getFullYear())
-      .click()
-      //select month
-      .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(endDate).toUpperCase())
-      .click()
-      //select date
-      .get(".mat-calendar-body-cell-content")
-      .contains(endDate.getDate())
-      .click()
+    cy.get("aj-popup").within(() => {
+      cy.get("select").select("Décharge syndicale");
 
-      .get("aj-popup")
-      .within(() => {
-        cy.get(".content")
-          .get(".form")
-          .within(() => {
-            cy.get("#input-indispo").clear().type(100);
-          });
+      cy.get("aj-date-select")
+        .first()
+        .find("input.manual-input")
+        .clear()
+        .type(toInputDate(startDate))
+        .blur();
 
-        cy.get(".actions").get("button").contains("Enregistrer").click();
-      });
+      cy.get("aj-date-select")
+        .eq(1)
+        .find("input.manual-input")
+        .clear()
+        .type(toInputDate(endDate))
+        .blur();
+
+      cy.get("#input-indispo").clear().type(100);
+
+      cy.get(".actions button").contains("Enregistrer").click();
+    });
   });
 
   it("Register new agent and his activities", () => {
