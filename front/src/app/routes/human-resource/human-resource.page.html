@@ -158,9 +158,10 @@
     </div>
     <div class="grid-double">
       <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
-        (valueChange)="updateIndisponiblity.dateStart = setToMidDay($event)"></aj-date-select>
+        (valueChange)="updateIndisponiblity.dateStart = setToMidDay($event)" [manualInput]="true"></aj-date-select>
       <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = setToMidDay($event)" [clearable]="true"></aj-date-select>
+        (valueChange)="updateIndisponiblity.dateStop = setToMidDay($event)" [clearable]="true"
+        [manualInput]="true"></aj-date-select>
     </div>
     <div>
       <div class="label-aj">Indisponibilité (en % d'un plein temps) :</div>

@@ -3,9 +3,9 @@
 </div>
 <div class="exportateur-container">
   <aj-date-select class="extend" title="Pour la période du" [value]="dateStart"
-    (valueChange)="selectDate('start', $event)"></aj-date-select>
-  <aj-date-select class="extend" title="À" [value]="dateStop"
-    (valueChange)="selectDate('stop', $event)"></aj-date-select>
+    (valueChange)="selectDate('start', $event)" [manualInput]="true"></aj-date-select>
+  <aj-date-select class="extend" title="À" [value]="dateStop" (valueChange)="selectDate('stop', $event)"
+    [manualInput]="true"></aj-date-select>
 
   <aj-select title="Catégorie" class="category-select" [defaultRealValue]="'Sélectionner la catégorie'" [value]="null"
     [datas]="categories" [multiple]="true" (valueChange)="updateCategory($event)"></aj-select>

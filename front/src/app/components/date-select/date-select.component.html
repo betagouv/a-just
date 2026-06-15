@@ -3,7 +3,13 @@
   @if (onShowLeftArrow()) {
   <mat-icon class="left cursor-pointer" (click)="readonly ? null : onChangeDate(-1)">chevron_left</mat-icon>
   }
+  @if (manualInput && !readonly && !readOnly) {
+  <input #manualEl class="manual-input" type="text" [value]="manualFocused ? editValue : (realValue || '')"
+    (input)="onManualInput(manualEl)" (focus)="onEditFocus()" (blur)="onEditBlur()" (keydown.enter)="manualEl.blur()"
+    (click)="$event.stopPropagation()" [placeholder]="dateType === 'month' ? 'MM/AAAA' : 'JJ/MM/AAAA'" />
+  } @else {
   <p (click)="onClick()">{{ realValue ? realValue : '-' }}</p>
+  }
   @if (value && clearable && !readOnly) {
   <mat-icon (click)="readonly ? null : onDateChanged(null); $event.preventDefault(); $event.stopPropagation()"
     class="cursor-pointer">

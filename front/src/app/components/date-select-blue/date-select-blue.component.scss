@@ -125,4 +125,25 @@ mat-datepicker-popup {
         }
     }
 
+    input.manual-input {
+        flex: 1;
+        width: auto;
+        height: auto;
+        position: static;
+        bottom: auto;
+        padding-left: 16px;
+        border: 0;
+        background: transparent;
+        outline: none;
+        align-self: center;
+        font-family: inherit;
+        font-size: 14px;
+        color: #0063cb;
+
+        &::placeholder {
+            color: #0063cb;
+            opacity: 0.6;
+        }
+    }
+
 }

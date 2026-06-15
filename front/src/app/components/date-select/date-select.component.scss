@@ -152,6 +152,14 @@
     p.title-select {
       color: utils.$colors-headerColor;
     }
+
+    input.manual-input {
+      color: utils.$colors-headerColor;
+
+      &::placeholder {
+        color: utils.$colors-headerColor;
+      }
+    }
   }
 
   &.read-only {
@@ -208,6 +216,28 @@
     left: -5px;
     padding: 0;
     border: 0;
+  }
+
+  input.manual-input {
+    flex: 1;
+    width: 100px;
+    height: 24px;
+    display: block;
+    position: static;
+    left: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    color: utils.$colors-cblack;
+
+    &::placeholder {
+      font-weight: normal;
+      color: utils.$colors-cgray;
+    }
   }
 
 }
