@@ -239,6 +239,7 @@
             selected: sortBy.type === 'lastStock'
           }" (click)="onSortBy('lastStock')"></i>
           <aj-tooltips
+            title="TMD {{ categorySelected === MAGISTRATS ? 'SIÈGE' : categorySelected === FONCTIONNAIRES ? 'GREFFE' : 'EAM' }}"
             content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
             [footer]="categorySelected === MAGISTRATS ? 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. / SORTIES</b>' : categorySelected === FONCTIONNAIRES ? 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT GREF. / SORTIES</b>' : 'Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT EAM. / SORTIES</b>'"
             class="no-left"></aj-tooltips>
