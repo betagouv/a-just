@@ -188,7 +188,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
       target: 'workforce-change',
       title: 'Changements récents',
       intro:
-        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d'indisponibilité ou d'arrivée et la modifier si vous découvrez qu'elle a évolué.",
+        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 3 derniers et 3 prochains mois. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d'indisponibilité ou d'arrivée et la modifier si vous découvrez qu'elle a évolué.",
     },
   ]
 
