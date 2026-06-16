@@ -213,7 +213,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           target: '.sub-main-header',
           title: 'Affinez votre sélection',
           intro:
-            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
+            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d'autant plus représentatives que la période sélectionnée sera longue.</p>",
         },
         {
           target: '.switch-tab .brut',
