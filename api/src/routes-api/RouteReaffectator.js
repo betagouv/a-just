@@ -186,8 +186,8 @@ export default class RouteReaffectator extends Route {
     })
     const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
 
-    console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
-    console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
+    //console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
+    //console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
 
     this.sendOk(ctx, {
       list: resultList,

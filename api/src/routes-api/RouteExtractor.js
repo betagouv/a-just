@@ -123,7 +123,7 @@ export default class RouteExtractor extends Route {
         console.time('🧩 Pré-formatage / Indexation')
         const indexes = await generateHRIndexes(allHuman)
         console.timeEnd('🧩 Pré-formatage / Indexation')
-        console.log('SI')
+        //console.log('SI')
         checkAbort(signal)
         console.time('extractor-5')
         let { onglet1, onglet2 } = await runExtractsInParallel({
@@ -140,7 +140,7 @@ export default class RouteExtractor extends Route {
           backupId,
           signal,
         })
-        console.timeEnd('extractor-5')
+        //console.timeEnd('extractor-5')
 
         console.time('extractor-6')
         const excelRef = buildExcelRef(flatReferentielsList)
@@ -165,7 +165,7 @@ export default class RouteExtractor extends Route {
           allJuridiction,
         })
 
-        console.timeEnd('extractor-6')
+        //console.timeEnd('extractor-6')
 
         this.sendOk(ctx, {
           fonctions: formatedFunctions,
@@ -178,7 +178,7 @@ export default class RouteExtractor extends Route {
         })
       }, 60000) // timeout en ms
     } catch (err) {
-      console.error('❌ Traitement interrompu :', err.message)
+      //console.error('❌ Traitement interrompu :', err.message)
       ctx.status = 503
       ctx.body = { error: err.message }
     }
@@ -214,12 +214,12 @@ export default class RouteExtractor extends Route {
               }
             }
           })
-          .catch((err) => console.log('error: ', err))
+          .catch((err) => console.error('error: ', err))
       })
     })
   }
 
- 
+
   /**
    * Route pour filtrer et ordonner les activités selon les référentiels
    * @param {*} ctx
@@ -261,13 +261,13 @@ export default class RouteExtractor extends Route {
 
     const sumTab = _buildSumTab(activities, flatReferentielsList)
     activities.forEach((item) => {
-       // Mettre à "-" toutes les valeurs qui sont null
-       if (item.entrees == null) item.entrees = "-"
-       if (item.sorties == null) item.sorties = "-"
-       if (item.stock == null) item.stock = "-"
-       if (item.originalEntrees == null) item.originalEntrees = "-"
-       if (item.originalSorties == null) item.originalSorties = "-"
-       if (item.originalStock == null) item.originalStock = "-"
+      // Mettre à "-" toutes les valeurs qui sont null
+      if (item.entrees == null) item.entrees = "-"
+      if (item.sorties == null) item.sorties = "-"
+      if (item.stock == null) item.stock = "-"
+      if (item.originalEntrees == null) item.originalEntrees = "-"
+      if (item.originalSorties == null) item.originalSorties = "-"
+      if (item.originalStock == null) item.originalStock = "-"
     })
     const groupedList = groupBy(activities, 'periode')
 
@@ -298,7 +298,7 @@ export default class RouteExtractor extends Route {
     }
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
-    const onProgress = () => {}
+    const onProgress = () => { }
     const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress, ctx.state.user.id)
 
     this.sendOk(ctx, result)

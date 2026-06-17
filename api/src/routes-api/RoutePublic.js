@@ -14,7 +14,7 @@ export default class RoutePublic extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
   }
 
@@ -24,9 +24,9 @@ export default class RoutePublic extends Route {
   @Route.Get({
     path: '*',
   })
-  async readFile (ctx) {
+  async readFile(ctx) {
     const file = `${__dirname}/..${ctx.request.url.replace('/api/', '/')}`
-    console.log(file, existsSync(file))
+    //console.log(file, existsSync(file))
 
     if (existsSync(file)) {
       const src = createReadStream(file)

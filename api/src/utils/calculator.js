@@ -273,9 +273,9 @@ const getActivityValues = async (
     const agents = hr.filter((h) => h.situations.filter((s) => s.activities.filter((a) => a.contentieux.id === referentielId || childsReferentielsIds.includes(a.contentieux.id))))
     for (const agent of agents) {
       for (const situation of agent.situations || []) {
-        if (agent.id === 43004 && referentielId === 447) {
-          console.log('situation.activities', situation.activities)
-        }
+        // if (agent.id === 43004 && referentielId === 447) {
+        //   console.log('situation.activities', situation.activities)
+        // }
         for (const activity of situation.activities || []) {
           if (
             (activity.contentieux.id === referentielId || childsReferentielsIds.includes(activity.contentieux.id)) &&
@@ -288,9 +288,9 @@ const getActivityValues = async (
       }
     }
 
-    if (referentielId === 447) {
-      console.log('lastVentilationUpdatedAt', lastVentilationUpdatedAt)
-    }
+    // if (referentielId === 447) {
+    //   console.log('lastVentilationUpdatedAt', lastVentilationUpdatedAt)
+    // }
   }
 
   let lastActivityUpdatedAt = null

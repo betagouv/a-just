@@ -63,7 +63,7 @@ export default class RouteActivities extends Route {
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
       console.time('new')
-      console.log('LA DATE', date)
+      //console.log('LA DATE', date)
       const list = await this.model.getByMonthNew(date, hrBackupId)
       console.timeEnd('new')
 

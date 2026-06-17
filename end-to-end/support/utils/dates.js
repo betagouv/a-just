@@ -7,7 +7,7 @@ export function getShortMonthString(date) {
   if (typeof date === 'string') {
     date = new Date(date)
   }
-  console.log('Date:', date)
+  //console.log('Date:', date)
   return [
     'Janv.',
     'Févr.',

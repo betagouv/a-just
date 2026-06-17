@@ -16,12 +16,12 @@ export class ServerService {
 
   handleError(error: any) {
     //this.appService.setIsLoading(false);
-    console.log('handleError', error)
+    console.error('handleError', error)
     if (error.status) {
-      console.log('error.status', error.status)
+      console.error('error.status', error.status)
     }
     if (error.toString) {
-      console.log('error.toString', error.toString())
+      console.error('error.toString', error.toString())
     }
 
     if (error.status === 403) {

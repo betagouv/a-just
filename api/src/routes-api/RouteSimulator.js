@@ -145,7 +145,7 @@ export default class RouteSimulator extends Route {
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
-    console.log(params)
+    //console.log(params)
     const simulatedSituation = await execSimulation(params, simulation, dateStart, dateStop, sufix, ctx, { indexes, referentielId, categories, dateStart, dateStop, fonctionIds: functionIds })
 
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')

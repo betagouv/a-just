@@ -28,7 +28,7 @@ export default class RouteIndex extends Route {
       const stats = statSync(file)
 
       if (url && url !== '/' && stats.isFile()) {
-        console.log('load page', file)
+        //console.log('load page', file)
 
         // only for video
         if (file.indexOf('.mp4') !== -1) {
@@ -60,7 +60,7 @@ export default class RouteIndex extends Route {
         ctx.body = src
       }
     } catch (err) {
-      console.log('on error', err)
+      console.error('on error', err)
       this.model.addLog(REFERENCE_REQUEST_URL, null, ip, { formatValue: false, datas2: url, logging: false })
 
       const indexFile = `${__dirname}/../../dist/front/index.html`

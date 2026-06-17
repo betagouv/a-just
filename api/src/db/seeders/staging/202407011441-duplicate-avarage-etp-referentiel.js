@@ -19,7 +19,7 @@ module.exports = {
         const backupCreated = await models.OptionsBackups.create({ ...backup, label: backup.label + ' - GREFFE', type: "GREFFE", status: 'Local' }) // ajouter attribue GREFFE
         const newBackupId = backupCreated.dataValues.id
 
-        console.log('&=>', newBackupId)
+        //console.log('&=>', newBackupId)
         const hrList = await models.ContentieuxOptions.findAll({
           where: {
             backup_id: allReferentiels[i].option_backup_id,

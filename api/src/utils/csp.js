@@ -43,7 +43,7 @@ const parseFile = (filePath, tag) => {
     if (config.envName === 'DEV') {
       filePath = filePath.replace('/front', '/../dist/front')
     }
-    console.log('filePath', filePath)
+    //console.log('filePath', filePath)
     let data = readFileSync(filePath, 'utf8')
 
     const key = crypt.generateRandomNumber(12)
@@ -72,7 +72,7 @@ const parseFile = (filePath, tag) => {
       })
     }
   } catch (err) {
-    console.log(err)
+    console.error(err)
   }
 
   return list

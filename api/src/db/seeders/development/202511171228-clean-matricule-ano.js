@@ -3,7 +3,7 @@ const { isTj } = require('../../../utils/ca')
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     const labels = isTj()
-      ? ['TJ DE DEMO BIS', 'TJ BASE TEST','TEST15OCT', 'TJ DE DEMO', 'TJ RECETTE', 'TJ WEBINAIRE']
+      ? ['TJ DE DEMO BIS', 'TJ BASE TEST', 'TEST15OCT', 'TJ DE DEMO', 'TJ RECETTE', 'TJ WEBINAIRE']
       : ['CA BASE TEST', 'CA DE DEMO', 'CA de Lyon - 2025 recette', 'CA RECETTE', 'CA WEBINAIRE']
 
     for (const label of labels) {
@@ -23,7 +23,7 @@ module.exports = {
           { replacements: { backupId }, type: queryInterface.sequelize.QueryTypes.SELECT, transaction: t },
         )
         const count = Array.isArray(countRes) && countRes.length ? countRes[0].cnt : 0
-        console.log(`Agents à anonymiser pour '${label}' (backupId=${backupId}) : ${count}`)
+        //console.log(`Agents à anonymiser pour '${label}' (backupId=${backupId}) : ${count}`)
 
         if (count === 0) {
           await t.rollback()
@@ -36,7 +36,7 @@ module.exports = {
         )
 
         await t.commit()
-        console.log(`Anonymisation terminée pour '${label}'.`)
+        //console.log(`Anonymisation terminée pour '${label}'.`)
       } catch (err) {
         await t.rollback()
         console.error(`Erreur lors de l'anonymisation pour label='${label}' :`, err)
@@ -44,5 +44,5 @@ module.exports = {
       }
     }
   },
-  down: (/*queryInterface , Sequelize*/) => {},
+  down: (/*queryInterface , Sequelize*/) => { },
 }

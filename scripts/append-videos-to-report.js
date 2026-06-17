@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const [,, htmlFile, videosDir] = process.argv;
+const [, , htmlFile, videosDir] = process.argv;
 
 if (!htmlFile || !videosDir) {
   console.error('Usage: node append-videos-to-report.js <htmlFile> <videosDir>');
@@ -17,12 +17,12 @@ if (!htmlFile || !videosDir) {
 }
 
 if (!fs.existsSync(htmlFile)) {
-  console.log(`HTML file not found: ${htmlFile}`);
+  console.error(`HTML file not found: ${htmlFile}`);
   process.exit(0);
 }
 
 if (!fs.existsSync(videosDir)) {
-  console.log(`Videos directory not found: ${videosDir}`);
+  console.error(`Videos directory not found: ${videosDir}`);
   process.exit(0);
 }
 
@@ -32,7 +32,7 @@ const videos = fs.readdirSync(videosDir)
   .sort();
 
 if (videos.length === 0) {
-  console.log('No videos found to append');
+  console.error('No videos found to append');
   process.exit(0);
 }
 

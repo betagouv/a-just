@@ -293,7 +293,7 @@ export default (sequelizeInstance, Model) => {
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
-        console.log(oldAccess)
+        //console.log(oldAccess)
 
         const newVentilationList = ventilationsList.map((v) => v.id).sort()
         if (JSON.stringify(newVentilationList) !== JSON.stringify(oldVentilations) || JSON.stringify(newAccess) !== JSON.stringify(oldAccess)) {

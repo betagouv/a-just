@@ -77,7 +77,7 @@ export const initRedis = () => {
         console.error('❌ Redis Client Error', err)
         if (err.message.includes('Socket closed unexpectedly')) {
           console.warn('♻️ Reconnexion forcée Redis')
-          client.quit().catch(() => {})
+          client.quit().catch(() => { })
           client = null
           initRedis()
         }
@@ -322,7 +322,7 @@ export async function listKeys(pattern = '*', count = 1000) {
  */
 export async function printKeys(pattern = '*') {
   const ks = await listKeys(pattern)
-  console.log(`Pattern "${pattern}" → ${ks.length} clé(s)`)
+  //console.log(`Pattern "${pattern}" → ${ks.length} clé(s)`)
   ks.forEach((k) => console.log(' -', k))
   return ks.length
 }

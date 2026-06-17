@@ -153,7 +153,7 @@ export default async (ctx, next, models) => {
   //console.log('Client IP', ip, url)
 
   if (IP_TRAPPED.indexOf(ip) !== -1) {
-    console.log('IP BLOCKED - ', ip)
+    console.error('IP BLOCKED - ', ip)
     models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ip, { formatValue: false, datas2: url, logging: false })
     ctx.res.writeHead(403).end()
     return
@@ -165,7 +165,7 @@ export default async (ctx, next, models) => {
       return url.includes(t)
     })
   ) {
-    console.log('NEW IP BLOCKED - ', ip, url)
+    console.error('NEW IP BLOCKED - ', ip, url)
     IP_TRAPPED.push(ip)
     models.Logs.addLog(HONEY_IP_TRAPPED, null, ip, { formatValue: false, datas2: url, logging: false })
     ctx.res.writeHead(403).end()

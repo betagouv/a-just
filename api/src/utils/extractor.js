@@ -705,12 +705,12 @@ export function generateOnglets({
 
           currentEffectiveAbs = periodDetails.indisponibilities.reduce((sum, i) => {
             const rate = ((i.percent || 0) / 100) * alpha
-            console.log('indispo final', rate)
+            //console.log('indispo final', rate)
             return absMap.has(i?.contentieux.label) ? sum + rate : sum
           }, 0)
 
           absOnPeriod = (currentEffectiveAbs * workingDays) / nbOfWorkingDaysQuery
-          console.log(absOnPeriod)
+          //console.log(absOnPeriod)
           abs.absenteisme = (abs.absenteisme ?? 0) + absOnPeriod
         }
         currentAbsEffectiveEtp = currentEffectiveAbs + period.effectiveETP

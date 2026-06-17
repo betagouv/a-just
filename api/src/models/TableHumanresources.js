@@ -30,7 +30,7 @@ export default (sequelizeInstance, Model) => {
       return
     }
 
-    console.log(`🚀 Recalcul forcé du cache HR pour toutes les juridictions @ ${new Date().toISOString()}`)
+    //console.log(`🚀 Recalcul forcé du cache HR pour toutes les juridictions @ ${new Date().toISOString()}`)
     console.time('forceRecalculateAllHrCache')
 
     const jurisdictions = await Model.getAllJuridictionsWithSizes()
@@ -61,7 +61,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     console.timeEnd('forceRecalculateAllHrCache')
-    console.log('✅ Recalcul complet du cache HR terminé')
+    //console.log('✅ Recalcul complet du cache HR terminé')
   }
 
   Model.sleep = (ms) => new Promise((res) => setTimeout(res, ms))
@@ -478,7 +478,7 @@ export default (sequelizeInstance, Model) => {
         if (findFonction) {
           situation.fonction_id = findFonction.id
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
-          console.log('code no imported=>', code, statut)
+          //console.log('code no imported=>', code, statut)
           // dont save this profil
           importSituation.push((list[i].nom_usage || list[i].nom) + ' no add by fonction ')
           continue
@@ -546,7 +546,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         // create person
-        console.log('CREATION DE LA FICHE =>', { ...options, ...situation })
+        //console.log('CREATION DE LA FICHE =>', { ...options, ...situation })
 
 
         findHRToDB = await Model.create(options)
@@ -568,7 +568,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove cache
-    console.log('IMPORT!:', importSituation)
+    //console.log('IMPORT!:', importSituation)
     return ids
   }
 
@@ -822,7 +822,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
     console.time('Calculator-global')
-    console.log('LOG', log)
+    // console.log('LOG', log)
 
     dateStart = today(dateStart)
     dateStop = today(dateStop)
@@ -913,8 +913,9 @@ export default (sequelizeInstance, Model) => {
       return hr['HRSituations.id'] === null
     })
 
+    //console.log('hrWithoutJoins', hrWithoutJoins)
     for (const hr of hrWithoutJoins) {
-      console.log('we removehr', hr.id)
+      //console.log('we removehr', hr.id)
       await Model.models.HumanResources.destroy({
         where: {
           id: hr.id, // Assurez-vous de supprimer par ID
@@ -922,7 +923,7 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    console.log('Nb Records removed:', hrWithoutJoins.length)
+    //console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
   Model.copyAgent = async (agentId) => {

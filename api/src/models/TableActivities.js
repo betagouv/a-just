@@ -216,7 +216,7 @@ export default (sequelizeInstance, Model) => {
         },
         paranoid: false,
       })
-      console.log('FORCE TO DELETE', activitiesToDeleted.length)
+      //console.log('FORCE TO DELETE', activitiesToDeleted.length)
       for (let i = 0; i < activitiesToDeleted.length; i++) {
         await activitiesToDeleted[i].destroy({
           truncate: true,
@@ -254,7 +254,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       if (duplicateActivities.length >= 2) {
-        console.log('DUPPLICATE', duplicateActivities[0].dataValues)
+        //console.log('DUPPLICATE', duplicateActivities[0].dataValues)
         for (let z = 1; z < duplicateActivities.length; z++) {
           await duplicateActivities[z].destroy(
             force
@@ -279,7 +279,7 @@ export default (sequelizeInstance, Model) => {
     let referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, false, filterReferentiels)
     //await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
 
-    console.log('MIN PERIODE', HRBackupId, minPeriode)
+    //console.log('MIN PERIODE', HRBackupId, minPeriode)
 
     if (!minPeriode) {
       if (!force)
@@ -297,7 +297,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log('START', referentiels, HRBackupId, minPeriode)
+    //console.log('START', referentiels, HRBackupId, minPeriode)
 
     for (let i = 0; i < referentiels.length; i++) {
       await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId)
@@ -316,7 +316,7 @@ export default (sequelizeInstance, Model) => {
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
     date = new Date(date)
 
-    console.log(values)
+    //console.log(values)
 
     let original = null
     let verify = null
@@ -358,12 +358,12 @@ export default (sequelizeInstance, Model) => {
         await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
       }
     } else {
-      console.log('create', {
-        ...values,
-        hr_backup_id: hrBackupId,
-        contentieux_id: contentieuxId,
-        periode: date,
-      })
+      //console.log('create', {
+      //  ...values,
+      //  hr_backup_id: hrBackupId,
+      //  contentieux_id: contentieuxId,
+      //  periode: date,
+      //})
       findActivity = await Model.create({
         ...values,
         hr_backup_id: hrBackupId,
@@ -379,6 +379,7 @@ export default (sequelizeInstance, Model) => {
         values[nodeUpdated] === null &&
         findActivity.dataValues[nodeUpdated] !== null
       )
+        //console.log('ADD HISTORY', userId, findActivity.dataValues.id, nodeUpdated, null)
         await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, null)
       else await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
@@ -975,7 +976,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getOneByMonth = async (HRBackupId, contentieuxId, date) => {
-    console.log('GetOneByMonth')
+    //console.log('GetOneByMonth')
     const year = new Date(date).getFullYear().toString()
     const month = (new Date(date).getMonth() + 1).toString()
     const periode = year + '-' + month

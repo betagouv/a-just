@@ -72,13 +72,13 @@ if (failures.length === 0) {
 const maxFailures = 10
 const displayFailures = failures.slice(0, maxFailures)
 
-console.log(`**${failures.length} test(s) failed:**`)
+console.error(`**${failures.length} test(s) failed:**`)
 displayFailures.forEach((f, i) => {
-  console.log(`${i + 1}. ${f.fullTitle}`)
+  console.error(`${i + 1}. ${f.fullTitle}`)
 })
 
 if (failures.length > maxFailures) {
-  console.log(`... and ${failures.length - maxFailures} more`)
+  console.error(`... and ${failures.length - maxFailures} more`)
 }
 
 // Exit 0 when failures found (for workflow logic)

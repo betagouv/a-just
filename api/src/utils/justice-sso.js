@@ -34,7 +34,7 @@ export const idp = new saml2.IdentityProvider(idp_options)
 export const loginSSO = () => {
   return new Promise((resolve, reject) => {
     sp.create_login_request_url(idp, {}, function (err, login_url, request_id) {
-      console.log(idp, err, login_url, request_id)
+      //console.log(idp, err, login_url, request_id)
       if (err != null) {
         reject(err)
       } else {
@@ -47,7 +47,7 @@ export const loginSSO = () => {
 export const logoutSSO = (options) => {
   return new Promise((resolve, reject) => {
     sp.create_logout_request_url(idp, options, function (err, logout_url) {
-      console.log(idp, err, logout_url)
+      //console.log(idp, err, logout_url)
       if (err != null) {
         reject(err)
       } else {
@@ -60,8 +60,8 @@ export const logoutSSO = (options) => {
 export const postAssertSSO = (requestBody) => {
   return new Promise((resolve, reject) => {
     sp.post_assert(idp, { request_body: requestBody }, function (err, saml_response) {
-      console.log('err', JSON.stringify(err))
-      console.log('saml_response', JSON.stringify(saml_response))
+      //console.log('err', JSON.stringify(err))
+      //console.log('saml_response', JSON.stringify(saml_response))
       /**
        * Exemple de retour
        * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return",

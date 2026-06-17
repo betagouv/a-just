@@ -9,14 +9,14 @@ module.exports = {
       },
     })
 
-    console.log(`Found ${users.length} users with no role to delete`)
+    //console.log(`Found ${users.length} users with no role to delete`)
 
     for (let i = 0; i < users.length; i++) {
       await users[i].destroy()
-      console.log(`Deleted user ${users[i].id} - ${users[i].email}`)
+      //  console.log(`Deleted user ${users[i].id} - ${users[i].email}`)
     }
 
-    console.log(`Cleanup complete: ${users.length} users deleted`)
+    //console.log(`Cleanup complete: ${users.length} users deleted`)
   },
-  down: (/*queryInterface, Sequelize*/) => {},
+  down: (/*queryInterface, Sequelize*/) => { },
 }

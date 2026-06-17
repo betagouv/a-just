@@ -58,7 +58,7 @@ export default class RouteCalculator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    console.log('this.body(ctx)', this.body(ctx))
+    //console.log('this.body(ctx)', this.body(ctx))
 
     this.sendOk(ctx, await this.model.onCalculate(this.body(ctx), ctx.state.user, this.body(ctx).log === false ? false : true))
   }
@@ -305,10 +305,11 @@ export default class RouteCalculator extends Route {
                 lockSorties = lastMonthSorties
               }
 
-              console.log('lastMonthEntrees', lastMonthEntrees)
-              console.log('lastMonthSorties', lastMonthSorties)
-              console.log('etpt', etpt)
-              console.log('tempsMoyen', tempsMoyen)
+              //console.log('lastMonthEntrees', lastMonthEntrees)
+              //console.log('lastMonthSorties', lastMonthSorties)
+              //console.log('etpt', etpt)
+              //console.log('tempsMoyen', tempsMoyen)
+
               if (tempsMoyen !== Infinity) {
                 let estimateStock = (lastStock || 0) + (lastMonthEntrees || 0)
                 if (categorySelected === 'magistrats') {

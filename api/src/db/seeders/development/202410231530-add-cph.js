@@ -73,9 +73,9 @@ module.exports = {
       for (let i = 0; i < CPH.length; i++) {
 
         // catch parent
-        console.log('IELST:', CPH[1] )
+        //console.log('IELST:', CPH[1] )
         const parent = await models.TJ.findOne({
-          where : {
+          where: {
             i_elst: CPH[i]['Code TJ'],
           },
           raw: true,
@@ -92,5 +92,5 @@ module.exports = {
       }
     }
   },
-  down: (/*queryInterface , Sequelize*/) => {},
+  down: (/*queryInterface , Sequelize*/) => { },
 }

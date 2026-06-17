@@ -12,7 +12,7 @@ export default class RouteCsp extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HumanResources
@@ -27,8 +27,8 @@ export default class RouteCsp extends Route {
       ['csp-report']: Types.any(),
     }),
   })
-  async report (ctx) {
-    console.log(this.body(ctx))
+  async report(ctx) {
+    //console.log(this.body(ctx))
     this.sendOk(ctx, 'OK')
   }
 }

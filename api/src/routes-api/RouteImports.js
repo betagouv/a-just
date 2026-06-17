@@ -52,7 +52,7 @@ export default class RouteImports extends Route {
       await invalidateBackup(backupId)
       await invalidateAjustBackup(backupId)
     }
-    console.log(backupIds, uniqueBackupIds.length)
+    //console.log(backupIds, uniqueBackupIds.length)
     this.sendOk(ctx, 'OK')
   }
 
@@ -92,7 +92,7 @@ export default class RouteImports extends Route {
     accesses: [Access.isAdmin],
   })
   async importActivities(ctx) {
-    console.log('oui? import activities')
+    //console.log('oui? import activities')
     const { backupId, file } = this.body(ctx)
 
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
@@ -114,7 +114,7 @@ export default class RouteImports extends Route {
   })
   async importAllActivities(ctx) {
     const { file } = this.body(ctx)
-    console.log('IMPORTS - START')
+    //console.log('IMPORTS - START')
 
     console.time('step0')
     console.time('step1')
@@ -124,7 +124,7 @@ export default class RouteImports extends Route {
     console.timeEnd('step1')
     await this.model.models.Activities.importMultipleJuridictions(arrayOfHR)
     console.timeEnd('step0')
-    console.log('IMPORTS - DONE')
+    //console.log('IMPORTS - DONE')
     this.sendOk(ctx, 'OK')
   }
 
@@ -142,13 +142,13 @@ export default class RouteImports extends Route {
     const { file } = this.body(ctx)
     // console.log('CHECK - START')
 
-    // console.time('step0')
-    // console.time('step1')
+    console.time('step0')
+    console.time('step1')
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    // console.timeEnd('step1')
-    // console.timeEnd('step0')
+    console.timeEnd('step1')
+    console.timeEnd('step0')
     // console.log('CHECK - DONE')
     this.sendOk(ctx, await this.model.models.Activities.checkDataBeforeImportAll(arrayOfHR))
   }
@@ -168,13 +168,13 @@ export default class RouteImports extends Route {
     const { backupId, file } = this.body(ctx)
     // console.log('CHECK - START')
 
-    // console.time('step0')
-    // console.time('step1')
+    console.time('step0')
+    console.time('step1')
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ',',
     })
-    // console.timeEnd('step1')
-    // console.timeEnd('step0')
+    console.timeEnd('step1')
+    console.timeEnd('step0')
     // console.log('CHECK - DONE')
     this.sendOk(ctx, await this.model.models.Activities.checkDataBeforeImportOne(arrayOfHR, backupId))
   }

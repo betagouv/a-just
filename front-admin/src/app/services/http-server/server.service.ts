@@ -16,12 +16,12 @@ export class ServerService {
 
   handleError(error: any) {
     //this.appService.setIsLoading(false);
-    console.log('handleError', error);
+    console.error('handleError', error);
     if (error.status) {
-      console.log('error.status', error.status);
+      console.error('error.status', error.status);
     }
     if (error.toString) {
-      console.log('error.toString', error.toString());
+      console.error('error.toString', error.toString());
     }
 
     if (error.status === 403) {
@@ -95,7 +95,7 @@ export class ServerService {
   }
 
   post(url: string, params = {}, options = {}, header = {}): Promise<any> {
-    console.log('HTTP POST ' + this.getUrl(url));
+    //console.log('HTTP POST ' + this.getUrl(url));
     return this._http
       .post(this.getUrl(url), params, options)
       .then((r) => {
@@ -113,7 +113,7 @@ export class ServerService {
   }
 
   async put(url: string, params = {}, options = {}): Promise<any> {
-    console.log('HTTP PUT ' + this.getUrl(url));
+    //console.log('HTTP PUT ' + this.getUrl(url));
     return this._http
       .put(this.getUrl(url), params, options)
       .then((r) => {
@@ -131,7 +131,7 @@ export class ServerService {
   }
 
   delete(url: string, options = {}): Promise<any> {
-    console.log('HTTP DELETE ' + this.getUrl(url));
+    //console.log('HTTP DELETE ' + this.getUrl(url));
     return this._http
       .delete(this.getUrl(url), options)
       .then((r) => {

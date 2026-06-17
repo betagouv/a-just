@@ -8,7 +8,7 @@ module.exports = {
       },
       raw: true,
     });
-    console.log(findJuridiction)
+    //console.log(findJuridiction)
     if (findJuridiction) {
       const hr = await models.HumanResources.findAll({
         where: {
@@ -23,5 +23,5 @@ module.exports = {
       }
     }
   },
-  down: (/*queryInterface , Sequelize*/) => {},
+  down: (/*queryInterface , Sequelize*/) => { },
 };

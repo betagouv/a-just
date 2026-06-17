@@ -16,11 +16,11 @@ apiKey.apiKey = config.sendinblue
  */
 export function sentEmail(to, templateId, params, options = {}) {
   if (!config.sentEmail) {
-    console.log('TEST Mail sent', {
-      to: [to],
-      templateId,
-      params: { ...params, envName: config.displayEnvName },
-    })
+    //console.log('TEST Mail sent', {
+    //  to: [to],
+    //  templateId,
+    //  params: { ...params, envName: config.displayEnvName },
+    //})
     return new Promise((resolve) => {
       resolve()
     })
@@ -41,7 +41,7 @@ export function sentEmail(to, templateId, params, options = {}) {
     },
     function (err) {
       if (err && err.response && err.response.body) {
-        console.log(err.response.body)
+        console.error(err.response.body)
       } else {
         console.error(err.text || err)
       }

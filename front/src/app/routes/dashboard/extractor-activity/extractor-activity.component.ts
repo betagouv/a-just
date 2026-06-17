@@ -328,7 +328,7 @@ export class ExtractorActivityComponent extends MainClass {
             return
           })
           .catch((err) => {
-            console.log('Error writing excel export', err)
+            console.error('Error writing excel export', err)
             try {
               l.finish('error')
             } catch {}
