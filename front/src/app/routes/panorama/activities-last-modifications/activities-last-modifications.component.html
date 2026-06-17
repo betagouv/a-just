@@ -1,6 +1,6 @@
 <h3>Dernières modifications</h3>
 
-@for (item of list; track item.contentieux.id) {
+@for (item of list; track item.contentieux.id + '-' + item.history.id) {
 <a class="item" routerLink="/donnees-d-activite"
   [queryParams]="{ month: item.activity.periode, cont: item.contentieux.id }">
   <div class="preview">

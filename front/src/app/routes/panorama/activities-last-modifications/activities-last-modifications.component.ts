@@ -58,6 +58,7 @@ export class ActivitiesLastModificationsComponent extends MainClass implements O
         if (hrBackup) {
           this.activitiesService.getLastUpdatedActivities().then((l) => {
             this.list = l
+            console.log(this.list.length)
           })
         } else {
           this.list = []
