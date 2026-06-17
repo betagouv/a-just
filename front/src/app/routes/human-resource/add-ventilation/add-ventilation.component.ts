@@ -443,9 +443,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.alertList.update((list) => [...list, 'etp'])
     }
 
-    if (!activitiesStartDate) {
-      this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
-      this.printErrorDateStart = true
+    if (!activitiesStartDate && !this.isEdit && this.human && this.human.dateStart) {
+      activitiesStartDate = new Date(this.human.dateStart)
+
+      // Old error when the date was not set, now we use by default the date of arrival of the agent
+      // this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
+      // this.printErrorDateStart = true
     }
 
     if (this.humanResourceService.alertList().length > 0) {
