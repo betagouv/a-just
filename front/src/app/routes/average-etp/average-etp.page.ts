@@ -102,7 +102,6 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        console.log(b)
         this.backups = orderBy(
           b,
           [

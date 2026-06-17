@@ -150,7 +150,7 @@ export class YamlToolsPage {
    */
   validateRemoval() {
     const response = confirm(
-      'Etes-vous sur de vouloir effectuer cette action ?'
+      'Etes-vous sur de vouloir effectuer cette action ?',
     );
     if (this.selectedPath.length && response) {
       this.displayResult = true;
@@ -159,7 +159,7 @@ export class YamlToolsPage {
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF =
           this.removeAll(
             this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF,
-            elem.NAC
+            elem.NAC,
           );
       });
       const message = document.getElementById('yml') as HTMLInputElement;
@@ -167,7 +167,7 @@ export class YamlToolsPage {
       message.value = stringify(this.finalYmlData);
       this.countResultAfterChange = this.countNacOccur(
         this.selectedPath,
-        this.finalYmlData
+        this.finalYmlData,
       );
     }
   }
@@ -283,14 +283,14 @@ export class YamlToolsPage {
       return { ...elem, NACToAdd: this.tmpNACToAdd };
     });
     this.selectedContentieuxTmp = tmp;
-    console.log('contentieuxSelect: ', this.contentieuxSelect);
+    //console.log('contentieuxSelect: ', this.contentieuxSelect);
   }
 
   /**
    *   Copie des contentieux selectionnés pour une NAC dans le tableaux final des NAC à ajouter
    */
   onAddNacValidation() {
-    console.log('selectedContentieux_tmp: ', this.selectedContentieuxTmp);
+    //console.log('selectedContentieux_tmp: ', this.selectedContentieuxTmp);
     this.selectedContentieuxTmp.map((elem) => {
       this.selectedContentieux.push(elem);
     });
@@ -299,7 +299,7 @@ export class YamlToolsPage {
     if (this.contentieuxSelect) {
       this.contentieuxSelect.selectedRights = [];
     }
-    console.log('selectedContentieux : ', this.selectedContentieux);
+    //console.log('selectedContentieux : ', this.selectedContentieux);
   }
 
   /**
@@ -318,7 +318,7 @@ export class YamlToolsPage {
    */
   validateAdding() {
     const response = confirm(
-      'Etes-vous sur de vouloir effectuer cette action ?'
+      'Etes-vous sur de vouloir effectuer cette action ?',
     );
     if (this.selectedContentieux.length && response) {
       this.displayResult = true;
@@ -336,7 +336,7 @@ export class YamlToolsPage {
           };
         this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF = this.addNAC(
           this.finalYmlData[elem.code].filtres[elem.path[1]].NATAFF,
-          elem.NACToAdd
+          elem.NACToAdd,
         );
       });
 

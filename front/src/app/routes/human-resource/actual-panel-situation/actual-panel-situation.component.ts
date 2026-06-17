@@ -120,7 +120,7 @@ export class ActualPanelSituationComponent extends MainClass implements OnChange
 
   async downloadAsset(type: string, download = false) {
     let url = null
-    console.log('Type:', type)
+    //console.log('Type:', type)
     if (type === 'nomencalture') {
       if (this.userService.isCa()) {
         url = NOMENCLATURE_DOWNLOAD_URL_CA

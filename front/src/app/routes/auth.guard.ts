@@ -26,7 +26,7 @@ class PermissionsService {
 
     this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
 
-    console.log('redirectUrl', this.authService.redirectUrl, window.location.pathname + window.location.search + window.location.hash)
+    //console.log('redirectUrl', this.authService.redirectUrl, window.location.pathname + window.location.search + window.location.hash)
     // Navigate to the login page with extras
     this.router.navigate(['/login'])
     return false

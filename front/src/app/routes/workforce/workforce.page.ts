@@ -622,7 +622,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   trackById(index: number, item: any) {
-    console.log('item', item)
+    //console.log('item', item)
     return index
   }
 
@@ -689,8 +689,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         }),
       ]
     }
-
-    console.log('this.allPersonsFiltered', this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
     this.allPersonsFilteredNotIn =
@@ -853,7 +851,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           person.category,
       )
       .map((person) => {
-        console.log('person', person)
+        //console.log('person', person)
         this.listFormated.map((l) => {
           if (l.categoryId === person.category?.id && !l.hr.find((h) => h.id === person.id)) {
             const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
@@ -1005,7 +1003,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.selectedReferentielIds = list
     this.humanResourceService.selectedReferentielIds = this.selectedReferentielIds
 
-    console.log('subList', subList)
+    //console.log('subList', subList)
 
     this.selectedSubReferentielIds = [...subList]
     this.humanResourceService.selectedSubReferentielIds = this.selectedSubReferentielIds
@@ -1375,15 +1373,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     const changed =
-      !!wasOpenSnapshot && (
-        wasOpenSnapshot.sort !== current.sort ||
+      !!wasOpenSnapshot &&
+      (wasOpenSnapshot.sort !== current.sort ||
         wasOpenSnapshot.order !== current.order ||
         wasOpenSnapshot.display !== current.display ||
         JSON.stringify(wasOpenSnapshot.filterValues) !== JSON.stringify(current.filterValues) ||
         JSON.stringify(wasOpenSnapshot.filterIndispoValues) !== JSON.stringify(current.filterIndispoValues) ||
         JSON.stringify(wasOpenSnapshot.referentielIds) !== JSON.stringify(current.referentielIds) ||
-        JSON.stringify(wasOpenSnapshot.subReferentielIds) !== JSON.stringify(current.subReferentielIds)
-      )
+        JSON.stringify(wasOpenSnapshot.subReferentielIds) !== JSON.stringify(current.subReferentielIds))
 
     if (changed) {
       const backup = this.humanResourceService.backupId.getValue()
@@ -1401,8 +1398,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     this.filterPanelSnapshot = null
   }
-
-  
 
   /**
    * Supprimer le filtre des contentieux

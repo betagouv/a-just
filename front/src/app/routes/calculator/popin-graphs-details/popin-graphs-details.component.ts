@@ -557,7 +557,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     if (this.optionDateStop) {
       configurationsDates.push(this.optionDateStop)
     }
-    console.log('configurationsDates', configurationsDates)
+    //console.log('configurationsDates', configurationsDates)
     const getFirstDate = minBy(configurationsDates, function (o) {
       o = today(o)
       return o.getTime()

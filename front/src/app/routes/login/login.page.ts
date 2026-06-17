@@ -61,7 +61,13 @@ export class LoginPage implements OnInit {
    * @param router
    * @param title
    */
-  constructor(private authService: AuthService, public userService: UserService, private router: Router, private title: Title, private ssoService: SSOService) {
+  constructor(
+    private authService: AuthService,
+    public userService: UserService,
+    private router: Router,
+    private title: Title,
+    private ssoService: SSOService,
+  ) {
     this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Se connecter')
   }
 
@@ -135,7 +141,7 @@ export class LoginPage implements OnInit {
   }
 
   onContinuToLogin(action: any, input: any) {
-    console.log(action, input.value)
+    //console.log(action, input.value)
     switch (action.id) {
       case 'connect':
         this.authService.completeLogin({ code: input.value }).then((returnLogin) => {

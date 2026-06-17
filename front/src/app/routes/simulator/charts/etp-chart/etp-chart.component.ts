@@ -30,18 +30,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * Valeur de début de simulation
    */
   startRealValue = ''
-   /**
+  /**
    * Valeur de début de simulation mois année
    */
-   startRealValueShort = ''
+  startRealValueShort = ''
   /**
    * Valeur de fin de simulation
    */
   stopRealValue = ''
-    /**
+  /**
    * Valeur de fin de simulation mois année
    */
-    stopRealValueShort = ''
+  stopRealValueShort = ''
   /**
    * Element html du graphique
    */
@@ -124,25 +124,29 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param element element html
    * @param simulatorService service simulateur
    */
-  constructor(private element: ElementRef<HTMLElement>, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    private element: ElementRef<HTMLElement>,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
         this.stopRealValue = findRealValue(value)
-        this.stopRealValueShort = findRealValueCustom(value,false,true)
+        this.stopRealValueShort = findRealValueCustom(value, false, true)
         this.dateStop = value
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)
-      this.startRealValueShort = findRealValueCustom(value,false,true)
+      this.startRealValueShort = findRealValueCustom(value, false, true)
       this.dateStart = value
       if (this.dateStop !== null) {
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
     })
     simulatorService.situationSimulated.subscribe((value) => {
-      console.log(this.labels, value)
+      //console.log(this.labels, value)
       if (this.labels !== null) {
         this.data.simulatedMag.values = simulatorService.generateLinearData(value?.etpMag as number, value?.etpMag as number, this.labels.length)
         this.data.simulatedGref.values = simulatorService.generateLinearData(value?.etpFon as number, value?.etpFon as number, this.labels.length)
@@ -152,7 +156,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         let monthlyContValues: any = undefined
         let monthlyFonValues: any = undefined
 
-        console.log(simulatorService.situationProjected.getValue())
+        //console.log(simulatorService.situationProjected.getValue())
 
         if (simulatorService.situationProjected.getValue()!.monthlyReport !== undefined) {
           simulatorService.situationProjected.getValue()!.monthlyReport!.forEach((x: any) => {
@@ -249,7 +253,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const labels = this.labels
 
-    console.log('load Chart ETP')
+    //console.log('load Chart ETP')
 
     const data = {
       labels: labels,

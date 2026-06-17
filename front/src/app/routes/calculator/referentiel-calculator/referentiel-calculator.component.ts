@@ -550,7 +550,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     // init graph error
     this.graphError = null
 
-    console.log('showChartJS', this.chartjs, this.chartjs.nativeElement)
+    //console.log('showChartJS', this.chartjs, this.chartjs.nativeElement)
 
     const mainColor = this.userService.referentielMappingColorActivityByInterface(
       this.userService.referentielMappingNameByInterface(
@@ -877,14 +877,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
             : nextDatesChartJS.map((v) => (v === null ? NaN : v)),
       },
     ]
-    console.log('datasets', datasets)
+    //console.log('datasets', datasets)
 
     this.projectionChart.config.data = {
       labels,
       datasets,
     }
     this.projectionChart.update()
-    console.log('projectionChart', this.projectionChart)
+    //console.log('projectionChart', this.projectionChart)
   }
 
   /**

@@ -507,7 +507,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.watch(
       this.userService.user.subscribe((u) => {
         this.categoryFiltered = this.categoriesAvailable.filter((c) => u && u.access && u.access.indexOf(c.accessId) !== -1)
-        console.log(this.categoryFiltered)
       }),
     )
   }
@@ -805,7 +804,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               }
               this.firstLoading = false
               this.onLoadComparaisons()
-              console.log('list', list)
               //this.refreshWarningInformations(list)
             })
             .catch(() => {
@@ -1645,7 +1643,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           }),
         ]
 
-        console.log('fx', value2TauxCouverture, value1TauxCouverture)
+        //console.log('fx', value2TauxCouverture, value1TauxCouverture)
         const variationsCouverture = getVariations(value2TauxCouverture, value1TauxCouverture, false)
         list.push({
           title: 'Taux de couverture',

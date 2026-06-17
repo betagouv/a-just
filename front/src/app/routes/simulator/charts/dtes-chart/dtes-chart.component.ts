@@ -77,7 +77,11 @@ export class DtesChartComponent {
    * @param element Element HTML
    * @param simulatorService Service simulateur
    */
-  constructor(element: ElementRef<HTMLElement>, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    element: ElementRef<HTMLElement>,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
         this.stopRealValue = findRealValue(value)
@@ -94,13 +98,10 @@ export class DtesChartComponent {
     })
     simulatorService.situationSimulated.subscribe((value) => {
       if (this.labels !== null) {
-
         this.data.projectedStock.values = []
         this.data.projectedDTES.values = []
 
-
-        if(this.simulatorService.isValidatedWhiteSimu.getValue()){
-
+        if (this.simulatorService.isValidatedWhiteSimu.getValue()) {
           this.data.simulatedStock.values = simulatorService.generateLinearData(
             simulatorService.getFieldValue('lastStock', simulatorService.situationActuelle.getValue()),
             value?.lastStock as number,
@@ -114,11 +115,11 @@ export class DtesChartComponent {
             this.labels.length,
           )
 
-          const simulatedZeroIndex = this.data.simulatedStock.values.findIndex(v => v < 0)
+          const simulatedZeroIndex = this.data.simulatedStock.values.findIndex((v) => v < 0)
           if (simulatedZeroIndex !== -1) {
             const startDTES = this.data.simulatedDTES.values[0]
             for (let i = 0; i < simulatedZeroIndex; i++) {
-              this.data.simulatedDTES.values[i] = startDTES - (startDTES * i / simulatedZeroIndex)
+              this.data.simulatedDTES.values[i] = startDTES - (startDTES * i) / simulatedZeroIndex
             }
             for (let i = simulatedZeroIndex; i < this.data.simulatedDTES.values.length; i++) {
               this.data.simulatedDTES.values[i] = 0
@@ -130,72 +131,71 @@ export class DtesChartComponent {
             simulatorService.getFieldValue('lastStock', simulatorService.situationProjected.getValue()),
             this.labels.length,
             true,
-        )
+          )
 
-        this.data.projectedDTES.values = simulatorService.generateLinearData(
-          simulatorService.situationActuelle.getValue()!.realDTESInMonths as number,
-          simulatorService.situationProjected.getValue()!.realDTESInMonths as number,
-          this.labels.length,
-        )
+          this.data.projectedDTES.values = simulatorService.generateLinearData(
+            simulatorService.situationActuelle.getValue()!.realDTESInMonths as number,
+            simulatorService.situationProjected.getValue()!.realDTESInMonths as number,
+            this.labels.length,
+          )
 
-        const projectedZeroIndex = this.data.projectedStock.values.findIndex(v => v < 0)
-        if (projectedZeroIndex !== -1) {
-          const startDTESProjected = this.data.projectedDTES.values[0]
-          for (let i = 0; i < projectedZeroIndex; i++) {
-            this.data.projectedDTES.values[i] = startDTESProjected - (startDTESProjected * i / projectedZeroIndex)
-          }
-          for (let i = projectedZeroIndex; i < this.data.projectedDTES.values.length; i++) {
-            this.data.projectedDTES.values[i] = 0
-          }
-        }
-      }
-      else {
-        //console.log('monthlyReportProjected', simulatorService.situationProjected.getValue())
-        const monthlyReportProjected = simulatorService.situationProjected.getValue()?.monthlyReport
-        const monthlyReportSimulated = simulatorService.situationSimulated.getValue()?.monthlyReport
-        const selectedCategoryLabel = simulatorService.selectedCategory.getValue()?.label
-        
-        if (selectedCategoryLabel) {
-          // Projeté
-          if (monthlyReportProjected) {
-            const categoryData = monthlyReportProjected.find((x: any) => x.name === selectedCategoryLabel)
-            if (categoryData && categoryData.values) {
-              const monthKeys = Object.keys(categoryData.values)
-              this.data.projectedStock.values = monthKeys.map((key) => {
-                const monthData = categoryData.values[key]
-                return monthData.lastStock !== null && monthData.lastStock !== undefined ? monthData.lastStock : null
-              })
-              this.data.projectedDTES.values = monthKeys.map((key) => {
-                const monthData = categoryData.values[key]
-                if (monthData.DTES !== null && monthData.DTES !== undefined) {
-                  return monthData.DTES < 0 ? 0 : monthData.DTES
-                }
-                return null
-              })
+          const projectedZeroIndex = this.data.projectedStock.values.findIndex((v) => v < 0)
+          if (projectedZeroIndex !== -1) {
+            const startDTESProjected = this.data.projectedDTES.values[0]
+            for (let i = 0; i < projectedZeroIndex; i++) {
+              this.data.projectedDTES.values[i] = startDTESProjected - (startDTESProjected * i) / projectedZeroIndex
+            }
+            for (let i = projectedZeroIndex; i < this.data.projectedDTES.values.length; i++) {
+              this.data.projectedDTES.values[i] = 0
             }
           }
+        } else {
+          //console.log('monthlyReportProjected', simulatorService.situationProjected.getValue())
+          const monthlyReportProjected = simulatorService.situationProjected.getValue()?.monthlyReport
+          const monthlyReportSimulated = simulatorService.situationSimulated.getValue()?.monthlyReport
+          const selectedCategoryLabel = simulatorService.selectedCategory.getValue()?.label
 
-          // Simulé
-          if (monthlyReportSimulated) {
-            const categoryDataSim = monthlyReportSimulated.find((x: any) => x.name === selectedCategoryLabel)
-            if (categoryDataSim && categoryDataSim.values) {
-              const monthKeys = Object.keys(categoryDataSim.values)
-              this.data.simulatedStock.values = monthKeys.map((key) => {
-                const monthData = categoryDataSim.values[key]
-                return monthData.lastStock !== null && monthData.lastStock !== undefined ? monthData.lastStock : null
-              })
-              this.data.simulatedDTES.values = monthKeys.map((key) => {
-                const monthData = categoryDataSim.values[key]
-                if (monthData.DTES !== null && monthData.DTES !== undefined) {
-                  return monthData.DTES < 0 ? 0 : monthData.DTES
-                }
-                return null
-              })
+          if (selectedCategoryLabel) {
+            // Projeté
+            if (monthlyReportProjected) {
+              const categoryData = monthlyReportProjected.find((x: any) => x.name === selectedCategoryLabel)
+              if (categoryData && categoryData.values) {
+                const monthKeys = Object.keys(categoryData.values)
+                this.data.projectedStock.values = monthKeys.map((key) => {
+                  const monthData = categoryData.values[key]
+                  return monthData.lastStock !== null && monthData.lastStock !== undefined ? monthData.lastStock : null
+                })
+                this.data.projectedDTES.values = monthKeys.map((key) => {
+                  const monthData = categoryData.values[key]
+                  if (monthData.DTES !== null && monthData.DTES !== undefined) {
+                    return monthData.DTES < 0 ? 0 : monthData.DTES
+                  }
+                  return null
+                })
+              }
+            }
+
+            // Simulé
+            if (monthlyReportSimulated) {
+              const categoryDataSim = monthlyReportSimulated.find((x: any) => x.name === selectedCategoryLabel)
+              if (categoryDataSim && categoryDataSim.values) {
+                const monthKeys = Object.keys(categoryDataSim.values)
+                this.data.simulatedStock.values = monthKeys.map((key) => {
+                  const monthData = categoryDataSim.values[key]
+                  return monthData.lastStock !== null && monthData.lastStock !== undefined ? monthData.lastStock : null
+                })
+                this.data.simulatedDTES.values = monthKeys.map((key) => {
+                  const monthData = categoryDataSim.values[key]
+                  if (monthData.DTES !== null && monthData.DTES !== undefined) {
+                    return monthData.DTES < 0 ? 0 : monthData.DTES
+                  }
+                  return null
+                })
+              }
             }
           }
         }
-      }
-        
+
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           this.myChart._metasets[0]._dataset.data = this.data.projectedStock.values
@@ -204,8 +204,8 @@ export class DtesChartComponent {
           this.myChart._metasets[3]._dataset.data = this.data.simulatedDTES.values
           this.myChart.update()
         }
-        console.log('DATAS',this.data)
-        console.log('isValidatedWhiteSimu',this.simulatorService.isValidatedWhiteSimu.getValue())
+        //console.log('DATAS',this.data)
+        //console.log('isValidatedWhiteSimu',this.simulatorService.isValidatedWhiteSimu.getValue())
       }
     })
 

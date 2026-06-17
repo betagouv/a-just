@@ -72,7 +72,6 @@ export class ServerService {
 
   /* HTTPs request */
   get(url: string, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url))
     //this.appService.setIsLoading(true);
     return this._http
       .get(this.getUrl(url), options)
@@ -84,7 +83,6 @@ export class ServerService {
   }
 
   getWithoutError(url: string, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url))
     return this._http.get(this.getUrl(url), options).then((r) => {
       //this.appService.setIsLoading(false);
       return r
@@ -92,7 +90,6 @@ export class ServerService {
   }
 
   post(url: string, params = {}, options = {}, header = {}): Promise<any> {
-    console.log('HTTP POST ' + this.getUrl(url))
     return this._http
       .post(this.getUrl(url), params, options)
       .then((r) => {
@@ -103,7 +100,6 @@ export class ServerService {
   }
 
   postWithoutError(url: string, params = {}, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url))
     return this._http.post(this.getUrl(url), params, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r
@@ -111,7 +107,6 @@ export class ServerService {
   }
 
   put(url: string, params = {}, options = {}): Promise<any> {
-    console.log('HTTP PUT ' + this.getUrl(url))
     return this._http
       .put(this.getUrl(url), params, options)
       .then((r) => {
@@ -122,7 +117,6 @@ export class ServerService {
   }
 
   delete(url: string, options = {}): Promise<any> {
-    console.log('HTTP DELETE ' + this.getUrl(url))
     return this._http
       .delete(this.getUrl(url), options)
       .then((r) => {

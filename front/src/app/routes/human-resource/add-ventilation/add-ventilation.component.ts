@@ -278,7 +278,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
-        console.log('value', value)
+        //console.log('value', value)
         if (value) {
           const valueFormated = parseFloat((value || '') + ''.replace(/,/, '.'))
 
@@ -419,7 +419,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.alertList.update((list) => [...list, 'lastName'])
     }
 
-    console.log('this.human', this.human)
+    //'this.human', this.human)
     if (this.human && !this.human.dateStart) {
       this.humanResourceService.alertList.update((list) => [...list, 'startDate'])
     } else {
@@ -449,7 +449,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (this.humanResourceService.alertList().length > 0) {
-      console.log('alertList', this.humanResourceService.alertList)
+      //console.log('alertList', this.humanResourceService.alertList)
       this.humanResourceService.alertList().map((tag) => {
         this.alertSet.emit({ tag })
       })
@@ -591,7 +591,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   ) {
     let situations = this.human?.situations || []
 
-    console.log('Situations:', situations, newReferentiel, activitiesStartDate, this.editId)
+    //console.log('Situations:', situations, newReferentiel, activitiesStartDate, this.editId)
 
     const activities: any[] = []
     newReferentiel
@@ -616,7 +616,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       const day = today(s.dateStart)
       return activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
     })
-    console.log('isSameDate:', isSameDate)
+    //console.log('isSameDate:', isSameDate)
 
     const options = {
       etp: profil.etp,
@@ -705,7 +705,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   async downloadAsset(type: string, download = false) {
     let url = null
-    console.log('Type:', type)
+    //console.log('Type:', type)
     if (type === 'nomencalture') {
       if (this.userService.isCa()) {
         url = NOMENCLATURE_DOWNLOAD_URL_CA

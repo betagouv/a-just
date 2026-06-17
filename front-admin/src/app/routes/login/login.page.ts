@@ -11,15 +11,9 @@ import { UserService } from '../../services/user/user.service';
 import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
 import { PopupComponent } from '../../components/popup/popup.component';
 
-
 @Component({
   standalone: true,
-  imports: [
-    PopupComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    PopupComponent
-],
+  imports: [PopupComponent, FormsModule, ReactiveFormsModule, PopupComponent],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
@@ -36,7 +30,7 @@ export class LoginPage {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -63,7 +57,7 @@ export class LoginPage {
   }
 
   onContinuToLogin(action: any, input: any) {
-    console.log(action, input.value);
+    //console.log(action, input.value);
     switch (action.id) {
       case 'connect':
         this.authService

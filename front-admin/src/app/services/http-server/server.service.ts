@@ -31,10 +31,10 @@ export class ServerService {
       return Promise.reject('Veuillez vous reconnecter');
     } else if (error.status === 404) {
       alert(
-        'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.'
+        'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.',
       );
       return Promise.reject(
-        'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.'
+        'Connexion au serveur impossible. Veuillez réessayer dans quelques minutes.',
       );
     } else if (error.status === undefined) {
       alert(error.toString());
@@ -77,7 +77,6 @@ export class ServerService {
 
   /* HTTPs request */
   get(url: string, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url));
     //this.appService.setIsLoading(true);
     return this._http
       .get(this.getUrl(url), options)
@@ -89,7 +88,6 @@ export class ServerService {
   }
 
   getWithoutError(url: string, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url));
     return this._http.get(this.getUrl(url), options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;
@@ -108,7 +106,6 @@ export class ServerService {
   }
 
   postWithoutError(url: string, params = {}, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url));
     return this._http.post(this.getUrl(url), params, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;
@@ -127,7 +124,6 @@ export class ServerService {
   }
 
   async putWithoutError(url: string, params = {}, options = {}): Promise<any> {
-    console.log('HTTP GET ' + this.getUrl(url));
     return this._http.put(this.getUrl(url), params, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;

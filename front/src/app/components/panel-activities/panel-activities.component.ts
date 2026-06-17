@@ -148,9 +148,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
     this.referentiel = cloneDeep(this.humanResourceService.contentieuxReferentielOnly.getValue())
   }
 
-  ngOnInit() {
-    console.log('this.id', this.id)
-  }
+  ngOnInit() {}
 
   /**
    * Détection d'un changement et génération des données du rendu
@@ -241,7 +239,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * @param parentReferentiel
    */
   onChangePercent(referentiel: ContentieuReferentielInterface, percent: number, parentReferentiel: ContentieuReferentielInterface | null = null) {
-    console.log('REF', referentiel.id)
+    //console.log('REF', referentiel.id)
     // memorise list
     const activity = this.activities.find((a) => a.contentieux.id === referentiel.id)
     if (activity) {

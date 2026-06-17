@@ -396,7 +396,7 @@
   @if (updatedBy) {
   <p class="sub-title">
     Dernière mise à jour le {{ updatedBy.date | date: 'dd' }} {{ getMonthString(updatedBy.date) }}
-    {{ updatedBy.date | date: 'YYYY' }}
+    {{ updatedBy.date | date: 'yyyy' }}
   </p>
   }
 </ng-template>

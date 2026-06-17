@@ -153,7 +153,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['id']) {
-          console.log('MON ID', params['id'])
+          //console.log('MON ID', params['id'])
           const id = +this.route.snapshot.params['id']
           this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
@@ -462,7 +462,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     if (event.id === 'cancel') {
       //this.savePopup = false
       this.contentieuxOptionsService.optionsIsModify.next(false)
-      console.log([this.nextState])
+      //console.log([this.nextState])
       this.router.navigate([this.nextState])
     } else if (event.id === 'save') {
       this.contentieuxOptionsService.optionsIsModify.next(false)

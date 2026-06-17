@@ -698,7 +698,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
             this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
             this.firstLoading = false
           } else {
-            console.log('second load')
             if (this.canViewMagistrat) {
               this.changeCategorySelected('MAGISTRAT')
               this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
@@ -763,7 +762,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
-    this.route.data.subscribe((data) => console.log('route:', data))
+    // this.route.data.subscribe((data) => console.log('route:', data))
     const findCategory =
       this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === this.categorySelected?.toUpperCase()) || null
 
@@ -1757,7 +1756,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
       realDTESInMonths: null,
       realCoverage: null,
     }
-    console.log('Launch simulation', params)
+    //console.log('Launch simulation', params)
     if (this.hasNoNullValue(this.firstSituationData)) {
       this.toDisplaySimulation = true
       //this.simulateButton = 'disabled'

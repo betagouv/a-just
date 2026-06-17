@@ -142,7 +142,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
           )
           .map((person: any) => {
             if (category.categoryId === person.category?.id && !listAgent.find((h: any) => h.id === person.id)) {
-              console.log('agent add by force', person)
+              // console.log('agent add by force', person)
               listAgent.push(person)
             }
           })

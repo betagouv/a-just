@@ -331,7 +331,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       const id = +this.route.snapshot.params['id']
       findUser = await this.humanResourceService.loadRemoteHR(id)
     }
-    console.log('userFinded', findUser)
     if (findUser) {
       this.currentHR = findUser
 
@@ -435,11 +434,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       const findIndispos = this.humanResourceService.findAllIndisponibilities(this.currentHR, currentDate)
       const findSituation = this.humanResourceService.findSituation(this.currentHR, currentDate)
 
-      console.log('--------------------------------')
-      console.log('currentDate', currentDate)
-      console.log('maxDate', maxDate)
-      console.log('findSituation', findSituation)
-      console.log('findIndispos', findIndispos)
+      // console.log('--------------------------------')
+      // console.log('currentDate', currentDate)
+      // console.log('maxDate', maxDate)
+      // console.log('findSituation', findSituation)
+      // console.log('findIndispos', findIndispos)
 
       delta = findIndispos.map((f) => f.id)
       if (findSituation) {
@@ -572,7 +571,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.showActuelPanel = true
     }
 
-    console.log('this.showActuelPanel', this.histories)
+    //console.log('this.showActuelPanel', this.histories)
 
     if (prepopon) {
       this.preOpenSituation()
@@ -858,10 +857,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
-    console.log(history, this.histories)
+    //console.log(history, this.histories)
 
     const index = history ? this.histories.findIndex((h) => h.id === history.id && h.dateStart === history.dateStart) : -1
-    console.log('index', index)
+    //console.log('index', index)
 
     if (this.onEditIndex === null) {
       if (index === -1) {

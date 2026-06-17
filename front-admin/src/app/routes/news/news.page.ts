@@ -145,7 +145,7 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
               return;
             }
 
-            console.log(this.newsToEdit);
+            //console.log(this.newsToEdit);
 
             this.newsService.updateOrCreate(this.newsToEdit).then(() => {
               this.newsToEdit = null;

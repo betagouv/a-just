@@ -32,7 +32,7 @@ export class JuridictionsPage extends MainClass implements OnInit {
   onLoad() {
     this.humanResourceService.getBackupList().then((datas: any) => {
       datas.map((elem: JuridictionInterface) =>
-        this.juridictionList.push(elem)
+        this.juridictionList.push(elem),
       );
     });
     this.juridictionsService.getAll().then((datas) => {
@@ -48,9 +48,9 @@ export class JuridictionsPage extends MainClass implements OnInit {
     if (node !== 'enabled') {
       const newValue = prompt(
         `Remplacer le champ '${node}' par`,
-        element[node] || ''
+        element[node] || '',
       );
-      console.log('newValue', newValue, element[node]);
+      //console.log('newValue', newValue, element[node]);
       if (newValue !== null && element[node] !== newValue) {
         element[node] = newValue;
         getValue = true;
@@ -92,7 +92,7 @@ export class JuridictionsPage extends MainClass implements OnInit {
     const backupId = Number(form.juridiction.value);
 
     const backupName = prompt(
-      'Quel nom souhaitez-vous donner à cette nouvelle juridiction ?'
+      'Quel nom souhaitez-vous donner à cette nouvelle juridiction ?',
     );
 
     if (backupName && backupName.length > 0) {
@@ -103,7 +103,7 @@ export class JuridictionsPage extends MainClass implements OnInit {
         backupId,
         juridiction !== null ? juridiction.label : '',
         form.copyActivity.checked,
-        form.excludeJuridiction.checked
+        form.excludeJuridiction.checked,
       );
     }
   }

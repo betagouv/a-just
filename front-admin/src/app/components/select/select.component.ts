@@ -183,7 +183,7 @@ export class SelectComponent extends MainClass implements OnChanges {
           tmpStr = (this.value as number[]).includes(t.id as never)
             ? tmpStr.concat(t.value, ', ')
             : tmpStr;
-        })
+        }),
       );
       this.realValue = tmpStr.slice(0, -2);
     } else if (
@@ -195,7 +195,7 @@ export class SelectComponent extends MainClass implements OnChanges {
       this.subReferentielData = [];
       this.value = this.subList;
       [find.childrens].map((s) =>
-        s?.map((t) => this.subReferentielData.push(t))
+        s?.map((t) => this.subReferentielData.push(t)),
       );
       this.realValue = 'Tous';
     } else if (Array.isArray(this.value) && this.value.length !== 0) {
@@ -227,7 +227,7 @@ export class SelectComponent extends MainClass implements OnChanges {
    * @returns void
    */
   onSelectedChanged(list: number[] | number) {
-    console.log('o change ', list);
+    //console.log('o change ', list);
     if (typeof list === 'number') this.value = [list];
     else this.value = list;
 

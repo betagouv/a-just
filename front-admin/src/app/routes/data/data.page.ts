@@ -136,7 +136,7 @@ export class DataPage {
     private importService: ImportService,
     private extractDataService: ExtractsDataService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
   ) {}
 
   ngOnInit() {
@@ -146,7 +146,7 @@ export class DataPage {
   onLoad() {
     this.humanResourceService.getBackupList().then((datas: any) => {
       datas.map((elem: JuridictionInterface) =>
-        this.juridictionList.push(elem)
+        this.juridictionList.push(elem),
       );
     });
     this.extractDataService.getJuridictionAjusted({
@@ -187,8 +187,8 @@ export class DataPage {
           element.reduce(
             (w: any, r: any) =>
               Math.max(w || 10, (r[header] || []).length || 10),
-            10
-          )
+            10,
+          ),
         ),
       };
     });
@@ -201,7 +201,7 @@ export class DataPage {
   getExportFileName(type: string, dateStart: Date, dateStop: Date) {
     return `${type}_${this.getTotalPeriodeLabel(
       dateStart || new Date(),
-      dateStop || new Date()
+      dateStop || new Date(),
     )}_${this.juridictionName}`;
   }
 
@@ -259,7 +259,7 @@ export class DataPage {
   generateFormatedDataMonthForExtract(
     act: any,
     monthTabName: string,
-    total = false
+    total = false,
   ) {
     const sortCodeArray = act.contentieux.code_import
       .split('.')
@@ -286,7 +286,7 @@ export class DataPage {
       ['% A-JUSTement Entrées']:
         act.entrees && act.originalEntrees && act.originalEntrees
           ? Math.abs(
-              (act.entrees - act.originalEntrees) / act.originalEntrees
+              (act.entrees - act.originalEntrees) / act.originalEntrees,
             ).toFixed(2)
           : null,
       [total === true ? 'Total sorties logiciel' : 'Sorties logiciel']:
@@ -297,7 +297,7 @@ export class DataPage {
       ['% A-JUSTement Sorties']:
         act.sorties && act.originalSorties && act.originalSorties
           ? Math.abs(
-              (act.sorties - act.originalSorties) / act.originalSorties
+              (act.sorties - act.originalSorties) / act.originalSorties,
             ).toFixed(2)
           : null,
       ['Stock logiciel']: act.originalStock,
@@ -305,7 +305,7 @@ export class DataPage {
       ['% A-JUSTement Stocks']:
         act.stock && act.originalStock && act.originalStock
           ? Math.abs(
-              (act.stock - act.originalStock) / act.originalStock
+              (act.stock - act.originalStock) / act.originalStock,
             ).toFixed(2)
           : null,
       ['Observations']: '',
@@ -322,7 +322,7 @@ export class DataPage {
   generateFormatedDataMonthForCompare(
     act: any,
     monthTabName: string,
-    total = false
+    total = false,
   ) {
     const sortCodeArray = act.contentieux.code_import
       .split('.')
@@ -388,7 +388,7 @@ export class DataPage {
     this.extractDateStop.setMonth(this.extractDateStop.getMonth() + 1);
 
     const juridiction = this.juridictionList.filter(
-      (elem) => elem.id === this.extractBackupId
+      (elem) => elem.id === this.extractBackupId,
     );
     this.juridictionName = juridiction[0].label;
 
@@ -412,9 +412,9 @@ export class DataPage {
                 act,
                 this.getTotalPeriodeLabel(
                   this.extractDateStart || new Date(),
-                  this.extractDateStop || new Date()
+                  this.extractDateStop || new Date(),
                 ),
-                true
+                true,
               );
             })
             .filter(
@@ -422,14 +422,14 @@ export class DataPage {
                 this.referentielService.idsIndispo.indexOf(r.idReferentiel) ===
                   -1 &&
                 this.referentielService.idsSoutien.indexOf(r.idReferentiel) ===
-                  -1
+                  -1,
             );
 
           this.sumTab = this.sortByCodeImport(this.sumTab);
           xlsx.utils.book_append_sheet(
             workbook,
             this.generateWorkSheet(extractHeadersSum, this.sumTab),
-            'Total sur la période'
+            'Total sur la période',
           );
 
           this.data = Object.keys(this.data).map((key: any) => {
@@ -438,24 +438,24 @@ export class DataPage {
                 monthTabName = this.getMonthTabName(act);
                 return this.generateFormatedDataMonthForExtract(
                   act,
-                  monthTabName
+                  monthTabName,
                 );
               })
               .filter(
                 (r: any) =>
                   this.referentielService.idsIndispo.indexOf(
-                    r.idReferentiel
+                    r.idReferentiel,
                   ) === -1 &&
                   this.referentielService.idsSoutien.indexOf(
-                    r.idReferentiel
-                  ) === -1
+                    r.idReferentiel,
+                  ) === -1,
               );
 
             this.data[key] = this.sortByCodeImport(this.data[key]);
             xlsx.utils.book_append_sheet(
               workbook,
               this.generateWorkSheet(extractHeaders, this.data[key]),
-              monthTabName
+              monthTabName,
             );
           });
 
@@ -470,12 +470,12 @@ export class DataPage {
             this.getExportFileName(
               'Extraction_Données_D_Activité',
               this.extractDateStart || new Date(),
-              this.extractDateStop || new Date()
-            ) + EXCEL_EXTENSION
+              this.extractDateStop || new Date(),
+            ) + EXCEL_EXTENSION,
           );
         } else {
           return alert(
-            'Aucune donnée pour cette juridiction sur la période sélectionée'
+            'Aucune donnée pour cette juridiction sur la période sélectionée',
           );
         }
       });
@@ -497,12 +497,12 @@ export class DataPage {
     this.compareDateStop = new Date(
       tmpDateStop.getFullYear(),
       tmpDateStop.getMonth() + 1,
-      0
+      0,
     );
     //console.log('compareDateStop:', this.compareDateStop)
 
     const juridiction = this.juridictionList.filter(
-      (elem) => elem.id === this.comapreBackupId
+      (elem) => elem.id === this.comapreBackupId,
     );
     this.juridictionName = juridiction[0].label;
 
@@ -526,9 +526,9 @@ export class DataPage {
                 act,
                 this.getTotalPeriodeLabel(
                   this.compareDateStart || new Date(),
-                  this.compareDateStop || new Date()
+                  this.compareDateStop || new Date(),
                 ),
-                true
+                true,
               );
             })
             .filter(
@@ -536,14 +536,14 @@ export class DataPage {
                 this.referentielService.idsIndispo.indexOf(r.idReferentiel) ===
                   -1 &&
                 this.referentielService.idsSoutien.indexOf(r.idReferentiel) ===
-                  -1
+                  -1,
             );
 
           this.sumTab = this.sortByCodeImport(this.sumTab);
           xlsx.utils.book_append_sheet(
             workbook,
             this.generateWorkSheet(compareHeadersSum, this.sumTab),
-            'Total sur la période'
+            'Total sur la période',
           );
 
           this.data = Object.keys(this.data).map((key: any) => {
@@ -552,24 +552,24 @@ export class DataPage {
                 monthTabName = this.getMonthTabName(act);
                 return this.generateFormatedDataMonthForCompare(
                   act,
-                  monthTabName
+                  monthTabName,
                 );
               })
               .filter(
                 (r: any) =>
                   this.referentielService.idsIndispo.indexOf(
-                    r.idReferentiel
+                    r.idReferentiel,
                   ) === -1 &&
                   this.referentielService.idsSoutien.indexOf(
-                    r.idReferentiel
-                  ) === -1
+                    r.idReferentiel,
+                  ) === -1,
               );
 
             this.data[key] = this.sortByCodeImport(this.data[key]);
             xlsx.utils.book_append_sheet(
               workbook,
               this.generateWorkSheet(compareHeaders, this.data[key]),
-              monthTabName
+              monthTabName,
             );
           });
 
@@ -584,12 +584,12 @@ export class DataPage {
             this.getExportFileName(
               'Comparatif_A-JUST_Pharos',
               this.compareDateStart || new Date(),
-              this.compareDateStop || new Date()
-            ) + EXCEL_EXTENSION
+              this.compareDateStop || new Date(),
+            ) + EXCEL_EXTENSION,
           );
         } else {
           return alert(
-            'Aucune donnée pour cette juridiction sur la période sélectionée'
+            'Aucune donnée pour cette juridiction sur la période sélectionée',
           );
         }
       });
@@ -619,15 +619,15 @@ export class DataPage {
         TJ_TO_IMPORT.push({ tj: { id: tj.id, label: tj.label }, data: file });
       }
     });
-    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT);
-    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
+    //console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT);
+    //console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
     setInterval(() => {
       if (index < TJ_TO_IMPORT.length) {
         this.importService.importActivities({
           file: TJ_TO_IMPORT[index].data,
           backupId: TJ_TO_IMPORT[index].tj.id,
         });
-        console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
+        //console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
       }
       index++;
     }, 60 * 1000);
@@ -653,7 +653,7 @@ export class DataPage {
         .checkDataBeforeImportOne({ file: fileToString, backupId })
         .then((response: any) => {
           let to_warn = response.data.to_warn;
-          console.log('to_warn:', to_warn);
+          //console.log('to_warn:', to_warn);
 
           if (to_warn.length === 0) {
             if (confirm('Aucun Problème détecté ! Importer ?')) {

@@ -234,7 +234,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     ;(document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value
     ;(document.getElementById('matricule') as HTMLElement).innerHTML = this.basicHrInfo?.get('matricule')?.value
 
-    console.log('this.currentHR', this.currentHR)
+    //console.log('this.currentHR', this.currentHR)
     if (this.currentHR && this.currentHR.situations.length) {
       const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
       if (dateEndToJuridiction && this.dateStart && dateEndToJuridiction.getTime() <= this.dateStart.getTime()) {
@@ -446,7 +446,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
       this.appService.appLoading.next(true)
       try {
         const newHR = await this.humanResourceService.copyPerson(this.currentHR.id)
-        console.log('newHR', newHR)
+        //console.log('newHR', newHR)
         if (newHR) {
           this.router.navigate(['/resource-humaine', newHR.id])
         }

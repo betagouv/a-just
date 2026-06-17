@@ -624,7 +624,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
-    this.route.data.subscribe((data) => console.log('route:', data))
+    // this.route.data.subscribe((data) => console.log('route:', data))
     const findCategory =
       this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === this.categorySelected?.toUpperCase()) || null
 
@@ -641,7 +641,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
       this.simulatorService.situationActuelle.subscribe((d) => {
         //console.log('Situation actuelle : ', d)
         this.firstSituationData = this.simulatorService.situationActuelle.getValue()
-        console.log('WHITE', this.firstSituationData)
+        //console.log('WHITE', this.firstSituationData)
       }),
     )
 
