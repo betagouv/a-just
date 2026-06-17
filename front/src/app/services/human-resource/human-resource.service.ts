@@ -470,7 +470,6 @@ export class HumanResourceService {
    * @returns
    */
   updateRemoteHR(hr: any) {
-    console.log(hr)
     return this.serverService
       .post(`human-resources/update-hr`, {
         hr,

@@ -89,10 +89,16 @@ export class AppComponent {
     })
 
     this.appService.alert.subscribe((a) => {
-      this.alertMessage = a
+      Promise.resolve().then(() => {
+        this.alertMessage = a
+      })
     })
 
-    this.appService.appLoading.subscribe((a) => (this.appLoading = a))
+    this.appService.appLoading.subscribe((a) => {
+      Promise.resolve().then(() => {
+        this.appLoading = a
+      })
+    })
 
     // Mirror current jurisdiction title for Sentry tagging (via util, no globals)
     try {

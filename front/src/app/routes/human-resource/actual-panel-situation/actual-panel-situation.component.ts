@@ -98,6 +98,10 @@ export class ActualPanelSituationComponent extends MainClass implements OnChange
    */
   activities: RHActivityInterface[] = []
   /**
+   * HMR mode should disable @defer warnings
+   */
+  isHmr: boolean = typeof import.meta !== 'undefined' && !!(import.meta as any).hot
+  /**
    * Detection d'une destruction de la composante
    */
   isDestroyed: boolean = false

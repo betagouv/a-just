@@ -63,10 +63,15 @@
   </a>
 </div>
 
+@if (!isHmr) {
 @defer (on viewport; prefetch on idle) {
 
 <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
   [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
 } @placeholder {
 <div class="flex-1"></div>
+}
+} @else {
+<panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
+  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
 }

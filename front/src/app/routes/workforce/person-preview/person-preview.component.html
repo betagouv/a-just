@@ -45,6 +45,7 @@
 </div>
 <div class="activities">
   <div class="space"></div>
+  @if (!isHmr) {
   @defer (on viewport; prefetch on idle;) {
   <panel-activities [id]="hr.id" [category]="hr.category" [activities]="hr.currentActivities" [header]="false"
     [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"></panel-activities>
@@ -55,6 +56,15 @@
   }
   } @placeholder {
   <div class="flex-1"></div>
+  }
+  } @else {
+  <panel-activities [id]="hr.id" [category]="hr.category" [activities]="hr.currentActivities" [header]="false"
+    [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"></panel-activities>
+  @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
+  <div class="activities-button">
+    <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
+  </div>
+  }
   }
 </div>
 <div class="actions">
