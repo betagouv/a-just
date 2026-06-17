@@ -320,7 +320,7 @@ export default (sequelizeInstance, Model) => {
         ids.push(backupId)
       }
 
-      list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
+      list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || list[i].nom || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
         where: {
           backup_id: backupId,
@@ -395,6 +395,7 @@ export default (sequelizeInstance, Model) => {
           continue
         }
 
+        // on reformat le code avec notre convention de nommage
         switch (code) {
           case 'MHFJS':
             code = 'MHFJ'
@@ -434,7 +435,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
-          importSituation.push(list[i].nom_usage + ' no add by S/P because P')
+          (importSituation.push(list[i].nom_usage || list[i].nom) + ' no add by S/P because P')
           continue
         }
 
@@ -479,7 +480,7 @@ export default (sequelizeInstance, Model) => {
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
           console.log('code no imported=>', code, statut)
           // dont save this profil
-          importSituation.push(list[i].nom_usage + ' no add by fonction ')
+          importSituation.push((list[i].nom_usage || list[i].nom) + ' no add by fonction ')
           continue
         }
 
@@ -493,7 +494,7 @@ export default (sequelizeInstance, Model) => {
             //situation.etp = null
           } else {
             // dont save this profil
-            importSituation.push(list[i].nom_usage + ' no add by etp')
+            importSituation.push((list[i].nom_usage || list[i].nom) + ' no add by etp')
             continue
           }
         }
@@ -520,7 +521,7 @@ export default (sequelizeInstance, Model) => {
         // prepare person
         const options = {
           first_name: list[i].prenom || '',
-          last_name: list[i].nom_usage || list[i].nom_marital || list[i].nom || '',
+          last_name: list[i].nom_usage || list[i].nom || list[i].nom_marital || '',
           matricule: list[i].hmatricule || '',
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
@@ -545,6 +546,9 @@ export default (sequelizeInstance, Model) => {
         }
 
         // create person
+        console.log('CREATION DE LA FICHE =>', { ...options, ...situation })
+
+
         findHRToDB = await Model.create(options)
 
         // create
@@ -553,13 +557,13 @@ export default (sequelizeInstance, Model) => {
           human_id: findHRToDB.dataValues.id,
         })
 
-        importSituation.push(list[i].nom_usage + ' ADDED')
+        importSituation.push((list[i].nom_usage || list[i].nom) + ' ADDED')
       } else {
         // force to save juridiction
         await findHRToDB.update({
           juridiction: list[i].juridiction || '',
         })
-        importSituation.push(list[i].nom_usage + ' no add by exist')
+        importSituation.push((list[i].nom_usage || list[i].nom) + ' no add by exist')
       }
     }
 
