@@ -129,6 +129,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     })
     this.watch(
       this.simulatorService.whiteSimulatorNbOfDays.subscribe((nbDays) => {
+        console.log('nbDays', nbDays)
         this.nbOfDays = nbDays
       }),
     )
@@ -670,6 +671,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       ],
     })
 
+    console.log('this.nbOfDays', this.nbOfDays)
     const endStock = startLastStock + (this.nbOfDays / (365 / 12)) * startTotalIn - (this.nbOfDays / (365 / 12)) * startTotalOut
 
     this.endSituation = {
