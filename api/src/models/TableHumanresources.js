@@ -926,9 +926,16 @@ export default (sequelizeInstance, Model) => {
     //console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
-  Model.copyAgent = async (agentId) => {
+  Model.copyAgent = async (agentId, situationId) => {
     const agent = await Model.getHr(agentId)
     if (agent) {
+      let situations = agent.situations || []
+      if (situationId && situationId !== -1) {
+        const findSituation = situations.find((s) => s.id === situationId)
+        if (findSituation) {
+          situations = [findSituation]
+        }
+      }
 
       return await Model.updateHR({
         ...agent,
@@ -938,7 +945,8 @@ export default (sequelizeInstance, Model) => {
         registration_number: null,
         dateEnd: null,
         id: null,
-        indisponibilities: []
+        indisponibilities: [],
+        situations,
       }, agent.backupId)
     }
     return null

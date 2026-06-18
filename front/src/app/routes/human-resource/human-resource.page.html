@@ -6,7 +6,10 @@
     @if (currentHR) {
     <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR" [backAnchor]="
             currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined
-          " [onEditIndex]="onEditIndex" [etp]="currentETP" [indisponibilities]="
+          " [onEditIndex]="onEditIndex"
+      [situationId]="indexOfTheFuture !== null ? histories[indexOfTheFuture].id : null"
+      [historiesOfThePast]="historiesOfThePast" [historiesOfTheFutur]="historiesOfTheFutur" [etp]="currentETP"
+      [indisponibilities]="
             indexOfTheFuture !== null && histories[indexOfTheFuture]
               ? histories[indexOfTheFuture].indisponibilities
               : []

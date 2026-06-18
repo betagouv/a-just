@@ -36,6 +36,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { ExcelService } from '../../../services/excel/excel.service'
 import { Router } from '@angular/router'
 import { AppService } from '../../../services/app/app.service'
+import { HistoryInterface } from '../human-resource.page'
 
 /**
  * Panneau de présentation d'une fiche
@@ -102,9 +103,21 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   @Input() onEditIndex: number | null = null
   /**
+   * Id de la situation en cours d'édition
+   */
+  @Input() situationId: number | null = null
+  /**
    * Formulaire
    */
   @Input() basicHrInfo: FormGroup | null = null
+  /**
+   * Liste des situations passées
+   */
+  @Input() historiesOfThePast: HistoryInterface[] = []
+  /**
+   * Liste des situations futures
+   */
+  @Input() historiesOfTheFutur: HistoryInterface[] = []
   /**
    * Date de début de la situation actuelle
    */
@@ -250,6 +263,8 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         }
       }
     }
+
+    console.log('this.situationId', this.situationId)
   }
 
   /**
@@ -445,7 +460,27 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     if (this.currentHR) {
       this.appService.appLoading.next(true)
       try {
-        const newHR = await this.humanResourceService.copyPerson(this.currentHR.id)
+        let idOfSituationToCopy = this.situationId ?? null
+
+        if (idOfSituationToCopy === -1) {
+          // prendre la derniere situation passée
+          const past = this.historiesOfThePast.filter((h) => h.id !== -1)
+          const lastSituationPassed = past.length > 0 ? past[past.length - 1].id : null
+          if (lastSituationPassed) {
+            idOfSituationToCopy = lastSituationPassed
+          }
+        }
+
+        if (idOfSituationToCopy === -1) {
+          // sinon prendre la premiere situation a venir
+          const future = this.historiesOfTheFutur.filter((h) => h.id !== -1)
+          const firstSituationFuture = future.length > 0 ? future[0].id : null
+          if (firstSituationFuture) {
+            idOfSituationToCopy = firstSituationFuture
+          }
+        }
+
+        const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, idOfSituationToCopy)
         //console.log('newHR', newHR)
         if (newHR) {
           this.router.navigate(['/resource-humaine', newHR.id])
