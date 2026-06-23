@@ -7,6 +7,7 @@ import routeCalcultator from './api/RouteCalculator.test.js'
 import routeVentilateur from './api/RouteVentilateur.test.js'
 import routePanorama from './api/RoutePanorama.test.js'
 import routeActivities from './api/RouteActivities.test.js'
+import routeFeedback from './api/RouteFeedback.test.js'
 import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/user'
 import { assert } from 'chai'
 import axios from 'axios'
@@ -261,6 +262,7 @@ routeCalcultator(datas)
 routeVentilateur(datas)
 routePanorama(datas)
 routeActivities(datas)
+routeFeedback(datas)
 
 /*routeImport()
 routeHR()

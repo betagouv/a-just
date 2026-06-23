@@ -1,0 +1,42 @@
+@use '../../../styles/utils.scss' as utils;
+
+:host {
+    display: none;
+
+    &.visible {
+        display: block;
+    }
+
+    .feedback-banner {
+        position: relative;
+        padding: 12px 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e8edff;
+
+        .content-feedback {
+            max-width: 800px;
+            display: flex;
+            align-items: center;
+
+            p {
+                margin: 0 24px 0 0;
+                position: relative;
+                top: -1px;
+            }
+
+            button {
+                background-color: transparent;
+                border: 1px solid utils.$colors-primary;
+                color: utils.$colors-primary;
+                border-radius: 0;
+            }
+        }
+    }
+}
+
+.close {
+    position: absolute;
+    right: 32px;
+}

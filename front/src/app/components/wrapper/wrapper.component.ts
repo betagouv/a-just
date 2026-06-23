@@ -7,6 +7,8 @@ import { uniqBy } from 'lodash'
 import { ActionsInterface, PopupComponent } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
 import { NewsComponent } from './news/news.component'
+import { FeedbackBannerComponent } from './feedback-banner/feedback-banner.component'
+import { PopinFeedbackComponent } from '../../routes/feedback/popin-feedback/popin-feedback.component'
 import { MainClass } from '../../libs/main-class'
 import { DocumentationInterface } from '../../interfaces/documentation'
 import { DateSelectorinterface } from '../../interfaces/date'
@@ -79,6 +81,8 @@ interface ExportPDFInterface {
   standalone: true,
   imports: [
     NewsComponent,
+    FeedbackBannerComponent,
+    PopinFeedbackComponent,
     MatIconModule,
     CommonModule,
     PopupComponent,
@@ -118,6 +122,14 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * DOM qui pointe sur le conteneur
    */
   @ViewChild('contener') contener: ElementRef<HTMLElement> | null = null
+  /**
+   * DOM qui pointe sur la news
+   */
+  @ViewChild('news') news: NewsComponent | null = null
+  /**
+   * DOM qui pointe sur la bannière d'avis
+   */
+  @ViewChild('feedbackBanner') feedbackBanner: FeedbackBannerComponent | null = null
   /**
    * DOM qui pointe sur le content
    */
@@ -202,6 +214,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Popup open
    */
   popin = false
+  /**
+   * Popup d'avis utilisateur
+   */
+  showFeedbackPopup = false
   /**
    * Dit si le paneau d'aide est visible ou non
    */
@@ -625,7 +641,15 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param elem
    */
   refreshHeight(elem: any) {
-    elem.style['padding-top'] = '0px'
+    const newsHeight = this.news?.offsetHeight || 0
+    const feedbackHeight = this.feedbackBanner?.offsetHeight || 0
+    elem.style['padding-top'] = `${newsHeight + feedbackHeight}px`
+  }
+
+  onFeedbackSubmitted(container: HTMLElement) {
+    this.showFeedbackPopup = false
+    this.feedbackBanner?.hideAfterSubmit()
+    this.refreshHeight(container)
   }
 
   /**

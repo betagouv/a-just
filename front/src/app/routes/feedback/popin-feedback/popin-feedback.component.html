@@ -1,0 +1,25 @@
+@if (visible) {
+<aj-popup class="border-radius width-500" [title]="title" [closeIcon]="true" [actions]="[
+      { id: 'cancel', content: 'Annuler' },
+      { id: 'submit', content: 'Envoyer', fill: true },
+    ]" (onClose)="close()" (selectedAction)="onAction($event)">
+  <p class="question">{{ question }}</p>
+
+  <div class="stars-zone" [class.error]="showRatingAlert">
+    <div class="stars">
+      @for (star of stars; track star) {
+      <i class="cursor-pointer star-icon" [class.ri-star-fill]="star <= selectedRating"
+        [class.ri-star-line]="star > selectedRating" (click)="selectRating(star)"></i>
+      }
+    </div>
+    @if (showRatingAlert) {
+    <aj-alert-small alertMessage="Veuillez sélectionner une note entre 1 et 5 étoiles."
+      (onClose)="showRatingAlert = false"></aj-alert-small>
+    }
+  </div>
+
+  <label for="feedback-comment">Commentaire (facultatif)</label>
+  <textarea id="feedback-comment" [(ngModel)]="comment" placeholder="Partagez votre expérience..."
+    maxlength="2000"></textarea>
+</aj-popup>
+}

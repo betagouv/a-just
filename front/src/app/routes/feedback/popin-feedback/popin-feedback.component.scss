@@ -1,0 +1,39 @@
+@use '../../../styles/utils.scss' as utils;
+
+.question {
+  margin: 0 0 16px;
+}
+
+.stars-zone {
+  position: relative;
+  margin-bottom: 24px;
+
+  &.error .stars .star-icon {
+    color: #ce0500;
+  }
+}
+
+.stars {
+  display: flex;
+  gap: 8px;
+
+  .star-icon {
+    font-size: 28px;
+    color: utils.$colors-primary;
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: utils.$colors-titleSelect;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px 12px;
+  border: 1px solid utils.$colors-cgraylightv3;
+  resize: vertical;
+  box-sizing: border-box;
+}
