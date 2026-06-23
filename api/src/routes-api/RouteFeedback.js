@@ -24,16 +24,20 @@ export default class RouteFeedback extends Route {
 
   @Route.Post({
     bodyType: Types.object().keys({
-      rating: Types.number().min(1).max(5).required(),
+      rating: Types.number(),
       comment: Types.string(),
       page: Types.string(),
     }),
     accesses: [Access.isLogin],
   })
   async submit(ctx) {
-    const body = this.body(ctx)
+    const { rating, comment, page } = this.body(ctx)
 
-    await this.model.submit(ctx.state.user.id, body)
+    if (typeof rating !== 'number' || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+      ctx.throw(400, 'La note doit être un entier entre 1 et 5')
+    }
+
+    await this.model.submit(ctx.state.user.id, { rating, comment, page })
 
     this.sendOk(ctx, 'OK')
   }
