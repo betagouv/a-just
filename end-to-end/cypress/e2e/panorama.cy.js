@@ -791,7 +791,7 @@ describe("Panorama page", () => {
     const formattedArrivalDate = `${arrivalDate.getDate()} ${getShortMonthString(
       arrivalDate
     )} ${arrivalDate.getFullYear()}`;
-    const normalizedArrivalDate = Cypress.$(formattedArrivalDate).text().replace(/\u00a0/g, " ").trim();
+    const normalizedArrivalDate = formattedArrivalDate.replace(/\u00a0/g, " ").trim();
 
     cy.get(".workforce-change .buttons")
       .find("button")
@@ -859,7 +859,7 @@ describe("Panorama page", () => {
     const formattedDepartureDate = `${departureDate.getDate()} ${getShortMonthString(
       departureDate
     )} ${departureDate.getFullYear()}`;
-    const normalizedDepartureDate = Cypress.$(formattedDepartureDate).text().replace(/\u00a0/g, " ").trim();
+    const normalizedDepartureDate = formattedDepartureDate.replace(/\u00a0/g, " ").trim();
 
 
     cy.get(".workforce-change .buttons")

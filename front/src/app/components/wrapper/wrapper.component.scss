@@ -1,19 +1,24 @@
 @use '../../styles/utils.scss' as utils;
 :host {
+    position: relative;
+    display: block;
     min-height: 100%;
-    aj-news {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        right: 0px;
-        z-index: 2;
-    }
-    aj-feedback-banner {
+
+    .top-banners {
         position: absolute;
         left: 0;
         right: 0;
+        top: 0;
         z-index: 2;
+        width: 100%;
     }
+
+    aj-news,
+    aj-feedback-banner {
+        display: block;
+        width: 100%;
+    }
+
     &.space-help {
         #top>div.top-header-back-title>div>div>aj-help-button {
             margin-left: 8px;
@@ -100,7 +105,7 @@
     .logo-ajust {
         cursor: pointer;
     }
-    >div:not(.help-section) {
+    >div:not(.help-section):not(.top-banners) {
         display: flex;
         height: 100%;
         &.duringPrint {

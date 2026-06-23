@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core'
+import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild, AfterViewInit } from '@angular/core'
 import * as Sentry from '@sentry/browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import html2canvas from 'html2canvas'
@@ -99,7 +99,7 @@ interface ExportPDFInterface {
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.scss'],
 })
-export class WrapperComponent extends MainClass implements OnDestroy {
+export class WrapperComponent extends MainClass implements OnDestroy, AfterViewInit {
   router = inject(Router)
   route = inject(ActivatedRoute)
   userService = inject(UserService)
@@ -218,6 +218,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Popup d'avis utilisateur
    */
   showFeedbackPopup = false
+  /**
+   * Padding haut du contenu pour les bannières
+   */
+  topPadding = 0
   /**
    * Dit si le paneau d'aide est visible ou non
    */
@@ -636,20 +640,25 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.activitiesService.activityMonth.next(date)
   }
 
-  /**
-   * Resize le wrapper lorsqu'il n'y a plus de news active
-   * @param elem
-   */
-  refreshHeight(elem: any) {
-    const newsHeight = this.news?.offsetHeight || 0
-    const feedbackHeight = this.feedbackBanner?.offsetHeight || 0
-    elem.style['padding-top'] = `${newsHeight + feedbackHeight}px`
+  ngAfterViewInit() {
+    setTimeout(() => this.refreshHeight())
   }
 
-  onFeedbackSubmitted(container: HTMLElement) {
+  /**
+   * Resize le wrapper lorsqu'une bannière apparaît ou disparaît
+   */
+  refreshHeight() {
+    setTimeout(() => {
+      const newsHeight = this.news?.offsetHeight || 0
+      const feedbackHeight = this.feedbackBanner?.offsetHeight || 0
+      this.topPadding = newsHeight + feedbackHeight
+    })
+  }
+
+  onFeedbackSubmitted() {
     this.showFeedbackPopup = false
     this.feedbackBanner?.hideAfterSubmit()
-    this.refreshHeight(container)
+    this.refreshHeight()
   }
 
   /**

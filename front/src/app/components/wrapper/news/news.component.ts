@@ -68,8 +68,11 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   loadNews() {
     this.newsService.getLast().then((n) => {
-      this.news = n;
-    });
+      this.news = n
+      if (n) {
+        setTimeout(() => this.isClosed.emit(true))
+      }
+    })
   }
 
   /**
@@ -77,9 +80,9 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   onClose() {
     if (this.news) {
-      this.newsService.updateNewsOnClick(this.news.id);
-      this.news = null;
-      this.isClosed.emit(true);
+      this.newsService.updateNewsOnClick(this.news.id)
+      this.news = null
+      setTimeout(() => this.isClosed.emit(true))
     }
   }
 }

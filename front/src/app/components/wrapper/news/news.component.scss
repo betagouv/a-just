@@ -2,6 +2,8 @@
 
 :host {
   position: relative;
+  display: block;
+  width: 100%;
 
   >div {
     padding: 12px 80px;

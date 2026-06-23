@@ -34,8 +34,8 @@ describe("Données d'activité", () => {
 
   it("Check that the doc button is accessible", () => {
     cy.get(".top-header")
-      .get(".top-header-back-title .title-with-doc")
-      .get("aj-help-button")
+      .find(".top-header-back-title .title-with-doc aj-help-button")
+      .first()
       .click();
 
     cy.wait(1000);

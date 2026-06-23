@@ -37,6 +37,14 @@ describe("Cockpit", () => {
     });
   });
 
+  beforeEach(() => {
+    cy.get("body").then(($body) => {
+      if ($body.find(".panel-helper .ri-close-line").length) {
+        cy.get(".panel-helper .ri-close-line").click({ force: true });
+      }
+    });
+  });
+
   it("Check the cockpit page load", () => {
     cy.visit("/cockpit");
     cy.wait(1000);
@@ -49,8 +57,8 @@ describe("Cockpit", () => {
 
   it("Check that the doc button is accessible", () => {
     cy.get(".top-header")
-      .get(".top-header-back-title .title-with-doc")
-      .get("aj-help-button")
+      .find(".top-header-back-title .title-with-doc aj-help-button")
+      .first()
       .click();
 
     cy.wait(2000);
@@ -146,7 +154,7 @@ describe("Cockpit", () => {
       const startDate = new Date(endDate);
       startDate.setMonth(endDate.getMonth() - 11);
 
-      cy.get(".actions").within(() => {
+      cy.get(".header .actions").within(() => {
         cy.get("button").first().click();
       });
       cy.get(".drop-down")
@@ -167,7 +175,7 @@ describe("Cockpit", () => {
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() - 1);
 
-    cy.get(".actions").within(() => {
+    cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
     });
 
@@ -223,7 +231,7 @@ describe("Cockpit", () => {
 
     // cy.wait(4000);
 
-    cy.get(".actions").within(() => {
+    cy.get(".header .actions").within(() => {
       cy.get("button").first().click({ force: true });
     });
 
@@ -247,7 +255,7 @@ describe("Cockpit", () => {
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() - 1);
 
-    cy.get(".actions").within(() => {
+    cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
     });
 
@@ -316,7 +324,7 @@ describe("Cockpit", () => {
 
     cy.get(".filters-item").contains("label", "Test comparateur referentiel");
 
-    cy.get(".actions").within(() => {
+    cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
     });
 

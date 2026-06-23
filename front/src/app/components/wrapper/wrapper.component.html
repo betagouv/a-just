@@ -1,12 +1,13 @@
-<aj-news #news (isClosed)="refreshHeight(container)"></aj-news>
-<!-- <aj-feedback-banner #feedbackBanner [style.top.px]="news?.offsetHeight || 0"
-    (visibilityChange)="refreshHeight(container)" (openSurvey)="showFeedbackPopup = true"></aj-feedback-banner> -->
+<div class="top-banners">
+    <aj-news #news (isClosed)="refreshHeight()"></aj-news>
+    <aj-feedback-banner #feedbackBanner (isClosed)="refreshHeight()"
+        (openSurvey)="showFeedbackPopup = true"></aj-feedback-banner>
+</div>
 @if (showFeedbackPopup) {
 <aj-popin-feedback [visible]="showFeedbackPopup" (onClose)="showFeedbackPopup = false"
-    (onSubmitted)="onFeedbackSubmitted(container)"></aj-popin-feedback>
+    (onSubmitted)="onFeedbackSubmitted()"></aj-popin-feedback>
 }
-<div #container [style.padding-top.px]="(news?.offsetHeight || 0) + (feedbackBanner?.offsetHeight || 0)"
-    [class.duringPrint]="duringPrint">
+<div #container [style.padding-top.px]="topPadding" [class.duringPrint]="duringPrint">
     <div id="side-menu-bar" class="menu no-print" title="">
         <div class="images">
             <div class="logo white-mode block-marque-white"></div>
