@@ -1,6 +1,6 @@
 <aj-news #news (isClosed)="refreshHeight(container)"></aj-news>
-<aj-feedback-banner #feedbackBanner [style.top.px]="news?.offsetHeight || 0"
-    (visibilityChange)="refreshHeight(container)" (openSurvey)="showFeedbackPopup = true"></aj-feedback-banner>
+<!-- <aj-feedback-banner #feedbackBanner [style.top.px]="news?.offsetHeight || 0"
+    (visibilityChange)="refreshHeight(container)" (openSurvey)="showFeedbackPopup = true"></aj-feedback-banner> -->
 @if (showFeedbackPopup) {
 <aj-popin-feedback [visible]="showFeedbackPopup" (onClose)="showFeedbackPopup = false"
     (onSubmitted)="onFeedbackSubmitted(container)"></aj-popin-feedback>
