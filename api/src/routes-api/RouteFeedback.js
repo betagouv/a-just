@@ -41,4 +41,18 @@ export default class RouteFeedback extends Route {
 
     this.sendOk(ctx, 'OK')
   }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAll(ctx) {
+    this.sendOk(ctx, await this.model.getAll())
+  }
+
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async stats(ctx) {
+    this.sendOk(ctx, await this.model.getStats())
+  }
 }

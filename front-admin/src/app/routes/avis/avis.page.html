@@ -1,0 +1,108 @@
+<aj-wrapper title="Avis utilisateurs">
+  @if (stats) {
+  <section class="stats">
+    <div class="stats-cards">
+      <article class="stat-card">
+        <span class="stat-label">Total</span>
+        <strong class="stat-value">{{ stats.total }}</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Note moyenne</span>
+        <strong class="stat-value">{{ stats.average }}/5</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Avec commentaire</span>
+        <strong class="stat-value">{{ stats.withComment }}</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Sans commentaire</span>
+        <strong class="stat-value">{{ stats.withoutComment }}</strong>
+      </article>
+    </div>
+
+    <div class="stats-details">
+      <div class="stats-block">
+        <h3>Répartition des notes</h3>
+        @for (rating of ratingLevels; track rating) {
+        <div class="rating-row">
+          <span class="rating-label">{{ rating }} ★</span>
+          <div class="rating-bar">
+            <div class="rating-fill" [style.width.%]="getRatingPercent(rating)"></div>
+          </div>
+          <span class="rating-count">{{ stats.byRating[rating] || 0 }}</span>
+        </div>
+        }
+      </div>
+
+      <div class="stats-block">
+        <h3>Par mois</h3>
+        @if (stats.byMonth.length) {
+        <ul class="stats-list">
+          @for (item of stats.byMonth; track item.month) {
+          <li>
+            <span>{{ item.month }}</span>
+            <strong>{{ item.count }}</strong>
+          </li>
+          }
+        </ul>
+        } @else {
+        <p class="empty">Aucune donnée</p>
+        }
+      </div>
+
+      <div class="stats-block">
+        <h3>Pages les plus citées</h3>
+        @if (stats.topPages.length) {
+        <ul class="stats-list">
+          @for (item of stats.topPages; track item.page) {
+          <li>
+            <span>{{ item.page }}</span>
+            <strong>{{ item.count }}</strong>
+          </li>
+          }
+        </ul>
+        } @else {
+        <p class="empty">Aucune donnée</p>
+        }
+      </div>
+    </div>
+  </section>
+  }
+
+  <section class="list">
+    <h2>Tous les avis</h2>
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef>Utilisateur</th>
+        <td mat-cell *matCellDef="let element">{{ getUserLabel(element) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="rating">
+        <th mat-header-cell *matHeaderCellDef>Note</th>
+        <td mat-cell *matCellDef="let element">{{ element.rating }}/5</td>
+      </ng-container>
+
+      <ng-container matColumnDef="comment">
+        <th mat-header-cell *matHeaderCellDef>Commentaire</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.comment || '—' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="page">
+        <th mat-header-cell *matHeaderCellDef>Page</th>
+        <td mat-cell *matCellDef="let element">{{ element.page || '—' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </section>
+</aj-wrapper>

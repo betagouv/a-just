@@ -1,4 +1,9 @@
-import { onGetFeedbackStatusApi, onSubmitFeedbackApi } from '../routes/feedback'
+import {
+  onGetFeedbackAllApi,
+  onGetFeedbackStatsApi,
+  onGetFeedbackStatusApi,
+  onSubmitFeedbackApi,
+} from '../routes/feedback'
 import { assert } from 'chai'
 
 module.exports = function (datas) {
@@ -45,6 +50,26 @@ module.exports = function (datas) {
       })
 
       assert.strictEqual(response.status, 200)
+    })
+
+    it('GetAll - returns feedback list for admin', async () => {
+      const response = await onGetFeedbackAllApi({ userToken: datas.adminToken })
+
+      assert.strictEqual(response.status, 200)
+      assert.isArray(response.data.data)
+      assert.isAtLeast(response.data.data.length, 1)
+      assert.property(response.data.data[0], 'rating')
+      assert.property(response.data.data[0], 'user')
+    })
+
+    it('Stats - returns aggregates for admin', async () => {
+      const response = await onGetFeedbackStatsApi({ userToken: datas.adminToken })
+
+      assert.strictEqual(response.status, 200)
+      assert.isAtLeast(response.data.data.total, 1)
+      assert.property(response.data.data, 'byRating')
+      assert.property(response.data.data, 'byMonth')
+      assert.property(response.data.data, 'topPages')
     })
   })
 }

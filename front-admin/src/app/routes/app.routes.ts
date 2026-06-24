@@ -46,6 +46,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'avis',
+    loadComponent: () => import('./avis/avis.page').then((mod) => mod.AvisPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'juridictions',
     loadComponent: () =>
       import('./juridictions/juridictions.page').then(

@@ -40,6 +40,11 @@ const MENU = [
     isSuperAdmin: false,
   },
   {
+    label: 'Avis',
+    path: 'avis',
+    isSuperAdmin: false,
+  },
+  {
     label: 'Juridictions',
     path: 'juridictions',
     isSuperAdmin: false,
