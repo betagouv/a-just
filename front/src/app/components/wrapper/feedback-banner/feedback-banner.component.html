@@ -1,9 +1,9 @@
 @if (showBanner) {
-  <div [ngStyle]="{ backgroundColor: '#e8edff' }">
-    <div class="content-feedback">
-      <p>{{ bannerText }}</p>
-      <button class="small" type="button" (click)="onOpenSurvey()">{{ buttonText }}</button>
-    </div>
-    <i class="ri-close-line close cursor-pointer" (click)="onDismiss()"></i>
+<div [ngStyle]="{ backgroundColor: '#e8edff' }">
+  <div class="content-feedback">
+    <p>{{ bannerText }}</p>
+    <button class="small" type="button" (click)="onOpenSurvey()">{{ buttonText }}</button>
   </div>
+  <i class="ri-close-line close cursor-pointer" (click)="onDismiss()"></i>
+</div>
 }

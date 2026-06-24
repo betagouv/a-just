@@ -32,7 +32,7 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
     this.watch(
       this.userService.user.subscribe(() => {
         this.loadBanner()
-      })
+      }),
     )
   }
 
