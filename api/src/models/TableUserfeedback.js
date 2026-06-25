@@ -2,6 +2,8 @@
  * Avis utilisateur sur le produit
  */
 
+import { Op } from 'sequelize'
+
 export default (sequelizeInstance, Model) => {
   Model.hasResponded = async (userId) => {
     return Model.findOne({
@@ -57,66 +59,74 @@ export default (sequelizeInstance, Model) => {
   Model.getStats = async () => {
     const { sequelize } = Model
 
-    const [totals] = await sequelize.query(
-      `
-      SELECT
-        COUNT(*)::int AS total,
-        COALESCE(AVG(rating), 0) AS average,
-        COUNT(*) FILTER (WHERE comment IS NOT NULL AND TRIM(comment) <> '')::int AS "withComment",
-        COUNT(*) FILTER (WHERE comment IS NULL OR TRIM(comment) = '')::int AS "withoutComment"
-      FROM "UserFeedback"
-      WHERE deleted_at IS NULL
-      `,
-      { type: sequelize.QueryTypes.SELECT },
-    )
+    const total = await Model.count()
 
-    const byRatingRows = await sequelize.query(
-      `
-      SELECT rating, COUNT(*)::int AS count
-      FROM "UserFeedback"
-      WHERE deleted_at IS NULL
-      GROUP BY rating
-      ORDER BY rating
-      `,
-      { type: sequelize.QueryTypes.SELECT },
-    )
+    const avgRow = await Model.findOne({
+      attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'average']],
+      raw: true,
+    })
+
+    const withComment = await Model.count({
+      where: {
+        [Op.and]: [
+          { comment: { [Op.ne]: null } },
+          sequelize.where(sequelize.fn('TRIM', sequelize.col('comment')), { [Op.ne]: '' }),
+        ],
+      },
+    })
+
+    const byRatingRows = await Model.findAll({
+      attributes: ['rating', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+      group: ['rating'],
+      order: [['rating', 'ASC']],
+      raw: true,
+    })
 
     const byRating = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
     byRatingRows.forEach(({ rating, count }) => {
-      byRating[rating] = count
+      byRating[rating] = parseInt(count, 10)
     })
 
-    const byMonth = await sequelize.query(
-      `
-      SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*)::int AS count
-      FROM "UserFeedback"
-      WHERE deleted_at IS NULL
-      GROUP BY TO_CHAR(created_at, 'YYYY-MM')
-      ORDER BY month DESC
-      `,
-      { type: sequelize.QueryTypes.SELECT },
-    )
+    const byMonth = await Model.findAll({
+      attributes: [
+        [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'month'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+      ],
+      group: [sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM')],
+      order: [[sequelize.fn('TO_CHAR', sequelize.col('created_at'), 'YYYY-MM'), 'DESC']],
+      raw: true,
+    })
 
-    const topPages = await sequelize.query(
-      `
-      SELECT page, COUNT(*)::int AS count
-      FROM "UserFeedback"
-      WHERE deleted_at IS NULL AND page IS NOT NULL AND TRIM(page) <> ''
-      GROUP BY page
-      ORDER BY count DESC
-      LIMIT 10
-      `,
-      { type: sequelize.QueryTypes.SELECT },
-    )
+    const topPages = await Model.findAll({
+      attributes: ['page', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+      where: {
+        page: {
+          [Op.and]: [
+            { [Op.ne]: null },
+            sequelize.where(sequelize.fn('TRIM', sequelize.col('page')), { [Op.ne]: '' }),
+          ],
+        },
+      },
+      group: ['page'],
+      order: [[sequelize.fn('COUNT', sequelize.col('id')), 'DESC']],
+      limit: 10,
+      raw: true,
+    })
 
     return {
-      total: totals.total,
-      average: Math.round(parseFloat(totals.average) * 10) / 10,
-      withComment: totals.withComment,
-      withoutComment: totals.withoutComment,
+      total,
+      average: avgRow?.average ? Math.round(parseFloat(avgRow.average) * 10) / 10 : 0,
+      withComment,
+      withoutComment: total - withComment,
       byRating,
-      byMonth,
-      topPages,
+      byMonth: byMonth.map(({ month, count }) => ({
+        month,
+        count: parseInt(count, 10),
+      })),
+      topPages: topPages.map(({ page, count }) => ({
+        page,
+        count: parseInt(count, 10),
+      })),
     }
   }
 
