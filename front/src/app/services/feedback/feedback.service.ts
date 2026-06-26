@@ -10,11 +10,12 @@ const SESSION_DISMISS_KEY = 'feedback-banner-dismissed'
 export class FeedbackService {
   serverService = inject(ServerService)
 
-  hasResponded(): Promise<boolean> {
-    return this.serverService.getWithoutError('feedback/status').then((d) => {
-      const status = d.data as FeedbackStatusInterface
-      return status?.hasResponded === true
-    })
+  async hasResponded(): Promise<boolean> {
+    const result = await this.serverService.getWithoutError('feedback/status')
+
+    const status = result.data as FeedbackStatusInterface
+
+    return status?.hasResponded === true
   }
 
   submit(rating: number, comment?: string, page?: string): Promise<any> {

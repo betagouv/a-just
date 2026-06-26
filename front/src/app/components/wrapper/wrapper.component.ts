@@ -8,7 +8,6 @@ import { ActionsInterface, PopupComponent } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
 import { NewsComponent } from './news/news.component'
 import { FeedbackBannerComponent } from './feedback-banner/feedback-banner.component'
-import { PopinFeedbackComponent } from '../../routes/feedback/popin-feedback/popin-feedback.component'
 import { MainClass } from '../../libs/main-class'
 import { DocumentationInterface } from '../../interfaces/documentation'
 import { DateSelectorinterface } from '../../interfaces/date'
@@ -49,6 +48,7 @@ import { REQUEST_USER_MANUAL, REQUET_HELP_PAGE } from '../../constants/log-codes
 import { findHelpCenter } from '../../utils/help-center'
 import { TourButtonComponent } from '../tour-button/tour-button.component'
 import { IntroJSStep } from '../../services/tour/tour.service'
+import { PopinFeedbackComponent } from './popin-feedback/popin-feedback.component'
 
 /**
  * Interface de génération d'un commentaire

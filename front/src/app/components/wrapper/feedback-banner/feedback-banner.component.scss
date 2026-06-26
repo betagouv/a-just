@@ -48,11 +48,6 @@
 .close {
   position: absolute;
   right: 32px;
-  color: utils.$colors-grayRow;
   transition: color 0.2s;
-
-  &:hover {
-    color: utils.$colors-textColorLight;
-  }
-
+  color: inherit;
 }

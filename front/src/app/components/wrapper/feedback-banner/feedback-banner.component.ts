@@ -30,8 +30,10 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
 
   ngOnInit() {
     this.watch(
-      this.userService.user.subscribe(() => {
-        this.loadBanner()
+      this.userService.user.subscribe((u) => {
+        if (u) {
+          this.loadBanner()
+        }
       }),
     )
   }
@@ -40,7 +42,7 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
     return typeof window !== 'undefined' && Boolean((window as any).Cypress)
   }
 
-  loadBanner() {
+  async loadBanner() {
     if (this.isE2ETest()) {
       this.showBanner = false
       this.notifyHeightChange()
@@ -53,11 +55,11 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
       return
     }
 
-    this.feedbackService.hasResponded().then((responded) => {
-      setTimeout(() => {
-        this.showBanner = !responded
-        this.notifyHeightChange()
-      })
+    const feedbackServiceResponse = await this.feedbackService.hasResponded()
+
+    setTimeout(() => {
+      this.showBanner = !feedbackServiceResponse
+      this.notifyHeightChange()
     })
   }
 
