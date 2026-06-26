@@ -5,7 +5,7 @@
     display: block;
     min-height: 100%;
 
-    .top-banners {
+    .top-notifications {
         position: absolute;
         left: 0;
         right: 0;
@@ -125,7 +125,7 @@
         cursor: pointer;
     }
 
-    >div:not(.help-section):not(.top-banners) {
+    >div:not(.help-section):not(.top-notifications) {
         display: flex;
         height: 100%;
 
