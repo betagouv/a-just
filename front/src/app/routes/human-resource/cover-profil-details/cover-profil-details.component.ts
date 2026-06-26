@@ -149,6 +149,10 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     remove?: boolean
   }>()
   /**
+   * Event lors du changement de la date d'arrivée
+   */
+  @Output() dateStartChange = new EventEmitter<Date | null>()
+  /**
    * Temps de travail en text
    */
   timeWorked: string | null = ''
@@ -343,6 +347,9 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
       })
 
       this.removeAlertItem('startDate')
+      if (nodeName === 'dateStart') {
+        this.dateStartChange.emit(value)
+      }
       this.ficheIsUpdated.emit(newHR)
     }
   }

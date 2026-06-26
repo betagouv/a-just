@@ -1030,6 +1030,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
+   * Reporte la date d'arrivée sur « A compter du » si l'utilisateur ne l'a pas encore saisie
+   */
+  onArrivalDateChange(date: Date | null) {
+    if (this.onEditIndex !== -1 || !this.addDomVentilation || !date) {
+      return
+    }
+
+    this.addDomVentilation.applyArrivalDateIfUnset(date)
+  }
+
+  /**
    * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
    * @param etp
    */
@@ -1052,22 +1063,22 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param updatedList
    */
   onAlertsUpdated({ tag, remove = false }: { tag: string; remove?: boolean }) {
-    // Remove alert from the service
     if (remove) {
       this.humanResourceService.removeAlert(tag)
-    } else {
-      // Scroll to the "Start Date" selector
-      // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-      if (this.humanResourceService.alertList().length > 0) {
-        if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
-          if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
-        } else if (this.humanResourceService.alertList().includes('etp')) {
-          this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
-        }
-      }
+      return
     }
 
-    //this.humanResourceService.removeAlert(tag)
+    if (this.humanResourceService.alertList().length === 0) {
+      return
+    }
+
+    if (this.humanResourceService.alertList().includes('startDate') || this.humanResourceService.alertList().includes('firstName') || this.humanResourceService.alertList().includes('lastName')) {
+      document.getElementById('content')?.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
+      if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
+    } else if (this.humanResourceService.alertList().includes('etp')) {
+      this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
+    }
   }
 
   /**

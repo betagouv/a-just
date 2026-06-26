@@ -217,6 +217,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Import
    */
   imported = false
+  /**
+   * Indique si l'utilisateur a saisi manuellement la date « A compter du »
+   */
+  situationDateSetByUser = false
 
   /**
    * Constructeur
@@ -358,7 +362,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       etp = 0
     }
     this.etp = etp
-    this.form.get('activitiesStartDate')?.setValue(this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null)
+    this.situationDateSetByUser = false
+    this.form.get('activitiesStartDate')?.setValue(this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null, { emitEvent: false })
+    if (!this.isEdit && this.human?.dateStart) {
+      this.applyArrivalDateIfUnset(this.human.dateStart)
+    }
     this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp))
     this.form.get('categoryId')?.setValue((situation && situation.category && situation.category.id) || null)
 
@@ -419,11 +427,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.alertList.update((list) => [...list, 'lastName'])
     }
 
-    //'this.human', this.human)
     if (this.human && !this.human.dateStart) {
       this.humanResourceService.alertList.update((list) => [...list, 'startDate'])
     } else {
       this.humanResourceService.removeAlert('startDate')
+    }
+
+    const canUseArrivalDateAsFallback = !this.isEdit && !!this.human?.dateStart
+    if (!activitiesStartDate && !canUseArrivalDateAsFallback) {
+      this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
+    } else {
+      this.humanResourceService.removeAlert('activitiesStartDate')
     }
 
     if (!cat) {
@@ -443,12 +457,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.alertList.update((list) => [...list, 'etp'])
     }
 
-    if (!activitiesStartDate && !this.isEdit && this.human && this.human.dateStart) {
+    if (!activitiesStartDate && canUseArrivalDateAsFallback && this.human?.dateStart) {
       activitiesStartDate = new Date(this.human.dateStart)
-
-      // Old error when the date was not set, now we use by default the date of arrival of the agent
-      // this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
-      // this.printErrorDateStart = true
     }
 
     if (this.humanResourceService.alertList().length > 0) {
@@ -849,6 +859,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           startDate.setHours(startDate.getHours() + 5)
         }
         this.form.get('activitiesStartDate')?.setValue(startDate)
+        this.situationDateSetByUser = true
       } else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
         mainEtp = worksheetLine['__EMPTY_4'] as number
         mainEtp = fixDecimal(mainEtp)
@@ -965,5 +976,30 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.bottomContainerTargetRef.nativeElement.scrollIntoView({
       behavior: 'smooth',
     })
+  }
+
+  /**
+   * Saisie manuelle de la date « A compter du »
+   */
+  onActivitiesStartDateUserChange(date: Date | null) {
+    this.situationDateSetByUser = true
+    this.form.get('activitiesStartDate')?.setValue(date)
+  }
+
+  /**
+   * Reporte la date d'arrivée sur « A compter du » tant que l'utilisateur ne l'a pas saisie
+   */
+  applyArrivalDateIfUnset(date: Date | null) {
+    if (this.isEdit || this.situationDateSetByUser || !date) {
+      return
+    }
+
+    const normalized = setTimeToMidDay(today(date))
+    if (!normalized) {
+      return
+    }
+
+    this.form.get('activitiesStartDate')?.setValue(normalized, { emitEvent: false })
+    this.humanResourceService.removeAlert('activitiesStartDate')
   }
 }

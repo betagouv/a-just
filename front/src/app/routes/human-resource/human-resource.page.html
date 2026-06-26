@@ -19,6 +19,7 @@
             indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
           " [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
+      (dateStartChange)="onArrivalDateChange($event)"
       (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
       [class.duringPrint]="duringPrint"></cover-profil-details>
     }
