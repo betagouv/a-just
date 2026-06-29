@@ -49,6 +49,7 @@ import { findHelpCenter } from '../../utils/help-center'
 import { TourButtonComponent } from '../tour-button/tour-button.component'
 import { IntroJSStep } from '../../services/tour/tour.service'
 import { PopinFeedbackComponent } from './popin-feedback/popin-feedback.component'
+import { FeedbackService } from '../../services/feedback/feedback.service'
 
 /**
  * Interface de génération d'un commentaire
@@ -117,6 +118,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Service to referentiel
    */
   referentielService = inject(ReferentielService)
+  feedbackService = inject(FeedbackService)
 
   /**
    * DOM qui pointe sur le conteneur
@@ -282,6 +284,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Dit si le paneau d'aide est visible ou non
    */
   helpSectionVisible: boolean = false
+  private feedbackAutoPopupChecked = false
 
   /**
    * Constructeur
@@ -298,6 +301,15 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
     this.watch(
       this.userService.user.subscribe((u) => {
         this.updateMenu(u)
+
+        if (u) {
+          if (!this.feedbackAutoPopupChecked) {
+            this.feedbackAutoPopupChecked = true
+            this.tryAutoShowFeedbackPopup()
+          }
+        } else {
+          this.feedbackAutoPopupChecked = false
+        }
       }),
     )
 
@@ -659,6 +671,25 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
     this.showFeedbackPopup = false
     this.feedbackBanner?.hideAfterSubmit()
     this.refreshHeight()
+  }
+
+  private isE2ETest() {
+    return typeof window !== 'undefined' && Boolean((window as any).Cypress)
+  }
+
+  async tryAutoShowFeedbackPopup() {
+    if (this.isE2ETest() || this.showFeedbackPopup || this.feedbackService.isAutoPopupShown()) {
+      return
+    }
+
+    const status = await this.feedbackService.getStatus()
+
+    if (status.hasResponded || !status.eligibleForFeedback) {
+      return
+    }
+
+    this.feedbackService.markAutoPopupShown()
+    this.showFeedbackPopup = true
   }
 
   /**

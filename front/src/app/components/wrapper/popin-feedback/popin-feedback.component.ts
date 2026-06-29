@@ -6,7 +6,7 @@ import { PopupComponent } from '../../../components/popup/popup.component'
 import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component'
 import { AppService } from '../../../services/app/app.service'
 import { FeedbackService } from '../../../services/feedback/feedback.service'
-import { FEEDBACK_POPUP_TITLE, FEEDBACK_QUESTION } from '../../../interfaces/feedback'
+import { FEEDBACK_POPUP_NOTIFICATION_THANKS, FEEDBACK_POPUP_TITLE, FEEDBACK_QUESTION } from '../../../constants/feedback'
 
 @Component({
   selector: 'aj-popin-feedback',
@@ -63,7 +63,7 @@ export class PopinFeedbackComponent {
     this.feedbackService
       .submit(this.selectedRating, this.comment.trim() || undefined, this.router.url)
       .then(() => {
-        this.appService.notification('Merci pour votre avis !')
+        this.appService.notification(FEEDBACK_POPUP_NOTIFICATION_THANKS)
         this.resetForm()
         this.onSubmitted.emit()
       })

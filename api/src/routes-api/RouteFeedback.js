@@ -17,9 +17,7 @@ export default class RouteFeedback extends Route {
     accesses: [Access.isLogin],
   })
   async status(ctx) {
-    const row = await this.model.hasResponded(ctx.state.user.id)
-
-    this.sendOk(ctx, { hasResponded: !!row })
+    this.sendOk(ctx, await this.model.getStatus(ctx.state.user.id))
   }
 
   @Route.Post({

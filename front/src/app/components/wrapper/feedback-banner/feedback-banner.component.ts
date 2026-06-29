@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { MainClass } from '../../../libs/main-class'
 import { FeedbackService } from '../../../services/feedback/feedback.service'
 import { UserService } from '../../../services/user/user.service'
-import { FEEDBACK_BANNER_BUTTON, FEEDBACK_BANNER_TEXT } from '../../../interfaces/feedback'
+import { FEEDBACK_BANNER_BUTTON, FEEDBACK_BANNER_TEXT } from '../../../constants/feedback'
 
 @Component({
   selector: 'aj-feedback-banner',
@@ -55,10 +55,10 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
       return
     }
 
-    const feedbackServiceResponse = await this.feedbackService.hasResponded()
+    const status = await this.feedbackService.getStatus()
 
     setTimeout(() => {
-      this.showBanner = !feedbackServiceResponse
+      this.showBanner = !status.hasResponded && status.eligibleForFeedback
       this.notifyHeightChange()
     })
   }

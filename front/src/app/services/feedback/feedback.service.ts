@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { ServerService } from '../http-server/server.service'
 import { FeedbackStatusInterface } from '../../interfaces/feedback'
-
-const SESSION_DISMISS_KEY = 'feedback-banner-dismissed'
+import { AUTO_POPUP_SHOWN_KEY, SESSION_DISMISS_KEY } from '../../constants/feedback'
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +9,16 @@ const SESSION_DISMISS_KEY = 'feedback-banner-dismissed'
 export class FeedbackService {
   serverService = inject(ServerService)
 
-  async hasResponded(): Promise<boolean> {
+  async getStatus(): Promise<FeedbackStatusInterface> {
     const result = await this.serverService.getWithoutError('feedback/status')
 
-    const status = result.data as FeedbackStatusInterface
+    return (result.data as FeedbackStatusInterface) || { hasResponded: false, eligibleForFeedback: false }
+  }
 
-    return status?.hasResponded === true
+  async hasResponded(): Promise<boolean> {
+    const status = await this.getStatus()
+
+    return status.hasResponded === true
   }
 
   submit(rating: number, comment?: string, page?: string): Promise<any> {
@@ -28,5 +31,13 @@ export class FeedbackService {
 
   dismissForSession(): void {
     sessionStorage.setItem(SESSION_DISMISS_KEY, '1')
+  }
+
+  isAutoPopupShown(): boolean {
+    return localStorage.getItem(AUTO_POPUP_SHOWN_KEY) === '1'
+  }
+
+  markAutoPopupShown(): void {
+    localStorage.setItem(AUTO_POPUP_SHOWN_KEY, '1')
   }
 }

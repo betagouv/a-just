@@ -13,6 +13,7 @@ module.exports = function (datas) {
 
       assert.strictEqual(response.status, 200)
       assert.isBoolean(response.data.data.hasResponded)
+      assert.isBoolean(response.data.data.eligibleForFeedback)
     })
 
     it('Submit - missing rating should return 400', async () => {
