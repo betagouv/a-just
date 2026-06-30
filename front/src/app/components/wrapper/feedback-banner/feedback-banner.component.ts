@@ -44,7 +44,7 @@ export class FeedbackBannerComponent extends MainClass implements OnInit {
 
   async loadBanner() {
     if (this.isE2ETest()) {
-      this.showBanner = false
+      this.showBanner = true
       this.notifyHeightChange()
       return
     }
