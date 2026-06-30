@@ -9,7 +9,7 @@ describe("Données d'activité", () => {
     loginApi(user.email, user.password).then((resp) => {
       const userId = resp.body.user.id;
       const token = resp.body.token;
-      
+
       return getUserDataApi(token).then((resp) => {
         const ventilations = resp.body.data.backups.map((v) => v.id);
         return resetToDefaultPermissions(userId, ventilations, token);
@@ -43,7 +43,7 @@ describe("Données d'activité", () => {
     cy.get(".panel-helper .panel-header")
       .get(".panel-header-closing-row")
       .should("contain.text", "Données d'activité A-JUST :");
-    cy.get(".panel-header-closing-row").get(".ri-close-line").click();
+    cy.get(".panel-header-closing-row").get(".ri-close-line").eq(1).click();
   });
 
   it("Check that all contentieux (level 2 + 3) are displayed", () => {

@@ -66,7 +66,7 @@ describe("Cockpit", () => {
       .get(".panel-header-closing-row")
       .should("contain.text", "Cockpit");
 
-    cy.get(".panel-header-closing-row").get(".ri-close-line").click();
+    cy.get(".panel-header-closing-row").get(".ri-close-line").eq(1).click();
   });
 
   it("Check that we can siwtch between 'Données brut' and 'Graphiques' mode ", () => {
