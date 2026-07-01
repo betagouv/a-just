@@ -2,7 +2,7 @@
   <p>Extracteur de données d'effectifs</p>
 </div>
 <div class="exportateur-container">
-  <aj-date-select class="extend" title="Pour la période du" [value]="dateStart"
+  <aj-date-select class="extend" [title]="ajDateSelectTitle" [value]="dateStart"
     (valueChange)="selectDate('start', $event)" [manualInput]="true"></aj-date-select>
   <aj-date-select class="extend" title="À" [value]="dateStop" (valueChange)="selectDate('stop', $event)"
     [manualInput]="true"></aj-date-select>

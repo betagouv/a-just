@@ -267,8 +267,6 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         }
       }
     }
-
-    console.log('this.situationId', this.situationId)
   }
 
   /**

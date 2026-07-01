@@ -244,6 +244,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   searchValue: string = ''
   /**
+   *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
+   */
+  ajDateSelectTitle: string = "A la date d'"
+  /**
    * Liste des RH trouvées
    */
   valuesFinded: HumanResourceInterface[] | null = null
@@ -1027,6 +1031,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     const backup = this.humanResourceService.backupId.getValue()
     if (backup) this.humanResourceService.trackVentilationDateChange(backup, date)
     this.onFilterList()
+
+    let todayDate = today(new Date())
+
+    if (date?.getTime() === todayDate.getTime()) {
+      this.ajDateSelectTitle = "A la date d'"
+    } else {
+      this.ajDateSelectTitle = 'A la date du'
+    }
   }
 
   /**

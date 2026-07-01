@@ -276,6 +276,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   /**
+   * Titre du sélecteur de date « A la date d' » (pour changement dynamique en fonction de la date)
+   */
+  ajDateSelectTitle: string = "A la date d'"
+  /**
    * Liste reçu par le serveur
    */
   listFormated: listFormatedInterface[] = []
@@ -857,6 +861,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this._reaffTxn = startLatencyScope('reaffectator')
     this.onFilterList()
     this.kpiService.register(DATE_REAFECTATOR, date)
+
+    let todayDate = today(new Date())
+    if (date?.getTime() === todayDate.getTime()) {
+      this.ajDateSelectTitle = "A la date d'"
+    } else {
+      this.ajDateSelectTitle = 'A la date du'
+    }
   }
 
   /**

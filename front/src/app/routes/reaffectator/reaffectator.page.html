@@ -3,7 +3,7 @@
   [tours]="listFormated && listFormated.length ? introSteps : []">
   <div class="container" [ngClass]="{ print: duringPrint }">
     <div class="title">
-      <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
+      <aj-date-select [title]="ajDateSelectTitle" class="dark-mode" [value]="dateSelected"
         (valueChange)="onDateChanged($event)" [manualInput]="true"></aj-date-select>
       <aj-select title="Choisir une catégorie" class="dark-mode category-select"
         [value]="reaffectatorService.selectedCategoriesId !== null ? [reaffectatorService.selectedCategoriesId] : []"

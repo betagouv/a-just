@@ -182,6 +182,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
   /**
+   *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
+   */
+  ajDateSelectTitle: string = 'A compter du'
+  /**
    * Activation de la calculatrice
    */
   calculatriceIsActive: boolean = false
@@ -983,6 +987,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onActivitiesStartDateUserChange(date: Date | null) {
     this.situationDateSetByUser = true
+
+    let todayDate = today(new Date())
+
+    if (date?.getTime() === todayDate.getTime()) {
+      this.ajDateSelectTitle = "A compter d'"
+    } else {
+      this.ajDateSelectTitle = 'A compter du'
+    }
+
     this.form.get('activitiesStartDate')?.setValue(date)
   }
 

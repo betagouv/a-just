@@ -7,6 +7,7 @@ import { UserService } from '../../../services/user/user.service'
 import { AppService } from '../../../services/app/app.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
 import { MatIconModule } from '@angular/material/icon'
+import { today } from '../../../utils/dates'
 
 @Component({
   selector: 'aj-extractor-ventilation',
@@ -52,12 +53,20 @@ export class ExtractorVentilationComponent extends MainClass {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
+   */
+  ajDateSelectTitle: string = 'Pour la période du'
 
   /**
    * Constructeur
    * @param excelService
    */
-  constructor(private excelService: ExcelService, private userService: UserService, private appService: AppService) {
+  constructor(
+    private excelService: ExcelService,
+    private userService: UserService,
+    private appService: AppService,
+  ) {
     super()
 
     this.watch(
@@ -111,6 +120,13 @@ export class ExtractorVentilationComponent extends MainClass {
     if (dateType === 'start') {
       this.excelService.dateStart.next(value)
       this.dateStart = value
+      let todayDate = today(new Date())
+
+      if (this.dateStart?.getTime() === todayDate.getTime()) {
+        this.ajDateSelectTitle = "Pour la période d'"
+      } else {
+        this.ajDateSelectTitle = 'Pour la période du'
+      }
     }
     if (dateType === 'stop') {
       this.excelService.dateStop.next(value)

@@ -8,7 +8,7 @@
         <div class="tags">
           @if (lastDateStart) {
           <p>
-            A partir du
+            {{ ajDateSelectTitle }}
             {{ lastDateStart | date: 'dd' }}
             {{ getShortMonthString(lastDateStart) }}
             {{ lastDateStart.getFullYear() }}
@@ -246,7 +246,7 @@
                 humanResourceService.alertList().includes('activitiesStartDate') ||
                 (form.get('activitiesStartDate')?.value === null && displayImportLabels),
             }">
-            <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+            <aj-date-select [title]="ajDateSelectTitle" [value]="form.get('activitiesStartDate')?.value"
               (valueChange)="onActivitiesStartDateUserChange($event)" [manualInput]="true"></aj-date-select>
             @if (humanResourceService.alertList().includes('activitiesStartDate')) {
             <aj-alert-small alertMessage="Vous devez saisir une date de début de situation !"
