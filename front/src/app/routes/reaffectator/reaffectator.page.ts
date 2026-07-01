@@ -854,13 +854,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
-    // Démarrer une transaction pour changement de date
-    try {
-      this._reaffTxn?.finish('success')
-    } catch {}
-    this._reaffTxn = startLatencyScope('reaffectator')
-    this.onFilterList()
-    this.kpiService.register(DATE_REAFECTATOR, date)
 
     let todayDate = today(new Date())
     if (date?.getTime() === todayDate.getTime()) {
@@ -868,6 +861,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     } else {
       this.ajDateSelectTitle = 'À la date du'
     }
+    // Démarrer une transaction pour changement de date
+    try {
+      this._reaffTxn?.finish('success')
+    } catch {}
+    this._reaffTxn = startLatencyScope('reaffectator')
+    this.onFilterList()
+    this.kpiService.register(DATE_REAFECTATOR, date)
   }
 
   /**
