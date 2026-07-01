@@ -276,9 +276,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   dateSelected: Date = this.workforceService.dateSelected.getValue()
   /**
-   * Titre du sélecteur de date « A la date d' » (pour changement dynamique en fonction de la date)
+   * Titre du sélecteur de date « À la date d' » (pour changement dynamique en fonction de la date)
    */
-  ajDateSelectTitle: string = "A la date d'"
+  ajDateSelectTitle: string = "À la date d'"
   /**
    * Liste reçu par le serveur
    */
@@ -864,9 +864,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
     let todayDate = today(new Date())
     if (date?.getTime() === todayDate.getTime()) {
-      this.ajDateSelectTitle = "A la date d'"
+      this.ajDateSelectTitle = "À la date d'"
     } else {
-      this.ajDateSelectTitle = 'A la date du'
+      this.ajDateSelectTitle = 'À la date du'
     }
   }
 

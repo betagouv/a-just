@@ -246,7 +246,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
    */
-  ajDateSelectTitle: string = "A la date d'"
+  ajDateSelectTitle: string = "À la date d'"
   /**
    * Liste des RH trouvées
    */
@@ -1035,9 +1035,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     let todayDate = today(new Date())
 
     if (date?.getTime() === todayDate.getTime()) {
-      this.ajDateSelectTitle = "A la date d'"
+      this.ajDateSelectTitle = "À la date d'"
     } else {
-      this.ajDateSelectTitle = 'A la date du'
+      this.ajDateSelectTitle = 'À la date du'
     }
   }
 
