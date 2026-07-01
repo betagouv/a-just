@@ -4,7 +4,7 @@
 
 import { differenceInMonths } from 'date-fns'
 import { Op } from 'sequelize'
-import { MIN_MONTHS_FOR_FEEDBACK, RATING_COUNT } from '../constants/feedback'
+import { MIN_MONTHS_FOR_FEEDBACK } from '../constants/feedback'
 
 /**
  * Modèle de feedback utilisateur
@@ -18,7 +18,7 @@ export default (sequelizeInstance, Model) => {
      * @param {number} userId - ID de l'utilisateur
      * @returns {Promise<Model>} Promise contenant le feedback de l'utilisateur
      */
-    Model.hasResponded = async(userId) => {
+    Model.hasResponded = async (userId) => {
         return Model.findOne({
             where: {
                 user_id: userId,
@@ -31,7 +31,7 @@ export default (sequelizeInstance, Model) => {
      * @param {number} userId - ID de l'utilisateur
      * @returns {Promise<Object>} Promise contenant le statut du feedback de l'utilisateur
      */
-    Model.getStatus = async(userId) => {
+    Model.getStatus = async (userId) => {
         const [feedback, user] = await Promise.all([
             Model.hasResponded(userId),
             Model.models.Users.findOne({
@@ -59,7 +59,7 @@ export default (sequelizeInstance, Model) => {
      * @param {string} feedback.page - Page du feedback
      * @returns {Promise<Model>} Promise contenant le feedback soumis
      */
-    Model.submit = async(userId, { rating, comment, page }) => {
+    Model.submit = async (userId, { rating, comment, page }) => {
         const existing = await Model.hasResponded(userId)
 
         if (existing) {
@@ -78,13 +78,13 @@ export default (sequelizeInstance, Model) => {
      * Récupère tous les feedbacks
      * @returns {Promise<Array<Object>>} Promise contenant tous les feedbacks
      */
-    Model.getAll = async() => {
+    Model.getAll = async () => {
         const rows = await Model.findAll({
             attributes: ['id', 'user_id', 'rating', 'comment', 'page', ['created_at', 'createdAt']],
             include: [{
                 attributes: ['email', 'first_name', 'last_name'],
                 model: Model.models.Users,
-            }, ],
+            },],
             order: [
                 ['created_at', 'DESC']
             ],
@@ -110,7 +110,7 @@ export default (sequelizeInstance, Model) => {
      * Récupère les statistiques des feedbacks
      * @returns {Promise<Object>} Promise contenant les statistiques des feedbacks
      */
-    Model.getStats = async() => {
+    Model.getStats = async () => {
         const { sequelize } = Model
 
         const total = await Model.count()
@@ -125,13 +125,13 @@ export default (sequelizeInstance, Model) => {
         const withComment = await Model.count({
             where: {
                 [Op.and]: [{
-                        comment: {
-                            [Op.ne]: null
-                        }
-                    },
-                    sequelize.where(sequelize.fn('TRIM', sequelize.col('comment')), {
-                        [Op.ne]: ''
-                    }),
+                    comment: {
+                        [Op.ne]: null
+                    }
+                },
+                sequelize.where(sequelize.fn('TRIM', sequelize.col('comment')), {
+                    [Op.ne]: ''
+                }),
                 ],
             },
         })
@@ -145,7 +145,7 @@ export default (sequelizeInstance, Model) => {
             raw: true,
         })
 
-        const byRating = RATING_COUNT
+        const byRating = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
         byRatingRows.forEach(({ rating, count }) => {
             byRating[rating] = parseInt(count, 10)
         })
@@ -167,11 +167,11 @@ export default (sequelizeInstance, Model) => {
             where: {
                 page: {
                     [Op.and]: [{
-                            [Op.ne]: null
-                        },
-                        sequelize.where(sequelize.fn('TRIM', sequelize.col('page')), {
-                            [Op.ne]: ''
-                        }),
+                        [Op.ne]: null
+                    },
+                    sequelize.where(sequelize.fn('TRIM', sequelize.col('page')), {
+                        [Op.ne]: ''
+                    }),
                     ],
                 },
             },

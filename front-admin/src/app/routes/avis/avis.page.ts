@@ -61,6 +61,8 @@ export class AvisPage extends MainClass implements OnInit, OnDestroy {
       return 0;
     }
 
-    return Math.round(((this.stats.byRating[rating] || 0) / this.stats.total) * 100);
+    return Math.round(
+      ((this.stats.byRating[rating] || 0) / this.stats.total) * 100,
+    );
   }
 }
