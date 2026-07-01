@@ -25,7 +25,10 @@
         <h3>Répartition des notes</h3>
         @for (rating of ratingLevels; track rating) {
         <div class="rating-row">
-          <span class="rating-label">{{ rating }} ★</span>
+          <span class="rating-label">
+            <span>★</span>
+            <span>{{ rating }}</span>
+          </span>
           <div class="rating-bar">
             <div class="rating-fill" [style.width.%]="getRatingPercent(rating)"></div>
           </div>

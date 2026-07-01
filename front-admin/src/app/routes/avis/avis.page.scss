@@ -65,6 +65,10 @@
 .rating-label,
 .rating-count {
   font-size: 14px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .stats-list {
