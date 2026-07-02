@@ -11,7 +11,7 @@ export const onGetFeedbackStatusApi = async ({ userToken }) => {
     .catch((err) => err.response)
 }
 
-export const onSubmitFeedbackApi = async ({ userToken, rating, comment, page }) => {
+export const onSubmitFeedbackApi = async ({ userToken, rating, comment, page, recontact }) => {
   return await instanceAxios
     .post(
       '/feedback/submit',
@@ -19,6 +19,7 @@ export const onSubmitFeedbackApi = async ({ userToken, rating, comment, page }) 
         rating,
         comment,
         page,
+        recontact,
       },
       {
         headers: {

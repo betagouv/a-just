@@ -36,4 +36,21 @@ textarea {
   border: 1px solid utils.$colors-cgraylightv3;
   resize: vertical;
   box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
+.recontact-zone {
+  color: utils.$colors-titleSelect;
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    margin-bottom: 0;
+  }
+
+  aj-radio-button {
+    cursor: pointer;
+  }
 }

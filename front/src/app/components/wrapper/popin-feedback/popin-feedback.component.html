@@ -21,5 +21,11 @@
   <label for="feedback-comment">Commentaire (facultatif)</label>
   <textarea id="feedback-comment" [(ngModel)]="comment" placeholder="Partagez votre expérience..."
     maxlength="2000"></textarea>
+
+  <div class="recontact-zone">
+    <aj-radio-button id="recontact-radio" bgColor="#000091" [switchColor]="recontact ? 'white' : '#000091'"
+      [value]="recontact" (valueChange)="recontact = $event.checked"></aj-radio-button>
+    <label for="recontact-radio">Je souhaite être recontacté</label>
+  </div>
 </aj-popup>
 }

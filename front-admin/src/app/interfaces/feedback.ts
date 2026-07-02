@@ -10,6 +10,7 @@ export interface FeedbackInterface {
   rating: number;
   comment: string | null;
   page: string | null;
+  recontact: boolean;
   createdAt: string;
   user: FeedbackUserInterface;
 }

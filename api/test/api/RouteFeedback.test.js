@@ -25,12 +25,13 @@ module.exports = function (datas) {
       assert.strictEqual(response.status, 400)
     })
 
-    it('Submit - valid rating saves feedback', async () => {
+    it('Submit - valid rating saves feedback with recontact', async () => {
       const response = await onSubmitFeedbackApi({
         userToken: datas.adminToken,
         rating: 4,
         comment: 'Très bon outil',
         page: '/panorama',
+        recontact: true,
       })
 
       assert.strictEqual(response.status, 200)
@@ -60,6 +61,7 @@ module.exports = function (datas) {
       assert.isArray(response.data.data)
       assert.isAtLeast(response.data.data.length, 1)
       assert.property(response.data.data[0], 'rating')
+      assert.property(response.data.data[0], 'recontact')
       assert.property(response.data.data[0], 'user')
     })
 

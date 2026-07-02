@@ -57,9 +57,10 @@ export default (sequelizeInstance, Model) => {
      * @param {number} feedback.rating - Note du feedback
      * @param {string} feedback.comment - Commentaire du feedback
      * @param {string} feedback.page - Page du feedback
+     * @param {boolean} feedback.recontact - Souhaite être recontacté
      * @returns {Promise<Model>} Promise contenant le feedback soumis
      */
-    Model.submit = async (userId, { rating, comment, page }) => {
+    Model.submit = async (userId, { rating, comment, page, recontact }) => {
         const existing = await Model.hasResponded(userId)
 
         if (existing) {
@@ -71,6 +72,7 @@ export default (sequelizeInstance, Model) => {
             rating,
             comment: comment || null,
             page: page || null,
+            recontact: recontact === true,
         })
     }
 
@@ -80,7 +82,7 @@ export default (sequelizeInstance, Model) => {
      */
     Model.getAll = async () => {
         const rows = await Model.findAll({
-            attributes: ['id', 'user_id', 'rating', 'comment', 'page', ['created_at', 'createdAt']],
+            attributes: ['id', 'user_id', 'rating', 'comment', 'page', 'recontact', ['created_at', 'createdAt']],
             include: [{
                 attributes: ['email', 'first_name', 'last_name'],
                 model: Model.models.Users,
@@ -96,6 +98,7 @@ export default (sequelizeInstance, Model) => {
             rating: row.rating,
             comment: row.comment,
             page: row.page,
+            recontact: row.recontact,
             createdAt: row.createdAt,
             user: {
                 id: row.user_id,

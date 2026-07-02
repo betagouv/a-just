@@ -7,4 +7,5 @@ export interface FeedbackSubmitInterface {
   rating: number
   comment?: string
   page?: string
+  recontact?: boolean
 }

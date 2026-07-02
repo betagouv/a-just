@@ -21,8 +21,8 @@ export class FeedbackService {
     return status.hasResponded === true
   }
 
-  submit(rating: number, comment?: string, page?: string): Promise<any> {
-    return this.serverService.post('feedback/submit', { rating, comment, page })
+  submit(rating: number, comment?: string, page?: string, recontact?: boolean): Promise<any> {
+    return this.serverService.post('feedback/submit', { rating, comment, page, recontact })
   }
 
   isSessionDismissed(): boolean {

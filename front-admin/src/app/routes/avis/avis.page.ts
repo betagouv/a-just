@@ -22,6 +22,7 @@ export class AvisPage extends MainClass implements OnInit, OnDestroy {
     'user',
     'rating',
     'comment',
+    'recontact',
     'page',
   ];
   dataSource = new MatTableDataSource<FeedbackInterface>();

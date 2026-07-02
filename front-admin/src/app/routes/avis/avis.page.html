@@ -99,6 +99,13 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="recontact">
+        <th mat-header-cell *matHeaderCellDef>Être recontacté ?</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.recontact ? 'Oui' : 'Non' }}
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="page">
         <th mat-header-cell *matHeaderCellDef>Page</th>
         <td mat-cell *matCellDef="let element">{{ element.page || '—' }}</td>
