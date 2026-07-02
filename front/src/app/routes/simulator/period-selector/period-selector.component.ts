@@ -177,6 +177,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
         this.simulatorService.disabled.next(this.disabled)
         this.dateStart = new Date(event)
         this.simulatorService.dateStart.next(this.dateStart)
+        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop || new Date()))
       } else if (type === 'dateStop') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)

@@ -213,7 +213,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           target: '.sub-main-header',
           title: 'Affinez votre sélection',
           intro:
-            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
+            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d'autant plus représentatives que la période sélectionnée sera longue.</p>",
         },
         {
           target: '.switch-tab .brut',
@@ -224,7 +224,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               <li>le taux de couverture moyen</li>
               <li>et le DTES (Délai Théorique d'Écoulement du Stock) à la date de fin de période</li>
             </ul>
-            <p>Vous retrouvez également les <b>ETPT</b> affectés à chaque contentieux</p>
+            <p>Vous retrouvez également :</p>
+            <ul>
+              <li>Les <b>entrées et sorties</b> moyennes mensuelles</li>
+              <li>Le <b>stock</b> à la fin de la période choisie</li>
+              <li>Les <b>ETPT</b> affectés à chaque contentieux</li>
+              <li>Les <b>temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li>
+            </ul>
           `,
           beforeLoad: async (intro: any) => {
             const itemToClick = document.querySelector('.switch-tab .brut')
@@ -282,7 +288,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           target: '.sub-main-header',
           title: 'Affinez votre sélection',
           intro:
-            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
+            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d'autant plus représentatives que la période sélectionnée sera longue.</p>",
         },
         {
           target: '.switch-tab .brut',
@@ -293,7 +299,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               <li>le taux de couverture moyen</li>
               <li>et le DTES (Délai Théorique d'Écoulement du Stock) à la date de fin de période</li>
             </ul>
-            <p>Vous retrouvez également les <b>ETPT</b> affectés à chaque contentieux</p>
+            <p>Vous retrouvez également :</p>
+            <ul>
+              <li>Les <b>entrées et sorties</b> moyennes mensuelles</li>
+              <li>Le <b>stock</b> à la fin de la période choisie</li>
+              <li>Les <b>ETPT</b> affectés à chaque contentieux</li>
+              <li>Les <b>temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li>
+            </ul>
           `,
           beforeLoad: async (intro: any) => {
             const itemToClick = document.querySelector('.switch-tab .brut')
