@@ -1,5 +1,5 @@
 import { getUserDataApi, loginApi, resetToDefaultPermissions } from "../../support/api";
-import user from "../../fixtures/user.json";    
+import user from "../../fixtures/user.json";
 
 describe("Feedback", () => {
     let userId;
@@ -10,12 +10,12 @@ describe("Feedback", () => {
     before(() => {
         // "Ceinture": Explicitly set required permissions before tests
         return loginApi(user.email, user.password).then((resp) => {
-          userId = resp.body.user.id;
-          token = resp.body.token;
-    
-          return getUserDataApi(token).then((resp) => {
+            userId = resp.body.user.id;
+            token = resp.body.token;
+
+            return getUserDataApi(token).then((resp) => {
                 ventilations = resp.body.data.backups.map((v) => v.id);
-        
+
                 // Ensure full default permissions (including greffier access needed for .fonctionnaires)
                 return resetToDefaultPermissions(userId, ventilations, token).then(() => {
                     cy.login(user.email, user.password);
@@ -23,20 +23,20 @@ describe("Feedback", () => {
             });
         });
     });
-    
+
     after(() => {
         // "Bretelles": Always restore default permissions after tests
         return loginApi(user.email, user.password).then((resp) => {
             userId = resp.body.user.id;
             token = resp.body.token;
-        
+
             return getUserDataApi(token).then((resp) => {
                 ventilations = resp.body.data.backups.map((v) => v.id);
                 return resetToDefaultPermissions(userId, ventilations, token);
             });
         });
     });
-    
+
     beforeEach(() => {
         cy.get("body").then(($body) => {
             if ($body.find(".panel-helper .ri-close-line").length) {

@@ -9,5 +9,5 @@
     "esModuleInterop": true,
     "baseUrl": "."
   },
-  "include": ["**/*.ts", "**/*.json"],
+  "include": ["**/*.ts", "**/*.json", "cypress/e2e/feedback.cy.js"]
 }
