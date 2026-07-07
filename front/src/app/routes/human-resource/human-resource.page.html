@@ -65,9 +65,17 @@
       [activities]="
             onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
           " [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
-      [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null" [lastDateStart]="
-            onEditIndex !== -1 ? histories[onEditIndex].dateStart : histories.length ? histories[0].dateStart : null
-          " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
+      [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
+      [lastDateStart]="
+        onEditIndex !== -1
+          ? histories[onEditIndex].dateStart
+          : indexOfTheFuture !== null
+            ? histories[indexOfTheFuture].dateStart
+            : histories.length
+              ? histories[0].dateStart
+              : null
+      "
+      [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"

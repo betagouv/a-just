@@ -3,27 +3,25 @@
     @if (saveActions) {
     <div class="header">
       @if (isEdit) {
-      <ng-template>
-        <p>Modification de la situation</p>
-        <div class="tags">
-          @if (lastDateStart) {
-          <p>
-            {{ ajDateSelectTitle }}
-            {{ lastDateStart | date: 'dd' }}
-            {{ getShortMonthString(lastDateStart) }}
-            {{ lastDateStart.getFullYear() }}
-          </p>
-          }
-          @if (dateStop && lastDateStart && lastDateStart.getTime() !== dateStop.getTime()) {
-          <p>
-            Jusqu'au
-            {{ dateStop | date: 'dd' }}
-            {{ getShortMonthString(dateStop) }}
-            {{ dateStop.getFullYear() }}
-          </p>
-          }
-        </div>
-      </ng-template>
+      <p>Modification de la situation</p>
+      <div class="tags">
+        @if (lastDateStart) {
+        <p>
+          {{ ajDateSelectTitle }}
+          {{ lastDateStart | date: 'dd' }}
+          {{ getShortMonthString(lastDateStart) }}
+          {{ lastDateStart.getFullYear() }}
+        </p>
+        }
+        @if (dateStop && lastDateStart && lastDateStart.getTime() !== dateStop.getTime()) {
+        <p>
+          Jusqu'au
+          {{ dateStop | date: 'dd' }}
+          {{ getShortMonthString(dateStop) }}
+          {{ dateStop.getFullYear() }}
+        </p>
+        }
+      </div>
       }
       @if (!isEdit) {
       <p>Renseigner une nouvelle situation</p>
@@ -277,24 +275,20 @@
                 </p>
                 <p>
                   @if (indisp.dateStart) {
-                  <ng-template>
-                    du {{ indisp.dateStart | date: 'dd' }}
-                    {{ getShortMonthString(indisp.dateStart) }}
-                    {{ getFullYear(indisp.dateStart) }}
-                  </ng-template>
+                  du {{ indisp.dateStart | date: 'dd' }}
+                  {{ getShortMonthString(indisp.dateStart) }}
+                  {{ getFullYear(indisp.dateStart) }}
                   }
                   @if (indisp.dateStart && indisp.dateStop) {
-                  <ng-template>au</ng-template>
+                  au
                   }
                   @if (!indisp.dateStart && indisp.dateStop) {
-                  <ng-template>jusqu'au</ng-template>
+                  jusqu'au
                   }
                   @if (indisp.dateStop) {
-                  <ng-template>
-                    {{ indisp.dateStop | date: 'dd' }}
-                    {{ getShortMonthString(indisp.dateStop) }}
-                    {{ getFullYear(indisp.dateStop) }}
-                  </ng-template>
+                  {{ indisp.dateStop | date: 'dd' }}
+                  {{ getShortMonthString(indisp.dateStop) }}
+                  {{ getFullYear(indisp.dateStop) }}
                   }
                 </p>
               </div>

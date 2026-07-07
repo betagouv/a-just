@@ -265,9 +265,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           if (this.displayImportLabels) {
             fct = this.fonctions.find((c) => c.id === this.importedFunction)
           } else {
-            fct = this.fonctions[0]
+            const currentFonctionId = this.form.get('fonctionId')?.value
+            fct = this.fonctions.find((c) => c.id == currentFonctionId) || this.fonctions[0]
           }
-          this.form.get('fonctionId')?.setValue(fct?.id || null)
+          this.form.get('fonctionId')?.setValue(fct?.id ?? null)
           if (fct) this.calculatriceIsActive = fct.calculatrice_is_active || false
 
           // // Suprpession de l'alerte
@@ -358,8 +359,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Initialisation du formulaire
    */
-  onStart() {
-    const situation = this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
+  async onStart() {
+    const situation =
+      this.isEdit || this.saveActions
+        ? this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
+        : null
 
     let etp = situation && situation.etp !== undefined ? situation.etp : null
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
@@ -368,19 +372,20 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.etp = etp
     this.situationDateSetByUser = false
     this.form.get('activitiesStartDate')?.setValue(this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null, { emitEvent: false })
-    if (!this.isEdit && this.human?.dateStart) {
+    if (!this.isEdit && !this.saveActions && this.human?.dateStart) {
       this.applyArrivalDateIfUnset(this.human.dateStart)
     }
     this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp))
-    this.form.get('categoryId')?.setValue((situation && situation.category && situation.category.id) || null)
 
-    this.form.get('fonctionId')?.setValue((situation && situation.fonction && situation.fonction.id) || null)
+    const categoryId = situation?.category?.id ?? null
+    const fonctionId = situation?.fonction?.id ?? null
 
-    const fonctions = this.humanResourceService.fonctions.getValue()
-    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value, this.form.get('categoryId')?.value)
+    this.form.get('categoryId')?.setValue(categoryId, { emitEvent: false })
+    await this.loadCategories()
+    this.form.get('fonctionId')?.setValue(fonctionId, { emitEvent: false })
+
+    const fonct = this.fonctions.find((c) => c.id == fonctionId)
     if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
-
-    this.loadCategories()
   }
 
   /**
@@ -877,8 +882,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
     }
 
-    this.importedFunction = fct?.id || null
-    category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
+    this.importedFunction = fct?.id ?? null
+    category !== null ? this.form.get('categoryId')?.setValue(category.id ?? null) : this.form.get('categoryId')?.setValue(null)
     this.form.get('etp')?.setValue(mainEtp)
 
     return { category, fct, mainEtp, startDate, ventilation: monTab }
