@@ -7,7 +7,7 @@ export const CET_LABEL = 'Compte épargne temps' //'Décharge syndicale' //'CONG
 /**
  * Categorie utilisée dans l'extracteur pour l'absentéisme lors des dialogues de gestion
  */
-export const ABSENTEISME_LABELS = ['Congé maladie ordinaire', 'Congé maternité/paternité/adoption', 'Autre absentéisme']
+export const ABSENTEISME_LABELS = ['Congé maladie ordinaire', 'Congé maternité/paternité/adoption', "Autorisation spéciale d'absence", 'Autre absentéisme']
 /**
  * Constante utilisée pour l'extracteur indiquant le libelé du niveau 3 indispo
  */

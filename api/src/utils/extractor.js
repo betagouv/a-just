@@ -276,17 +276,17 @@ export const getViewModel = async (params) => {
         sub1: x.sub,
       }
 
-    if (x.global === 'TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)' && isTj())
+    if (x.global === 'TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)' && isTj())
       return {
         ...x,
         global1: "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
         sub1: x.sub,
       }
 
-    if (x.global === 'TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)' && isCa())
+    if (x.global === 'TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)' && isCa())
       return {
         ...x,
-        global1: "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
+        global1: "15. TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)",
         sub1: x.sub,
       }
 
@@ -360,7 +360,7 @@ export function buildExcelRef(flatReferentielsList) {
     ...formatedExcelList,
     { global: null, sub: 'CET > 30 jours' },
     {
-      global: 'TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)',
+      global: 'TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)',
       sub: null,
     },
     { global: null, sub: 'CET < 30 jours' },
@@ -570,9 +570,6 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
   if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ', 'TPRX ')
 
   const { remaining, absOrdered, delegationEntry } = isolateAbsenteismeAndDelegation(filledVentilations)
-  //let remaining = filledVentilations
-  //let absOrdered = {}
-  //let delegationEntry = null
 
   let gaps = null
   if (isCa()) {
@@ -611,7 +608,7 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
     ['CET > 30 jours']: abs.CET ?? 0,
     ['CET < 30 jours']: abs['CET<30'] ?? 0,
     ...absOrdered, // Mettre l'absenteisme ici
-    ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: abs.absenteisme ?? 0,
+    ['TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)']: abs.absenteisme ?? 0,
     ...delegationEntry, // Mettre la délégation TJ à la fin
     ['']: null,
     ['ETPT global sur la période (incluant absentéisme et action 99)']: abs.realEtp + (filledReferentiel.get(indispoL3) ?? 0),
