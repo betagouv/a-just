@@ -751,11 +751,11 @@ export class HumanResourceService {
     }
   }
 
-  async copyPerson(agentId: number, situationId: number | null) {
+  async copyPerson(agentId: number, situationIds: Array<number | null>) {
     return this.serverService
       .post(`human-resources/copy-agent`, {
         agentId,
-        situationId,
+        situationIds,
       })
       .then((response) => response.data)
   }

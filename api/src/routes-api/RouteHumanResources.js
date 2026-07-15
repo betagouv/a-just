@@ -556,10 +556,10 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canEditHR],
   })
   async copyAgent(ctx) {
-    const { agentId, situationId } = this.body(ctx)
+    const { agentId, situationIds } = this.body(ctx)
 
     if (await this.model.haveAccess(agentId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.copyAgent(agentId, situationId))
+      this.sendOk(ctx, await this.model.copyAgent(agentId, situationIds))
     } else {
       this.sendOk(ctx, null)
     }
