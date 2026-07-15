@@ -939,9 +939,9 @@ export default (sequelizeInstance, Model) => {
 
       return await Model.updateHR({
         ...agent,
-        firstName: agent.firstName + ' - COPY',
-        lastName: agent.lastName + ' - COPY',
-        matricule: '',
+        firstName: agent.firstName + ' - COPIE',
+        lastName: agent.lastName + ' - COPIE',
+        matricule: agent.matricule,
         registration_number: null,
         dateEnd: null,
         id: null,

@@ -1072,7 +1072,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    if (this.humanResourceService.alertList().includes('startDate') || this.humanResourceService.alertList().includes('firstName') || this.humanResourceService.alertList().includes('lastName')) {
+    if (
+      this.humanResourceService.alertList().includes('startDate') ||
+      this.humanResourceService.alertList().includes('firstName') ||
+      this.humanResourceService.alertList().includes('lastName')
+    ) {
       document.getElementById('content')?.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
       if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
@@ -1103,7 +1107,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         if (this.coverDetails) {
           const calendars = this.coverDetails.getCalendars()
-          console.log('calendars', calendarType)
+          //console.log('calendars', calendarType)
           if (event && event.target.id === 'matricule') {
             calendars[0].onClick()
           } else if (calendarType && calendarType === 'dateStart') {

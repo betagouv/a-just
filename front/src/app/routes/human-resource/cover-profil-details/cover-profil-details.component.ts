@@ -467,6 +467,8 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
       try {
         let idOfSituationToCopy = this.situationId ?? null
 
+        // TODO : Copy all the situations
+
         if (idOfSituationToCopy === -1) {
           // prendre la derniere situation passée
           const past = this.historiesOfThePast.filter((h) => h.id !== -1)
@@ -486,7 +488,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         }
 
         const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, idOfSituationToCopy)
-        //console.log('newHR', newHR)
+        console.log('newHR', newHR)
         if (newHR) {
           this.router.navigate(['/resource-humaine', newHR.id])
         }
