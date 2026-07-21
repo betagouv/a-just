@@ -103,6 +103,10 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   @Input() onEditIndex: number | null = null
   /**
+   * Affiche les étiquettes « à vérifier » après duplication
+   */
+  @Input() displayDuplicateLabels: boolean = false
+  /**
    * Id de la situation en cours d'édition
    */
   @Input() situationId: number | null = null
@@ -495,7 +499,9 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, situationIdsToCopy)
         console.log('newHR', newHR)
         if (newHR) {
-          this.router.navigate(['/resource-humaine', newHR.id])
+          this.router.navigate(['/resource-humaine', newHR.id], {
+            state: { fromDuplicate: true },
+          })
         }
       } catch (error) {}
       this.appService.appLoading.next(false)

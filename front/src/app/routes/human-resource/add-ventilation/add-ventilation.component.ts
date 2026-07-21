@@ -206,6 +206,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   displayImportLabels = false
   /**
+   * Affiche les étiquettes « à vérifier » après duplication
+   */
+  @Input() displayDuplicateLabels: boolean = false
+  /**
    * Somme des valeurs importés
    */
   sumPercentImported = 0

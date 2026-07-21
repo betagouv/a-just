@@ -146,6 +146,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onEditIndex: number | null = null // null (no edition), -1 (new edition), x (x'eme edition)
   /**
+   * Fiche ouverte après duplication d'un agent
+   */
+  isDuplicating = false
+  /**
    * Indispo en court d'édition
    */
   updateIndisponiblity: RHActivityInterface | null = null
@@ -325,10 +329,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     let findUser = null
+    const id = +this.route.snapshot.params['id']
+    if (cacheHr === null && this.currentHR?.id !== id) {
+      this.onEditIndex = null
+      this.isDuplicating = false
+    }
     if (cacheHr) {
       findUser = cacheHr
     } else {
-      const id = +this.route.snapshot.params['id']
       findUser = await this.humanResourceService.loadRemoteHR(id)
     }
     if (findUser) {
@@ -359,7 +367,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.categoryName = ''
     }
 
+    const fromDuplicate = history.state?.['fromDuplicate']
+    if (fromDuplicate) {
+      history.replaceState({}, '')
+    }
+
     this.formatHRHistory()
+
+    if (fromDuplicate && this.histories.length) {
+      this.isDuplicating = true
+      this.onEditIndex = this.indexOfTheFuture ?? 0
+    }
   }
 
   /**
@@ -636,10 +654,26 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param removeIndispo
    */
   async onCancel(removeIndispo: boolean = false) {
+    if (this.isDuplicating && this.currentHR) {
+      this.isDuplicating = false
+      this.onEditIndex = null
+      this.appService.appLoading.next(true)
+      try {
+        if (await this.humanResourceService.cancelDuplicatedAgent(this.currentHR)) {
+          const back = this.routerLinkToGoBack?.length ? this.routerLinkToGoBack : ['/ventilations']
+          await this.router.navigate(back)
+        }
+      } finally {
+        this.appService.appLoading.next(false)
+      }
+      return
+    }
+
     if (removeIndispo && this.currentHR && this.currentHR.indisponibilities.length) {
       await this.updateHuman('indisponibilities', [])
     }
 
+    this.isDuplicating = false
     this.onEditIndex = null
 
     const findElement = document.getElementById('content')
@@ -670,6 +704,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Demande de chargement de la fiche
    */
   onNewUpdate() {
+    this.isDuplicating = false
     this.onEditIndex = null
     this.onLoad(null, false)
   }

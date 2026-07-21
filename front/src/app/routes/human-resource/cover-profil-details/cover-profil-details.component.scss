@@ -326,3 +326,20 @@ input#lastName:-internal-autofill-selected {
     }
   }
 }
+
+.import-confirmation.duplicate-review {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: solid 1px utils.$colors-lightBorder;
+  padding: 0 12px 3px 6px;
+  font-size: 14px;
+  color: #c3992a;
+  background-color: #feebd0;
+  margin-left: 8px;
+
+  i {
+    margin-right: 6px;
+  }
+}

@@ -260,10 +260,11 @@ export class HumanResourceService {
   /**
    * Suppression d'une fiche d'une juridiction
    * @param id
+   * @param skipConfirm
    * @returns
    */
-  async removeHrById(id: number) {
-    if (confirm('Supprimer cette personne ?')) {
+  async removeHrById(id: number, skipConfirm = false) {
+    if (skipConfirm || confirm('Supprimer cette personne ?')) {
       return this.serverService.delete(`human-resources/remove-hr/${id}`).then(() => {
         // update date of backup after remove
         const hrBackups = this.backups.getValue()
@@ -277,6 +278,35 @@ export class HumanResourceService {
     }
 
     return false
+  }
+
+  /**
+   * Annule une duplication : supprime les situations copiées puis la fiche
+   * @param hr
+   * @returns
+   */
+  async cancelDuplicatedAgent(hr: HumanResourceInterface) {
+    let currentHr: HumanResourceInterface | null = hr
+    let safety = (hr.situations?.length || 0) + 5
+
+    while (currentHr?.situations?.length && safety > 0) {
+      safety--
+      const previousCount = currentHr.situations.length
+      const situationId = currentHr.situations[0].id
+      const updatedHr = await this.removeSituation(situationId, false)
+
+      if (!updatedHr || updatedHr.situations.length >= previousCount) {
+        return false
+      }
+
+      currentHr = updatedHr
+    }
+
+    if (currentHr?.situations?.length) {
+      return false
+    }
+
+    return this.removeHrById(hr.id, true)
   }
 
   /**

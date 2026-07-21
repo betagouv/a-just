@@ -1,12 +1,12 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
   @if (contentieuxReferentiel.length) {
   <div class="wrapper-content"
-    [ngStyle]="{ 'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px' }"
+    [ngStyle]="{ 'margin-bottom': onEditIndex !== null && (histories.length === 0 || isDuplicating) ? '80px' : '0px' }"
     [class.duringPrint]="duringPrint">
     @if (currentHR) {
     <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR" [backAnchor]="
             currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined
-          " [onEditIndex]="onEditIndex"
+          " [onEditIndex]="onEditIndex" [displayDuplicateLabels]="isDuplicating"
       [situationId]="indexOfTheFuture !== null ? histories[indexOfTheFuture].id : null"
       [historiesOfThePast]="historiesOfThePast" [historiesOfTheFutur]="historiesOfTheFutur" [etp]="currentETP"
       [indisponibilities]="
@@ -74,10 +74,10 @@
               : null
       " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
-      [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
-      (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
-      (alertSet)="onAlertsUpdated($event)"></add-ventilation>
+      [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0 && !isDuplicating"
+      [displayDuplicateLabels]="isDuplicating" (onOpenHelpPanel)="openHelpPanel($event)"
+      [forceToShowContentieuxDetail]="duringPrint" [class.empty-user]="histories.length === 0"
+      [setValueEtp]="updateETP.bind(this)" (alertSet)="onAlertsUpdated($event)"></add-ventilation>
     }
 
     @if (historiesOfTheFutur.length) {
@@ -130,9 +130,9 @@
 
     <div class="flex-1"></div>
 
-    @if (onEditIndex !== null && histories.length === 0) {
+    @if (onEditIndex !== null && (histories.length === 0 || isDuplicating)) {
     <div class="sticky-action-footer">
-      <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>
+      <button class="small outline blue strict-border" (click)="onCancel(histories.length === 0)">Annuler</button>
       <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
     </div>
     }
