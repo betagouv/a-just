@@ -469,34 +469,27 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     if (this.currentHR) {
       this.appService.appLoading.next(true)
       try {
-        // TODO : Copy all the situations
-        let situationIdsToCopy: Array<number | null> = []
+        let idOfSituationToCopy = this.situationId ?? null
 
-        for (const situation of this.currentHR.situations) {
-          situationIdsToCopy.push(situation.id)
+        if (idOfSituationToCopy === -1) {
+          // prendre la derniere situation passée
+          const past = this.historiesOfThePast.filter((h) => h.id !== -1)
+          const lastSituationPassed = past.length > 0 ? past[past.length - 1].id : null
+          if (lastSituationPassed) {
+            idOfSituationToCopy = lastSituationPassed
+          }
         }
 
-        //let idOfSituationToCopy = this.situationId ?? null
+        if (idOfSituationToCopy === -1) {
+          // sinon prendre la premiere situation a venir
+          const future = this.historiesOfTheFutur.filter((h) => h.id !== -1)
+          const firstSituationFuture = future.length > 0 ? future[0].id : null
+          if (firstSituationFuture) {
+            idOfSituationToCopy = firstSituationFuture
+          }
+        }
 
-        // if (idOfSituationToCopy === -1) {
-        //   // prendre la derniere situation passée
-        //   const past = this.historiesOfThePast.filter((h) => h.id !== -1)
-        //   const lastSituationPassed = past.length > 0 ? past[past.length - 1].id : null
-        //   if (lastSituationPassed) {
-        //     idOfSituationToCopy = lastSituationPassed
-        //   }
-        // }
-
-        // if (idOfSituationToCopy === -1) {
-        //   // sinon prendre la premiere situation a venir
-        //   const future = this.historiesOfTheFutur.filter((h) => h.id !== -1)
-        //   const firstSituationFuture = future.length > 0 ? future[0].id : null
-        //   if (firstSituationFuture) {
-        //     idOfSituationToCopy = firstSituationFuture
-        //   }
-        // }
-
-        const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, situationIdsToCopy)
+        const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, idOfSituationToCopy)
         console.log('newHR', newHR)
         if (newHR) {
           this.router.navigate(['/resource-humaine', newHR.id], {

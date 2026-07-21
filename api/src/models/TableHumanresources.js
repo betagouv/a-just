@@ -926,12 +926,12 @@ export default (sequelizeInstance, Model) => {
     //console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
-  Model.copyAgent = async (agentId, situationIds) => {
+  Model.copyAgent = async (agentId, situationId) => {
     const agent = await Model.getHr(agentId)
     if (agent) {
       let situations = agent.situations || []
-      if (situationIds && situationIds.length > 0) {
-        situations = situations.filter((s) => situationIds.includes(s.id))
+      if (situationId && situationId !== -1) {
+        const findSituation = situations.find((s) => s.id === situationId)
         if (findSituation) {
           situations = [findSituation]
         }
