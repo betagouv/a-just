@@ -207,6 +207,7 @@ function readSheetContext(): Cypress.Chainable<SheetContext> {
       );
 
       const requiredKeys = Object.keys(REQUIRED_HEADERS) as string[];
+
       const headerRowIndex = rows.findIndex((row) => {
         return requiredKeys.every((key) =>
           row.some((cell) => matchesHeader(cell, REQUIRED_HEADERS[key])),
