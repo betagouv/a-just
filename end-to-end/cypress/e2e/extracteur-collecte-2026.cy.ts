@@ -729,57 +729,57 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
     exportAndPersist(baseUrl, START, STOP);
   });
 
-  // it("Compare current output with reference", () => {
-  //   const refJson =
-  //     "cypress/artifacts/effectif/extracteur-collecte-2026-reference.json";
-  //   const currentJson =
-  //     "cypress/artifacts/effectif/extracteur-collecte-2026-current.json";
+  it("Compare current output with reference", () => {
+    const refJson =
+      "cypress/artifacts/effectif/extracteur-collecte-2026-reference.json";
+    const currentJson =
+      "cypress/artifacts/effectif/extracteur-collecte-2026-current.json";
 
-  //   // Read both JSON files and compare in browser context (like effectif-suite.cy.ts)
-  //   cy.readFile(refJson, { timeout: 60000 }).then((reference) => {
-  //     cy.readFile(currentJson, { timeout: 60000 }).then((current) => {
-  //       // Use the shared comparison function from effectif-helpers
-  //       const { diffs, summary } = diffSheetsWithTolerance(
-  //         reference,
-  //         current,
-  //         1e-6,
-  //       );
+    // Read both JSON files and compare in browser context (like effectif-suite.cy.ts)
+    cy.readFile(refJson, { timeout: 60000 }).then((reference) => {
+      cy.readFile(currentJson, { timeout: 60000 }).then((current) => {
+        // Use the shared comparison function from effectif-helpers
+        const { diffs, summary } = diffSheetsWithTolerance(
+          reference,
+          current,
+          1e-6,
+        );
 
-  //       if (diffs.length > 0) {
-  //         // Write detailed diff report
-  //         const report =
-  //           `Extracteur Collecte 2026 - Rapport de différences\n` +
-  //           `${"=".repeat(80)}\n` +
-  //           `Référence : ${REFERENCE_FILE}\n` +
-  //           `Période : ${START} à ${STOP}\n` +
-  //           `Catégorie : ${CATEGORY}\n` +
-  //           `Backup : ${BACKUP_LABEL}\n\n` +
-  //           summary;
+        if (diffs.length > 0) {
+          // Write detailed diff report
+          const report =
+            `Extracteur Collecte 2026 - Rapport de différences\n` +
+            `${"=".repeat(80)}\n` +
+            `Référence : ${REFERENCE_FILE}\n` +
+            `Période : ${START} à ${STOP}\n` +
+            `Catégorie : ${CATEGORY}\n` +
+            `Backup : ${BACKUP_LABEL}\n\n` +
+            summary;
 
-  //         // Save to file
-  //         cy.writeFile(
-  //           "cypress/artifacts/effectif/extracteur-collecte-2026-diff.txt",
-  //           report,
-  //         );
+          // Save to file
+          cy.writeFile(
+            "cypress/artifacts/effectif/extracteur-collecte-2026-diff.txt",
+            report,
+          );
 
-  //         // Log to console
-  //         cy.log(`❌ ${diffs.length} différences trouvées`);
-  //         console.log(report);
+          // Log to console
+          cy.log(`❌ ${diffs.length} différences trouvées`);
+          console.log(report);
 
-  //         // Fail the test with structured error
-  //         let errorMsg = `\n${"=".repeat(80)}\n`;
-  //         errorMsg += `ÉCHEC : L'extracteur actuel diffère de la référence\n`;
-  //         errorMsg += `${"=".repeat(80)}\n\n`;
-  //         errorMsg += summary;
-  //         errorMsg += `\n${"=".repeat(80)}\n`;
-  //         errorMsg += `Rapport détaillé : cypress/artifacts/effectif/extracteur-collecte-2026-diff.txt\n`;
-  //         errorMsg += `${"=".repeat(80)}\n`;
+          // Fail the test with structured error
+          let errorMsg = `\n${"=".repeat(80)}\n`;
+          errorMsg += `ÉCHEC : L'extracteur actuel diffère de la référence\n`;
+          errorMsg += `${"=".repeat(80)}\n\n`;
+          errorMsg += summary;
+          errorMsg += `\n${"=".repeat(80)}\n`;
+          errorMsg += `Rapport détaillé : cypress/artifacts/effectif/extracteur-collecte-2026-diff.txt\n`;
+          errorMsg += `${"=".repeat(80)}\n`;
 
-  //         throw new Error(errorMsg);
-  //       } else {
-  //         cy.log(`✅ L'extracteur actuel correspond à la référence`);
-  //       }
-  //     });
-  //   });
-  // });
+          throw new Error(errorMsg);
+        } else {
+          cy.log(`✅ L'extracteur actuel correspond à la référence`);
+        }
+      });
+    });
+  });
 });

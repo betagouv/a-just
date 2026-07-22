@@ -918,76 +918,76 @@ describe("Non-regression des calculs de l'extracteur (données d'effectifs)", ()
     });
   });
 
-  // it("Compare PR vs SANDBOX artifacts", () => {
-  //   const hostSB = new URL(SANDBOX).host.replace(/[:.]/g, "-");
-  //   const hostPR = new URL(PR).host.replace(/[:.]/g, "-");
+  it("Compare PR vs SANDBOX artifacts", () => {
+    const hostSB = new URL(SANDBOX).host.replace(/[:.]/g, "-");
+    const hostPR = new URL(PR).host.replace(/[:.]/g, "-");
 
-  //   const results: Array<{
-  //     label: string;
-  //     diffCount: number;
-  //     summary: string;
-  //   }> = [];
+    const results: Array<{
+      label: string;
+      diffCount: number;
+      summary: string;
+    }> = [];
 
-  //   CATEGORIES.forEach((cat) => {
-  //     const slug = slugifyLabel(cat);
-  //     const sbJson = `cypress/artifacts/effectif/effectif_${hostSB}_${START}_${STOP}_${slug}.json`;
-  //     const prJson = `cypress/artifacts/effectif/effectif_${hostPR}_${START}_${STOP}_${slug}.json`;
-  //     cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
-  //       cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
-  //         const { diffs, summary } = diffSheetsWithTolerance(sb, pr, 1e-6);
-  //         if (diffs.length > 0) {
-  //           // Write detailed diff report
-  //           const report =
-  //             `Category: ${cat}\n` +
-  //             `Reference: SANDBOX (${hostSB})\n` +
-  //             `Candidate: PR (${hostPR})\n` +
-  //             `Date Range: ${START} to ${STOP}\n\n` +
-  //             summary;
-  //           cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, report);
-  //           cy.log(`❌ ${cat}: ${diffs.length} differences found`);
-  //         } else {
-  //           cy.log(`✅ ${cat}: No differences`);
-  //         }
-  //         results.push({ label: cat, diffCount: diffs.length, summary });
-  //       });
-  //     });
-  //   });
+    CATEGORIES.forEach((cat) => {
+      const slug = slugifyLabel(cat);
+      const sbJson = `cypress/artifacts/effectif/effectif_${hostSB}_${START}_${STOP}_${slug}.json`;
+      const prJson = `cypress/artifacts/effectif/effectif_${hostPR}_${START}_${STOP}_${slug}.json`;
+      cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
+        cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
+          const { diffs, summary } = diffSheetsWithTolerance(sb, pr, 1e-6);
+          if (diffs.length > 0) {
+            // Write detailed diff report
+            const report =
+              `Category: ${cat}\n` +
+              `Reference: SANDBOX (${hostSB})\n` +
+              `Candidate: PR (${hostPR})\n` +
+              `Date Range: ${START} to ${STOP}\n\n` +
+              summary;
+            cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, report);
+            cy.log(`❌ ${cat}: ${diffs.length} differences found`);
+          } else {
+            cy.log(`✅ ${cat}: No differences`);
+          }
+          results.push({ label: cat, diffCount: diffs.length, summary });
+        });
+      });
+    });
 
-  //   cy.then(() => {
-  //     const failing = results.filter((r) => r.diffCount > 0);
-  //     if (failing.length) {
-  //       let errorMsg = `\n${"=".repeat(80)}\n`;
-  //       errorMsg += `ÉCHEC DES TESTS DE NON-RÉGRESSION EFFECTIF\n`;
-  //       errorMsg += `${"=".repeat(80)}\n\n`;
+    cy.then(() => {
+      const failing = results.filter((r) => r.diffCount > 0);
+      if (failing.length) {
+        let errorMsg = `\n${"=".repeat(80)}\n`;
+        errorMsg += `ÉCHEC DES TESTS DE NON-RÉGRESSION EFFECTIF\n`;
+        errorMsg += `${"=".repeat(80)}\n\n`;
 
-  //       // Count total sheets with differences across all categories
-  //       let totalSheets = 0;
-  //       failing.forEach((r) => {
-  //         const sheetMatches = r.summary.match(/Feuille :/g);
-  //         totalSheets += sheetMatches ? sheetMatches.length : 0;
-  //       });
+        // Count total sheets with differences across all categories
+        let totalSheets = 0;
+        failing.forEach((r) => {
+          const sheetMatches = r.summary.match(/Feuille :/g);
+          totalSheets += sheetMatches ? sheetMatches.length : 0;
+        });
 
-  //       if (failing.length === 1 && failing[0].label === "Tous") {
-  //         // Single "Tous" category - just show sheet-level summary
-  //         errorMsg += failing[0].summary;
-  //       } else {
-  //         // Multiple categories - show category grouping
-  //         errorMsg += `Trouvé des différences dans ${failing.length} catégorie(s) :\n\n`;
-  //         failing.forEach((r) => {
-  //           errorMsg += `Catégorie : ${r.label}\n`;
-  //           errorMsg += `-`.repeat(80) + "\n";
-  //           errorMsg += r.summary;
-  //         });
-  //       }
+        if (failing.length === 1 && failing[0].label === "Tous") {
+          // Single "Tous" category - just show sheet-level summary
+          errorMsg += failing[0].summary;
+        } else {
+          // Multiple categories - show category grouping
+          errorMsg += `Trouvé des différences dans ${failing.length} catégorie(s) :\n\n`;
+          failing.forEach((r) => {
+            errorMsg += `Catégorie : ${r.label}\n`;
+            errorMsg += `-`.repeat(80) + "\n";
+            errorMsg += r.summary;
+          });
+        }
 
-  //       errorMsg += `\n${"=".repeat(80)}\n`;
-  //       errorMsg += `Rapports détaillés sauvegardés dans : cypress/artifacts/effectif/diff_*.txt\n`;
-  //       errorMsg += `${"=".repeat(80)}\n`;
+        errorMsg += `\n${"=".repeat(80)}\n`;
+        errorMsg += `Rapports détaillés sauvegardés dans : cypress/artifacts/effectif/diff_*.txt\n`;
+        errorMsg += `${"=".repeat(80)}\n`;
 
-  //       throw new Error(errorMsg);
-  //     } else {
-  //       cy.log(`✅ Toutes les catégories correspondent entre PR et SANDBOX`);
-  //     }
-  //   });
-  // });
+        throw new Error(errorMsg);
+      } else {
+        cy.log(`✅ Toutes les catégories correspondent entre PR et SANDBOX`);
+      }
+    });
+  });
 });
