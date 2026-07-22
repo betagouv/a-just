@@ -99,3 +99,5 @@ export const posad = {
   p90: 0.9,
   sus: 1,
 }
+
+export const WORKING_DAYS_PER_YEAR = 365 * 5 / 7 // 260 jours
