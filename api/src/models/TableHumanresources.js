@@ -941,7 +941,7 @@ export default (sequelizeInstance, Model) => {
         ...agent,
         firstName: agent.firstName + ' - COPIE',
         lastName: agent.lastName + ' - COPIE',
-        matricule: agent.matricule,
+        matricule: null,
         registration_number: null,
         dateEnd: null,
         id: null,
