@@ -490,7 +490,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         }
 
         const newHR = await this.humanResourceService.copyPerson(this.currentHR.id, idOfSituationToCopy)
-        console.log('newHR', newHR)
+        //console.log('newHR', newHR)
         if (newHR) {
           this.router.navigate(['/resource-humaine', newHR.id], {
             state: { fromDuplicate: true },

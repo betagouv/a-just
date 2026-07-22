@@ -660,8 +660,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.appService.appLoading.next(true)
       try {
         if (await this.humanResourceService.cancelDuplicatedAgent(this.currentHR)) {
-          const back = this.routerLinkToGoBack?.length ? this.routerLinkToGoBack : ['/ventilations']
-          await this.router.navigate(back)
+          await this.router.navigate(['/ventilations'])
         }
       } finally {
         this.appService.appLoading.next(false)
