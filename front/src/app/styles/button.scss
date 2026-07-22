@@ -14,9 +14,14 @@ button {
   -webkit-appearance: none;
   border-radius: 8px;
   white-space: nowrap;
+  transition: all 0.2s ease-in-out;
 
   &.light {
     font-size: 16px;
+
+    &:hover {
+      background-color: utils.$colors-hoverLightColor;
+    }
   }
 
   &.medium {
@@ -56,6 +61,10 @@ button {
   &.primary {
     color: white;
     background-color: utils.$colors-cbluedark;
+
+    &:hover {
+      background-color: utils.$colors-cblue;
+    }
   }
 
   &.red {
@@ -69,36 +78,59 @@ button {
   }
 
   &.outline {
+    transition: all 0.2s ease-in-out;
 
     &.blue,
     &.primary {
       color: utils.$colors-primary;
       border: 1px solid utils.$colors-primary;
       background-color: transparent;
+
+      &:hover {
+        background-color: utils.$colors-bgBlueTag;
+      }
     }
 
     &.red {
       color: utils.$colors-creddark;
       border: 1px solid utils.$colors-creddark;
       background-color: transparent;
+
+      &:hover {
+        background-color: utils.$colors-credlight;
+      }
     }
 
     &.blue-light {
       color: utils.$colors-darkModeTitle;
       border: 1px solid utils.$colors-darkModeTitle;
       background-color: transparent;
+
+      &:hover {
+        background-color: utils.$colors-grayRow;
+        color: white;
+      }
     }
 
     &.white {
       color: utils.$colors-primary;
       border: 1px solid utils.$colors-primary;
       background-color: transparent;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
     }
 
     &.gray {
       color: utils.$colors-grayRow;
       border: 1px solid utils.$colors-grayRow;
       background-color: transparent;
+
+      &:hover {
+        background-color: utils.$colors-grayRow;
+        color: white;
+      }
     }
   }
 

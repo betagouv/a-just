@@ -137,7 +137,7 @@ const HEADER_LABELS = {
   jaf: "2. Total Contentieux JAF",
   cmo: "12.31. Congé maladie ordinaire",
   absentReintegre:
-    "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)",
+    "TOTAL absentéisme réintégré (CMO + Congé maternité + ASA + Autre absentéisme + CET < 30 jours)",
   totalAction99: "12. Total des indisponibilités relevant de l'action 99",
   action99Detail: "12.7 Autres Indisponibilités (Action 99)",
   etptGlobal: "ETPT global sur la période (incluant absentéisme et action 99)",
@@ -207,6 +207,7 @@ function readSheetContext(): Cypress.Chainable<SheetContext> {
       );
 
       const requiredKeys = Object.keys(REQUIRED_HEADERS) as string[];
+
       const headerRowIndex = rows.findIndex((row) => {
         return requiredKeys.every((key) =>
           row.some((cell) => matchesHeader(cell, REQUIRED_HEADERS[key])),

@@ -131,9 +131,14 @@ export class DateSelectBlueComponent extends MainClass implements OnChanges {
    * @param event
    */
   onDateChanged(event: any) {
-    const date = new Date(event);
-    this.value = date;
-    this.valueChange.emit(this.value);
+    if (event == null) {
+      this.value = null;
+      this.valueChange.emit(this.value);
+    } else {
+      const date = new Date(event);
+      this.value = date;
+      this.valueChange.emit(this.value);
+    }
     this.findRealValue();
     this.findEditValue();
   }
@@ -228,7 +233,7 @@ export class DateSelectBlueComponent extends MainClass implements OnChanges {
     if (date) {
       this.value = date;
       this.valueChange.emit(this.value);
-    } else if (!this.editValue) {
+    } else if (!this.editValue && this.value != null) {
       this.value = null;
       this.valueChange.emit(this.value);
     }

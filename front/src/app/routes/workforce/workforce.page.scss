@@ -452,7 +452,7 @@ progression-bar {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border: solid 1px #ddd;
     background-color: white;
-    min-width: 250px;
+    min-width: 300px;
 
     >* {
       border-bottom: 1px solid utils.$colors-lightBorder;

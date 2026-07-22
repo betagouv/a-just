@@ -178,7 +178,7 @@ describe("Ajout d'un agent", () => {
       .click();
 
     cy.get("aj-popup").within(() => {
-      cy.get("select").select("Décharge syndicale");
+      cy.get("select").select("Congé maladie ordinaire");
 
       cy.get("aj-date-select")
         .first()

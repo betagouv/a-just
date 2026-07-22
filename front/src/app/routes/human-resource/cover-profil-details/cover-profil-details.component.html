@@ -65,6 +65,12 @@
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
       }
+      @if (displayDuplicateLabels) {
+      <label class="import-confirmation duplicate-review">
+        <i class="ri-checkbox-circle-fill"></i>
+        à vérifier
+      </label>
+      }
     </div>
     <div class="last-row">
       <div class="matricule input-wrapper">
@@ -103,6 +109,12 @@
 
   <div class="right-second-row">
     <div class="dates">
+      @if (displayDuplicateLabels) {
+      <label class="import-confirmation duplicate-review">
+        <i class="ri-checkbox-circle-fill"></i>
+        à vérifier
+      </label>
+      }
       @if(humanResourceService.alertList().includes('startDate')) {
       <aj-alert-small alertMessage="Vous devez saisir une date d'arrivée !"
         (onClose)="removeAlertItem('startDate')"></aj-alert-small>

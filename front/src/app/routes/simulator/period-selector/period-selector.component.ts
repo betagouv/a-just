@@ -46,6 +46,12 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
    */
   dateStop: Date | null = null
   /**
+   * Date minimum pour dateStop (dateStart + 1 jour).
+   * Propriété mise en cache pour éviter de recréer un objet Date à chaque
+   * cycle de détection de changements, ce qui réinitialisait la saisie manuelle.
+   */
+  dateStopMin: Date = new Date()
+  /**
    * Nombre de mois contenu dans la période selectionnée
    */
   nbOfMonthWithinPeriod: number[] = []
@@ -81,6 +87,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
             this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
           }
           this.dateStart = new Date()
+          this.refreshDateStopMin()
         }
 
         if (this.route.snapshot.queryParams && this.route.snapshot.queryParams['dstart']) {
@@ -112,12 +119,14 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
           this.mooveClass = ''
           this.dateStop = null
           this.dateStart = new Date()
+          this.refreshDateStopMin()
         }
       }),
     )
   }
 
   ngOnInit(): void {
+    this.refreshDateStopMin()
     if (this.whiteSimulator === true) {
       let now = new Date()
       now.setFullYear(now.getFullYear() + 1)
@@ -135,6 +144,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
     if (this.whiteSimulator === false) {
       if (type === 'dateStart') {
         this.dateStart = new Date(event)
+        this.refreshDateStopMin()
         this.simulatorService.dateStart.next(this.dateStart)
         this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
         if (logKPI) {
@@ -156,8 +166,8 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
       } else if (type === 'dateStop') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
-        this.dateStop = new Date(event)
-        if (logKPI) {
+        this.dateStop = event == null ? null : new Date(event)
+        if (logKPI && this.dateStop) {
           this.kpiService.register(END_DATE_SIMULATOR, this.dateStop + '')
         }
 
@@ -168,7 +178,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
         )
           this.mooveClass = 'future'
         else this.mooveClass = 'present'
-        this.simulatorService.dateStop.next(this.dateStop)
+        this.simulatorService.dateStop.next(this.dateStop ?? undefined)
         this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
       }
     } else {
@@ -176,19 +186,24 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
         this.dateStart = new Date(event)
+        this.refreshDateStopMin()
         this.simulatorService.dateStart.next(this.dateStart)
         this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop || new Date()))
       } else if (type === 'dateStop') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
-        this.dateStop = new Date(event)
-        this.simulatorService.dateStop.next(this.dateStop)
+        this.dateStop = event == null ? null : new Date(event)
+        this.simulatorService.dateStop.next(this.dateStop ?? undefined)
         this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart
-        this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop
-        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop))
+        if (this.dateStop) {
+          this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop
+        }
+        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop || new Date()))
         this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
         this.mooveClass = 'present'
-        this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '')
+        if (this.dateStop) {
+          this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '')
+        }
       }
     }
   }
@@ -200,5 +215,15 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
     const date = new Date(this.dateStart)
     date.setDate(this.dateStart.getDate() + 1)
     return date
+  }
+
+  /**
+   * Met à jour la date minimum de dateStop uniquement quand dateStart change
+   */
+  refreshDateStopMin(): void {
+    const min = this.getMin()
+    if (this.dateStopMin.getTime() !== min.getTime()) {
+      this.dateStopMin = min
+    }
   }
 }

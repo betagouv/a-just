@@ -3,11 +3,21 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "sourceMap": true,
-    "types": ["cypress", "node"],
+    "types": [
+      "cypress",
+      "node"
+    ],
     "esModuleInterop": true,
     "baseUrl": "."
   },
-  "include": ["**/*.ts", "**/*.json", "cypress/e2e/feedback.cy.js"]
+  "include": [
+    "**/*.ts",
+    "**/*.json",
+    "cypress/e2e/feedback.cy.js"
+  ]
 }

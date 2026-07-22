@@ -1,12 +1,12 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
   @if (contentieuxReferentiel.length) {
   <div class="wrapper-content"
-    [ngStyle]="{ 'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px' }"
+    [ngStyle]="{ 'margin-bottom': onEditIndex !== null && (histories.length === 0 || isDuplicating) ? '80px' : '0px' }"
     [class.duringPrint]="duringPrint">
     @if (currentHR) {
     <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR" [backAnchor]="
             currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined
-          " [onEditIndex]="onEditIndex"
+          " [onEditIndex]="onEditIndex" [displayDuplicateLabels]="isDuplicating"
       [situationId]="indexOfTheFuture !== null ? histories[indexOfTheFuture].id : null"
       [historiesOfThePast]="historiesOfThePast" [historiesOfTheFutur]="historiesOfTheFutur" [etp]="currentETP"
       [indisponibilities]="
@@ -19,9 +19,8 @@
             indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
           " [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
-      (dateStartChange)="onArrivalDateChange($event)"
-      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
-      [class.duringPrint]="duringPrint"></cover-profil-details>
+      (dateStartChange)="onArrivalDateChange($event)" (alertSet)="onAlertsUpdated($event)"
+      (focusNext)="focusNext($event)" [class.duringPrint]="duringPrint"></cover-profil-details>
     }
     @if (histories.length !== 0) {
     <div id="first-panel" class="first-panel">
@@ -66,13 +65,19 @@
             onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
           " [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
       [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null" [lastDateStart]="
-            onEditIndex !== -1 ? histories[onEditIndex].dateStart : histories.length ? histories[0].dateStart : null
-          " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
+        onEditIndex !== -1
+          ? histories[onEditIndex].dateStart
+          : indexOfTheFuture !== null
+            ? histories[indexOfTheFuture].dateStart
+            : histories.length
+              ? histories[0].dateStart
+              : null
+      " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
-      [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
-      (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
-      (alertSet)="onAlertsUpdated($event)"></add-ventilation>
+      [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0 ||isDuplicating"
+      [displayDuplicateLabels]="isDuplicating" (onOpenHelpPanel)="openHelpPanel($event)"
+      [forceToShowContentieuxDetail]="duringPrint" [class.empty-user]="histories.length === 0"
+      [setValueEtp]="updateETP.bind(this)" (alertSet)="onAlertsUpdated($event)"></add-ventilation>
     }
 
     @if (historiesOfTheFutur.length) {
@@ -125,9 +130,9 @@
 
     <div class="flex-1"></div>
 
-    @if (onEditIndex !== null && histories.length === 0) {
+    @if (onEditIndex !== null && (histories.length === 0)) {
     <div class="sticky-action-footer">
-      <button class="small outline blue strict-border" (click)="onCancel(true)">Annuler</button>
+      <button class="small outline blue strict-border" (click)="onCancel(histories.length === 0)">Annuler</button>
       <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
     </div>
     }
@@ -141,10 +146,9 @@
       { id: 'close', content: 'Annuler' },
       { id: 'modify', content: 'Enregistrer', fill: true },
     ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
-  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
-  <p class="title">
-    {{ updateIndisponiblity.id > 0 ? "Modification de l'indisponibilité" : 'Nouvelle indisponibilité' }}
-  </p>
+  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)" [title]="
+      updateIndisponiblity.id > 0 ? 'Modification de l\'indisponibilité' : 'Nouvelle indisponibilité'
+    ">
   <div class="form">
     <div class="first-bloc">
       <div class="label-aj">Motif d'indisponibilité</div>

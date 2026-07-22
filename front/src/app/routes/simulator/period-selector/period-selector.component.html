@@ -5,7 +5,7 @@
         <div class="container-timeline-button">
             <aj-date-select-blue class="select-disabled {{ mooveClass }} {{ disabled }}" [value]="dateStart" (valueChange)="updateDateSelected('dateStart', $event)" [max]="dateStop" [min]="today" [side]="mooveClass === 'future' ? 'right' : ''" [manualInput]="true"></aj-date-select-blue>
             <div class="space"></div>
-            <aj-date-select-blue id="bt-white-simulator" class="{{ disabled }}" [title]="'Fin de période'" [value]="dateStop" (valueChange)="updateDateSelected('dateStop', $event)" [min]="getMin()" [side]="'right'" [manualInput]="true"></aj-date-select-blue>
+            <aj-date-select-blue id="bt-white-simulator" class="{{ disabled }}" [title]="'Fin de période'" [value]="dateStop" (valueChange)="updateDateSelected('dateStop', $event)" [min]="dateStopMin" [side]="'right'" [manualInput]="true"></aj-date-select-blue>
         </div>
         <div class="rec-container">
             <div class="separator"></div>
