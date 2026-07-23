@@ -6,7 +6,7 @@ import { Op } from 'sequelize'
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id', 'ressort'],
       where: {
         parent_id: null,
       },
