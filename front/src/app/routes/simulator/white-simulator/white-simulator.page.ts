@@ -1710,7 +1710,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * @returns
    */
   getTooltipText() {
-    return 'Evolution par rapport ' + (this.startRealValue !== '' ? 'au ' : 'à ') + (this.startRealValue || "aujourd'hui")
+    return 'Évolution par rapport ' + (this.startRealValue !== '' ? 'au ' : 'à ') + (this.startRealValue || "aujourd'hui")
   }
 
   /**

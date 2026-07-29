@@ -1956,7 +1956,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
    * @returns
    */
   getTooltipText() {
-    return 'Evolution par rapport ' + (this.startRealValue !== '' ? 'au ' : 'à ') + (this.startRealValue || "aujourd'hui")
+    return 'Évolution par rapport ' + (this.startRealValue !== '' ? 'au ' : 'à ') + (this.startRealValue || "aujourd'hui")
   }
 
   /**
