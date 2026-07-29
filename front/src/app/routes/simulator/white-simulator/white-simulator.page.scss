@@ -1371,6 +1371,12 @@
             opacity: 1;
             margin-top: 30px;
 
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-cblue;
+            }
+
             p.title {
                 color: utils.$colors-textCategoryAll;
             }

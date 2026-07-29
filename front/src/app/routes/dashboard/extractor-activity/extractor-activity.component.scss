@@ -71,6 +71,12 @@ h1 {
             padding: 4px 8px;
             height: 55px;
 
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-cblue;
+            }
+
             &.disabled {
                 pointer-events: none;
                 opacity: 0.3

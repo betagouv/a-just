@@ -281,7 +281,7 @@ input#lastName:-internal-autofill-selected {
     transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 
     &:hover {
-      background-color: #f5f5f5;
+      background-color: utils.$colors-hoverLightColor;
     }
   }
 
@@ -306,7 +306,7 @@ input#lastName:-internal-autofill-selected {
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: #f5f5f5;
+        background-color: utils.$colors-hoverLightColor;
       }
 
       &:first-child {
