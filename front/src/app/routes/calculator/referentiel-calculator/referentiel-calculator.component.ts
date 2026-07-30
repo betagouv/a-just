@@ -693,9 +693,12 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     const datasFuturs = datasProjected
 
     let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
-    max *= 1.05
+    max *= 1.2
     let min = [...datasPast, ...datasFuturs].reduce((min, d) => Math.min(min, d?.value || 0), 0)
     min *= 0.95
+    if (min < 0) {
+      min = 0
+    }
 
     const defaultDataset = {
       cubicInterpolationMode: 'default',
