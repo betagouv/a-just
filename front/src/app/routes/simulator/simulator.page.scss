@@ -1,8 +1,5 @@
 @use '../../styles/utils.scss' as utils;
 
-
-
-
 .display-none {
   display: none !important;
 }
@@ -109,7 +106,12 @@
       padding: 8px 16px;
 
       border: solid 1px utils.$colors-primary;
-      background-color: white;
+      background-color: transparent;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
 
       p {
         color: utils.$colors-primary;
@@ -125,6 +127,11 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       &.disabled {
         pointer-events: none;
@@ -385,9 +392,13 @@
     height: 40px;
     padding: 8px 16px;
     border: solid 1px utils.$colors-primary;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-hoverLightColor;
+    }
 
     &.export-b {
-
       margin-right: 8px;
       border: solid 1px utils.$colors-primary;
       background-color: utils.$colors-primary;
@@ -397,6 +408,11 @@
         opacity: 1;
         cursor: pointer;
         pointer-events: initial;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background-color: utils.$colors-cblue;
+        }
       }
 
       mat-icon {
@@ -844,13 +860,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      border: solid 1px transparent;
+      transition: all 0.2s ease-in-out;
 
       &:first-child {
         margin-right: 12px;
       }
 
       &:hover {
-        border: solid 1px utils.$colors-sortHeaderSelected;
+        border-color: utils.$colors-sortHeaderSelected;
         background-color: utils.$colors-activityGuideButtonText;
       }
     }
@@ -877,6 +895,13 @@
       padding: 8px 16px;
       color: utils.$colors-bgTag;
       border: solid 1px utils.$colors-bgTag;
+
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
+
     }
 
     .simulate-button {
@@ -887,6 +912,11 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       &.disabled {
         pointer-events: none;
@@ -1096,10 +1126,19 @@
         border-top-right-radius: 0px;
         background-color: transparent;
         padding-bottom: 5px;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background-color: utils.$colors-bgBlueTag;
+        }
 
         &.greffe {
           border-color: utils.$colors-cpink !important;
           color: utils.$colors-cpink;
+
+          &:hover {
+            background-color: utils.$colors-cpinkmiddle;
+          }
         }
 
         &.white-button {
@@ -1255,13 +1294,18 @@
       color: white;
       opacity: 1;
       margin-top: 30px;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       p.title {
         color: white;
       }
 
       .shape {
-        background-color: utils.$colors-primary;
+        background-color: transparent;
         color: white;
       }
     }

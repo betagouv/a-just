@@ -1,4 +1,4 @@
-import { Component, ViewChildren, QueryList, ElementRef, inject, ViewChild } from '@angular/core'
+import { Component, ViewChildren, QueryList, ElementRef, inject, ViewChild, computed, Signal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
@@ -73,17 +73,37 @@ export class SignupPage {
   /**
    * Liste des fonctions (1VP, VP, ...)
    */
-  fonctions: string[] = [
-    this.userService.isCa() ? 'Premier président' : 'Président(e)',
-    'Directeur/trice de greffe',
-    'Secrétaire général(e)',
-    'Chef(fe) de cabinet',
-    'Chargé(e) de mission',
-    this.userService.isCa() ? 'Secrétariat Première présidence' : 'Secrétaire administratif - présidence',
-    'Secrétaire administratif - DG',
-    'Directeur/trice de greffe adjoint(e)',
-    'Directeur/trice des services de greffe judiciaires',
-  ]
+  fonctions: Signal<string[]> = computed(() => {
+    return this.userService.isCa()
+      ? [
+          'Premier président',
+          'Directeur/trice de greffe',
+          'Premier/ère président(e) de chambre',
+          'Président(e) de chambre',
+          'Secrétaire général(e)',
+          'Chef(fe) de cabinet',
+          'Chargé(e) de mission',
+          'Secrétariat Première présidence',
+          'Secrétaire administratif - DG',
+          'Directeur/trice de greffe adjoint(e)',
+          'Directeur/trice des services de greffe judiciaires',
+        ]
+      : [
+          'Président(e)',
+          'Directeur/trice de greffe',
+          'Premier/ère vice-président(e)',
+          'Secrétaire général(e)',
+          'Vice-président(e)',
+          'Chef(fe) de cabinet',
+          'Chargé(e) de mission',
+          'Attaché(e) de justice',
+          'Secrétaire administratif - présidence',
+          'Secrétaire administratif - DG',
+          'Directeur/trice de greffe adjoint(e)',
+          'Directeur/trice des services de greffe judiciaires',
+          'Cadre greffier/ière',
+        ]
+  })
   tjs: any[] = []
   provider: string = ''
 
@@ -298,7 +318,7 @@ export class SignupPage {
    * @param event
    */
   setFonc(event: any) {
-    this.fonctions.map((fct) => {
+    this.fonctions().map((fct) => {
       if (fct === event.value) {
         this.form.controls['fonction'].setValue(fct)
       }

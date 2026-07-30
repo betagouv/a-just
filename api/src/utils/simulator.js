@@ -7,6 +7,7 @@ import { calculateETPForContentieux, getEtpByDateAndPersonSimu } from './human-r
 import { canHaveUserCategoryAccess } from './hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { checkAbort } from './abordTimeout'
+import { WORKING_DAYS_PER_YEAR } from '../constants/hr'
 
 /**
  * Variable de temps travail en fonction de la category
@@ -541,7 +542,7 @@ export function computeDTES(lastStock, totalOut) {
 function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix, totalOut = null) {
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  const periodeEnMois = countOfCalandarDays / (365 / 12)
+  const periodeEnMois = countOfCalandarDays / (WORKING_DAYS_PER_YEAR / 12)
 
   // Si totalOut, l'utiliser comme paramètre bloqué
   const sortiesMensuelles = totalOut !== null
@@ -957,7 +958,7 @@ export async function execSimulation(params, simulation, dateStart, dateStop, su
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalIn = (simulation.lastStock - params.beginSituation.lastStock) / (nbDays / (365 / 12)) + simulation.totalOut
+          simulation.totalIn = (simulation.lastStock - params.beginSituation.lastStock) / (nbDays / (WORKING_DAYS_PER_YEAR / 12)) + simulation.totalOut
         } else if (simulation.totalOut && simulation.realCoverage) {
           simulation.totalIn = simulation.totalOut / simulation.realCoverage
         }
@@ -975,14 +976,14 @@ export async function execSimulation(params, simulation, dateStart, dateStop, su
               (simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
           }
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalOut = (params.beginSituation.lastStock - simulation.lastStock) / (nbDays / (365 / 12)) + simulation.totalIn
+          simulation.totalOut = (params.beginSituation.lastStock - simulation.lastStock) / (nbDays / (WORKING_DAYS_PER_YEAR / 12)) + simulation.totalIn
         } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths !== 0)) {
           simulation.totalOut = simulation.lastStock / simulation.realDTESInMonths
         } else if (simulation.realCoverage && simulation.totalIn) {
           simulation.totalOut = simulation.realCoverage * simulation.totalIn
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut =
-            (params.beginSituation.lastStock + simulation.totalIn * (nbDays / (365 / 12))) / (simulation.realDTESInMonths + nbDays / (365 / 12))
+            (params.beginSituation.lastStock + simulation.totalIn * (nbDays / (WORKING_DAYS_PER_YEAR / 12))) / (simulation.realDTESInMonths + nbDays / (WORKING_DAYS_PER_YEAR / 12))
         }
       }
 
@@ -991,7 +992,7 @@ export async function execSimulation(params, simulation, dateStart, dateStop, su
         //simulation.lastStock = 0
         //} else
         if (simulation.totalIn && simulation.totalOut) {
-          simulation.lastStock = params.beginSituation.lastStock + (nbDays / (365 / 12)) * simulation.totalIn - (nbDays / (365 / 12)) * simulation.totalOut
+          simulation.lastStock = params.beginSituation.lastStock + (nbDays / (WORKING_DAYS_PER_YEAR / 12)) * simulation.totalIn - (nbDays / (WORKING_DAYS_PER_YEAR / 12)) * simulation.totalOut
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = simulation.realDTESInMonths * simulation.totalOut
         } else if (simulation.totalOut && simulation.realDTESInMonths === 0) {
@@ -1290,7 +1291,7 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
 
         // Calcul du stock : stock = stock_précédent + (périodeEnMois × totalIn) - (périodeEnMois × totalOut)
         if (totalOutToUse !== null && nbDays && totalInMonth !== null) {
-          const periodeEnMois = nbDays / (365 / 12)
+          const periodeEnMois = nbDays / (WORKING_DAYS_PER_YEAR / 12)
           lastStockValue = previousStock + (periodeEnMois * totalInMonth) - (periodeEnMois * totalOutToUse)
         } else {
           lastStockValue = previousStock

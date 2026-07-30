@@ -29,6 +29,7 @@
       <th mat-sort-header="latitude">Latitude</th>
       <th mat-sort-header="longitude">Longitude</th>
       <th mat-sort-header="population">Population</th>
+      <th mat-sort-header="ressort">Ressort</th>
       <th mat-sort-header="enabled">Actif</th>
     </tr>
 
@@ -52,6 +53,9 @@
       </td>
       <td class="cursor-pointer" (click)="onUpdate('population', element)">
         {{element.population || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('ressort', element)">
+        {{element.ressort || '-'}}
       </td>
       <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
         {{element.enabled ? 'Oui' : 'Non'}}

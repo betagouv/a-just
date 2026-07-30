@@ -35,7 +35,6 @@ export default (sequelizeInstance, Model) => {
           label: list[i]['ContentieuxReferentiel.label'],
         },
       }
-      console.log(list[i])
     }
 
     return list
