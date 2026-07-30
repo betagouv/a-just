@@ -694,7 +694,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
 
     let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
     max *= 1.2
-    let min = [...datasPast, ...datasFuturs].reduce((min, d) => Math.min(min, d?.value || 0), 0)
+    let min = [...datasPast, ...datasFuturs].reduce((min, d) => Math.min(min, d?.value || 0), max)
     min *= 0.95
     if (min < 0) {
       min = 0
