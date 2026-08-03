@@ -1098,7 +1098,8 @@
             {{
             differenceStr(
             getFieldValue('etpMag', simulatedSationData),
-            getFieldValue('etpMag', firstSituationData)
+            getFieldValue('etpMag', firstSituationData),
+            getDeltaUnit('etpMag')
             )
             }}
             ({{
@@ -1147,7 +1148,8 @@
             {{
             differenceStr(
             getFieldValue('etpFon', simulatedSationData),
-            getFieldValue('etpFon', firstSituationData)
+            getFieldValue('etpFon', firstSituationData),
+            getDeltaUnit('etpFon')
             )
             }}
             ({{
@@ -1189,7 +1191,8 @@
             {{
             differenceStr(
             getFieldValue('etpCont', projectedSituationData),
-            getFieldValue('etpCont', firstSituationData)
+            getFieldValue('etpCont', firstSituationData),
+            getDeltaUnit('etpCont')
             )}}
             ({{
             ratioStr(
@@ -1319,19 +1322,19 @@
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
-            <!-- {{
+            {{
             percentageModifiedInputTextStr(
             'magRealTimePerCase',
             getFieldValue('magRealTimePerCase', firstSituationData, true)
             )
-            }} -->
+            }}
 
-            {{
+            <!-- {{
             ratioStr(
             getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
             getFieldValue('magRealTimePerCase', firstSituationData, true, true)
             )
-            }}
+            }} -->
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1344,17 +1347,11 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            differenceStr(
-            getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
-            getFieldValue('magRealTimePerCase', firstSituationData, true, true)
-            )
-            }}
-            ({{
             ratioStr(
             getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
             getFieldValue('magRealTimePerCase', firstSituationData, true, true)
             )
-            }})
+            }}
             <div class="triangle simulated blue"></div>
           </div>
           }

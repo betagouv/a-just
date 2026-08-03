@@ -1544,11 +1544,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
       case 'etpMag':
       case 'etpFon':
       case 'etpCont':
-        return ' ETPT'
+        return 'ETPT'
       case 'realCoverage':
-        return ' pts'
+        return 'pts'
       case 'realDTESInMonths':
-        return ' mois'
+        return 'mois'
       default:
         return ''
     }
