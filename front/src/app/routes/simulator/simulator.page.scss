@@ -719,6 +719,8 @@
 
             &.blue {
               border-bottom: 4px solid utils.$colors-primary;
+              // display: flex;
+              // flex-direction: row;
 
               &::before {
                 content: '';

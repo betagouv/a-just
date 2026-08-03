@@ -345,7 +345,7 @@
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0" [@fadeInOut]>
-        {{ percentageModifiedInputTextStr(etpMag.id, getFieldValue('etpMag', firstSituationData), false, true) }}
+        {{ percentageModifiedInputTextStr(etpMag.id, getFieldValue('etpMag', firstSituationData)) }}
         <div class="triangle"></div>
       </div>
       }
@@ -359,7 +359,7 @@
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0" [@fadeInOut]>
-        {{ percentageModifiedInputTextStr(etpFon.id, getFieldValue('etpFon', firstSituationData), false, true) }}
+        {{ percentageModifiedInputTextStr(etpFon.id, getFieldValue('etpFon', firstSituationData)) }}
         <div class="triangle"></div>
       </div>
       }
@@ -386,7 +386,7 @@
         [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0" [@fadeInOut]>
         {{
-        percentageModifiedInputTextStr(realCoverage.id, getFieldValue('realCoverage', firstSituationData), true)
+        percentageModifiedInputTextStr(realCoverage.id, getFieldValue('realCoverage', firstSituationData))
         }}
         <div class="triangle"></div>
       </div>
@@ -703,7 +703,7 @@
           [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0" [@fadeInOut]>
           {{
-          percentageModifiedInputTextStr(etpMagWhite.id, getFieldValue('etpMag', firstSituationData), false, true)
+          percentageModifiedInputTextStr(etpMagWhite.id, getFieldValue('etpMag', firstSituationData))
           }}
           <div class="triangle"></div>
         </div>
@@ -718,7 +718,7 @@
           [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
           matTooltipHideDelay="0" [@fadeInOut]>
           {{
-          percentageModifiedInputTextStr(etpFonWhite.id, getFieldValue('etpFon', firstSituationData), false, true)
+          percentageModifiedInputTextStr(etpFonWhite.id, getFieldValue('etpFon', firstSituationData))
           }}
           <div class="triangle"></div>
         </div>
@@ -751,8 +751,7 @@
           {{
           percentageModifiedInputTextStr(
           realCoverageWhite.id,
-          getFieldValue('realCoverage', firstSituationData),
-          true
+          getFieldValue('realCoverage', firstSituationData)
           )
           }}
           <div class="triangle"></div>
@@ -949,6 +948,10 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{ percentageModifiedInputTextStr('totalIn', getFieldValue('totalIn', firstSituationData)) }}
+            ({{ ratioStr(
+            getFieldValue('totalIn', simulatedSationData,false,false,true),
+            getFieldValue('totalIn', firstSituationData,false,false,true)
+            ) }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -960,11 +963,17 @@
             matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0"
             [matTooltipClass]="{ 'tooltip-gray': true }" [@fadeInOut]>
             {{
+            differenceStr(
+            getFieldValue('totalIn', simulatedSationData, false, false, true),
+            getFieldValue('totalIn', firstSituationData, false, false, true)
+            )
+            }}
+            ({{
             ratioStr(
             getFieldValue('totalIn', simulatedSationData,false,false,true),
             getFieldValue('totalIn', firstSituationData,false,false,true)
             )
-            }}
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -979,6 +988,13 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{ percentageModifiedInputTextStr('totalOut', getFieldValue('totalOut', firstSituationData)) }}
+            (
+            {{
+            ratioStr(
+            getFieldValue('totalOut', simulatedSationData,false,false,true),
+            getFieldValue('totalOut', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -990,11 +1006,17 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
+            differenceStr(
             getFieldValue('totalOut', simulatedSationData,false,false,true),
             getFieldValue('totalOut', firstSituationData,false,false,true)
             )
             }}
+            ({{
+            ratioStr(
+            getFieldValue('totalOut', simulatedSationData,false,false,true),
+            getFieldValue('totalOut', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1009,6 +1031,13 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{ percentageModifiedInputTextStr('lastStock', getFieldValue('lastStock', firstSituationData)) }}
+            (
+            {{
+            ratioStr(
+            getFieldValue('lastStock', simulatedSationData,false,false,true),
+            getFieldValue('lastStock', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1020,11 +1049,17 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
+            differenceStr(
             getFieldValue('lastStock', simulatedSationData,false,false,true),
             getFieldValue('lastStock', firstSituationData,false,false,true)
             )
             }}
+            ({{
+            ratioStr(
+            getFieldValue('lastStock', simulatedSationData,false,false,true),
+            getFieldValue('lastStock', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1041,8 +1076,15 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            percentageModifiedInputTextStr('etpMag', getFieldValue('etpMag', firstSituationData), false, true)
+            percentageModifiedInputTextStr('etpMag', getFieldValue('etpMag', firstSituationData))
             }}
+            (
+            {{
+            ratioStr(
+            getFieldValue('etpMag', simulatedSationData,false,false,true),
+            getFieldValue('etpMag', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1054,11 +1096,17 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
+            differenceStr(
             getFieldValue('etpMag', simulatedSationData),
             getFieldValue('etpMag', firstSituationData)
             )
             }}
+            ({{
+            ratioStr(
+            getFieldValue('etpMag', simulatedSationData),
+            getFieldValue('etpMag', firstSituationData)
+            )
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1076,8 +1124,15 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            percentageModifiedInputTextStr('etpFon', getFieldValue('etpFon', firstSituationData), false, true)
+            percentageModifiedInputTextStr('etpFon', getFieldValue('etpFon', firstSituationData))
             }}
+            (
+            {{
+            ratioStr(
+            getFieldValue('etpFon', simulatedSationData,false,false,true),
+            getFieldValue('etpFon', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1090,11 +1145,17 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
+            differenceStr(
             getFieldValue('etpFon', simulatedSationData),
             getFieldValue('etpFon', firstSituationData)
             )
             }}
+            ({{
+            ratioStr(
+            getFieldValue('etpFon', simulatedSationData),
+            getFieldValue('etpFon', firstSituationData)
+            )
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1108,6 +1169,12 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{ percentageModifiedInputTextStr('etpCont', getFieldValue('etpCont', firstSituationData)) }}
+            ({{
+            ratioStr(
+            getFieldValue('etpCont', simulatedSationData,false,false,true),
+            getFieldValue('etpCont', firstSituationData,false,false,true)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1120,11 +1187,16 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
+            differenceStr(
+            getFieldValue('etpCont', projectedSituationData),
+            getFieldValue('etpCont', firstSituationData)
+            )}}
+            ({{
             ratioStr(
             getFieldValue('etpCont', projectedSituationData),
             getFieldValue('etpCont', firstSituationData)
             )
-            }}
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1142,10 +1214,16 @@
             {{
             percentageModifiedInputTextStr(
             'realCoverage',
-            getFieldValue('realCoverage', firstSituationData),
-            true
+            getFieldValue('realCoverage', firstSituationData)
             )
             }}
+            <!-- (
+            {{
+            ratioStr(
+            getFieldValue('realCoverage', simulatedSationData),
+            getFieldValue('realCoverage', firstSituationData)
+            )
+            }}) -->
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1192,6 +1270,13 @@
             getFieldValue('realDTESInMonths', firstSituationData)
             )
             }}
+            (
+            {{
+            ratioStr(
+            getFieldValue('realDTESInMonths', simulatedSationData),
+            getFieldValue('realDTESInMonths', firstSituationData)
+            )
+            }})
             <div class="triangle simulated"></div>
           </div>
           }
@@ -1206,11 +1291,18 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
+            differenceStr(
+            getFieldValue('realDTESInMonths', simulatedSationData),
+            getFieldValue('realDTESInMonths', firstSituationData),
+            'mois'
+            )
+            }}
+            ({{
             ratioStr(
             getFieldValue('realDTESInMonths', simulatedSationData),
             getFieldValue('realDTESInMonths', firstSituationData)
             )
-            }}
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1227,10 +1319,17 @@
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
-            {{
+            <!-- {{
             percentageModifiedInputTextStr(
             'magRealTimePerCase',
             getFieldValue('magRealTimePerCase', firstSituationData, true)
+            )
+            }} -->
+
+            {{
+            ratioStr(
+            getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
+            getFieldValue('magRealTimePerCase', firstSituationData, true, true)
             )
             }}
             <div class="triangle simulated"></div>
@@ -1245,11 +1344,17 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
+            differenceStr(
             getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
             getFieldValue('magRealTimePerCase', firstSituationData, true, true)
             )
             }}
+            ({{
+            ratioStr(
+            getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
+            getFieldValue('magRealTimePerCase', firstSituationData, true, true)
+            )
+            }})
             <div class="triangle simulated blue"></div>
           </div>
           }
