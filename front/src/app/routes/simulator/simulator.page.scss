@@ -669,7 +669,6 @@
         z-index: 1;
         position: absolute;
         bottom: -15px;
-        display: block;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -677,9 +676,13 @@
         background-color: utils.$colors-titleIndisponibilitiesPanel;
         border-radius: 4px;
         min-width: 74px;
-        height: 35px;
-        line-height: 31px;
-        font-size: 16px;
+        min-height: 35px;
+        height: auto;
+        line-height: 1.2;
+        font-size: 14px;
+        padding: 4px 10px;
+        display: flex;
+        flex-direction: column;
         color: utils.$colors-bgSelect;
 
         &.simulated {
@@ -699,7 +702,7 @@
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
-          left: 30.5px;
+          left: 49%;
           top: -5px;
 
           &::before {
@@ -715,7 +718,8 @@
           }
 
           &.simulated {
-            bottom: -40px;
+            // bottom: -40px;
+            top: -5px;
 
             &.blue {
               border-bottom: 4px solid utils.$colors-primary;
@@ -1058,7 +1062,7 @@
         cursor: pointer;
         z-index: 1;
         position: absolute;
-        bottom: -33px;
+        bottom: -8px;
         display: block;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -1079,7 +1083,7 @@
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
-          left: 30.5px;
+          left: 46%;
           top: -5px;
 
           &::before {
