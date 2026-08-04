@@ -683,6 +683,8 @@
         padding: 4px 10px;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
         color: utils.$colors-bgSelect;
 
         &.simulated {
@@ -1063,7 +1065,10 @@
         z-index: 1;
         position: absolute;
         bottom: -8px;
-        display: block;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);

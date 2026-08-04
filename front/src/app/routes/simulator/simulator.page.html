@@ -988,8 +988,7 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             <div>{{ percentageModifiedInputTextStr('totalOut', getFieldValue('totalOut', firstSituationData)) }}</div>
-            <div>(
-              {{
+            <div>({{
               ratioStr(
               getFieldValue('totalOut', simulatedSationData,false,false,true),
               getFieldValue('totalOut', firstSituationData,false,false,true)
