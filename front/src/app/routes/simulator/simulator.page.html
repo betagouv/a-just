@@ -307,7 +307,6 @@
         [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0" [@fadeInOut]>
         {{ percentageModifiedInputTextStr(totalIn.id, getFieldValue('totalIn', firstSituationData)) }}
-        <!-- <div>(C'est ici qu'il faudra rajouter)</div> -->
         <div class="triangle"></div>
       </div>
       }
@@ -952,7 +951,7 @@
             <div>({{ ratioStr(
               getFieldValue('totalIn', simulatedSationData,false,false,true),
               getFieldValue('totalIn', firstSituationData,false,false,true)
-              ) }})</div>
+              )}})</div>
             <div class="triangle simulated"></div>
           </div>
           }
@@ -966,7 +965,9 @@
             <div>{{
               differenceStr(
               getFieldValue('totalIn', simulatedSationData, false, false, true),
-              getFieldValue('totalIn', firstSituationData, false, false, true)
+              getFieldValue('totalIn', firstSituationData, false, false, true),
+              getDeltaUnit('totalIn'),
+              'totalIn'
               )
               }}</div>
             <div>({{
@@ -988,7 +989,8 @@
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
-            <div>{{ percentageModifiedInputTextStr('totalOut', getFieldValue('totalOut', firstSituationData)) }}</div>
+            <div>{{ percentageModifiedInputTextStr('totalOut', getFieldValue('totalOut', firstSituationData)) }}
+            </div>
             <div>({{
               ratioStr(
               getFieldValue('totalOut', simulatedSationData,false,false,true),
@@ -1009,7 +1011,9 @@
             <div>{{
               differenceStr(
               getFieldValue('totalOut', simulatedSationData,false,false,true),
-              getFieldValue('totalOut', firstSituationData,false,false,true)
+              getFieldValue('totalOut', firstSituationData,false,false,true),
+              getDeltaUnit('totalOut'),
+              'totalOut'
               )
               }}</div>
             <div>({{
@@ -1031,7 +1035,8 @@
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
-            <div>{{ percentageModifiedInputTextStr('lastStock', getFieldValue('lastStock', firstSituationData)) }}</div>
+            <div>{{ percentageModifiedInputTextStr('lastStock', getFieldValue('lastStock', firstSituationData)) }}
+            </div>
             <div>({{
               ratioStr(
               getFieldValue('lastStock', simulatedSationData,false,false,true),
@@ -1051,7 +1056,9 @@
             <div>{{
               differenceStr(
               getFieldValue('lastStock', simulatedSationData,false,false,true),
-              getFieldValue('lastStock', firstSituationData,false,false,true)
+              getFieldValue('lastStock', firstSituationData,false,false,true),
+              getDeltaUnit('lastStock'),
+              'lastStock'
               )
               }}</div>
             <div>({{
@@ -1101,7 +1108,8 @@
               differenceStr(
               getFieldValue('etpMag', simulatedSationData),
               getFieldValue('etpMag', firstSituationData),
-              getDeltaUnit('etpMag')
+              getDeltaUnit('etpMag'),
+              'etpMag'
               )
               }}</div>
             <div>({{
@@ -1150,7 +1158,8 @@
               differenceStr(
               getFieldValue('etpFon', simulatedSationData),
               getFieldValue('etpFon', firstSituationData),
-              getDeltaUnit('etpFon')
+              getDeltaUnit('etpFon'),
+              'etpFon'
               )
               }}</div>
             <div>({{
@@ -1193,7 +1202,8 @@
               differenceStr(
               getFieldValue('etpCont', projectedSituationData),
               getFieldValue('etpCont', firstSituationData),
-              getDeltaUnit('etpCont')
+              getDeltaUnit('etpCont'),
+              'etpCont'
               )}}</div>
             <div>({{
               ratioStr(
@@ -1290,7 +1300,8 @@
               differenceStr(
               getFieldValue('realDTESInMonths', simulatedSationData),
               getFieldValue('realDTESInMonths', firstSituationData),
-              getDeltaUnit('realDTESInMonths')
+              getDeltaUnit('realDTESInMonths'),
+              'realDTESInMonths'
               )
               }}</div>
             <div>({{
@@ -1315,12 +1326,6 @@
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
-            <!-- {{
-            percentageModifiedInputTextStr(
-            'magRealTimePerCase',
-            getFieldValue('magRealTimePerCase', firstSituationData, true)
-            )
-            }} -->
             {{
             ratioStr(
             getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
