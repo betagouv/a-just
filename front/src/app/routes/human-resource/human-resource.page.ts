@@ -393,6 +393,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     // if no situation and createdAt is more than 6 hours ago
     if (this.currentHR.situations.length === 0 && this.currentHR.createdAt && getTime() - getTime(this.currentHR.createdAt) > 60 * 1000) {
+      this.histories = []
+      this.historiesOfThePast = []
+      this.historiesOfTheFutur = []
+      this.indexOfTheFuture = null
       this.onEditIndex = null
       return
     }
@@ -400,6 +404,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.histories = []
     this.historiesOfThePast = []
     this.historiesOfTheFutur = []
+    this.indexOfTheFuture = null
 
     const situations = orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
@@ -431,6 +436,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     let maxDate = maxBy(listAllDates, (d) => d.getTime())
 
     if (!minDate || !maxDate) {
+      this.indexOfTheFuture = null
       this.onEditIndex = -1
       return
     }
@@ -589,7 +595,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.showActuelPanel = true
     }
 
-    //console.log('this.showActuelPanel', this.histories)
+    console.log('this.showActuelPanel', this.histories)
 
     if (prepopon) {
       this.preOpenSituation()

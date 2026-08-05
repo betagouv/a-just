@@ -87,6 +87,7 @@ export class SignupPage {
           'Secrétaire administratif - DG',
           'Directeur/trice de greffe adjoint(e)',
           'Directeur/trice des services de greffe judiciaires',
+          'Cadre greffier/ière',
         ]
       : [
           'Président(e)',
