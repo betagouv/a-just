@@ -95,7 +95,7 @@
         content="Délai théorique d’écoulement du stock projeté (stock affiché / sorties mensuelles possibles calculées) à la date indiquée, exprimé en mois."></aj-tooltips>
     </div>
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
-      <p>Temps moyen / dossier en hh:mm</p>
+      <p>Temps moyen / dossier en hh:mn</p>
       <aj-tooltips title="Temps moyen par dossier" class="medium left"
         content="Temps moyen consacré au traitement d’un dossier de ce contentieux sur les 12 derniers mois d’activité."></aj-tooltips>
     </div>
@@ -923,7 +923,7 @@
         </div>
         <div class="item blue-bg"
           [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator, 'no-bg': whiteSimulator }">
-          <p>Temps moyen / dossier en hh:mm</p>
+          <p>Temps moyen / dossier en hh:mn</p>
         </div>
       </div>
     </div>

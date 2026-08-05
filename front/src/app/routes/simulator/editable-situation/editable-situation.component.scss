@@ -1,3 +1,5 @@
+@use '../../../styles/utils.scss' as utils;
+
 #magRealTimePerCase {
   width: 80%;
 }
@@ -26,36 +28,36 @@
     padding: 4px 12px;
     right: 0px;
     position: relative;
-    background-color: #000091;
-    border: 1px solid #000091;
-    color: white;
+    background-color: utils.$colors-primary;
+    border: 1px solid utils.$colors-primary;
+    color: utils.$colors-white;
 
     &.disable-button-validate {
       background-color: gray !important;
-      color: white;
+      color: utils.$colors-white;
       border: 1px solid gray;
       pointer-events: fill;
     }
 
     &.effacer {
-      background-color: white;
-      border: 1px solid #000091;
-      color: #000091;
+      background-color: utils.$colors-white;
+      border: 1px solid utils.$colors-primary;
+      ;
+      color: utils.$colors-primary;
+      ;
     }
   }
 
   .validate-button {
     border-radius: 6px;
-    color: white;
+    color: utils.$colors-white;
     text-align: center;
     cursor: pointer;
     flex: 1.93 !important;
     height: 69px !important;
     font-size: 14px;
-    background-color: white;
+    background-color: utils.$colors-white;
   }
-
-
 
   .edit-button {
     background-color: #e5e5e580;
@@ -70,7 +72,7 @@
 }
 
 .items {
-  background-color: #fff;
+  background-color: utils.$colors-white;
   display: flex;
   position: relative;
   border-bottom: solid 3px black;
@@ -98,20 +100,20 @@
 
       &.selected {
         mix-blend-mode: multiply;
-        background-color: #dcdcfb !important;
+        background-color: utils.$colors-selectedTooltipSimulator !important;
       }
     }
 
     &.selected {
       mix-blend-mode: multiply;
-      background-color: #e8e5fa !important;
+      background-color: utils.$colors-selectedSimulator !important;
     }
 
     p {
       text-align: center;
       font-size: 12px;
       font-weight: bold;
-      color: #161616;
+      color: utils.$colors-cblackdark;
       margin-bottom: 14px;
       margin-top: 24px;
     }
@@ -124,19 +126,19 @@
   position: relative;
   display: flex;
   border-bottom: solid 1px #ddd;
-  background-color: white;
+  background-color: utils.$colors-white;
 
   &.color-white {
-    background-color: white;
+    background-color: utils.$colors-white;
     border-bottom: solid 1px #e5e5e5;
 
     &::before {
-      background-color: white;
+      background-color: utils.$colors-white;
       border-bottom: solid 1px #e5e5e5;
     }
 
     &::after {
-      background-color: white;
+      background-color: utils.$colors-white;
       border-bottom: solid 1px #e5e5e5;
     }
   }
@@ -161,7 +163,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #161616;
+    color: utils.$colors-cblackdark;
     position: relative;
 
     &.orange-bg {
@@ -200,19 +202,19 @@
       text-align: center;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
         0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: solid 1px #fa7a35;
-      background-color: #e4794a;
+      border: solid 1px utils.$colors-tooltipSimulatorOrange;
+      background-color: utils.$colors-titleIndisponibilitiesPanel;
       border-radius: 4px;
       width: 74px;
       height: 35px;
       line-height: 31px;
       font-size: 16px;
-      color: #fff;
+      color: utils.$colors-white;
 
       .triangle {
         height: 0;
         width: 0;
-        border-bottom: 4px solid #fa7a35;
+        border-bottom: 4px solid utils.$colors-tooltipSimulatorOrange;
         border-right: 4px solid transparent;
         border-left: 4px solid transparent;
         position: absolute;
@@ -223,7 +225,7 @@
           content: '';
           height: 0;
           width: 0;
-          border-bottom: 4px solid #e4794a;
+          border-bottom: 4px solid utils.$colors-titleIndisponibilitiesPanel;
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
@@ -249,18 +251,18 @@
 
       &:focus {
         outline: none;
-        border-bottom: solid 2px #3a3a3a !important;
+        border-bottom: solid 2px utils.$colors-cblack !important;
       }
     }
 
     .ajusted-button {
       pointer-events: all;
       cursor: pointer;
-      border: solid 2px #000091;
+      border: solid 2px utils.$colors-primary;
       width: 95%;
       height: 32px;
       text-align: center;
-      color: #000091;
+      color: utils.$colors-primary;
       font-size: 16px;
       border-top-left-radius: 0px;
       border-top-right-radius: 0px;
@@ -284,7 +286,7 @@
         width: 95%;
 
         :focus {
-          border: solid 2px #3a3a3a !important;
+          border: solid 2px utils.$colors-cblack !important;
         }
 
         &.disable {
@@ -350,19 +352,19 @@
       text-align: center;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
         0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: solid 1px #fa7a35;
-      background-color: #e4794a;
+      border: solid 1px utils.$colors-tooltipSimulatorOrange;
+      background-color: utils.$colors-titleIndisponibilitiesPanel;
       border-radius: 4px;
       width: 74px;
       height: 35px;
       line-height: 31px;
       font-size: 16px;
-      color: #fff;
+      color: utils.$colors-white;
 
       .triangle {
         height: 0;
         width: 0;
-        border-bottom: 4px solid #fa7a35;
+        border-bottom: 4px solid utils.$colors-tooltipSimulatorOrange;
         border-right: 4px solid transparent;
         border-left: 4px solid transparent;
         position: absolute;
@@ -373,7 +375,7 @@
           content: '';
           height: 0;
           width: 0;
-          border-bottom: 4px solid #e4794a;
+          border-bottom: 4px solid utils.$colors-titleIndisponibilitiesPanel;
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
@@ -390,15 +392,15 @@
       width: 80%;
 
       font-weight: normal;
-      background-color: white;
-      border: solid 1px #e5e5e5;
+      background-color: utils.$colors-white;
+      border: solid 1px utils.$colors-editBtton;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
       position: relative;
 
       &:focus {
         outline: none;
-        border-bottom: solid 2px #3a3a3a !important;
+        border-bottom: solid 2px utils.$colors-cblack !important;
       }
 
       &.grey-bg-disabled {
@@ -409,11 +411,11 @@
     .ajusted-button {
       pointer-events: all;
       cursor: pointer;
-      border: solid 2px #000091;
+      border: solid 2px utils.$colors-primary;
       width: 95%;
       height: 32px;
       text-align: center;
-      color: #000091;
+      color: utils.$colors-primary;
       font-size: 16px;
       border-top-left-radius: 0px;
       border-top-right-radius: 0px;
@@ -438,7 +440,7 @@
         width: 95%;
 
         :focus {
-          border: solid 2px #3a3a3a !important;
+          border: solid 2px utils.$colors-cblack !important;
         }
 
         &.disable {

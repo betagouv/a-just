@@ -218,7 +218,12 @@
             padding: 8px 16px;
 
             border: solid 1px utils.$colors-primary;
-            background-color: utils.$colors-textCategoryAll;
+            background-color: transparent;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-hoverLightColor;
+            }
 
             p {
                 color: utils.$colors-primary;
@@ -234,6 +239,11 @@
             margin: 0 0 0 8px;
             padding: 8px 16px;
             background-color: utils.$colors-primary;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-cblue;
+            }
 
             &.disabled {
                 pointer-events: none;
@@ -242,7 +252,7 @@
             }
 
             p {
-                color: white;
+                color: utils.$colors-white;
             }
         }
     }
@@ -261,7 +271,7 @@
             background-color: utils.$colors-primary;
             height: 22px;
             border-radius: 6px;
-            color: white;
+            color: utils.$colors-white;
             text-align: center;
         }
 
@@ -344,6 +354,10 @@
                 border: 1px solid utils.$colors-borderSimulator;
                 background-color: utils.$colors-textCategoryAll;
                 transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    background-color: utils.$colors-hoverLightColor;
+                }
 
                 &.alone {
                     border-radius: 4px;
@@ -496,13 +510,17 @@
         height: 40px;
         padding: 8px 24px;
         border: solid 1px utils.$colors-primary;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: utils.$colors-hoverLightColor;
+        }
 
         &.export-b {
-
             margin-right: 8px;
             border: solid 1px utils.$colors-primary;
             background-color: utils.$colors-primary;
-            color: white !important;
+            color: utils.$colors-white !important;
 
             &.disabled {
                 pointer-events: none;
@@ -514,6 +532,11 @@
                 opacity: 1 !important;
                 cursor: pointer !important;
                 pointer-events: initial !important;
+                transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    background-color: utils.$colors-cblue;
+                }
             }
 
             mat-icon {
@@ -522,7 +545,7 @@
             }
 
             p {
-                color: white;
+                color: utils.$colors-white;
             }
         }
 
@@ -663,7 +686,7 @@
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: #ececfe !important;
+                    background-color: utils.$colors-bgReadETPDark !important;
                 }
 
                 input {
@@ -721,7 +744,7 @@
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: #ececfe !important;
+                    background-color: utils.$colors-bgReadETPDark !important;
                 }
             }
 
@@ -769,8 +792,7 @@
                 cursor: pointer;
                 z-index: 1;
                 position: absolute;
-                bottom: -15px;
-                display: block;
+                bottom: -25px;
                 text-align: center;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
                     0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -778,9 +800,15 @@
                 background-color: utils.$colors-titleIndisponibilitiesPanel;
                 border-radius: 4px;
                 min-width: 74px;
-                height: 35px;
-                line-height: 31px;
-                font-size: 16px;
+                min-height: 35px;
+                height: auto;
+                line-height: 1.2;
+                font-size: 14px;
+                padding: 4px 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 color: utils.$colors-tooltipContentTitleColor;
 
                 &.simulated {
@@ -800,7 +828,7 @@
                     border-right: 4px solid transparent;
                     border-left: 4px solid transparent;
                     position: absolute;
-                    left: 30.5px;
+                    left: 46%;
                     top: -5px;
 
                     &::before {
@@ -816,7 +844,7 @@
                     }
 
                     &.simulated {
-                        bottom: -40px;
+                        top: -5px;
 
                         &.blue {
                             border-bottom: 4px solid utils.$colors-primary;
@@ -953,13 +981,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border: solid 1px transparent;
+            transition: all 0.2s ease-in-out;
 
             &:first-child {
                 margin-right: 12px;
             }
 
             &:hover {
-                border: solid 1px utils.$colors-sortHeaderSelected;
+                border-color: utils.$colors-sortHeaderSelected;
                 background-color: utils.$colors-activityGuideBg;
             }
         }
@@ -975,7 +1005,7 @@
         position: absolute;
         bottom: -84px;
         width: 100%;
-        background-color: utils.$colors-textCategoryAll;
+        background-color: utils.$colors-white;
 
         .init-button {
             pointer-events: all;
@@ -986,6 +1016,11 @@
             padding: 8px 16px;
             color: utils.$colors-dataNotSettedIsSetBg;
             border: solid 1px utils.$colors-dataNotSettedIsSetBg;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-hoverLightColor;
+            }
         }
 
         .simulate-button {
@@ -996,6 +1031,11 @@
             margin: 0 0 0 8px;
             padding: 8px 16px;
             background-color: utils.$colors-primary;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: utils.$colors-cblue;
+            }
 
             &.disabled {
                 pointer-events: none;
@@ -1135,8 +1175,11 @@
                 cursor: pointer;
                 z-index: 1;
                 position: absolute;
-                bottom: -33px;
-                display: block;
+                bottom: -25px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 text-align: center;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
                     0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -1145,9 +1188,10 @@
                 border-radius: 4px;
                 min-width: 74px;
                 height: 35px;
-                line-height: 31px;
-                font-size: 16px;
+                line-height: 1.2;
+                font-size: 14px;
                 color: utils.$colors-bgSelect;
+                padding: 4px 10px;
 
                 .triangle {
                     height: 0;
@@ -1156,7 +1200,7 @@
                     border-right: 4px solid transparent;
                     border-left: 4px solid transparent;
                     position: absolute;
-                    left: 30.5px;
+                    left: 46%;
                     top: -5px;
 
                     &::before {
@@ -1205,10 +1249,19 @@
                 border-top-right-radius: 0px;
                 background-color: transparent;
                 padding-bottom: 5px;
+                transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    background-color: utils.$colors-bgBlueTag;
+                }
 
                 &.greffe {
                     border-color: utils.$colors-cpink !important;
                     color: utils.$colors-cpink;
+
+                    &:hover {
+                        background-color: utils.$colors-cpinkmiddle;
+                    }
                 }
 
                 &.white-button {
@@ -1325,7 +1378,7 @@
             pointer-events: all;
             cursor: pointer;
             background-color: utils.$colors-primary;
-            color: white;
+            color: utils.$colors-white;
             opacity: 1;
 
             p.title {
@@ -1334,7 +1387,7 @@
 
             .shape {
                 background-color: utils.$colors-primary;
-                color: utils.$colors-textCategoryAll;
+                color: utils.$colors-white;
             }
         }
     }
@@ -1370,7 +1423,6 @@
             color: utils.$colors-textCategoryAll;
             opacity: 1;
             margin-top: 30px;
-
             transition: all 0.2s ease-in-out;
 
             &:hover {
@@ -1382,7 +1434,7 @@
             }
 
             .shape {
-                background-color: utils.$colors-primary;
+                background-color: transparent;
                 color: utils.$colors-textCategoryAll;
             }
         }
@@ -1523,7 +1575,5 @@
                 left: -3px;
             }
         }
-
-
     }
 }
