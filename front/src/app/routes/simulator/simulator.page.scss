@@ -713,7 +713,7 @@
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
-          left: 49%;
+          left: 46%;
           top: -5px;
 
           &::before {
@@ -1086,8 +1086,9 @@
         border-radius: 4px;
         min-width: 74px;
         height: 35px;
-        line-height: 31px;
-        font-size: 16px;
+        line-height: 1.2;
+        font-size: 14px;
+        padding: 4px 10px;
         color: utils.$colors-bgSelect;
 
         .triangle {
