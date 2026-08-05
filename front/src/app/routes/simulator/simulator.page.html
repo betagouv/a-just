@@ -307,6 +307,7 @@
         [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0" [@fadeInOut]>
         {{ percentageModifiedInputTextStr(totalIn.id, getFieldValue('totalIn', firstSituationData)) }}
+        <!-- <div>(C'est ici qu'il faudra rajouter)</div> -->
         <div class="triangle"></div>
       </div>
       }
@@ -1244,7 +1245,7 @@
             parseFloat(getFieldValue('realCoverage', simulatedSationData)),
             parseFloat(getFieldValue('realCoverage', firstSituationData))
             )
-            }}pts
+            }}{{getDeltaUnit('realCoverage')}}
             <div class="triangle simulated blue"></div>
           </div>
           }
@@ -1289,7 +1290,7 @@
               differenceStr(
               getFieldValue('realDTESInMonths', simulatedSationData),
               getFieldValue('realDTESInMonths', firstSituationData),
-              'mois'
+              getDeltaUnit('realDTESInMonths')
               )
               }}</div>
             <div>({{
