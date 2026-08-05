@@ -247,11 +247,12 @@ export default class RouteUsers extends Route {
       access: Types.any(),
       ventilations: Types.any(),
       referentielIds: Types.any(),
+      localAdminIds: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
   async updateAccount(ctx) {
-    const { userId, referentielIds } = this.body(ctx)
+    const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
@@ -392,7 +393,11 @@ export default class RouteUsers extends Route {
     accesses: [Access.isLogin],
   })
   async getUserDatas(ctx) {
-    const backups = await this.models.HRBackups.list(ctx.state.user.id)
+    const getUsersAdminLocal = await this.model.getUserAdminLocal(ctx.state.user.id);
+    const backups = (await this.models.HRBackups.list(ctx.state.user.id)).map((backup) => ({
+      ...backup,
+      isAdminLocal: getUsersAdminLocal.includes(backup.id),
+    }));
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
     const fonctions = await this.models.HRFonctions.getAll()
 

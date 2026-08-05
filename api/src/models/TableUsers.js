@@ -252,7 +252,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction', ['referentiel_ids', 'referentielIds']],
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction', ['referentiel_ids', 'referentielIds'], ['local_admin_ids', 'localAdminIds']],
       raw: true,
     })
 
@@ -270,7 +270,7 @@ export default (sequelizeInstance, Model) => {
    * Mise à jour des informations utilisateurs et informer en cas de changement d'attribution
    * @param {*} param0
    */
-  Model.updateAccount = async ({ userId, access, ventilations, referentielIds }) => {
+  Model.updateAccount = async ({ userId, access, ventilations, referentielIds, localAdminIds }) => {
     const user = await Model.findOne({
       where: {
         id: userId,
@@ -281,6 +281,7 @@ export default (sequelizeInstance, Model) => {
     if (user) {
       await Model.updateById(user.id, {
         referentiel_ids: referentielIds,
+        local_admin_ids: localAdminIds,
       })
       const oldAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
       await Model.models.UsersAccess.updateAccess(userId, access)
@@ -289,7 +290,9 @@ export default (sequelizeInstance, Model) => {
         updated_at: new Date(),
       })
       const oldVentilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort()
-      const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
+      const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, [
+        ...new Set([...(ventilations || []), ...(localAdminIds || [])]),
+      ])
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
@@ -432,6 +435,17 @@ export default (sequelizeInstance, Model) => {
     })
 
     return user.referentiel_ids === null ? true : false
+  }
+
+  Model.getUserAdminLocal = async (userId) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+      raw: true,
+    })
+
+    return user ? user.local_admin_ids || [] : []
   }
 
   return Model

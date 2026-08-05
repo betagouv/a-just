@@ -26,6 +26,13 @@ interface FormSelection {
   selected: boolean;
 }
 
+interface FormVentilationSelection {
+  id: number;
+  label: string;
+  hasAccess: boolean;
+  isLocalAdmin: boolean;
+}
+
 @Component({
   standalone: true,
   imports: [PopupComponent, WrapperComponent, MatSortModule, FormsModule],
@@ -49,7 +56,7 @@ export class UsersPage
     orderRequired: boolean;
     access: FormSelection[];
   }[] = [];
-  ventilations: FormSelection[] = [];
+  ventilations: FormVentilationSelection[] = [];
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
   userConnected: UserInterface | null = null;
@@ -126,7 +133,10 @@ export class UsersPage
                   .filter((label) => label !== 'Indisponibilité')
                   .join(', <br/>'),
           ventilationsName: (u.ventilations || [])
-            .map((j) => j.label)
+            .map(
+              (j) =>
+                ((u.localAdminIds || []).includes(j.id) ? ' ★ ' : '') + j.label,
+            )
             .join('<br/>'),
         }));
         this.datasSource = this.datas.slice();
@@ -134,7 +144,8 @@ export class UsersPage
         this.ventilations = l.ventilations.map((u: BackupInterface) => ({
           id: u.id,
           label: u.label,
-          selected: false,
+          hasAccess: false,
+          isLocalAdmin: false,
         }));
 
         this.sortData(
@@ -198,9 +209,10 @@ export class UsersPage
     this.ventilations = this.ventilations.map((u) => {
       return {
         ...u,
-        selected: (user.ventilations || []).find((j) => j.id === u.id)
+        hasAccess: (user.ventilations || []).find((j) => j.id === u.id)
           ? true
           : false,
+        isLocalAdmin: (user.localAdminIds || []).includes(u.id) ? true : false,
       };
     });
 
@@ -259,7 +271,10 @@ export class UsersPage
               userId: this.userEdit && this.userEdit.id,
               access: this.userEdit && this.userEdit.access,
               ventilations: this.ventilations
-                .filter((a) => a.selected)
+                .filter((a) => a.hasAccess)
+                .map((a) => a.id),
+              localAdminIds: this.ventilations
+                .filter((a) => a.isLocalAdmin)
                 .map((a) => a.id),
               referentielIds:
                 this.referentiels.filter((a) => a.selected).length ===

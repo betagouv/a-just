@@ -68,6 +68,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         allowNull: true,
       },
+      local_admin_ids: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
