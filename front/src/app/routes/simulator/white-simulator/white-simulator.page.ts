@@ -806,12 +806,13 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * @param param paramètre à afficher
    * @param data simulation
    * @param initialValue valeur initial
-   * @param toCompute valeur calculé ou non
+   * @param toCompute valeur calculée ou non
+   * @param decimal valeur décimale ou non
    * @returns valeur à afficher
    */
-  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): string {
+  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false, decimal = false): string {
     if ((this.simulatorService.situationActuelle.getValue() !== null && this.subList.length) || !this.getElementById(this.contentieuId)?.childrens?.length) {
-      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
+      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute, decimal)
     }
     return ''
   }
@@ -1178,41 +1179,57 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * @param projectedValue valeur projeté
    * @returns chaine de caractère de la valeur finale
    */
+  // percentageModifiedInputText(id: string, projectedValue: string | number | undefined) {
+  //   if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
+  //   if (id === 'realCoverage' && this.paramsToAjust.param1.label === 'realCoverage')
+  //     return this.percantageWithSign(parseFloat(this.paramsToAjust.param1.value) - parseFloat(projectedValue as string))
+  //   if (id === 'realCoverage' && this.paramsToAjust.param2.label === 'realCoverage')
+  //     return this.percantageWithSign(parseFloat(this.paramsToAjust.param2.value) - parseFloat(projectedValue as string))
+  //   if ((id === 'etpMag' && this.paramsToAjust.param1.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param1.label === 'etpFon')) {
+  //     let res = parseFloat(this.paramsToAjust.param1.addition || '')
+  //     if (this.paramsToAjust.param1.addition) return res >= 0 ? '+' + res : res
+  //     else {
+  //       let res =
+  //         Math.round(
+  //           (parseFloat(this.paramsToAjust.param1.value || '') - Number(this.getFieldValue(this.paramsToAjust.param1.label, this.firstSituationData))) * 100,
+  //         ) / 100
+  //       return res >= 0 ? '+' + res : res
+  //     }
+  //   }
+  //   if ((id === 'etpMag' && this.paramsToAjust.param2.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param2.label === 'etpFon')) {
+  //     let res = parseFloat(this.paramsToAjust.param2.addition || '')
+  //     if (this.paramsToAjust.param2.addition) return res >= 0 ? '+' + res : res
+  //     else {
+  //       let res =
+  //         Math.round(
+  //           (parseFloat(this.paramsToAjust.param2.value || '') - Number(this.getFieldValue(this.paramsToAjust.param2.label, this.firstSituationData))) * 100,
+  //         ) / 100
+  //       return res >= 0 ? '+' + res : res
+  //     }
+  //   }
+  //   return this.paramsToAjust.param1.label === id
+  //     ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
+  //       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
+  //       : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
+  //     : this.percantageWithSign(this.paramsToAjust.param2.percentage)
+  //       ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+  //       : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+  // }
   percentageModifiedInputText(id: string, projectedValue: string | number | undefined) {
     if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
-    if (id === 'realCoverage' && this.paramsToAjust.param1.label === 'realCoverage')
-      return this.percantageWithSign(parseFloat(this.paramsToAjust.param1.value) - parseFloat(projectedValue as string))
-    if (id === 'realCoverage' && this.paramsToAjust.param2.label === 'realCoverage')
-      return this.percantageWithSign(parseFloat(this.paramsToAjust.param2.value) - parseFloat(projectedValue as string))
-    if ((id === 'etpMag' && this.paramsToAjust.param1.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param1.label === 'etpFon')) {
-      let res = parseFloat(this.paramsToAjust.param1.addition || '')
-      if (this.paramsToAjust.param1.addition) return res >= 0 ? '+' + res : res
-      else {
-        let res =
-          Math.round(
-            (parseFloat(this.paramsToAjust.param1.value || '') - Number(this.getFieldValue(this.paramsToAjust.param1.label, this.firstSituationData))) * 100,
-          ) / 100
-        return res >= 0 ? '+' + res : res
-      }
+
+    const baseline = String(projectedValue)
+    const param = this.paramsToAjust.param1.label === id ? this.paramsToAjust.param1 : this.paramsToAjust.param2.label === id ? this.paramsToAjust.param2 : null
+
+    if (!param) return ''
+
+    // ETP variation input (addition field in popup)
+    if ((id === 'etpMag' || id === 'etpFon') && param.addition) {
+      const res = parseFloat(param.addition)
+      return res >= 0 ? '+' + res : String(res)
     }
-    if ((id === 'etpMag' && this.paramsToAjust.param2.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param2.label === 'etpFon')) {
-      let res = parseFloat(this.paramsToAjust.param2.addition || '')
-      if (this.paramsToAjust.param2.addition) return res >= 0 ? '+' + res : res
-      else {
-        let res =
-          Math.round(
-            (parseFloat(this.paramsToAjust.param2.value || '') - Number(this.getFieldValue(this.paramsToAjust.param2.label, this.firstSituationData))) * 100,
-          ) / 100
-        return res >= 0 ? '+' + res : res
-      }
-    }
-    return this.paramsToAjust.param1.label === id
-      ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
-        ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
-        : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
-      : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+
+    return this.difference(String(param.value), baseline, id)
   }
 
   /**
@@ -1220,10 +1237,10 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * @param value
    * @returns String contenant le chiffre ainsi que le signe + ou -
    */
-  percantageWithSign(value: number | null) {
-    if (value !== null && !isFinite(value)) return 'NA'
-    return value && value >= 0 ? '+' + value : value
-  }
+  // percantageWithSign(value: number | null) {
+  //   if (value !== null && !isFinite(value)) return 'NA'
+  //   return value && value >= 0 ? '+' + value : value
+  // }
 
   /**
    * Calcul la proportion d'une valeur par rapport à une autre
@@ -1234,14 +1251,74 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
   ratio(result: string, initialValue: string) {
     const roundedValue = Math.round((((parseFloat(result) - parseFloat(initialValue)) * 100) / parseFloat(initialValue as string)) * 100) / 100
     if (!isFinite(roundedValue)) return 'NA'
-    return roundedValue >= 0 ? '+' + roundedValue : roundedValue
+    return roundedValue >= 0 ? '+' + Math.round(roundedValue) : String(Math.round(roundedValue))
   }
 
+  /**
+   * Retourne la proportion d'une valeur par rapport à une autre avec le symbole %
+   * @param result numérateur
+   * @param initialValue dénominateur
+   * @returns resultat de la proportion avec le symbole %
+   */
   ratioStr(result: string, initialValue: string) {
     let res = this.ratio(result, initialValue)
     if (res === 'NA') return 'NA'
     else return res + '%'
   }
+
+  /**
+   * Calcule la différence entre 2 valeurs
+   * @param result valeur finale
+   * @param initialValue valeur initiale
+   * @returns Différence entre les 2 valeurs
+   */
+  difference(result: string, initialValue: string, id: string) {
+    const roundedValue = Math.round((parseFloat(result) - parseFloat(initialValue)) * 100) / 100
+    if (!isFinite(roundedValue)) return 'NA'
+
+    let res
+
+    if (id === 'totalIn' || id === 'totalOut' || id === 'lastStock') {
+      res = roundedValue >= 0 ? '+' + Math.round(roundedValue) : String(Math.round(roundedValue))
+    } else {
+      res = roundedValue >= 0 ? '+' + roundedValue : String(roundedValue)
+    }
+
+    return res
+  }
+
+  /**
+   * Calcule la différence entre 2 valeurs et ajoute une unité
+   * @param result
+   * @param initialValue
+   * @param unit
+   * @returns
+   */
+  differenceStr(result: string, initialValue: string, unit = '', id: string) {
+    const res = this.difference(result, initialValue, id)
+    return res === 'NA' ? 'NA' : res + unit
+  }
+
+  /**
+   * Retourne l'unité d'une valeur
+   * @param fieldId nom du champs à éditer
+   * @returns unité associée au champs de saisi
+   */
+  getDeltaUnit(fieldId: string) {
+    switch (fieldId) {
+      case 'etpMag':
+      case 'etpFon':
+      case 'etpCont':
+        return ' ETPT'
+      case 'realCoverage':
+        return ' pts'
+      case 'realDTESInMonths':
+        return ' mois'
+      default:
+        return ''
+    }
+  }
+
   /**
    * Soustrait 2 valeurs
    * @param value1
@@ -1750,17 +1827,14 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
   }
 
   /**
-   * Prévenir dans le cas d'un ajustement de pourcentage induisant une division par 0 (mention du label NA à la place de la valeur en %)
+   * Prévenir dans le cas d'un ajustement de pourcentage induisant une division par 0 (mention du label NA à la place de la valeur en delta unit)
    * @param id
    * @param projectedValue
-   * @param ptsUnit
    * @returns
    */
-  percentageModifiedInputTextStr(id: string, projectedValue: string | number | undefined, ptsUnit = false, etpUnit = false) {
-    let res = this.percentageModifiedInputText(id, projectedValue)
-    if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
-    if (etpUnit) return res === 'NA' ? 'NA' : res + ' ETPT'
-    return res === 'NA' ? 'NA' : res + '%'
+  percentageModifiedInputTextStr(id: string, projectedValue: string | number | undefined) {
+    const res = this.percentageModifiedInputText(id, projectedValue)
+    return res === 'NA' ? 'NA' : res + this.getDeltaUnit(id)
   }
 
   canDeactivate(nextState: string) {

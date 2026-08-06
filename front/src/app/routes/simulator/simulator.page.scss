@@ -788,6 +788,7 @@
       display: flex;
       align-items: center;
       margin-top: 8px;
+      border: solid 1px transparent;
 
       .title {
         flex: 1;
@@ -840,7 +841,7 @@
       }
 
       &:focus-within {
-        border: solid 1px utils.$colors-tooltipBgTitleColor;
+        border-color: utils.$colors-tooltipBgTitleColor;
         background-color: utils.$colors-activityGuideBg;
       }
     }
