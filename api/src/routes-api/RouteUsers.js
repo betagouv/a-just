@@ -407,4 +407,49 @@ export default class RouteUsers extends Route {
       fonctions,
     })
   }
+
+  /**
+   * Liste des utilisateurs ayant accès à la juridiction
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async getUsersJuridictions(ctx) {
+    const { juridictionId } = this.body(ctx)
+
+    const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
+    if (hasAccess) {
+      const users = await this.model.getUsersJuridictions(juridictionId)
+      this.sendOk(ctx, {
+        users,
+      })
+    } else {
+      this.sendOk(ctx, {
+        users: [],
+      })
+    }
+  }
+
+  /**
+   * Liste des utilisateurs ayant accès à la juridiction
+   */
+  @Route.Put({
+    bodyType: Types.object().keys({
+      userId: Types.number(),
+      access: Types.any(),
+      referentielIds: Types.any(),
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async updateUserOfJuridictionsByLocalAdmin(ctx) {
+    const { userId, access, referentielIds, juridictionId } = this.body(ctx)
+
+    await this.model.updateUserOfJuridictionsByLocalAdmin(ctx.state.user.id, { userId, access, referentielIds, juridictionId })
+
+    this.sendOk(ctx, 'Ok')
+  }
 }

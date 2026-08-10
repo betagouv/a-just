@@ -167,6 +167,13 @@ export class UserService implements OnInit {
     return user && user.referentielIds === null ? true : false
   })
   /**
+   * User is local admin
+   */
+  isLocalAdmin = computed(() => {
+    const backup = this.humanResourceService.hrBackupS()
+    return !!backup?.isAdminLocal
+  })
+  /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null
@@ -507,5 +514,25 @@ export class UserService implements OnInit {
     }
 
     window.location.href = urlToRedirect
+  }
+
+  /**
+   * API demande les utilisateurs de la juridiction
+   * @returns
+   */
+  async getUsersJuridictions(): Promise<UserInterface[]> {
+    const data = await this.serverService.post('users/get-users-juridictions', {
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
+    return data.data.users || []
+  }
+
+  async updatePersonByLocalAdmin({ userId, access, referentielIds }: { userId: number; access: number[]; referentielIds: number[] }) {
+    await this.serverService.put('users/update-user-of-juridictions-by-local-admin', {
+      userId,
+      access,
+      referentielIds,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
   }
 }

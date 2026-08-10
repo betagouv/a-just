@@ -212,7 +212,7 @@ export const loadOrWarmHR = async (backupId, models, userId) => {
 
   if (!hr) {
     //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
-    hr = await models.HumanResources.getCurrentHrNew(backupId)
+    hr = await models.HumanResources.getCurrentHrNew(backupId, false)
     await setCacheValue(backupId, hr, cacheKey, 3600)
     await invalidateBackup(backupId)
     await invalidateAjustBackup(backupId)

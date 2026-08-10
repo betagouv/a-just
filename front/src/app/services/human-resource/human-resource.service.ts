@@ -1,4 +1,5 @@
-import { inject, Injectable, Input, Signal, signal, WritableSignal } from '@angular/core'
+import { inject, Injectable, Input, signal, WritableSignal } from '@angular/core'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivitiesService } from '../activities/activities.service'
@@ -103,6 +104,10 @@ export class HumanResourceService {
    * Last backup Id
    */
   lastBackupId: number | null = null
+  /**
+   * Converti en signal la variable hrBackup qui est une observable
+   */
+  hrBackupS = toSignal(this.hrBackup, { initialValue: null })
   /**
    * Liste des alertes
    */

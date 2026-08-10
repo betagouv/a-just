@@ -1,0 +1,83 @@
+<h3>Liste des utilisateurs ayant accès à la juridiction</h3>
+
+<div class="users-list">
+  @for(user of users; track user.id) {
+  <div class="user-card">
+    <div class="user-item">
+      <div class="user-main">
+        <div class="user-name">{{ user.lastName }} {{ user.firstName }}</div>
+        <div class="user-email">{{ user.email }}</div>
+      </div>
+      @if(!onEditUserIds.includes(user?.id || 0)) {
+      <div class="user-access">
+        <p class="s">Accès aux pages</p>
+        <p class="s" [innerHTML]="getUserPagesAccessToString(user.access || []) | sanitizeHtml"></p>
+      </div>
+      <div class="user-access">
+        <p class="s">Types d'agents</p>
+        <p class="s" [innerHTML]="getUserCategoriesAccessToString(user.access || []) | sanitizeHtml"></p>
+      </div>
+      <div class="user-referentiel">
+        <p class="s">Référentiels</p>
+        <p class="s" [innerHTML]="getUserContentieuxAccessToString(user.referentielIds) | sanitizeHtml"></p>
+      </div>
+      }
+      <div>
+        <button class="primary outline small" (click)="toggleUserDetails(user)">
+          {{ onEditUserIds.includes(user?.id || 0) ? 'Voir moins' : 'Voir plus' }}
+        </button>
+      </div>
+    </div>
+    @if (onEditUserIds.includes(user?.id || 0)) {
+    <div class="user-details is-open">
+      <div>
+        <div class="detail-group">
+          <div class="detail-label">Accès aux pages</div>
+          <div class="detail-value">
+            @for(accessRow of USER_ACCESS_LIST; track accessRow.name) {
+            <p class="s">{{accessRow.label}} :</p>
+            <div class="access-grid">
+              @for(access of accessRow.access; track access.id) {
+              <div>
+                <input type="checkbox" [checked]="hasAccess(user.id, access.id)" #accessCheckbox
+                  (change)="onToggleAccess(user.id, access.id, accessCheckbox.checked)">
+                <p class="s" (click)="accessCheckbox.click()">{{ access.label }}</p>
+              </div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+        <div class="detail-group">
+          <div class="detail-label">Types d'agents</div>
+          <div class="detail-value">
+            @for(accessId of CATEGORIES_ACCESS_IDS; track accessId) {
+            <div>
+              <input type="checkbox" [checked]="hasAccess(user.id, accessId)" #accessCheckbox
+                (change)="onToggleAccess(user.id, accessId, accessCheckbox.checked)">
+              <p class="s" (click)="accessCheckbox.click()">{{ accessToString(accessId) }}</p>
+            </div>
+            }
+          </div>
+        </div>
+        <div class="detail-group">
+          <div class="detail-label">Référentiels</div>
+          <div class="detail-value">
+            @for(referentiel of referentiels; track referentiel.id) {
+            <div>
+              <input type="checkbox" [checked]="hasReferentielAccess(user.id, referentiel.id)" #accessCheckbox
+                (change)="onToggleReferentiel(user.id, referentiel.id, accessCheckbox.checked)">
+              <p class="s" (click)="accessCheckbox.click()">{{ referentiel.label }}</p>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="details-actions">
+        <button class="primary small" (click)="onUpdateById(user.id || 0)">Modifier</button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

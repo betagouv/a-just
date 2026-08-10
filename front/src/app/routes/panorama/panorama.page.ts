@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common'
 import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
 import { IntroJSStep } from '../../services/tour/tour.service'
+import { RouterModule } from '@angular/router'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -36,6 +37,7 @@ import { IntroJSStep } from '../../services/tour/tour.service'
     ActivitiesLastModificationsComponent,
     CommonModule,
     ActivitiesToCompleteComponent,
+    RouterModule,
   ],
   templateUrl: './panorama.page.html',
   styleUrls: ['./panorama.page.scss'],
@@ -201,14 +203,12 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
     {
       target: 'activities-last-disponibilities',
       title: 'Dernières données disponibles',
-      intro:
-        `Visualisez en un coup d'œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l'un ou l'autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l'outil.`,
+      intro: `Visualisez en un coup d'œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l'un ou l'autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l'outil.`,
     },
     {
       target: 'activities-to-complete',
       title: 'Données à compléter',
-      intro:
-        `Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n'est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.`,
+      intro: `Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n'est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.`,
     },
     {
       target: 'activities-last-modifications',
