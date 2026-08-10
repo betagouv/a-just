@@ -102,12 +102,25 @@
       </div>
       <div class="item">
         <h4>Liste des ventilations accessibles</h4>
-        @for (jur of ventilations; track jur.id) {
-        <p>
-          <input type="checkbox" #jurDom [(ngModel)]="jur.selected" />
-          <label (click)="jurDom.click()">{{ jur.label }}</label>
-        </p>
-        }
+        <table>
+          <tr>
+            <th>Nom</th>
+            <th>Accès à la juridiction</th>
+            <th>Administrateur local</th>
+          </tr>
+          @for (jur of ventilations; track jur.id) {
+          <tr>
+            <td>{{ jur.label }}</td>
+            <td>@if (!jur.isLocalAdmin) {<input type="checkbox" [(ngModel)]="jur.hasAccess" /> <label
+                (click)="jur.hasAccess = !jur.hasAccess">{{
+                jur.hasAccess ? 'Oui'
+                :
+                'Non' }}</label>}</td>
+            <td><input type="checkbox" [(ngModel)]="jur.isLocalAdmin" /> <label
+                (click)="jur.isLocalAdmin = !jur.isLocalAdmin">{{ jur.isLocalAdmin ? 'Oui' : 'Non' }}</label></td>
+          </tr>
+          }
+        </table>
       </div>
     </div>
   </aj-popup>

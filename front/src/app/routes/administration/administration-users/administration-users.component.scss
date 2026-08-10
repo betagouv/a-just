@@ -1,0 +1,143 @@
+@use '../../../styles/utils.scss' as utils;
+
+:host {
+  display: block;
+  padding: 24px;
+
+  h3 {
+    color: utils.$colors-primary;
+    font-size: 20px;
+    margin-bottom: 22px;
+  }
+
+  .users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .user-card {
+    border: 1px solid #d9e2f2;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(22, 52, 115, 0.08);
+    overflow: hidden;
+  }
+
+  .user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+  }
+
+  .user-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1 100px;
+  }
+
+  .user-name {
+    color: #1d2b4f;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .user-email {
+    color: #5e6b85;
+    font-size: 14px;
+  }
+
+  .user-access,
+  .user-referentiel {
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+
+    p:first-child {
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    p:last-child {
+      overflow: auto;
+      max-height: 70px;
+    }
+  }
+
+  .user-details {
+    display: none;
+    border-top: 1px solid #e7ecf5;
+    background: linear-gradient(180deg, #f9fbff 0%, #f4f7fc 100%);
+    padding: 18px 20px;
+
+    &.is-open {
+      display: block;
+    }
+
+    >div:first-child {
+      display: flex;
+      gap: 8px;
+
+      >div {
+        flex: 1;
+      }
+    }
+  }
+
+  .detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .detail-label {
+    color: #5e6b85;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .detail-value {
+    color: #1d2b4f;
+    font-size: 14px;
+    line-height: 1.5;
+
+    >div {
+      display: flex;
+      gap: 8px;
+      margin: 4px 0;
+
+      >p,
+      >input {
+        cursor: pointer;
+      }
+    }
+
+    .access-grid {
+      display: flex;
+      flex-wrap: wrap;
+
+      >div {
+        margin-bottom: 4px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+
+        input {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .details-actions {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

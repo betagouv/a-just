@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core'
 import { CanActivateFn, Router } from '@angular/router'
 import { AuthService } from '../services/auth/auth.service'
+import { UserService } from '../services/user/user.service'
 import {
   USER_ACCESS_ACTIVITIES_READER,
   USER_ACCESS_AVERAGE_TIME_READER,
@@ -273,4 +274,29 @@ class ActivitiesPermissionsService {
 
 export const activitiesGuard: CanActivateFn = (route, state) => {
   return inject(ActivitiesPermissionsService).canViewActivities()
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+class AdministratorPermissionsService {
+  authService = inject(AuthService)
+  router = inject(Router)
+  userService = inject(UserService)
+
+  async canViewAdmin() {
+    await this.authService.userConnected()
+    const canView = this.userService.isLocalAdmin()
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
+  }
+}
+
+export const administratorGuard: CanActivateFn = (route, state) => {
+  return inject(AdministratorPermissionsService).canViewAdmin()
 }

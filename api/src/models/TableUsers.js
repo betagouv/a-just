@@ -36,6 +36,7 @@ import { getNbDay, humanDate, today } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
 import { differenceInMinutes } from 'date-fns'
 import { Op } from 'sequelize'
+import { groupBy } from 'lodash'
 
 /**
  * Table des utilisateurs
@@ -252,7 +253,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction', ['referentiel_ids', 'referentielIds']],
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction', ['referentiel_ids', 'referentielIds'], ['local_admin_ids', 'localAdminIds']],
       raw: true,
     })
 
@@ -270,7 +271,7 @@ export default (sequelizeInstance, Model) => {
    * Mise à jour des informations utilisateurs et informer en cas de changement d'attribution
    * @param {*} param0
    */
-  Model.updateAccount = async ({ userId, access, ventilations, referentielIds }) => {
+  Model.updateAccount = async ({ userId, access, ventilations, referentielIds, localAdminIds }) => {
     const user = await Model.findOne({
       where: {
         id: userId,
@@ -279,17 +280,28 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (user) {
+      const newOptions = {}
+      if (referentielIds !== undefined) {
+        newOptions.referentiel_ids = referentielIds
+      }
+      if (localAdminIds !== undefined) {
+        newOptions.local_admin_ids = localAdminIds
+      }
+
       await Model.updateById(user.id, {
-        referentiel_ids: referentielIds,
+        ...newOptions,
       })
-      const oldAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
+
+      const oldAccess = access ? (await Model.models.UsersAccess.getUserAccess(userId)).sort() : []
       await Model.models.UsersAccess.updateAccess(userId, access)
-      const newAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
+      const newAccess = access ? (await Model.models.UsersAccess.getUserAccess(userId)).sort() : []
       await Model.updateById(user.id, {
         updated_at: new Date(),
       })
-      const oldVentilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort()
-      const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
+      const oldVentilations = ventilations ? (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort() : []
+      const ventilationsList = ventilations ? (await Model.models.UserVentilations.updateVentilations(userId, [
+        ...new Set([...(ventilations || []), ...(localAdminIds || [])]),
+      ])) : []
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
@@ -432,6 +444,84 @@ export default (sequelizeInstance, Model) => {
     })
 
     return user.referentiel_ids === null ? true : false
+  }
+
+  Model.getUserAdminLocal = async (userId) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+      raw: true,
+    })
+
+    return user ? user.local_admin_ids || [] : []
+  }
+
+  Model.hasAdminAccessToJuridiction = async (userId, juridictionId) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+      raw: true,
+    })
+
+    if (user) {
+      const localAdminIds = user.local_admin_ids || []
+      return localAdminIds.includes(juridictionId)
+    }
+
+    return false
+  }
+
+  Model.getUsersJuridictions = async (juridicitonId) => {
+    const users = await Model.findAll({
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', ['referentiel_ids', 'referentielIds']],
+      include: [{
+        required: true,
+        model: Model.models.UserVentilations,
+        where: {
+          hr_backup_id: juridicitonId,
+        },
+      }, {
+        model: Model.models.UsersAccess,
+      }],
+      where: {
+        role: null
+      },
+      raw: true,
+    })
+
+    return Object.values(groupBy(users, 'id')).map(([user]) => ({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      referentielIds: user.referentielIds,
+      access: users.filter((u) => u.id === user.id).map((u) => u['UsersAccesses.access_id']),
+    }))
+  }
+
+  Model.updateUserOfJuridictionsByLocalAdmin = async (ownerId, { userId, juridictionId, access, referentielIds }) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+    })
+
+    if (!user) {
+      throw 'Utilisateur non trouvé'
+    }
+
+    const ownerHasAdminAccess = await Model.hasAdminAccessToJuridiction(ownerId, juridictionId)
+    const userHasAccess = await Model.models.HRBackups.haveAccess(juridictionId, userId)
+    if (ownerHasAdminAccess && userHasAccess) {
+      await Model.updateAccount({
+        userId,
+        access,
+        referentielIds,
+      })
+    }
   }
 
   return Model

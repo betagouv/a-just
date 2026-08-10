@@ -30,14 +30,16 @@
         @if (hrBackups.length) {
         <div class="juridiction">
             <div class="juridiction-title">
-                <h6>{{ hrBackup && hrBackup.label }}</h6>
+                <h6 [title]="hrBackup && hrBackup.label">
+                    {{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup && hrBackup.label }}
+                </h6>
                 @if (hrBackups && hrBackups.length > 1) {
                 <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
                 }
                 <mat-menu #menu="matMenu">
                     @for (bu of hrBackups; track bu.id) {
                     <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-                        {{ bu.label }}
+                        {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
                     </button> }
                 </mat-menu>
             </div>
@@ -105,7 +107,8 @@
                 <div class="top-header-back-title">
                     @if (backUrl) {
                     <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" class="back-url"
-                        [ngClass]="{ 'is-dark-screen': isDarkScreen }" /> } @if (actionsLeftTemplate) {
+                        [ngClass]="{ 'is-dark-screen': isDarkScreen }" /> }
+                    @if (actionsLeftTemplate) {
                     <ng-container *ngTemplateOutlet="actionsLeftTemplate"></ng-container>
                     }
                     <div>
@@ -135,6 +138,10 @@
       </ng-template> -->
                     @if (titleTemplate) {
                     <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+                    }
+                    @if(actionsRightTemplate) {
+                    <div class="space"></div>
+                    <ng-container *ngTemplateOutlet="actionsRightTemplate"></ng-container>
                     }
                 </div>
                 @if (dateSelector) {

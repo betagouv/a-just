@@ -161,6 +161,10 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   @Input() actionsLeftTemplate: TemplateRef<any> | undefined
   /**
+   * Parmétrage au niveau des boutons d'actions en haut à droite
+   */
+  @Input() actionsRightTemplate: TemplateRef<any> | undefined
+  /**
    * Titre de page
    */
   @Input() title: string = ''

@@ -352,6 +352,7 @@
 
             h6 {
                 color: white;
+                flex: 1;
             }
 
             mat-icon {
@@ -520,6 +521,7 @@
         .top-header-back-title {
             display: flex;
             align-items: center;
+            width: 100%;
         }
 
         .back-url {
