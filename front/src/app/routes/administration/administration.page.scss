@@ -1,8 +1,16 @@
 @use '../../styles/utils.scss' as utils;
 
+:host {
+    display: block;
+    height: 100%;
+}
+
 .administration-container {
     background-color: white;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    overflow: hidden;
 
     .header-administration {
         box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1),
@@ -37,7 +45,9 @@
         }
     }
 
-    .container-panorama {
+    .container-administration {
+        flex: 1;
+        min-height: 0;
         overflow: auto;
     }
 }
