@@ -30,9 +30,8 @@
         @if (hrBackups.length) {
         <div class="juridiction">
             <div class="juridiction-title">
-                <h6 [title]="hrBackup && hrBackup.label">
-                    {{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup && hrBackup.label }}
-                </h6>
+                <h6 [title]="hrBackup && hrBackup.label">{{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup
+                    && hrBackup.label }}</h6>
                 @if (hrBackups && hrBackups.length > 1) {
                 <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
                 }
