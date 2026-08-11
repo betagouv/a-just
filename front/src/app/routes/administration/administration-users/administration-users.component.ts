@@ -105,6 +105,18 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     return this.editedUsers[userId]?.access.includes(accessId) || false
   }
 
+  showAccessByOrder(userId: number | undefined, accessRow: { orderRequired?: boolean; access: { id: number }[] }, accessIndex: number) {
+    if (!accessRow.orderRequired) {
+      return true
+    }
+
+    if (accessIndex === 0) {
+      return true
+    }
+
+    return this.hasAccess(userId, accessRow.access[accessIndex - 1].id)
+  }
+
   hasReferentielAccess(userId: number | undefined, referentielId: number) {
     if (!userId) {
       return false
@@ -160,13 +172,32 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     }
 
     const list: number[] = []
+    USER_ACCESS_LIST.map((accessRow) => {
+      accessRow.access.map((access, accessIndex) => {
+        if (!accessIds.includes(access.id)) {
+          return
+        }
+
+        if (accessRow.orderRequired && accessIndex > 0) {
+          const previousAccess = accessRow.access[accessIndex - 1]
+          if (!accessIds.includes(previousAccess.id)) {
+            return
+          }
+        }
+
+        if (PAGES_ACCESS_IDS.includes(access.id)) {
+          list.push(access.id)
+        }
+      })
+    })
+
     PAGES_ACCESS_IDS.map((pageId) => {
-      if (accessIds.includes(pageId)) {
+      if (!list.includes(pageId) && accessIds.includes(pageId)) {
         list.push(pageId)
       }
     })
 
-    return list.length === PAGES_ACCESS_IDS.length ? 'Toutes les pages' : list.map((accessId) => accessToString(accessId)).join(',<br/>')
+    return list.length === PAGES_ACCESS_IDS.length ? 'Toutes' : list.map((accessId) => accessToString(accessId)).join(',<br/>')
   }
 
   getUserCategoriesAccessToString(accessIds: number[]) {

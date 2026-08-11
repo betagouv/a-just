@@ -37,12 +37,14 @@
             @for(accessRow of USER_ACCESS_LIST; track accessRow.name) {
             <p class="s">{{accessRow.label}} :</p>
             <div class="access-grid">
-              @for(access of accessRow.access; track access.id) {
+              @for(access of accessRow.access; track access.id; let accessIndex = $index) {
+              @if(showAccessByOrder(user.id, accessRow, accessIndex)) {
               <div>
                 <input type="checkbox" [checked]="hasAccess(user.id, access.id)" #accessCheckbox
                   (change)="onToggleAccess(user.id, access.id, accessCheckbox.checked)">
                 <p class="s" (click)="accessCheckbox.click()">{{ access.label }}</p>
               </div>
+              }
               }
             </div>
             }
