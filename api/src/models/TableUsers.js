@@ -30,7 +30,7 @@ import {
   TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_AGAIN_CA,
   TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA,
 } from '../constants/email'
-import { USER_AUTO_LOGIN } from '../constants/log-codes'
+import { UPDATE_USER_JURIDICTION, USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate, today } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
@@ -516,6 +516,7 @@ export default (sequelizeInstance, Model) => {
     const ownerHasAdminAccess = await Model.hasAdminAccessToJuridiction(ownerId, juridictionId)
     const userHasAccess = await Model.models.HRBackups.haveAccess(juridictionId, userId)
     if (ownerHasAdminAccess && userHasAccess) {
+      await Model.models.Logs.addLog(UPDATE_USER_JURIDICTION, ownerId, { userId, juridictionId, access, referentielIds })
       await Model.updateAccount({
         userId,
         access,
