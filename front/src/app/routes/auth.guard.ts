@@ -263,11 +263,19 @@ export const completeReferentielGuard: CanActivateFn = (route, state) => {
   providedIn: 'root',
 })
 class ActivitiesPermissionsService {
+  router = inject(Router)
   authService = inject(AuthService)
 
   async canViewActivities() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
