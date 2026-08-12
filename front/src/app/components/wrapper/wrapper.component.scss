@@ -316,6 +316,12 @@
     &.large-actions .actions {
         flex: 100;
     }
+
+    &.title-no-100 {
+        .header .top-header .top-header-back-title {
+            width: inherit;
+        }
+    }
 }
 
 .menu {

@@ -427,6 +427,7 @@
 
       p {
         color: utils.$colors-white;
+        white-space: nowrap;
       }
     }
 
@@ -444,6 +445,7 @@
 
     p {
       color: utils.$colors-primary;
+      white-space: nowrap;
       font-size: 14px;
     }
   }
