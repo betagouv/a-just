@@ -95,8 +95,12 @@
       flex: 1.5;
     }
 
+    // &.pink-bg {
+    //   background-color: utils.$colors-disabledPinkSimulator !important;
+    // }
+
     &.blue-bg {
-      //background-color: #f5f5fe;
+      // background-color: utils.$colors-blueSimulator;
 
       &.selected {
         mix-blend-mode: multiply;

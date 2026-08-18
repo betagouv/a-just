@@ -1,6 +1,7 @@
-import { HONEY_IP_BLOCK_AGAIN, HONEY_IP_TRAPPED } from '../../constants/log-codes'
+import { HONEY_IP_BLOCK_AGAIN, HONEY_BLACKLIST_IPS } from '../../constants/log-codes'
 import config from 'config'
 
+export const HTTP_FORBIDDEN_CODE = 403
 const TRAPS = [
   'api/sn',
   'api/st',
@@ -125,7 +126,8 @@ const TRAPS = [
   '.vscode',
   'kibana',
 ]
-const IP_TRAPPED = []
+const BLACKLIST_IPS = []
+const BANNED_CHARS = ['<', '>', '=']
 
 /**
  * Module de control des urls interdit
@@ -152,10 +154,10 @@ export default async (ctx, next, models) => {
 
   //console.log('Client IP', ip, url)
 
-  if (IP_TRAPPED.indexOf(ip) !== -1) {
+  if (BLACKLIST_IPS.indexOf(ip) !== -1) {
     console.error('IP BLOCKED - ', ip)
     models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ip, { formatValue: false, datas2: url, logging: false })
-    ctx.res.writeHead(403).end()
+    ctx.res.writeHead(HTTP_FORBIDDEN_CODE).end()
     return
   }
 
@@ -166,14 +168,35 @@ export default async (ctx, next, models) => {
     })
   ) {
     console.error('NEW IP BLOCKED - ', ip, url)
-    IP_TRAPPED.push(ip)
-    models.Logs.addLog(HONEY_IP_TRAPPED, null, ip, { formatValue: false, datas2: url, logging: false })
-    ctx.res.writeHead(403).end()
+    BLACKLIST_IPS.push(ip)
+    models.Logs.addLog(HONEY_BLACKLIST_IPS, null, ip, { formatValue: false, datas2: url, logging: false })
+    ctx.res.writeHead(HTTP_FORBIDDEN_CODE).end()
     return
   }
 
   await next()
 }
+
+// Fonction pattern qui retourne HTTP_FORBIDDEN_CODE si IP présente dans la blacklist
+export const checkBannedChars = (ctx, stringValues) => {
+  const ip = ctx.request.ip
+  let isBanned = false
+
+  stringValues = Array.isArray(stringValues) ? stringValues : [stringValues]
+
+  stringValues.forEach(value => {
+    if (BANNED_CHARS.some(x => value.includes(x))) {
+      isBanned = true;
+    }
+  });
+
+  if (isBanned) {
+    BLACKLIST_IPS.push(ip)
+  }
+
+  return isBanned
+}
+
 
 // /api/juridictions-details/get-cle
 /*
