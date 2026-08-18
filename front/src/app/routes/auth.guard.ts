@@ -286,6 +286,7 @@ class AdministratorPermissionsService {
 
   async canViewAdmin() {
     await this.authService.userConnected()
+    await this.userService.initDatas()
     const canView = this.userService.isLocalAdmin()
 
     if (!canView) {

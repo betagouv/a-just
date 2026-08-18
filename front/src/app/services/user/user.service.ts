@@ -378,8 +378,8 @@ export class UserService implements OnInit {
   /**
    * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
    */
-  initDatas() {
-    this.getInitDatas().then((result) => {
+  async initDatas() {
+    return this.getInitDatas().then((result) => {
       this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
       this.humanResourceService.fonctions.next(result.fonctions)
       this.humanResourceService.categories.next(result.categories)
