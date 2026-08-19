@@ -125,6 +125,29 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     return this.editedUsers[userId]?.referentielIds.includes(referentielId) || false
   }
 
+  hasUserChanges(user: UserInterface) {
+    if (!user.id || !this.editedUsers[user.id]) {
+      return false
+    }
+
+    const userEdition = this.editedUsers[user.id]
+    const access = user.access || []
+    const referentielIds = user.referentielIds || this.referentiels.map((referentiel) => referentiel.id)
+
+    return !this.areIdsEqual(userEdition.access, access) || !this.areIdsEqual(userEdition.referentielIds, referentielIds)
+  }
+
+  private areIdsEqual(firstIds: number[], secondIds: number[]) {
+    if (firstIds.length !== secondIds.length) {
+      return false
+    }
+
+    const sortedFirstIds = [...firstIds].sort((firstId, secondId) => firstId - secondId)
+    const sortedSecondIds = [...secondIds].sort((firstId, secondId) => firstId - secondId)
+
+    return sortedFirstIds.every((id, index) => id === sortedSecondIds[index])
+  }
+
   onToggleAccess(userId: number | undefined, accessId: number, checked: boolean) {
     if (!userId || !this.editedUsers[userId]) {
       return

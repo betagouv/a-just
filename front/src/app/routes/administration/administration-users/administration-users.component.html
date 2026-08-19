@@ -42,7 +42,7 @@
               <div>
                 <input type="checkbox" [checked]="hasAccess(user.id, access.id)" #accessCheckbox
                   (change)="onToggleAccess(user.id, access.id, accessCheckbox.checked)">
-                <p class="s" (click)="accessCheckbox.click()">{{ access.label }}</p>
+                <p class="s cursor-pointer" (click)="accessCheckbox.click()">{{ access.label }}</p>
               </div>
               }
               }
@@ -76,7 +76,11 @@
         </div>
       </div>
       <div class="details-actions">
-        <button class="primary small" (click)="onUpdateById(user.id || 0)">Modifier</button>
+        @if(hasUserChanges(user)) {
+        <button class="primary small" (click)="onUpdateById(user.id || 0)">Enregistrer</button>
+        } @else {
+        <button class="gray small" disabled>Enregistrer</button>
+        }
       </div>
     </div>
     }
