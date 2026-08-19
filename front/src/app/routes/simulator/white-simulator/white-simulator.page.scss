@@ -903,10 +903,11 @@
             width: 496px;
             padding: 12px 24px;
             border-radius: 8px;
-            background-color: utils.$colors-popupLightBg;
+            background-color: utils.$colors-bgSelect;
             display: flex;
             align-items: center;
             margin-top: 8px;
+            border: solid 1px transparent;
 
             .title {
                 flex: 1;
@@ -924,11 +925,16 @@
                 width: 120px !important;
                 height: 40px;
                 font-size: 18px;
-                //border-bottom: solid 2px utils.$colors-dataNotSettedIsSetBg !important;
-                border: solid 2px utils.$colors-cblack !important;
 
                 :focus {
                     border: solid 2px utils.$colors-cblack !important;
+                }
+            }
+
+            .no-border {
+                &:focus {
+                    outline: none;
+                    border-bottom: solid 2px utils.$colors-cblack !important;
                 }
             }
 

@@ -177,7 +177,7 @@
             de :
           </div>
           }
-          <input [class.displayNone]="buttonSelected.id === 'magRealTimePerCase'" type="number"
+          <input class="no-border" [class.displayNone]="buttonSelected.id === 'magRealTimePerCase'" type="number"
             (oninput)="onUpdateValueToAjust($event)" (focusin)="resetPercentage = true"
             (focusout)="resetPercentage = false" value="{{ valueSaved(1) }}" #volume />
           @if (buttonSelected.id === 'magRealTimePerCase') {
