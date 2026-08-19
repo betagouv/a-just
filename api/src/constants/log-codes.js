@@ -91,6 +91,7 @@ export const REQUEST_USER_MANUAL = 30001
 export const REAFFECTOR_UPDATE_AGENT = 40000
 
 export const UPDATE_USER_JURIDICTION = 50000
+export const INVITE_USER_JURIDICTION = 50001
 
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',

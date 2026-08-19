@@ -13,7 +13,7 @@ import {
   TEMPLATE_USER_ONBOARDING,
 } from '../constants/email'
 import config from 'config'
-import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
+import { ADMIN_CHANGE_USER_ACCESS, INVITE_USER_JURIDICTION, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 import { checkBannedChars, HTTP_FORBIDDEN_CODE } from './middlewares/honeyTrap'
@@ -494,6 +494,7 @@ export default class RouteUsers extends Route {
             serverUrl: config.frontUrl,
           },
         )
+        await this.models.Logs.addLog(INVITE_USER_JURIDICTION, ctx.state.user.id, { email, juridictionId })
         this.sendOk(ctx, 'Ok')
       } else {
         ctx.throw(401, ctx.state.__('Vous devez saisir une adresse e-mail professionnelle'))
