@@ -535,4 +535,11 @@ export class UserService implements OnInit {
       juridictionId: this.humanResourceService.backupId.getValue(),
     })
   }
+
+  async inviteUserByEmail(email: string) {
+    await this.serverService.post('users/invite-user-by-email', {
+      email,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
+  }
 }

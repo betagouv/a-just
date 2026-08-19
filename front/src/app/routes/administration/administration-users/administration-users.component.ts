@@ -282,4 +282,18 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
 
     return userEdition
   }
+
+  async onInvite(input: HTMLInputElement) {
+    const email = input.value.trim()
+    if (email) {
+      // Call the service to invite the user by email
+      try {
+        await this.userService.inviteUserByEmail(email)
+        alert(`Invitation envoyée à ${email}`)
+        input.value = ''
+      } catch (error) {
+        console.error("Erreur lors de l'invitation de l'utilisateur", error)
+      }
+    }
+  }
 }

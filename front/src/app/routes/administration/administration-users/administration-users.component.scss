@@ -4,10 +4,30 @@
   display: block;
   padding: 24px;
 
-  h3 {
-    color: utils.$colors-primary;
-    font-size: 20px;
+  .administration-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
     margin-bottom: 22px;
+
+    h3 {
+      color: utils.$colors-primary;
+      font-size: 20px;
+      margin: 0;
+      padding-top: 8px;
+    }
+  }
+
+  .invite-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+
+    input {
+      min-width: 240px;
+    }
   }
 
   .users-list {
@@ -139,5 +159,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  @media (max-width: 700px) {
+    .administration-header {
+      flex-direction: column;
+      gap: 12px;
+
+      h3 {
+        padding-top: 0;
+      }
+    }
+
+    .invite-user {
+      width: 100%;
+
+      input {
+        min-width: 0;
+        flex: 1;
+      }
+    }
   }
 }

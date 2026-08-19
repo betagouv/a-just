@@ -7,6 +7,7 @@ import { sentEmail } from '../utils/email'
 import {
   TEMPLATE_FORGOT_PASSWORD_ID,
   TEMPLATE_FORGOT_PASSWORD_ID_CA,
+  TEMPLATE_INVITE_USER_TO_SIGNUP,
   TEMPLATE_NEW_USER_SIGNIN,
   TEMPLATE_NEW_USER_SIGNIN_CA,
   TEMPLATE_USER_ONBOARDING,
@@ -457,5 +458,48 @@ export default class RouteUsers extends Route {
     await this.model.updateUserOfJuridictionsByLocalAdmin(ctx.state.user.id, { userId, access, referentielIds, juridictionId })
 
     this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+   * Invite a user by email to the juridiction
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string(),
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async inviteUserByEmail(ctx) {
+    let { email, juridictionId } = this.body(ctx)
+    email = (email || '').trim().toLowerCase()
+
+    const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
+    if (hasAccess) {
+      if (validateEmail(email) && (email.includes('@justice.fr') || email.includes('.gouv.fr') || email.includes('@a-just.fr'))) {
+
+        const findUser = await this.model.findOne({ where: { email } })
+        if (findUser) {
+          ctx.throw(401, ctx.state.__('Cet utilisateur existe déjà'))
+          return
+        }
+
+        await sentEmail(
+          {
+            email,
+          },
+          TEMPLATE_INVITE_USER_TO_SIGNUP,
+          {
+            email,
+            serverUrl: config.frontUrl,
+          },
+        )
+        this.sendOk(ctx, 'Ok')
+      } else {
+        ctx.throw(401, ctx.state.__('Vous devez saisir une adresse e-mail professionnelle'))
+      }
+    } else {
+      ctx.throw(401, ctx.state.__("Vous n'avez pas les droits pour inviter un utilisateur !"))
+    }
   }
 }

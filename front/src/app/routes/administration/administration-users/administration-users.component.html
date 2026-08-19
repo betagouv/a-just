@@ -1,4 +1,10 @@
-<h3>Liste des utilisateurs ayant accès à la juridiction</h3>
+<div class="administration-header">
+  <h3>Liste des utilisateurs ayant accès à la juridiction</h3>
+  <div class="invite-user">
+    <input type="text" placeholder="Mail de l'utilisateur" #input />
+    <button class="primary small" (click)="onInvite(input)">Inviter l'utilisateur</button>
+  </div>
+</div>
 
 <div class="users-list">
   @for(user of users; track user.id) {
