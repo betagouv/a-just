@@ -420,7 +420,7 @@
         {{
         percentageModifiedInputTextStr(
         magRealTimePerCase.id,
-        getFieldValue('magRealTimePerCase', firstSituationData, true)
+        getFieldValue('magRealTimePerCase', firstSituationData, true, false)
         )
         }}
         <div class="triangle"></div>
@@ -796,7 +796,7 @@
           {{
           percentageModifiedInputTextStr(
           magRealTimePerCaseWhite.id,
-          getFieldValue('magRealTimePerCase', firstSituationData, true)
+          getFieldValue('magRealTimePerCase', firstSituationData, true, false)
           )
           }}
           <div class="triangle"></div>
@@ -1327,9 +1327,9 @@
             [matTooltipClass]="{ 'tooltip-orange': true }" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
-            ratioStr(
-            getFieldValue('magRealTimePerCase', simulatedSationData, true, true),
-            getFieldValue('magRealTimePerCase', firstSituationData, true, true)
+            percentageModifiedInputTextStr(
+            'magRealTimePerCase',
+            getFieldValue('magRealTimePerCase', firstSituationData, true)
             )
             }}
             <div class="triangle simulated"></div>

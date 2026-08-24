@@ -1179,42 +1179,6 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
    * @param projectedValue valeur projeté
    * @returns chaine de caractère de la valeur finale
    */
-  // percentageModifiedInputText(id: string, projectedValue: string | number | undefined) {
-  //   if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
-  //   if (id === 'realCoverage' && this.paramsToAjust.param1.label === 'realCoverage')
-  //     return this.percantageWithSign(parseFloat(this.paramsToAjust.param1.value) - parseFloat(projectedValue as string))
-  //   if (id === 'realCoverage' && this.paramsToAjust.param2.label === 'realCoverage')
-  //     return this.percantageWithSign(parseFloat(this.paramsToAjust.param2.value) - parseFloat(projectedValue as string))
-  //   if ((id === 'etpMag' && this.paramsToAjust.param1.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param1.label === 'etpFon')) {
-  //     let res = parseFloat(this.paramsToAjust.param1.addition || '')
-  //     if (this.paramsToAjust.param1.addition) return res >= 0 ? '+' + res : res
-  //     else {
-  //       let res =
-  //         Math.round(
-  //           (parseFloat(this.paramsToAjust.param1.value || '') - Number(this.getFieldValue(this.paramsToAjust.param1.label, this.firstSituationData))) * 100,
-  //         ) / 100
-  //       return res >= 0 ? '+' + res : res
-  //     }
-  //   }
-  //   if ((id === 'etpMag' && this.paramsToAjust.param2.label === 'etpMag') || (id === 'etpFon' && this.paramsToAjust.param2.label === 'etpFon')) {
-  //     let res = parseFloat(this.paramsToAjust.param2.addition || '')
-  //     if (this.paramsToAjust.param2.addition) return res >= 0 ? '+' + res : res
-  //     else {
-  //       let res =
-  //         Math.round(
-  //           (parseFloat(this.paramsToAjust.param2.value || '') - Number(this.getFieldValue(this.paramsToAjust.param2.label, this.firstSituationData))) * 100,
-  //         ) / 100
-  //       return res >= 0 ? '+' + res : res
-  //     }
-  //   }
-  //   return this.paramsToAjust.param1.label === id
-  //     ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
-  //       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
-  //       : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
-  //     : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-  //       ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-  //       : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
-  // }
   percentageModifiedInputText(id: string, projectedValue: string | number | undefined) {
     if (id === 'magRealTimePerCase' && projectedValue === -100) return ''
 
@@ -1227,6 +1191,15 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
     if ((id === 'etpMag' || id === 'etpFon') && param.addition) {
       const res = parseFloat(param.addition)
       return res >= 0 ? '+' + res : String(res)
+    }
+
+    if (id === 'magRealTimePerCase') {
+      if (param.input === 2 && param.percentage !== null && param.percentage !== '') {
+        const pct = parseFloat(String(param.percentage))
+        if (!isFinite(pct)) return 'NA'
+        return pct >= 0 ? '+' + pct : String(pct)
+      }
+      return this.ratioStr(String(param.value), baseline)
     }
 
     return this.difference(String(param.value), baseline, id)
@@ -1314,6 +1287,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         return ' pts'
       case 'realDTESInMonths':
         return ' mois'
+      case 'magRealTimePerCase':
+        return '%'
       default:
         return ''
     }

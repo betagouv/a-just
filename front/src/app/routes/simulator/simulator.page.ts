@@ -1441,6 +1441,15 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
       return res >= 0 ? '+' + res : String(res)
     }
 
+    if (id === 'magRealTimePerCase') {
+      if (param.input === 2 && param.percentage !== null && param.percentage !== '') {
+        const pct = parseFloat(String(param.percentage))
+        if (!isFinite(pct)) return 'NA'
+        return pct >= 0 ? '+' + pct : String(pct)
+      }
+      return this.ratioStr(String(param.value), baseline)
+    }
+
     return this.difference(String(param.value), baseline, id)
   }
 
@@ -1516,6 +1525,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy, After
         return ' pts'
       case 'realDTESInMonths':
         return ' mois'
+      case 'magRealTimePerCase':
+        return '%'
       default:
         return ''
     }
