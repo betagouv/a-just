@@ -28,20 +28,21 @@ export const onLoginApi = async ({ email, password }) => {
     })
 }
 
-export const onSignUpApi = async ({ email, password, firstName, lastName, fonction }) => {
+export const onSignUpApi = async ({ email, password, firstName, lastName, tj, fonction }) => {
   return await instanceAxios
     .post('users/create-account', {
       email: email,
       password: password,
       firstName: firstName,
       lastName: lastName,
+      tj: tj,
       fonction: fonction,
     })
     .then((res) => {
       return res
     })
     .catch((err) => {
-      return err
+      return err.response
     })
 }
 

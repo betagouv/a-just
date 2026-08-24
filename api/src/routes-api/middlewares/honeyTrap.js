@@ -184,11 +184,12 @@ export const checkBannedChars = (ctx, stringValues) => {
 
   stringValues = Array.isArray(stringValues) ? stringValues : [stringValues]
 
-  stringValues.forEach(value => {
-    if (BANNED_CHARS.some(x => value.includes(x))) {
-      isBanned = true;
+  stringValues.forEach((value) => {
+    const str = value == null ? '' : String(value)
+    if (BANNED_CHARS.some((x) => str.includes(x))) {
+      isBanned = true
     }
-  });
+  })
 
   if (isBanned) {
     BLACKLIST_IPS.push(ip)
