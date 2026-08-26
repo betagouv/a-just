@@ -112,12 +112,14 @@
 
         :first-child {
             background-color: utils.$colors-primary;
-            color: white;
+            color: utils.$colors-white;
         }
 
         button {
             width: 80px;
-            margin: 0px 4px 0px 4px;
+            height: 32px;
+            line-height: 32px;
+            margin: 8px;
         }
     }
 
