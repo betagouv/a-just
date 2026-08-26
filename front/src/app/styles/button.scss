@@ -127,9 +127,15 @@ button {
       border: 1px solid utils.$colors-grayRow;
       background-color: transparent;
 
-      &:hover {
-        background-color: utils.$colors-grayRow;
-        color: white;
+      &:disabled {
+        cursor: auto;
+      }
+
+      &:enabled {
+        &:hover {
+          background-color: utils.$colors-grayRow;
+          color: white;
+        }
       }
     }
   }
