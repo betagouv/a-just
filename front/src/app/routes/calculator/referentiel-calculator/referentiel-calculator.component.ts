@@ -68,6 +68,9 @@ import { HelpButtonComponent } from '../../../components/help-button/help-button
   selector: 'aj-referentiel-calculator',
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
+  host: {
+    '(document:keydown.escape)': 'handleEscape()',
+  },
 })
 export class ReferentielCalculatorComponent extends MainClass implements AfterViewInit, OnChanges {
   /**
@@ -321,6 +324,17 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       this.calculator.childIsVisible = this.showChildren
     }
     if (this.showChildren === true) this.kpiService.register(CALCULATOR_OPEN_CONTENTIEUX, this.calculator?.contentieux.label + '')
+  }
+
+  /**
+   * Ferme la popin active via la touche escape
+   */
+  handleEscape(): void {
+    if (this.showProjectionPopin) {
+      this.showProjectionPopin = false
+    } else if (this.showAlertPopin) {
+      this.showAlertPopin = false
+    }
   }
 
   /**
