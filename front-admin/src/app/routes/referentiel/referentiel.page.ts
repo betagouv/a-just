@@ -11,11 +11,13 @@ import {
   SelectComponent,
 } from '../../components/select/select.component';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
-import { BackupGroupInterface, BackupInterface } from '../../interfaces/backup';
+import {
+  BackupGroupInterface,
+  BackupInterface,
+} from '../../interfaces/backups.interface';
 import { difference } from 'lodash';
 
-interface ContentieuReferentielWithBackupsInterface
-  extends ContentieuReferentielInterface {
+interface ContentieuReferentielWithBackupsInterface extends ContentieuReferentielInterface {
   backups: dataInterface[] | null;
 }
 
@@ -88,11 +90,11 @@ export class ReferentielPage extends MainClass implements OnInit {
   onUpdateElement(
     item: ContentieuReferentielWithBackupsInterface,
     node: string,
-    value: any
+    value: any,
   ) {
     if (
       confirm(
-        'Voulez-vous vraiment modifier le referentiel ? Cela va prendre plusieurs minutes et monopoliser un docker. Seul la sandbox sera blocké car elle a un seul docker mais les autres seront toujours accessibles.'
+        'Voulez-vous vraiment modifier le referentiel ? Cela va prendre plusieurs minutes et monopoliser un docker. Seul la sandbox sera blocké car elle a un seul docker mais les autres seront toujours accessibles.',
       )
     ) {
       if (node === 'onlyToHrBackup' && Array.isArray(value)) {
@@ -111,7 +113,7 @@ export class ReferentielPage extends MainClass implements OnInit {
 
         if (isOnAdd !== null) {
           const backupElements = this.backups.filter((b) =>
-            deltaToUpdate.includes(b.id)
+            deltaToUpdate.includes(b.id),
           );
           backupElements.map((backupElements) => {
             const groups = backupElements.groups || [];
@@ -119,7 +121,7 @@ export class ReferentielPage extends MainClass implements OnInit {
               groups.map((group) => {
                 const allids = this.backups
                   .filter((b) =>
-                    (b.groups || []).some((g) => g.id === group.id)
+                    (b.groups || []).some((g) => g.id === group.id),
                   )
                   .map((b) => b.id);
                 allids.map((id) => {

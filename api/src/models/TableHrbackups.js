@@ -1,6 +1,6 @@
 import { Op } from 'sequelize'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
-import { orderBy } from 'lodash'
+import { groupBy, orderBy } from 'lodash'
 import { isTj } from '../utils/ca'
 
 /**
@@ -298,15 +298,35 @@ export default (sequelizeInstance, Model) => {
     const listAll = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date']],
       order: [['label', 'asc']],
+      include: [
+        {
+          attributes: [],
+          model: Model.models.HRBackupsGroupsIds,
+          include: [
+            {
+              required: true,
+              attributes: ['label'],
+              model: Model.models.HRBackupsGroups,
+            },
+          ],
+        },
+      ],
       raw: true,
     })
+
     const list = []
-    for (let i = 0; i < listAll.length; i++) {
+    const groups = groupBy(listAll, 'id')
+    for (const [key, value] of Object.entries(groups)) {
       list.push({
-        id: listAll[i].id,
-        label: listAll[i].label,
-        date: listAll[i].date,
-        groups: await Model.models.HRBackupsGroupsIds.getGroupsByBackupId(listAll[i].id),
+        id: key,
+        label: value[0].label,
+        date: value[0].date,
+        groups: value.filter((item) => item['HRBackupsGroupsId.HRBackupsGroup.id'] !== null).map((item) =>
+        ({
+          id: item['HRBackupsGroupsId.HRBackupsGroup.id'],
+          label: item['HRBackupsGroupsId.HRBackupsGroup.label'],
+        })
+        ),
       })
     }
     return list
@@ -385,6 +405,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.findByLabel = async (juridictionName) => {
+    // TODO REMOVE, passer par le backup_id
     const find = await Model.findOne({
       attributes: ['id'],
       where: {

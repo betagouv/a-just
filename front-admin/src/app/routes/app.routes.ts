@@ -22,7 +22,7 @@ export const routes: Routes = [
     path: 'backup-options',
     loadComponent: () =>
       import('./backup-options/backup-options.page').then(
-        (mod) => mod.BackupOptionsPage
+        (mod) => mod.BackupOptionsPage,
       ),
     canActivate: [authGuard],
   },
@@ -30,7 +30,7 @@ export const routes: Routes = [
     path: 'referentiel',
     loadComponent: () =>
       import('./referentiel/referentiel.page').then(
-        (mod) => mod.ReferentielPage
+        (mod) => mod.ReferentielPage,
       ),
     canActivate: [authGuard],
   },
@@ -54,7 +54,7 @@ export const routes: Routes = [
     path: 'juridictions',
     loadComponent: () =>
       import('./juridictions/juridictions.page').then(
-        (mod) => mod.JuridictionsPage
+        (mod) => mod.JuridictionsPage,
       ),
     canActivate: [authGuard],
   },
@@ -67,6 +67,12 @@ export const routes: Routes = [
   {
     path: 'data',
     loadComponent: () => import('./data/data.page').then((mod) => mod.DataPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'groups',
+    loadComponent: () =>
+      import('./groups/groups.page').then((mod) => mod.GroupsPage),
     canActivate: [authGuard],
   },
 ];

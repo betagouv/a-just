@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
-import { BackupInterface } from '../../interfaces/backup';
+import { BackupInterface } from '../../interfaces/backups.interface';
 import { ImportService } from '../../services/import/import.service';
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
 import { exportFileToString } from '../../utils/file';
@@ -17,7 +17,7 @@ export class ImportsPage {
 
   constructor(
     private importService: ImportService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
   ) {}
 
   ngOnInit() {

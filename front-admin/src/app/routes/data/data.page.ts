@@ -3,7 +3,7 @@ import { orderBy } from 'lodash';
 import * as FileSaver from 'file-saver';
 import * as xlsx from 'xlsx';
 import { JuridictionInterface } from '../../interfaces/juridiction';
-import { BackupInterface } from '../../interfaces/backup';
+import { BackupInterface } from '../../interfaces/backups.interface';
 import { ActivityIssueInterface } from '../../interfaces/activity';
 import { ImportService } from '../../services/import/import.service';
 import { ExtractsDataService } from '../../services/extracts-data/extracts-data.service';

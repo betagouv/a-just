@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
-import { HumanResourceService } from '../human-resource/human-resource.service';
 import { UserInterface } from '../../interfaces/user-interface';
-import { HRCategoryInterface } from '../../interfaces/hr-category';
-import { BackupInterface } from '../../interfaces/backup';
 
 @Injectable({
   providedIn: 'root',
@@ -13,17 +10,10 @@ export class UserService {
   user: BehaviorSubject<UserInterface | null> =
     new BehaviorSubject<UserInterface | null>(null);
 
-  constructor(
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService
-  ) {}
+  constructor(private serverService: ServerService) {}
 
   setUser(user: UserInterface | null) {
     this.user.next(user);
-
-    if (user) {
-      this.initDatas();
-    }
   }
 
   me() {
@@ -55,34 +45,5 @@ export class UserService {
 
   deleteUser(userId: number): Promise<any> {
     return this.serverService.delete(`users/remove-account/${userId}`);
-  }
-
-  /**
-   * API demande des informations générale
-   * @returns
-   */
-  getInitDatas() {
-    return this.serverService
-      .get('users/get-user-datas')
-      .then((data) => data.data || null);
-  }
-
-  /**
-   * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
-   */
-  initDatas() {
-    this.getInitDatas().then((result) => {
-      this.humanResourceService.categoriesFilterListIds = result.categories.map(
-        (c: HRCategoryInterface) => c.id
-      );
-      this.humanResourceService.fonctions.next(result.fonctions);
-      this.humanResourceService.categories.next(result.categories);
-      this.humanResourceService.backups.next(
-        result.backups.map((b: BackupInterface) => ({
-          ...b,
-          date: new Date(b.date),
-        }))
-      );
-    });
   }
 }

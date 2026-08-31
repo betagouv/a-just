@@ -59,6 +59,11 @@ const MENU = [
     path: 'data',
     isSuperAdmin: false,
   },
+  {
+    label: 'Groupes de juridictions',
+    path: 'groups',
+    isSuperAdmin: false,
+  },
 ];
 
 @Component({

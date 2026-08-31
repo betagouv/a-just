@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { BehaviorSubject } from 'rxjs';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
-import { BackupInterface } from '../../interfaces/backup';
+import { BackupInterface } from '../../interfaces/backups.interface';
 import { HRFonctionInterface } from '../../interfaces/hr-fonction';
 import { HRCategoryInterface } from '../../interfaces/hr-category';
 

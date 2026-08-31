@@ -8,11 +8,6 @@ import { BehaviorSubject } from 'rxjs';
 export class ServerService {
   _http = inject(HttpService);
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  serverUrl: string = import.meta.env.NG_APP_SERVER_URL;
-
-  getUrl(url: string): string {
-    return this.serverUrl + url;
-  }
 
   handleError(error: any) {
     //this.appService.setIsLoading(false);
@@ -76,10 +71,10 @@ export class ServerService {
   }
 
   /* HTTPs request */
-  get(url: string, options = {}): Promise<any> {
+  async get(url: string, options = {}): Promise<any> {
     //this.appService.setIsLoading(true);
     return this._http
-      .get(this.getUrl(url), options)
+      .get(url, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -87,17 +82,22 @@ export class ServerService {
       .catch(this.handleError);
   }
 
-  getWithoutError(url: string, options = {}): Promise<any> {
-    return this._http.get(this.getUrl(url), options).then((r) => {
+  async getWithoutError(url: string, options = {}): Promise<any> {
+    return this._http.get(url, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;
     });
   }
 
-  post(url: string, params = {}, options = {}, header = {}): Promise<any> {
-    //console.log('HTTP POST ' + this.getUrl(url));
+  async post(
+    url: string,
+    params = {},
+    options = {},
+    header = {},
+  ): Promise<any> {
+    //console.log('HTTP POST ' + url);
     return this._http
-      .post(this.getUrl(url), params, options)
+      .post(url, params, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -105,17 +105,17 @@ export class ServerService {
       .catch(this.handleError);
   }
 
-  postWithoutError(url: string, params = {}, options = {}): Promise<any> {
-    return this._http.post(this.getUrl(url), params, options).then((r) => {
+  async postWithoutError(url: string, params = {}, options = {}): Promise<any> {
+    return this._http.post(url, params, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;
     });
   }
 
   async put(url: string, params = {}, options = {}): Promise<any> {
-    //console.log('HTTP PUT ' + this.getUrl(url));
+    //console.log('HTTP PUT ' + url);
     return this._http
-      .put(this.getUrl(url), params, options)
+      .put(url, params, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -124,16 +124,16 @@ export class ServerService {
   }
 
   async putWithoutError(url: string, params = {}, options = {}): Promise<any> {
-    return this._http.put(this.getUrl(url), params, options).then((r) => {
+    return this._http.put(url, params, options).then((r) => {
       //this.appService.setIsLoading(false);
       return r;
     });
   }
 
-  delete(url: string, options = {}): Promise<any> {
-    //console.log('HTTP DELETE ' + this.getUrl(url));
+  async delete(url: string, options = {}): Promise<any> {
+    //console.log('HTTP DELETE ' + url);
     return this._http
-      .delete(this.getUrl(url), options)
+      .delete(url, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;

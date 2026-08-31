@@ -67,7 +67,6 @@ const TRAPS = [
   '.aws',
   'api/auth/',
   'api/auth 2',
-  'api/g',
   'api/identity',
   'api/init',
   'api/call',
@@ -167,7 +166,9 @@ export default async (ctx, next, models) => {
       return url.includes(t)
     })
   ) {
-    console.error('NEW IP BLOCKED - ', ip, url)
+    console.error('NEW IP BLOCKED - ', ip, url, TRAPS.filter((t) => {
+      return url.includes(t)
+    }))
     BLACKLIST_IPS.push(ip)
     models.Logs.addLog(HONEY_BLACKLIST_IPS, null, ip, { formatValue: false, datas2: url, logging: false })
     ctx.res.writeHead(HTTP_FORBIDDEN_CODE).end()

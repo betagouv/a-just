@@ -1,4 +1,4 @@
-import { BackupInterface } from './backup';
+import { BackupInterface } from './backups.interface';
 
 export interface UserInterface {
   id?: number;

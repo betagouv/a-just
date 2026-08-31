@@ -1,32 +1,71 @@
-import { groupBy, sumBy } from 'lodash'
-import { listCategories } from '../utils/ventilator'
-import { loadOrWarmHR } from '../utils/redis'
-import { Op } from 'sequelize'
+import { Op, literal } from 'sequelize'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
     const list = await Model.findAll({
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id', 'ressort'],
-      where: {
-        parent_id: null,
-      },
       order: [['label', 'asc']],
       raw: true,
     })
 
+    const backupIdList = list.map((item) => item.backup_id).filter((item) => item !== null)
+
+    // Récupérer tous les utilisateurs avec leurs ventilations
+    const allUsers = await Model.models.Users.findAll({
+      attributes: ['id', ['first_name', 'firstName'], ['last_name', 'lastName']],
+      include: [{
+        attributes: ['hr_backup_id'],
+        model: Model.models.UserVentilations,
+        where: {
+          hr_backup_id: { [Op.in]: backupIdList },
+        },
+      }],
+      raw: true,
+    })
+
+    // Récupérer la liste des agents
+    const agents = await Model.models.HumanResources.findAll({
+      attributes: ['id', 'backup_id'],
+      where: {
+        backup_id: { [Op.in]: backupIdList },
+      },
+      include: [{
+        attributes: ['category_id', 'date_start'],
+        required: true,
+        model: Model.models.HRSituations,
+        where: {
+          id: {
+            [Op.eq]: literal(`(
+              SELECT s.id
+              FROM "HRSituations" AS s
+              WHERE s.human_id = "HumanResources"."id"
+                AND s.deleted_at IS NULL
+              ORDER BY s.date_start DESC, s.id DESC
+              LIMIT 1
+            )`),
+          },
+        },
+      }],
+      raw: true,
+    })
+
+    // Récupérer la liste des catégories
+    const categories = await Model.models.HRCategories.findAll({
+      attributes: ['id', 'label'],
+      order: [['id', 'asc']],
+      raw: true,
+    })
+
+    // Parcourir la liste des juridictions et ajouter les éléments filtrés à chaque juridiction
     for (let i = 0; i < list.length; i++) {
-      list[i].users = await Model.models.UserVentilations.getUserVentilationsWithLabel(list[i].label)
-      const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
-      const agents = getBackupId ? listCategories(await loadOrWarmHR(getBackupId, Model.models)) : []
-      const group = groupBy(
-        agents.filter((a) => a.category),
-        'category.label',
-      )
+      list[i].users = allUsers.filter((user) => user['UserVentilations.hr_backup_id'] === list[i].backup_id)
+
+      const localAgents = agents.filter((agent) => agent.backup_id === list[i].backup_id)
       list[i].categoriesAgents = []
-      for (const [key, value] of Object.entries(group)) {
-        list[i].categoriesAgents.push({ label: key, nbAgents: value.length })
+      for (const cat of categories) {
+        list[i].categoriesAgents.push({ label: cat.label, nbAgents: localAgents.filter((a) => a['HRSituations.category_id'] === cat.id).length })
       }
-      list[i].nbAgents = sumBy(list[i].categoriesAgents, 'nbAgents')
+      list[i].nbAgents = localAgents.length
     }
 
     return list

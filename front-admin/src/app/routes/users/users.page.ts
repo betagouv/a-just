@@ -14,7 +14,7 @@ import { PopupComponent } from '../../components/popup/popup.component';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 
 import { FormsModule } from '@angular/forms';
-import { BackupInterface } from '../../interfaces/backup';
+import { BackupInterface } from '../../interfaces/backups.interface';
 import { compare } from '../../utils/array';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';

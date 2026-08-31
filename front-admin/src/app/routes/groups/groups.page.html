@@ -1,0 +1,53 @@
+<aj-wrapper title="Groupes de juridictions">
+  <div class="layout" cdkDropListGroup>
+    <section class="groups-panel">
+      <div class="groups-toolbar">
+        <button type="button" class="btn-primary" (click)="createGroup()">
+          Créer un groupe
+        </button>
+      </div>
+      <div class="groups-grid">
+        @for (group of groups; track group.id) {
+        <div class="group-card">
+          <div class="group-header">
+            <h3>{{ group.label }}</h3>
+            <div class="group-actions">
+              <button type="button" (click)="renameGroup(group)">
+                Renommer
+              </button>
+              <button type="button" class="danger" (click)="deleteGroup(group)">
+                Supprimer
+              </button>
+            </div>
+          </div>
+          <div class="group-drop" cdkDropList [cdkDropListData]="group.backups" (cdkDropListDropped)="onDrop($event)">
+            @if (!group.backups.length) {
+            <p class="empty">Déposez des juridictions ici</p>
+            }
+            @for (backup of group.backups; track backup.id) {
+            <div class="backup-item" cdkDrag>
+              {{ backup.label }}
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+
+    <aside class="backups-panel">
+      <h3>Juridictions</h3>
+      <p class="hint">Glissez une juridiction vers un groupe</p>
+      <div class="backups-list" cdkDropList [cdkDropListData]="hrbackupAlone" (cdkDropListDropped)="onDrop($event)">
+        @if (!hrbackupAlone.length) {
+        <p class="empty">Aucune juridiction non groupée</p>
+        }
+        @for (backup of hrbackupAlone; track backup.id) {
+        <div class="backup-item" cdkDrag>
+          {{ backup.label }}
+        </div>
+        }
+      </div>
+    </aside>
+  </div>
+</aj-wrapper>

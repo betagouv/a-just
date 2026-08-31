@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HRBackups'
+const tableName = 'Groups'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -16,27 +16,6 @@ export default (sequelizeInstance) => {
       label: {
         type: Sequelize.STRING(255),
         allowNull: false,
-      },
-      jirs: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-      },
-      stat_exclusion: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-      },
-      // numéro de groupe des juridictions
-      group: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      group_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      group_id_rank: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -66,10 +45,6 @@ export default (sequelizeInstance) => {
   )
 
   Model.associate = function (models) {
-    Model.hasOne(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'id' })
-    Model.hasMany(models.HumanResources, { foreignKey: 'backup_id', sourceKey: 'id' })
-    Model.hasOne(models.HRBackupsGroupsIds, { foreignKey: 'hr_backup_id', sourceKey: 'id' })
-
     return models
   }
 
