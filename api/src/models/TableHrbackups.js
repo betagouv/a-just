@@ -329,7 +329,7 @@ export default (sequelizeInstance, Model) => {
         ),
       })
     }
-    return list
+    return orderBy(list, 'label')
   }
 
   /**

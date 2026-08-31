@@ -51,6 +51,7 @@ module.exports = {
       }
 
       await models.HRBackups.updateById(backup.id, {
+        stat_exclusion: true,
         group_id: getHRBackupOfParentTJ.group_id,
         group_id_rank: (await models.HRBackups.count({
           where: {
