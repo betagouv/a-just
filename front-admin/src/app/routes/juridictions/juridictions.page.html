@@ -1,87 +1,142 @@
 <aj-wrapper title="Liste des juridictions dans la base">
+  <div class="layout">
+    <section class="card duplicata">
+      <h3>Dupliquer une juridiction</h3>
+      <p class="hint">Copie les agents, les ventilations et les indisponibilités</p>
 
-  <div class="duplicata">
-    <p class="title">Dupliquer une juridiction (agents, ventillations et indisponibilités) :</p>
-    <div class="content">
-      <label>Sélectionner une juridiction à dupliquer =></label>
-      <form #formExtract>
-        <select class="cursor-pointer" name="juridiction">
+      <div class="duplicata-form">
+        <select class="field-input cursor-pointer" [(ngModel)]="duplicateSourceId">
+          <option [ngValue]="null">Sélectionner une juridiction</option>
           @for (j of juridictionList; track j.id) {
-          <option [value]="j.id">{{
-            j.label }}</option>
+          <option [ngValue]="j.id">{{ j.label }}</option>
           }
         </select>
-        <label>, Copier également les données d'activité</label>
-        <input class="copy-activity" name="copyActivity" type="checkbox">
-        <label>, Exclure cette juridiction des statistiques</label>
-        <input class="copy-activity" name="excludeJuridiction" type="checkbox">
-        <button class="cursor-pointer" (click)="duplicate(formExtract)" type="button">Dupliquer</button>
-      </form>
-    </div>
+
+        <label class="option">
+          <input type="checkbox" [(ngModel)]="duplicateCopyActivity" />
+          <span>Copier les données d'activité</span>
+        </label>
+
+        <label class="option">
+          <input type="checkbox" [(ngModel)]="duplicateExcludeFromStats" />
+          <span>Exclure des statistiques</span>
+        </label>
+
+        <button type="button" class="btn-primary" [disabled]="!duplicateSourceId" (click)="duplicate()">
+          Dupliquer
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="hint">Cliquez sur une cellule pour modifier sa valeur</p>
+
+      <table (matSortChange)="sortData($event)" matSort>
+        <thead>
+          <tr>
+            <th mat-sort-header="iElst">I ELST</th>
+            <th mat-sort-header="label">Nom</th>
+            <th mat-sort-header="latitude">Latitude</th>
+            <th mat-sort-header="longitude">Longitude</th>
+            <th mat-sort-header="population">Population</th>
+            <th mat-sort-header="ressort">Ressort</th>
+            <th mat-sort-header="enabled">Actif</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (element of datasSource; track element.id) {
+          <tr>
+            <td>{{ element.iElst || '—' }}</td>
+            <td class="cell-name">
+              <span class="editable" (click)="onUpdate('label', element)">
+                <b>{{ element.label }}</b>
+                <i class="ri-pencil-line"></i>
+              </span>
+              <span class="chips">
+                @if (element.users?.length; as nbUsers) {
+                <span class="chip" (click)="selectedJuridiction = element">
+                  {{ nbUsers }} utilisateur{{ nbUsers > 1 ? 's' : '' }}
+                </span>
+                }
+                @if (element.nbAgents) {
+                <span class="chip" (click)="selectedJuridiction = element">
+                  {{ element.nbAgents }} agents
+                </span>
+                }
+              </span>
+            </td>
+            <td>
+              <span class="editable" (click)="onUpdate('latitude', element)">
+                {{ element.latitude || '—' }}
+                <i class="ri-pencil-line"></i>
+              </span>
+            </td>
+            <td>
+              <span class="editable" (click)="onUpdate('longitude', element)">
+                {{ element.longitude || '—' }}
+                <i class="ri-pencil-line"></i>
+              </span>
+            </td>
+            <td>
+              <span class="editable" (click)="onUpdate('population', element)">
+                {{ element.population || '—' }}
+                <i class="ri-pencil-line"></i>
+              </span>
+            </td>
+            <td>
+              <span class="editable" (click)="onUpdate('ressort', element)">
+                {{ element.ressort || '—' }}
+                <i class="ri-pencil-line"></i>
+              </span>
+            </td>
+            <td>
+              <span class="status cursor-pointer" [class.on]="element.enabled" (click)="onUpdate('enabled', element)">
+                {{ element.enabled ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+          </tr>
+          }
+
+          @if (!datasSource.length) {
+          <tr>
+            <td colspan="7">
+              <p class="empty">Aucune juridiction</p>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </section>
   </div>
 
-  <br />
-  <p>Cliquer sur le champ souhaité pour les modifier</p>
-  <table (matSortChange)="sortData($event)" matSort>
-    <tr>
-      <th mat-sort-header="iElst">I ELST</th>
-      <th mat-sort-header="label">Nom</th>
-      <th mat-sort-header="latitude">Latitude</th>
-      <th mat-sort-header="longitude">Longitude</th>
-      <th mat-sort-header="population">Population</th>
-      <th mat-sort-header="ressort">Ressort</th>
-      <th mat-sort-header="enabled">Actif</th>
-    </tr>
-
-    @for (element of datasSource; track element.id) {
-    <tr>
-      <td>{{element.iElst}}</td>
-      <td class="cursor-pointer" (click)="onUpdate('label', element)">
-        {{element.label}}
-        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
-          '(' + element.users.length
-          + ' utilisateurs)' : ''}}</i>
-        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
-          '(' +
-          element.nbAgents + ' agents)' : ''}}</i>
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
-        {{element.latitude || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
-        {{element.longitude || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('population', element)">
-        {{element.population || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('ressort', element)">
-        {{element.ressort || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
-        {{element.enabled ? 'Oui' : 'Non'}}
-      </td>
-    </tr>
-    }
-  </table>
-
   @if (selectedJuridiction) {
-  <aj-popup [closeIcon]="true" (onClose)="selectedJuridiction = null">
-    <h3>Détails de la juridiction</h3>
-    <div class="grid-double">
+  <aj-popup class="width-500" [closeIcon]="true" [title]="selectedJuridiction.label"
+    (onClose)="selectedJuridiction = null">
+    <div class="detail">
       <div>
-        <p><b>Liste des personnes ayant accès :</b></p>
+        <p class="detail-title">Personnes ayant accès</p>
         @for (e of (selectedJuridiction.users || []); track e.id) {
-        <p>
-          {{e.firstName}} {{e.lastName}}
-        </p>
+        <div class="user">
+          <span class="avatar">{{ getInitials(e.firstName, e.lastName) }}</span>
+          <span>{{ e.firstName }} {{ e.lastName }}</span>
+        </div>
+        }
+        @if (!(selectedJuridiction.users || []).length) {
+        <p class="empty">Aucun utilisateur rattaché</p>
         }
       </div>
+
       <div>
-        <p><b>Nombre de type d'agents :</b></p>
+        <p class="detail-title">Répartition des agents</p>
         @for (e of (selectedJuridiction.categoriesAgents || []); track e.label) {
-        <p>
-          {{e.nbAgents}} {{e.label}}
-        </p>
+        <div class="category">
+          <span>{{ e.label }}</span>
+          <b>{{ e.nbAgents }}</b>
+        </div>
+        }
+        @if (!(selectedJuridiction.categoriesAgents || []).length) {
+        <p class="empty">Aucun agent renseigné</p>
         }
       </div>
     </div>

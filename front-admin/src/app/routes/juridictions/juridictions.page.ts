@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MainClass } from '../../libs/main-class';
 import { JuridictionInterface } from '../../interfaces/juridiction';
@@ -6,10 +7,11 @@ import { JuridictionsService } from '../../services/juridictions/juridictions.se
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { PopupComponent } from '../../components/popup/popup.component';
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
+import { compare } from '../../utils/array';
 
 @Component({
   standalone: true,
-  imports: [WrapperComponent, PopupComponent, MatSortModule],
+  imports: [WrapperComponent, PopupComponent, MatSortModule, FormsModule],
   templateUrl: './juridictions.page.html',
   styleUrls: ['./juridictions.page.scss'],
 })
@@ -20,6 +22,9 @@ export class JuridictionsPage extends MainClass implements OnInit {
   datasSource: JuridictionInterface[] = [];
   selectedJuridiction: JuridictionInterface | null = null;
   juridictionList: JuridictionInterface[] = [];
+  duplicateSourceId: number | null = null;
+  duplicateCopyActivity = false;
+  duplicateExcludeFromStats = false;
 
   constructor() {
     super();
@@ -31,14 +36,25 @@ export class JuridictionsPage extends MainClass implements OnInit {
 
   onLoad() {
     this.humanResourceService.getBackupList().then((datas: any) => {
-      datas.map((elem: JuridictionInterface) =>
-        this.juridictionList.push(elem),
-      );
+      this.juridictionList = datas;
     });
     this.juridictionsService.getAll().then((datas) => {
       this.datas = datas;
       this.datasSource = this.datas.slice();
     });
+  }
+
+  sortData(sort: Sort) {
+    const data = this.datas.slice();
+    if (!sort.active || sort.direction === '') {
+      this.datasSource = data;
+      return;
+    }
+
+    this.datasSource = data.sort((a, b) =>
+      // @ts-ignore
+      compare(a[sort.active], b[sort.active], sort.direction === 'asc'),
+    );
   }
 
   onUpdate(node: string, element: any) {
@@ -50,7 +66,6 @@ export class JuridictionsPage extends MainClass implements OnInit {
         `Remplacer le champ '${node}' par`,
         element[node] || '',
       );
-      //console.log('newValue', newValue, element[node]);
       if (newValue !== null && element[node] !== newValue) {
         element[node] = newValue;
         getValue = true;
@@ -71,25 +86,14 @@ export class JuridictionsPage extends MainClass implements OnInit {
     }
   }
 
-  sortData(sort: Sort) {
-    const data = this.datas.slice();
-    if (!sort.active || sort.direction === '') {
-      this.datasSource = data;
-      return;
-    }
-
-    this.datasSource = data.sort((a, b) => {
-      const isAsc = sort.direction === 'asc';
-      // @ts-ignore
-      return compare(a[sort.active], b[sort.active], isAsc);
-    });
+  getInitials(firstName?: string, lastName?: string) {
+    return `${(firstName || '').charAt(0)}${(lastName || '').charAt(0)}`.toUpperCase();
   }
 
-  duplicate(form: any) {
-    if (!form.juridiction.value) {
+  duplicate() {
+    if (!this.duplicateSourceId) {
       return alert('Veuillez sélectionner une juridiction');
     }
-    const backupId = Number(form.juridiction.value);
 
     const backupName = prompt(
       'Quel nom souhaitez-vous donner à cette nouvelle juridiction ?',
@@ -97,13 +101,14 @@ export class JuridictionsPage extends MainClass implements OnInit {
 
     if (backupName && backupName.length > 0) {
       const juridiction =
-        this.juridictionList.find((j) => j.id === backupId) || null;
+        this.juridictionList.find((j) => j.id === this.duplicateSourceId) ||
+        null;
       this.juridictionsService.duplicateJuridiction(
         backupName,
-        backupId,
+        this.duplicateSourceId,
         juridiction !== null ? juridiction.label : '',
-        form.copyActivity.checked,
-        form.excludeJuridiction.checked,
+        this.duplicateCopyActivity,
+        this.duplicateExcludeFromStats,
       );
     }
   }
