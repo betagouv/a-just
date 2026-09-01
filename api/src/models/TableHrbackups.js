@@ -318,7 +318,7 @@ export default (sequelizeInstance, Model) => {
     const groups = groupBy(listAll, 'id')
     for (const [key, value] of Object.entries(groups)) {
       list.push({
-        id: key,
+        id: +key,
         label: value[0].label,
         date: value[0].date,
         groups: value.filter((item) => item['HRBackupsGroupsId.HRBackupsGroup.id'] !== null).map((item) =>

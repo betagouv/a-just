@@ -1,58 +1,99 @@
 <aj-wrapper title="Utilisateurs">
-  <table (matSortChange)="sortData($event)" matSort>
-    <tr>
-      <th mat-sort-header="email">Email</th>
-      <th mat-sort-header="firstName">Prénom</th>
-      <th mat-sort-header="lastName">Nom</th>
-      <th mat-sort-header="tj">Tribunal de rattachement</th>
-      <th mat-sort-header="fonction">Fonction</th>
-      <th mat-sort-header="referentiels">Referentiels</th>
-      <th mat-sort-header="access">Accès</th>
-      <th mat-sort-header="ventilationsName">Ventilations</th>
-      <th mat-sort-header="actions">Actions</th>
-    </tr>
+  <div class="layout">
+    <section class="card">
+      <p class="hint">Cliquez sur une action pour modifier les accès ou supprimer un utilisateur</p>
 
-    @for (element of datasSource; track element.id) {
-    <tr>
-      <td>{{element.email}}</td>
-      <td>{{element.firstName}}</td>
-      <td>{{element.lastName}}</td>
-      <td>{{element.tj}}</td>
-      <td>{{element.fonction}}</td>
-      <td [innerHTML]="element.referentielName"></td>
-      <td>
-        <div class="scrollable-wrapper">
-          <div class="scrollable-cell" [innerHTML]="element.accessName"></div>
-        </div>
-      </td>
-      <td>
-        <div class="scrollable-wrapper">
-          <div class="scrollable-cell" [innerHTML]="element.ventilationsName"></div>
-        </div>
-      </td>
-      <td>
-        @if (!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role
-        !== USER_ROLE_SUPER_ADMIN)) {
-        <button mat-button color="primary" (click)="onEdit(element)">
-          Modifier les accès
-        </button>
-        }
-        @if (element && userConnected && element.id !== userConnected.id && !(element.role && element.role ===
-        USER_ROLE_SUPER_ADMIN)) {
-        <button mat-button color="warn" (click)="onDelete(element)">
-          Supprimer
-        </button>
-        }
-        @if (element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role
-        !== USER_ROLE_SUPER_ADMIN) {
-        <p class="super-administrateur">
-          <i>Super administrateur</i>
-        </p>
-        }
-      </td>
-    </tr>
-    }
-  </table>
+      <table (matSortChange)="sortData($event)" matSort>
+        <thead>
+          <tr>
+            <th mat-sort-header="email">Email</th>
+            <th mat-sort-header="firstName">Prénom</th>
+            <th mat-sort-header="lastName">Nom</th>
+            <th mat-sort-header="tj">Tribunal de rattachement</th>
+            <th mat-sort-header="fonction">Fonction</th>
+            <th mat-sort-header="referentiels">Referentiels</th>
+            <th mat-sort-header="access">Accès</th>
+            <th mat-sort-header="ventilationsName">Ventilations</th>
+            <th mat-sort-header="actions">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (element of datasSource; track element.id) {
+          <tr>
+            <td class="cell-name">
+              <b>{{ element.email }}</b>
+            </td>
+            <td>{{ element.firstName || '—' }}</td>
+            <td>{{ element.lastName || '—' }}</td>
+            <td>{{ element.tj || '—' }}</td>
+            <td>{{ element.fonction || '—' }}</td>
+            <td>
+              <span class="chips">
+                @for (label of element.referentielLabels; track label) {
+                <span class="chip">{{ label }}</span>
+                }
+              </span>
+            </td>
+            <td>
+              <div class="scrollable-wrapper">
+                <div class="scrollable-cell">
+                  <span class="chips">
+                    @for (label of element.accessLabels; track label) {
+                    <span class="chip">{{ label }}</span>
+                    }
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="scrollable-wrapper">
+                <div class="scrollable-cell">
+                  <span class="chips">
+                    @for (item of element.ventilationItems; track item.id) {
+                    <span class="chip" [class.admin]="item.isLocalAdmin">
+                      @if (item.isLocalAdmin) {★ }
+                      {{ item.label }}
+                    </span>
+                    }
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="row-actions">
+                @if (!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected &&
+                userConnected.role !== USER_ROLE_SUPER_ADMIN)) {
+                <button type="button" (click)="onEdit(element)">
+                  Modifier les accès
+                </button>
+                }
+                @if (element && userConnected && element.id !== userConnected.id && !(element.role && element.role ===
+                USER_ROLE_SUPER_ADMIN)) {
+                <button type="button" class="danger" (click)="onDelete(element)">
+                  Supprimer
+                </button>
+                }
+                @if (element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected &&
+                userConnected.role !== USER_ROLE_SUPER_ADMIN) {
+                <span class="status">Super administrateur</span>
+                }
+              </div>
+            </td>
+          </tr>
+          }
+
+          @if (!datasSource.length) {
+          <tr>
+            <td colspan="9">
+              <p class="empty">Aucun utilisateur</p>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
 
   @if (userEdit) {
   <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
@@ -63,8 +104,10 @@
         <p>Prénom: {{ userEdit.firstName }}</p>
         <p>Nom: {{ userEdit.lastName }}</p>
         <div class="item-left">
-          <h4>Liste des accès</h4>
-          <button (click)="onSelectAllAccess()">Tout sélectionner</button>
+          <div class="section-header">
+            <h4>Liste des accès</h4>
+            <button type="button" class="btn-primary" (click)="onSelectAllAccess()">Tout sélectionner</button>
+          </div>
           <div class="grid-double">
             @for (ac of access; track ac.name) {
             <div>
@@ -75,11 +118,11 @@
               @if(i === 0 || ac.orderRequired === false || (ac.orderRequired && (userEdit.access ||
               []).indexOf(ac.access[i - 1].id)
               !== -1)) {
-              <p class="access-item">
-                <label (click)="accDom.click()">{{ acc.label }}</label>
+              <label class="option access-item">
                 <input type="checkbox" #accDom [ngModel]="(userEdit.access || []).indexOf(acc.id) !== -1 ? true : false"
                   (change)="onChangeAccess(acc.id, accDom.checked)" />
-              </p>
+                <span>{{ acc.label }}</span>
+              </label>
               }
               }
             </div>
@@ -88,14 +131,16 @@
         </div>
         <hr />
         <div class="item">
-          <h4>Liste des referentiels accessibles</h4>
-          <button (click)="onSelectAllContentieux()">Tout sélectionner</button>
+          <div class="section-header">
+            <h4>Liste des referentiels accessibles</h4>
+            <button type="button" class="btn-primary" (click)="onSelectAllContentieux()">Tout sélectionner</button>
+          </div>
           @for (ref of referentiels; track ref.id) {
           @if (ref.label !== 'Indisponibilité') {
-          <p>
+          <label class="option">
             <input type="checkbox" #refDom [(ngModel)]="ref.selected" />
-            <label (click)="refDom.click()">{{ ref.label }}</label>
-          </p>
+            <span>{{ ref.label }}</span>
+          </label>
           }
           }
         </div>
@@ -103,23 +148,34 @@
       <div class="item">
         <h4>Liste des ventilations accessibles</h4>
         <table>
-          <tr>
-            <th>Nom</th>
-            <th>Accès à la juridiction</th>
-            <th>Administrateur local</th>
-          </tr>
-          @for (jur of ventilations; track jur.id) {
-          <tr>
-            <td>{{ jur.label }}</td>
-            <td>@if (!jur.isLocalAdmin) {<input type="checkbox" [(ngModel)]="jur.hasAccess" /> <label
-                (click)="jur.hasAccess = !jur.hasAccess">{{
-                jur.hasAccess ? 'Oui'
-                :
-                'Non' }}</label>}</td>
-            <td><input type="checkbox" [(ngModel)]="jur.isLocalAdmin" /> <label
-                (click)="jur.isLocalAdmin = !jur.isLocalAdmin">{{ jur.isLocalAdmin ? 'Oui' : 'Non' }}</label></td>
-          </tr>
-          }
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Accès à la juridiction</th>
+              <th>Administrateur local</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (jur of ventilations; track jur.id) {
+            <tr>
+              <td>{{ jur.label }}</td>
+              <td>
+                @if (!jur.isLocalAdmin) {
+                <label class="option">
+                  <input type="checkbox" [(ngModel)]="jur.hasAccess" />
+                  <span>{{ jur.hasAccess ? 'Oui' : 'Non' }}</span>
+                </label>
+                }
+              </td>
+              <td>
+                <label class="option">
+                  <input type="checkbox" [(ngModel)]="jur.isLocalAdmin" />
+                  <span>{{ jur.isLocalAdmin ? 'Oui' : 'Non' }}</span>
+                </label>
+              </td>
+            </tr>
+            }
+          </tbody>
         </table>
       </div>
     </div>

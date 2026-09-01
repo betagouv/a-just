@@ -14,8 +14,11 @@ export interface UserInterface {
   access?: number[];
   localAdminIds?: number[];
   accessName?: string;
+  accessLabels?: string[];
   ventilations?: BackupInterface[];
   ventilationsName?: string;
+  ventilationItems?: { id: number; label: string; isLocalAdmin: boolean }[];
   referentielIds?: number[];
   referentielName?: string;
+  referentielLabels?: string[];
 }

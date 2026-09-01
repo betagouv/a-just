@@ -1,70 +1,182 @@
-@use "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
+
+:host {
+  display: block;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(utils.$colors-cblack, 0.12);
+  padding: 16px;
+}
+
+.hint {
+  font-size: 12px;
+  color: utils.$colors-titleSelect;
+  margin: 0 0 12px;
+}
 
 table {
   width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 8px;
+  text-align: left;
+  font-size: 12px;
+  color: utils.$colors-titleSelect;
+  border-bottom: 1px solid utils.$colors-borderSelect;
+  white-space: nowrap;
+}
+
+td {
+  padding: 8px;
+  font-size: 14px;
+  border-bottom: 1px solid utils.$colors-borderSelect;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: utils.$colors-bgSelect;
+
+  .scrollable-wrapper::after {
+    background: linear-gradient(to bottom, transparent, utils.$colors-bgSelect);
+  }
+}
+
+.cell-name {
+  min-width: 180px;
+}
+
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: utils.$colors-bgSelect;
+  border: 1px solid utils.$colors-borderSelect;
+  color: utils.$colors-titleSelect;
+  font-size: 12px;
+
+  &.admin {
+    background: #e8e8f7;
+    border-color: utils.$colors-primary;
+    color: utils.$colors-primary;
+  }
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0 4px;
+    font-size: 12px;
+    color: utils.$colors-primary;
+    cursor: pointer;
+    line-height: 20px;
+
+    &.danger {
+      color: #c9191e;
+    }
+  }
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  background: utils.$colors-bgSelect;
+  color: utils.$colors-titleSelect;
+  font-size: 13px;
+}
+
+.empty {
+  font-size: 13px;
+  color: utils.$colors-titleSelect;
+  padding: 8px 0;
+}
+
+.btn-primary {
+  background: utils.$colors-primary;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-family: "Marianne";
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 6px 0;
+
+  input {
+    accent-color: utils.$colors-primary;
+    cursor: pointer;
+  }
 }
 
 .content-popup {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 16px;
+
+  h4 {
+    margin: 0;
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 16px;
 }
 
 .item {
   margin-bottom: 16px;
-
-  &.item-left {
-    margin-top: 16px;
-  }
-
-  p {
-    line-height: 32px;
-    height: 32px;
-
-    input {
-      margin-right: 8px;
-    }
-  }
-}
-
-.super-administrateur {
-  font-size: 12px;
-}
-
-td {
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-
-  &:last-child {
-    border-right: none;
-  }
 }
 
 .grid-double {
+  display: grid;
+  grid-template-columns: auto 1fr;
   grid-gap: 16px 8px;
 }
 
 .access-items {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
 .access-item {
-  display: flex;
-  align-items: center;
   flex-direction: column;
-  gap: 2px;
-
-  label {
-    text-align: center;
-  }
-}
-
-.content-popup {
-  h4 {
-    margin-top: 8px;
-    margin-bottom: 16px;
-  }
+  text-align: center;
+  margin: 0;
 }
 
 .scrollable-wrapper {
@@ -72,7 +184,7 @@ td {
   max-height: 100px;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;

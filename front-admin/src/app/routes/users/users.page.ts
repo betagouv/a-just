@@ -120,25 +120,37 @@ export class UsersPage
       .then((l) => {
         this.access = l.access;
 
-        this.datas = l.list.map((u: UserInterface) => ({
-          ...u,
-          accessName: this.convertAccessToString(u.access || []),
-          referentielName:
+        this.datas = l.list.map((u: UserInterface) => {
+          const accessLabels = this.convertAccessToLabels(u.access || []);
+          const referentielLabels =
             u.referentielIds === null
-              ? 'Tous'
+              ? ['Tous']
               : (u.referentielIds || [])
                   .map(
                     (id) => this.referentiels.find((r) => r.id === id)?.label,
                   )
-                  .filter((label) => label !== 'Indisponibilité')
-                  .join(', <br/>'),
-          ventilationsName: (u.ventilations || [])
-            .map(
-              (j) =>
-                ((u.localAdminIds || []).includes(j.id) ? ' ★ ' : '') + j.label,
-            )
-            .join('<br/>'),
-        }));
+                  .filter(
+                    (label): label is string =>
+                      !!label && label !== 'Indisponibilité',
+                  );
+          const ventilationItems = (u.ventilations || []).map((j) => ({
+            id: j.id,
+            label: j.label,
+            isLocalAdmin: (u.localAdminIds || []).includes(j.id),
+          }));
+
+          return {
+            ...u,
+            accessLabels,
+            accessName: accessLabels.join(', '),
+            referentielLabels,
+            referentielName: referentielLabels.join(', '),
+            ventilationItems,
+            ventilationsName: ventilationItems
+              .map((j) => (j.isLocalAdmin ? '★ ' : '') + j.label)
+              .join(', '),
+          };
+        });
         this.datasSource = this.datas.slice();
 
         this.ventilations = l.ventilations.map((u: BackupInterface) => ({
@@ -162,7 +174,7 @@ export class UsersPage
       });
   }
 
-  convertAccessToString(access: number[]) {
+  convertAccessToLabels(access: number[]) {
     const list: string[] = [];
     this.access.forEach((a) => {
       a.access.map((b) => {
@@ -172,7 +184,7 @@ export class UsersPage
       });
     });
 
-    return list.join(', <br/>');
+    return list;
   }
 
   sortData(sort: Sort) {
