@@ -257,11 +257,41 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    // Récupération des ids des utilisateurs
+    const ids = list.map((item) => item.id)
+
+    // Récupération des accès des utilisateurs
+    const allAccess = await Model.models.UsersAccess.findAll({
+      attributes: ['user_id', 'access_id'],
+      where: { user_id: { [Op.in]: ids } },
+      raw: true,
+    })
+
+    // Récupération des ventilations des utilisateurs
+    const allVentilations = await Model.models.UserVentilations.findAll({
+      attributes: ['id', 'user_id', 'hr_backup_id'],
+      where: {
+        user_id: { [Op.in]: ids },
+      },
+      include: [
+        {
+          attributes: ['id', 'label'],
+          model: Model.models.HRBackups,
+        },
+      ],
+      raw: true,
+    })
+
     for (let i = 0; i < list.length; i++) {
-      list[i].access = await Model.models.UsersAccess.getUserAccess(list[i].id)
+      list[i].access = allAccess.filter((item) => item.user_id === list[i].id).map((item) => item.access_id)
       list[i].accessName = list[i].access.map((a) => accessToString(a)).join(', ')
       list[i].roleName = roleToString(list[i].role)
-      list[i].ventilations = await Model.models.UserVentilations.getUserVentilations(list[i].id)
+      list[i].ventilations = allVentilations.filter((item) => item.user_id === list[i].id).map((item) => {
+        return {
+          id: item['HRBackup.id'],
+          label: item['HRBackup.label'],
+        }
+      })
     }
 
     return list
