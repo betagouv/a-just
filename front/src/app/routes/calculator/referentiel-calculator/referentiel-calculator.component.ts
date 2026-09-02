@@ -311,7 +311,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     if (this.currentProjection || this.calculator) {
       this.canViewPreviousProjection = this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== 0
       this.canViewNextProjection =
-        this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== this.datas.length - 1
+        this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== this.datas.length - 2
     }
   }
 
