@@ -179,6 +179,49 @@ tbody tr:hover {
   margin: 0;
 }
 
+.group-row {
+  background: utils.$colors-bgSelect;
+}
+
+.group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  .caret {
+    width: 12px;
+    color: utils.$colors-titleSelect;
+  }
+
+  .counter {
+    padding: 0 6px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid utils.$colors-borderSelect;
+    color: utils.$colors-titleSelect;
+    font-size: 11px;
+  }
+}
+
+.child-name {
+  padding-left: 26px;
+}
+
+.ventilation-block-title {
+  margin: 16px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: utils.$colors-titleSelect;
+}
+
 .scrollable-wrapper {
   position: relative;
   max-height: 100px;

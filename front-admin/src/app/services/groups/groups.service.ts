@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { GroupsResponse } from '../../interfaces/groups.interface';
+import { GroupsResponseInterface } from '../../interfaces/groups.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class GroupsService {
 
   listGroups() {
     return this.http
-      .get<GroupsResponse>('groups/list-groups')
+      .get<GroupsResponseInterface>('groups/list-groups')
       .pipe(map((data) => data.data));
   }
 

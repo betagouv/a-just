@@ -19,6 +19,7 @@ import { compare } from '../../utils/array';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
 import { AppService } from '../../services/app/app.service';
+import { GroupInterface } from '../../interfaces/groups.interface';
 
 interface FormSelection {
   id: number;
@@ -31,6 +32,13 @@ interface FormVentilationSelection {
   label: string;
   hasAccess: boolean;
   isLocalAdmin: boolean;
+}
+
+interface FormVentilationGroup {
+  id: number;
+  label: string;
+  items: FormVentilationSelection[];
+  expanded: boolean;
 }
 
 @Component({
@@ -56,7 +64,10 @@ export class UsersPage
     orderRequired: boolean;
     access: FormSelection[];
   }[] = [];
+  groups: GroupInterface[] = [];
   ventilations: FormVentilationSelection[] = [];
+  ventilationGroups: FormVentilationGroup[] = [];
+  ventilationsWithoutGroup: FormVentilationSelection[] = [];
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
   userConnected: UserInterface | null = null;
@@ -119,6 +130,7 @@ export class UsersPage
       .getAll()
       .then((l) => {
         this.access = l.access;
+        this.groups = l.groups;
 
         this.datas = l.list.map((u: UserInterface) => {
           const accessLabels = this.convertAccessToLabels(u.access || []);
@@ -159,6 +171,7 @@ export class UsersPage
           hasAccess: false,
           isLocalAdmin: false,
         }));
+        this.buildVentilationGroups();
 
         this.sortData(
           this.sort
@@ -172,6 +185,69 @@ export class UsersPage
       .finally(() => {
         this.appService.isLoading.next(false);
       });
+  }
+
+  /**
+   * Répartit les ventilations dans leur groupe. Les objets sont partagés par
+   * référence avec this.ventilations qui reste la source de vérité à la sauvegarde.
+   */
+  buildVentilationGroups() {
+    const ventilationById = new Map(this.ventilations.map((v) => [v.id, v]));
+    const groupedIds = new Set<number>();
+
+    this.ventilationGroups = this.groups
+      .map((group) => {
+        const items = (group.backups || [])
+          .map((backup) => ventilationById.get(backup.id))
+          .filter((item): item is FormVentilationSelection => !!item);
+        items.forEach((item) => groupedIds.add(item.id));
+
+        return {
+          id: group.id,
+          label: group.label,
+          items,
+          expanded: false,
+        };
+      })
+      .filter((group) => group.items.length > 0);
+
+    this.ventilationsWithoutGroup = this.ventilations.filter(
+      (v) => !groupedIds.has(v.id),
+    );
+  }
+
+  groupAccessCount(group: FormVentilationGroup) {
+    return group.items.filter((i) => i.hasAccess || i.isLocalAdmin).length;
+  }
+
+  groupLocalAdminCount(group: FormVentilationGroup) {
+    return group.items.filter((i) => i.isLocalAdmin).length;
+  }
+
+  isGroupAllLocalAdmin(group: FormVentilationGroup) {
+    return this.groupLocalAdminCount(group) === group.items.length;
+  }
+
+  onToggleGroupAccess(group: FormVentilationGroup, checked: boolean) {
+    group.items.forEach((item) => {
+      if (!item.isLocalAdmin) {
+        item.hasAccess = checked;
+      }
+    });
+  }
+
+  onToggleGroupLocalAdmin(group: FormVentilationGroup, checked: boolean) {
+    group.items.forEach((item) => (item.isLocalAdmin = checked));
+  }
+
+  selectionLabel(selected: number, total: number) {
+    if (selected === 0) {
+      return 'Non';
+    }
+    if (selected === total) {
+      return 'Oui';
+    }
+    return `${selected}/${total}`;
   }
 
   convertAccessToLabels(access: number[]) {
@@ -226,6 +302,12 @@ export class UsersPage
           : false,
         isLocalAdmin: (user.localAdminIds || []).includes(u.id) ? true : false,
       };
+    });
+
+    this.buildVentilationGroups();
+    this.ventilationGroups.forEach((group) => {
+      const accessCount = this.groupAccessCount(group);
+      group.expanded = accessCount > 0 && accessCount < group.items.length;
     });
 
     this.referentiels = this.referentiels.map((u) => {

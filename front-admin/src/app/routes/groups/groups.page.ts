@@ -9,7 +9,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { GroupsService } from '../../services/groups/groups.service';
-import { Group } from '../../interfaces/groups.interface';
+import { GroupInterface } from '../../interfaces/groups.interface';
 import { BackupInterface } from '../../interfaces/backups.interface';
 
 @Component({
@@ -20,7 +20,7 @@ import { BackupInterface } from '../../interfaces/backups.interface';
 })
 export class GroupsPage implements OnInit {
   groupsService = inject(GroupsService);
-  groups: Group[] = [];
+  groups: GroupInterface[] = [];
   hrbackupAlone: BackupInterface[] = [];
 
   ngOnInit() {
@@ -35,7 +35,7 @@ export class GroupsPage implements OnInit {
     this.groupsService.createGroup(label).subscribe(() => this.loadGroups());
   }
 
-  renameGroup(group: Group) {
+  renameGroup(group: GroupInterface) {
     const label = window.prompt('Nouveau nom du groupe', group.label)?.trim();
     if (!label || label === group.label) {
       return;
@@ -45,7 +45,7 @@ export class GroupsPage implements OnInit {
       .subscribe(() => this.loadGroups());
   }
 
-  deleteGroup(group: Group) {
+  deleteGroup(group: GroupInterface) {
     if (
       !window.confirm(
         `Supprimer le groupe « ${group.label} » ? Les juridictions associées seront retirées du groupe.`,
@@ -58,7 +58,7 @@ export class GroupsPage implements OnInit {
 
   private loadGroups() {
     this.groupsService.listGroups().subscribe((data) => {
-      this.groups = (data.groups || []).map((group) => ({
+      this.groups = (data.groups || []).map((group: GroupInterface) => ({
         ...group,
         backups: [...(group.backups || [])],
       }));

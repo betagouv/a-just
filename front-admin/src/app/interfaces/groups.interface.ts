@@ -1,13 +1,13 @@
 import { BackupInterface } from './backups.interface';
 
-export interface GroupsResponse {
+export interface GroupsResponseInterface {
   data: {
-    groups: Group[];
+    groups: GroupInterface[];
     hrbackupAlone: BackupInterface[];
   };
 }
 
-export interface Group {
+export interface GroupInterface {
   id: number;
   label: string;
   backups: BackupInterface[];

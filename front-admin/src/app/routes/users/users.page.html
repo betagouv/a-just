@@ -147,6 +147,8 @@
       </div>
       <div class="item">
         <h4>Liste des ventilations accessibles</h4>
+        @if (ventilationGroups.length) {
+        <h5 class="ventilation-block-title">Groupes</h5>
         <table>
           <thead>
             <tr>
@@ -156,7 +158,73 @@
             </tr>
           </thead>
           <tbody>
-            @for (jur of ventilations; track jur.id) {
+            @for (group of ventilationGroups; track group.id) {
+            <tr class="group-row">
+              <td>
+                <button type="button" class="group-toggle" [attr.aria-expanded]="group.expanded"
+                  (click)="group.expanded = !group.expanded">
+                  <span class="caret">{{ group.expanded ? '▾' : '▸' }}</span>
+                  <b>{{ group.label }}</b>
+                  <span class="counter">{{ group.items.length }}</span>
+                </button>
+              </td>
+              <td>
+                @if (!isGroupAllLocalAdmin(group)) {
+                <label class="option">
+                  <input type="checkbox" [checked]="groupAccessCount(group) === group.items.length"
+                    [indeterminate]="groupAccessCount(group) > 0 && groupAccessCount(group) < group.items.length"
+                    (change)="onToggleGroupAccess(group, $any($event.target).checked)" />
+                  <span>{{ selectionLabel(groupAccessCount(group), group.items.length) }}</span>
+                </label>
+                }
+              </td>
+              <td>
+                <label class="option">
+                  <input type="checkbox" [checked]="groupLocalAdminCount(group) === group.items.length"
+                    [indeterminate]="groupLocalAdminCount(group) > 0 && groupLocalAdminCount(group) < group.items.length"
+                    (change)="onToggleGroupLocalAdmin(group, $any($event.target).checked)" />
+                  <span>{{ selectionLabel(groupLocalAdminCount(group), group.items.length) }}</span>
+                </label>
+              </td>
+            </tr>
+            @if (group.expanded) {
+            @for (jur of group.items; track jur.id) {
+            <tr>
+              <td class="child-name">{{ jur.label }}</td>
+              <td>
+                @if (!jur.isLocalAdmin) {
+                <label class="option">
+                  <input type="checkbox" [(ngModel)]="jur.hasAccess" />
+                  <span>{{ jur.hasAccess ? 'Oui' : 'Non' }}</span>
+                </label>
+                }
+              </td>
+              <td>
+                <label class="option">
+                  <input type="checkbox" [(ngModel)]="jur.isLocalAdmin" />
+                  <span>{{ jur.isLocalAdmin ? 'Oui' : 'Non' }}</span>
+                </label>
+              </td>
+            </tr>
+            }
+            }
+            }
+          </tbody>
+        </table>
+        }
+
+        @if (ventilationsWithoutGroup.length) {
+        <h5 class="ventilation-block-title">Hors groupe</h5>
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Accès à la juridiction</th>
+              <th>Administrateur local</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (jur of ventilationsWithoutGroup; track jur.id) {
             <tr>
               <td>{{ jur.label }}</td>
               <td>
@@ -177,6 +245,7 @@
             }
           </tbody>
         </table>
+        }
       </div>
     </div>
   </aj-popup>
