@@ -95,5 +95,16 @@ export default (sequelizeInstance, Model) => {
     return true
   }
 
+  Model.getGroupsByJuridictionId = async (juridictionId) => {
+    /*const groups = await Model.findAll({
+      attributes: ['id', 'label'],
+      where: { juridiction_id: juridictionId },
+      raw: true,
+    })
+    console.log('groups', groups);
+    return groups*/
+    return []
+  }
+
   return Model
 }

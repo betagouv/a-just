@@ -24,6 +24,9 @@ export default (sequelizeInstance, Model) => {
             user_id: userId,
           },
         },
+        {
+          model: Model.models.TJ,
+        }
       ],
       order: [['label', 'asc']],
       raw: true,
@@ -31,7 +34,7 @@ export default (sequelizeInstance, Model) => {
     const list = []
 
     for (let i = 0; i < listAll.length; i++) {
-      if (await Model.models.TJ.isVisible(listAll[i].label)) {
+      if (listAll[i]['TJ.enabled']) {
         list.push({
           id: listAll[i].id,
           label: listAll[i].label,

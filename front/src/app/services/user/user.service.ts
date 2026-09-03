@@ -177,6 +177,14 @@ export class UserService implements OnInit {
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null
+  /**
+   * Identifiant de l'utilisateur pour lequel les données générales ont été chargées
+   */
+  private initDatasUserId: number | null = null
+  /**
+   * Chargement des données générales en cours ou déjà effectué
+   */
+  private initDatasPromise: Promise<void> | null = null
 
   constructor() {
     this.user.subscribe((s) => {
@@ -312,7 +320,7 @@ export class UserService implements OnInit {
    * API Identification de qui est l'utilisateur connecté
    * @returns
    */
-  me() {
+  async me() {
     return this.serverService.getWithoutError('users/me').then((data) => data.data || null)
   }
 
@@ -321,7 +329,7 @@ export class UserService implements OnInit {
    * @param params
    * @returns
    */
-  register(params = {}): Promise<any> {
+  async register(params = {}): Promise<any> {
     return this.serverService.post('users/create-account', params).then((data) => {
       this.serverService.setToken(data.token)
       return data
@@ -333,7 +341,7 @@ export class UserService implements OnInit {
    * @param params
    * @returns
    */
-  forgotPassword(params = {}): Promise<any> {
+  async forgotPassword(params = {}): Promise<any> {
     return this.serverService.post('users/forgot-password', params).then((data) => data.data || null)
   }
 
@@ -342,7 +350,7 @@ export class UserService implements OnInit {
    * @param params
    * @returns
    */
-  forgotPasswordTest(params = {}): Promise<any> {
+  async forgotPasswordTest(params = {}): Promise<any> {
     return this.serverService.post('users/forgot-password-test', params).then((data) => data.data || null)
   }
 
@@ -351,7 +359,7 @@ export class UserService implements OnInit {
    * @param params
    * @returns
    */
-  changePassword(params = {}): Promise<any> {
+  async changePassword(params = {}): Promise<any> {
     return this.serverService.post('users/change-password', params).then((data) => data.data || null)
   }
 
@@ -359,8 +367,10 @@ export class UserService implements OnInit {
    * API Logout avec suppression du token coté serveur
    * @returns
    */
-  logout() {
+  async logout() {
     return this.serverService.get('auths/logout').then(() => {
+      this.initDatasUserId = null
+      this.initDatasPromise = null
       this.user.next(null)
       this.serverService.removeToken()
       window.location.href = '/'
@@ -371,31 +381,47 @@ export class UserService implements OnInit {
    * API demande des informations générale
    * @returns
    */
-  getInitDatas() {
+  async getInitDatas() {
     return this.serverService.get('users/get-user-datas').then((data) => data.data || null)
   }
 
   /**
    * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
    */
-  async initDatas() {
-    return this.getInitDatas().then((result) => {
-      this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
-      this.humanResourceService.fonctions.next(result.fonctions)
-      this.humanResourceService.categories.next(result.categories)
-      this.humanResourceService.backups.next(
-        result.backups.map((b: BackupInterface) => ({
-          ...b,
-          date: new Date(b.date),
-        })),
-      )
+  async initDatas(force: boolean = false) {
+    const userId = this.user.getValue()?.id ?? null
 
-      // if no backup we need onboarding
-      if (result.backups.length === 0) {
-        this.serverService.removeToken() // logout user without access
-        this.router.navigate(['/' + NEED_BOOKING_PAGE])
-      }
-    })
+    if (!force && this.initDatasPromise && this.initDatasUserId === userId) {
+      return this.initDatasPromise
+    }
+
+    this.initDatasUserId = userId
+    this.initDatasPromise = this.getInitDatas()
+      .then((result) => {
+        this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
+        this.humanResourceService.fonctions.next(result.fonctions)
+        this.humanResourceService.categories.next(result.categories)
+        this.humanResourceService.backups.next(
+          result.backups.map((b: BackupInterface) => ({
+            ...b,
+            date: new Date(b.date),
+          })),
+        )
+
+        // if no backup we need onboarding
+        if (result.backups.length === 0) {
+          this.serverService.removeToken() // logout user without access
+          this.router.navigate(['/' + NEED_BOOKING_PAGE])
+        }
+      })
+      .catch((err) => {
+        // un échec ne doit pas empêcher un nouveau chargement
+        this.initDatasPromise = null
+        this.initDatasUserId = null
+        throw err
+      })
+
+    return this.initDatasPromise
   }
 
   /**

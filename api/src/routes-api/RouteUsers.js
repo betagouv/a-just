@@ -430,9 +430,11 @@ export default class RouteUsers extends Route {
 
     const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
     if (hasAccess) {
+      const group = await this.model.models.Groups.getGroupsByJuridictionId(juridictionId);
       const users = await this.model.getUsersJuridictions(juridictionId)
       this.sendOk(ctx, {
         users,
+        group,
       })
     } else {
       this.sendOk(ctx, {

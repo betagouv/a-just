@@ -69,6 +69,7 @@ export default (sequelizeInstance) => {
     Model.hasOne(models.UserVentilations, { foreignKey: 'hr_backup_id', sourceKey: 'id' })
     Model.hasMany(models.HumanResources, { foreignKey: 'backup_id', sourceKey: 'id' })
     Model.hasOne(models.HRBackupsGroupsIds, { foreignKey: 'hr_backup_id', sourceKey: 'id' })
+    Model.hasOne(models.TJ, { foreignKey: 'backup_id', sourceKey: 'id' })
 
     return models
   }
