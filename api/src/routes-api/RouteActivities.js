@@ -45,7 +45,7 @@ export default class RouteActivities extends Route {
       await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
       this.sendOk(ctx, 'Ok')
     } else {
-      ctx.throw(403, "Vous n'avez pas accès à cette juridiction")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -76,7 +76,7 @@ export default class RouteActivities extends Route {
         date,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -98,7 +98,7 @@ export default class RouteActivities extends Route {
         date,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -120,7 +120,7 @@ export default class RouteActivities extends Route {
         list,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -144,7 +144,7 @@ export default class RouteActivities extends Route {
         list,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }
