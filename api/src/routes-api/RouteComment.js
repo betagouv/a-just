@@ -35,7 +35,7 @@ export default class RouteComment extends Route {
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getComments(type, juridictionId))
     } else {
-      this.sendOk(ctx, [])
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -58,7 +58,7 @@ export default class RouteComment extends Route {
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.updateComment(type, juridictionId, comment, ctx.state.user.id, commentId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -79,7 +79,7 @@ export default class RouteComment extends Route {
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.deleteComment(commentId, juridictionId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }
