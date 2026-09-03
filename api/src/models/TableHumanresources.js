@@ -589,10 +589,12 @@ export default (sequelizeInstance, Model) => {
         {
           attributes: ['id'],
           model: Model.models.HRBackups,
+          required: true,
           include: [
             {
               attributes: ['id'],
               model: Model.models.UserVentilations,
+              required: true,
               where: {
                 user_id: userId,
               },
