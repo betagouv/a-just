@@ -363,7 +363,6 @@ export default class App extends AppBase {
    * Montage des différentes routes de l'application
    */
   _mountRoutes() {
-    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/')
     super.mountFolder(join(__dirname, 'routes-api'), '/api/')
     super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/')
     super.mountFolder(join(__dirname, 'routes'), '/')

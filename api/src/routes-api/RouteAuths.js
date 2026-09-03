@@ -176,16 +176,6 @@ export default class RouteAuths extends Route {
     if (typeof tryUserCon === 'string') {
       ctx.throw(401, tryUserCon)
     } else {
-      const now = new Date()
-      now.setMonth(now.getMonth() - 6)
-      const nbAuthBy2FAOffMonth = (
-        await this.models.Logs.getLogs({
-          code_id: USER_USER_PASSWORD_CHANGED,
-          user_id: tryUserCon.id,
-          created_at: { [Op.gte]: now },
-        })
-      ).length
-
       await ctx.loginUser(tryUserCon, 7)
       await super.addUserInfoInBody(ctx, tryUserCon.id)
       this.sendCreated(ctx)
