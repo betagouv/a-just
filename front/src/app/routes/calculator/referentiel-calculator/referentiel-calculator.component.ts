@@ -308,11 +308,20 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Initialisation des valeurs par défaut
    */
   initValues() {
-    if (this.currentProjection || this.calculator) {
-      this.canViewPreviousProjection = this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== 0
-      this.canViewNextProjection =
-        this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== this.datas.length - 2
-    }
+    const target = this.currentProjection || this.calculator
+    if (!target) return
+
+    const currentIndex = this.datas.findIndex((d) => d.contentieux.id === target.contentieux.id)
+    const maxIndex = this.parentCalculator ? this.datas.length - 1 : this.datas.length - 2
+
+    this.canViewPreviousProjection = currentIndex > 0
+    this.canViewNextProjection = currentIndex !== -1 && currentIndex < maxIndex
+
+    // if (this.currentProjection || this.calculator) {
+    //   this.canViewPreviousProjection = this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== 0
+    //   this.canViewNextProjection =
+    //     this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== this.datas.length - 1
+    // }
   }
 
   /**
