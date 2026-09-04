@@ -191,7 +191,7 @@ export class SignupPage {
 
     this.userService.register({ email, password, firstName, lastName, fonction, tj }).then((returnLogin) => {
       if (returnLogin) {
-        this.router.navigate([this.userService.getUserPageUrl(returnLogin.user)])
+        this.router.navigate(['/bienvenue'])
       } else {
         this.router.navigate(['/login'])
       }

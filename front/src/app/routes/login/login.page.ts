@@ -117,6 +117,11 @@ export class LoginPage implements OnInit {
         if (returnLogin && returnLogin.data && returnLogin.data.status === LOGIN_STATUS_GET_CODE) {
           this.needToGetCode = returnLogin.data.datas.code || ''
         } else {
+          if (returnLogin && returnLogin.user && (returnLogin.user.ventilations.length > 0 || returnLogin.user.access.length > 0)) {
+            this.router.navigate(['/bienvenue'])
+            return
+          }
+
           if (this.authService.redirectUrl) {
             window.location.href = this.authService.redirectUrl
             return
@@ -145,6 +150,11 @@ export class LoginPage implements OnInit {
     switch (action.id) {
       case 'connect':
         this.authService.completeLogin({ code: input.value }).then((returnLogin) => {
+          if (returnLogin && returnLogin.user && (returnLogin.user.ventilations.length > 0 || returnLogin.user.access.length > 0)) {
+            this.router.navigate(['/bienvenue'])
+            return
+          }
+
           if (this.authService.redirectUrl) {
             window.location.href = this.authService.redirectUrl
             return
