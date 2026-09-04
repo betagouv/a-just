@@ -1,4 +1,4 @@
-import Route from './Route'
+import Route, { Access } from './Route'
 
 /**
  * Route des fonctions (VP, 1VP, ...)
@@ -12,7 +12,7 @@ export default class RouteHrFonctions extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HRFonctions
@@ -21,8 +21,10 @@ export default class RouteHrFonctions extends Route {
   /**
    * Interface de la liste de toutes les fonctions
    */
-  @Route.Get({})
-  async getAll (ctx) {
+  @Route.Get({
+    accesses: [Access.isLogin],
+  })
+  async getAll(ctx) {
     this.sendOk(ctx, await this.model.getAll())
   }
 }
