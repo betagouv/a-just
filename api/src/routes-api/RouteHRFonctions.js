@@ -21,9 +21,7 @@ export default class RouteHrFonctions extends Route {
   /**
    * Interface de la liste de toutes les fonctions
    */
-  @Route.Get({
-    accesses: [Access.isLogin],
-  })
+  @Route.Get()
   async getAll(ctx) {
     this.sendOk(ctx, await this.model.getAll())
   }
