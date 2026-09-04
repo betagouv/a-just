@@ -245,7 +245,7 @@ function isSuperAdmin(ctx) {
  * @returns
  */
 function canVewCalculator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1
 }
 
 /**
@@ -254,7 +254,7 @@ function canVewCalculator(ctx) {
  * @returns
  */
 function canEditCalculator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1
 }
 
 /**
@@ -263,7 +263,7 @@ function canEditCalculator(ctx) {
  * @returns
  */
 function canVewHR(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1
 }
 
 /**
@@ -272,7 +272,7 @@ function canVewHR(ctx) {
  * @returns
  */
 function canEditHR(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1
 }
 
 /**
@@ -281,7 +281,7 @@ function canEditHR(ctx) {
  * @returns
  */
 function canVewActivities(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1
 }
 
 /**
@@ -290,7 +290,7 @@ function canVewActivities(ctx) {
  * @returns
  */
 function canEditActivities(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1
 }
 
 /**
@@ -299,7 +299,7 @@ function canEditActivities(ctx) {
  * @returns
  */
 function canVewContentieuxOptions(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1
 }
 
 /**
@@ -308,7 +308,7 @@ function canVewContentieuxOptions(ctx) {
  * @returns
  */
 function canEditContentieuxOptions(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1
 }
 
 /**
@@ -317,7 +317,7 @@ function canEditContentieuxOptions(ctx) {
  * @returns
  */
 function canVewSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1
 }
 
 /**
@@ -327,7 +327,7 @@ function canVewSimulation(ctx) {
  */
 function canEditSimulation(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
   )
@@ -339,7 +339,7 @@ function canEditSimulation(ctx) {
  * @returns
  */
 function canVewWhiteSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1
 }
 
 /**
@@ -349,7 +349,7 @@ function canVewWhiteSimulation(ctx) {
  */
 function canEditWhiteSimulation(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
   )
@@ -361,7 +361,7 @@ function canEditWhiteSimulation(ctx) {
  * @returns
  */
 function canVewReaffectator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1
 }
 
 /**
@@ -371,7 +371,7 @@ function canVewReaffectator(ctx) {
  */
 function canEditReaffectator(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
   )

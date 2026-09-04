@@ -72,7 +72,7 @@ export default class RouteCentreDAide extends Route {
       userId: Types.number().required(),
       phoneNumber: Types.string().required(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.isExist],
   })
   async postFormHubspot(ctx) {
     const { userId, phoneNumber } = this.body(ctx)
