@@ -1,23 +1,10 @@
 import { getShortMonthString } from "../../support/utils/dates";
 import { contentieuxStructure } from "../../support/utils/contentieux";
-import user from "../../fixtures/user.json";
-import { loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 
 describe("Données d'activité", () => {
   before(() => {
-    // Ensure user has full permissions before UI login
-    loginApi(user.email, user.password).then((resp) => {
-      const userId = resp.body.user.id;
-      const token = resp.body.token;
-
-      return getUserDataApi(token).then((resp) => {
-        const ventilations = resp.body.data.backups.map((v) => v.id);
-        return resetToDefaultPermissions(userId, ventilations, token);
-      });
-    }).then(() => {
-      // Now proceed with UI login
-      cy.login();
-    });
+    // cy.login() réapplique les droits par défaut avant le login UI
+    cy.login();
   });
 
   it("Check the activity data page load", () => {

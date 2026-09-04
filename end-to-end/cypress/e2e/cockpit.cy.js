@@ -1,40 +1,15 @@
-import { getLastMonthApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
+import { getLastMonthApi, ensureE2EUserReady } from "../../support/api";
 import { getShortMonthString } from "../../support/utils/dates";
-import user from "../../fixtures/user.json";
 
 describe("Cockpit", () => {
-  let userId;
-  let token;
-  let ventilations = [];
-
   before(() => {
-    // "Ceinture": Explicitly set required permissions before tests
-    return loginApi(user.email, user.password).then((resp) => {
-      userId = resp.body.user.id;
-      token = resp.body.token;
-
-      return getUserDataApi(token).then((resp) => {
-        ventilations = resp.body.data.backups.map((v) => v.id);
-
-        // Ensure full default permissions (including greffier access needed for .fonctionnaires)
-        return resetToDefaultPermissions(userId, ventilations, token).then(() => {
-          cy.login();
-        });
-      });
-    });
+    // "Ceinture": cy.login() réapplique les droits par défaut avant le login UI
+    cy.login();
   });
 
   after(() => {
     // "Bretelles": Always restore default permissions after tests
-    return loginApi(user.email, user.password).then((resp) => {
-      userId = resp.body.user.id;
-      token = resp.body.token;
-
-      return getUserDataApi(token).then((resp) => {
-        ventilations = resp.body.data.backups.map((v) => v.id);
-        return resetToDefaultPermissions(userId, ventilations, token);
-      });
-    });
+    ensureE2EUserReady();
   });
 
   beforeEach(() => {

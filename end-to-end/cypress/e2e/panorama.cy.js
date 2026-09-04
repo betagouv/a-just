@@ -1,40 +1,16 @@
-import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
+import { updateHumanResourcesApi, ensureE2EUserReady } from "../../support/api";
 import user from "../../fixtures/user.json";
 import { getShortMonthString, normalizeDate } from "../../support/utils/dates";
 
 describe("Panorama page", () => {
-  let userId;
-  let token;
-  let ventilations = [];
-
   before(() => {
-    // "Ceinture": Explicitly set required permissions before tests
-    return loginApi(user.email, user.password).then((resp) => {
-      userId = resp.body.user.id;
-      token = resp.body.token;
-
-      return getUserDataApi(token).then((resp) => {
-        ventilations = resp.body.data.backups.map((v) => v.id);
-
-        // Ensure full default permissions (including reaffectator needed for workforce-composition)
-        return resetToDefaultPermissions(userId, ventilations, token).then(() => {
-          cy.login();
-        });
-      });
-    });
+    // "Ceinture": cy.login() réapplique les droits par défaut avant le login UI
+    cy.login();
   });
 
   after(() => {
     // "Bretelles": Always restore default permissions after tests
-    return loginApi(user.email, user.password).then((resp) => {
-      userId = resp.body.user.id;
-      token = resp.body.token;
-
-      return getUserDataApi(token).then((resp) => {
-        ventilations = resp.body.data.backups.map((v) => v.id);
-        return resetToDefaultPermissions(userId, ventilations, token);
-      });
-    });
+    ensureE2EUserReady();
   });
 
   it("Check panorama page load", () => {
