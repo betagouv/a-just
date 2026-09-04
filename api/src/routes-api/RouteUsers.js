@@ -395,9 +395,11 @@ export default class RouteUsers extends Route {
 
   /**
    * Interface pour avoir une liste des données standard d'un utilisateur connecté
+   * Accessible sans droit ni ventilation: le front s'appuie sur une liste de
+   * juridictions vide pour rediriger l'utilisateur vers l'onboarding
    */
   @Route.Get({
-    accesses: [Access.isLogin],
+    accesses: [Access.isExist],
   })
   async getUserDatas(ctx) {
     const getUsersAdminLocal = await this.model.getUserAdminLocal(ctx.state.user.id);
