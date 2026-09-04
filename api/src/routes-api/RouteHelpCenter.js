@@ -37,6 +37,7 @@ export default class RouteCentreDAide extends Route {
     await this.models.Logs.addLog(EXECUTE_HELPCENTER_SEARCH, ctx.state.user.id, { recherche: value })
     this.sendOk(ctx, 'Ok')
   }
+
   /**
    * Log cente
    * @param {*} node
@@ -46,6 +47,7 @@ export default class RouteCentreDAide extends Route {
     bodyType: Types.object().keys({
       value: Types.any().required(),
     }),
+    accesses: [Access.isLogin],
   })
   async logDocumentationLink(ctx) {
     const { value } = this.body(ctx)
@@ -58,7 +60,9 @@ export default class RouteCentreDAide extends Route {
    * @param {*} node
    * @param {*} juridictionId
    */
-  @Route.Post()
+  @Route.Post({
+    accesses: [Access.isLogin],
+  })
   async logDocumentation(ctx) {
     await this.models.Logs.addLog(EXECUTE_HELPCENTER, null)
     this.sendOk(ctx, 'Ok')
@@ -72,7 +76,7 @@ export default class RouteCentreDAide extends Route {
       userId: Types.number().required(),
       phoneNumber: Types.string().required(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.isExist],
   })
   async postFormHubspot(ctx) {
     const { userId, phoneNumber } = this.body(ctx)
