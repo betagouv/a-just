@@ -218,7 +218,7 @@ function isExist(ctx) {
  * @returns
  */
 function isLogin(ctx) {
-  return !!ctx.body.user /* && ctx.body.user.access.length > 0 && ctx.body.user.ventilations.length > 0*/
+  return !!ctx.body.user && ctx.body.user.access.length > 0 && ctx.body.user.ventilations.length > 0
 }
 
 /**
