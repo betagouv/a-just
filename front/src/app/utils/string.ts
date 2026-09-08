@@ -9,3 +9,13 @@ export function ucFirst(string: string): string {
   }
   return string
 }
+
+export function isProfessionalEmailDomain(email: string): boolean {
+  const domain = String(email).toLowerCase().trim().split('@')[1]
+
+  if (!domain) {
+    return false
+  }
+
+  return domain === 'justice.fr' || domain.endsWith('.gouv.fr') || domain === 'a-just.fr'
+}

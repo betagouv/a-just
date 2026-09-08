@@ -3,16 +3,16 @@ describe("Signup Page", () => {
     // Clear all session state to ensure clean test environment
     cy.clearCookies();
     cy.clearAllLocalStorage();
-    
+
     // Intercept API calls to ensure they complete before proceeding
     cy.intercept('GET', '**/api/users/interface-type').as('interfaceType');
     cy.intercept('GET', '**/api/users/me').as('userMe');
-    
+
     cy.visit(`/connexion`);
-    
+
     // Wait for API calls to complete
     cy.wait(['@interfaceType', '@userMe'], { timeout: 15000 });
-    
+
     // Now find the signup element with increased timeout
     cy.get(".signup", { timeout: 10000 })
       .should("contain.text", "Rejoindre A-JUST")
@@ -28,18 +28,34 @@ describe("Signup Page", () => {
   // })
 
   it("Check that we have an error if email is different from @justice.gouv.fr or @*.gouv.fr", () => {
+    cy.on("window:alert", (alert) => {
+      expect(alert).to.equal(
+        "Vous devez saisir une adresse e-mail professionnelle"
+      );
+    });
     cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
     cy.get('input[formControlName="lastName"]').type("UserTestLastname");
     cy.get('input[formControlName="email"]').type("userTest@test.mail.fr");
     cy.get('input[formControlName="password"]').type("1xDrv9&!");
     cy.get('input[formControlName="passwordConf"]').type("1xDrv9&!");
     cy.get('input[formControlName="checkbox"]').check();
+    cy.get(".next-step").click();
+    cy.visit(`/inscription`);
+  });
 
+  it("Check that we have an error if gouv.fr is only in the local part of the email", () => {
     cy.on("window:alert", (alert) => {
       expect(alert).to.equal(
         "Vous devez saisir une adresse e-mail professionnelle"
       );
     });
+    cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
+    cy.get('input[formControlName="lastName"]').type("UserTestLastname");
+    cy.get('input[formControlName="email"]').type("test.gouv.fr@attacker-controlled-domain.example");
+    cy.get('input[formControlName="password"]').type("1xDrv9&!");
+    cy.get('input[formControlName="passwordConf"]').type("1xDrv9&!");
+    cy.get('input[formControlName="checkbox"]').check();
+    cy.get(".next-step").click();
     cy.visit(`/inscription`);
   });
 

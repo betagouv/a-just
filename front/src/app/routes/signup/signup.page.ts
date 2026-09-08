@@ -8,6 +8,7 @@ import { UserService } from '../../services/user/user.service'
 import { ServerService } from '../../services/http-server/server.service'
 import { SSOService } from '../../services/sso/sso.service'
 import { MIN_PASSWORD_LENGTH } from '../../utils/user'
+import { isProfessionalEmailDomain } from '../../utils/string'
 
 /**
  * Page d'inscription
@@ -217,7 +218,7 @@ export class SignupPage {
       return
     }
 
-    if (!this.paramsUrl?.email && email.includes('@justice.fr') === false && email.includes('.gouv.fr') === false && email.includes('@a-just.fr') === false) {
+    if (!this.paramsUrl?.email && !isProfessionalEmailDomain(email)) {
       alert('Vous devez saisir une adresse e-mail professionnelle')
       this.focusSoon(() => this.focusByControlName('email'))
       return

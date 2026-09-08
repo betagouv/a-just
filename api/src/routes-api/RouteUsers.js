@@ -1,7 +1,7 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { accessList } from '../constants/access'
-import { validateEmail } from '../utils/utils'
+import { isProfessionalEmailDomain, validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
 import {
@@ -86,13 +86,11 @@ export default class RouteUsers extends Route {
       return
     }
 
-    if (!email.includes('@justice.fr') && !email.includes('.gouv.fr') && !email.includes('@a-just.fr')) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
-      return
-    }
-
-    if (!validateEmail(email)) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail valide')
+    const isValidEmail = validateEmail(email)
+    if (!isValidEmail || !isProfessionalEmailDomain(email)) {
+      ctx.throw(401, isValidEmail
+        ? 'Vous devez saisir une adresse e-mail professionnelle'
+        : 'Vous devez saisir une adresse e-mail valide')
       return
     }
 
@@ -478,7 +476,7 @@ export default class RouteUsers extends Route {
 
     const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
     if (hasAccess) {
-      if (validateEmail(email) && (email.includes('@justice.fr') || email.includes('.gouv.fr') || email.includes('@a-just.fr'))) {
+      if (validateEmail(email) && isProfessionalEmailDomain(email)) {
 
         const findUser = await this.model.findOne({ where: { email } })
         if (findUser) {
