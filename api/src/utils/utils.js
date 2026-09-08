@@ -51,7 +51,7 @@ export function controlPassword(password) {
 }
 
 export function isProfessionalEmailDomain(email) {
-  const domain = String(email).toLowerCase().trim().split('@')[1]
+  const domain = String(email).toLowerCase().trim().split('@').pop()
 
   if (!domain) {
     return false
@@ -212,17 +212,17 @@ export const compareResults = (
       differences.push(
         detailed
           ? {
-              index: i,
-              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
-              changes, // { clé: [old, new] }
-              old: oldItem,
-              new: newItem,
-            }
+            index: i,
+            id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+            changes, // { clé: [old, new] }
+            old: oldItem,
+            new: newItem,
+          }
           : {
-              index: i,
-              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
-              changes, // minimal et actionnable
-            },
+            index: i,
+            id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+            changes, // minimal et actionnable
+          },
       )
     }
   }
