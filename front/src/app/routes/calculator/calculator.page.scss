@@ -787,10 +787,20 @@
 aj-select,
 aj-options-backup-panel {
   margin-left: 8px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: utils.$colors-bgSelect;
+  }
 }
 
 aj-date-select {
   margin-left: 8px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: utils.$colors-bgSelect;
+  }
 
   &.popup {
     margin-left: 1px;
