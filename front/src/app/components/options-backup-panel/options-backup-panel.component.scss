@@ -1,11 +1,9 @@
-@use "../../styles/utils.scss" as utils;
+@use '../../styles/utils.scss' as utils;
 
 :host {
   display: flex;
   align-items: center;
   width: 100%;
-
-
 
   .header-selection {
     font-weight: bold;
@@ -20,7 +18,7 @@
   }
 
   .options {
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
     line-height: 34px;
     font-size: 18px;
     font-weight: 500;
@@ -30,7 +28,7 @@
   }
 
   .no-margin {
-    margin-right: 0px !important
+    margin-right: 0px !important;
   }
 
   .blue-button {

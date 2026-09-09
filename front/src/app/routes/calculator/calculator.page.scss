@@ -648,7 +648,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100vh - 72px);
   background-color: white;
 
   .content-list {
