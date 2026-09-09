@@ -79,11 +79,11 @@ export class LoginPage implements OnInit {
       //this.ssoService.canUseSSO().then((d) => (this.canUseSSO = d))
     }
 
-    this.userService.me().then((data) => {
+    /*this.userService.me().then((data) => {
       if (data) {
         this.router.navigate([this.userService.getUserPageUrl(data)])
       }
-    })
+    })*/
 
     this.ssoService.getSSOStatus().then((s) => {
       this.isReady = true
