@@ -370,6 +370,7 @@
       margin-right: 2px;
       width: 260px;
       font-size: 14px;
+      cursor: pointer;
 
       .export {
         border-bottom: solid 1px #ddd;
@@ -380,13 +381,22 @@
         min-height: 40px;
         padding: 8px 16px;
         align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background-color: utils.$colors-bgSelect;
+        }
 
         i {
           font-size: 18px;
           margin-right: 8px;
+
         }
 
         label {
+          cursor: pointer;
+
           i {
             margin-right: 8px;
             font-size: 18px;
@@ -822,6 +832,12 @@ aj-referentiel-calculator:nth-child(even) {
     cursor: pointer;
     border: solid 1px utils.$colors-cgraylightv3;
 
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-bgSelect;
+    }
+
     &.alone {
       border-radius: 4px;
     }
@@ -923,6 +939,11 @@ aj-referentiel-calculator:nth-child(even) {
     padding: 0 16px;
     cursor: pointer;
     border: solid 1px utils.$colors-cgraylightv3;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-bgSelect;
+    }
 
     &.alone {
       border-radius: 4px;
