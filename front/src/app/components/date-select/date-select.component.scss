@@ -10,6 +10,11 @@
   cursor: pointer;
   margin: auto 0;
   height: 55px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: utils.$colors-bgTag;
+  }
 
   &.not-read-only {
     cursor: not-allowed !important;
@@ -143,6 +148,11 @@
   &.dark-mode {
     background-color: utils.$colors-darkModeBgMenu;
     border: 1px solid utils.$colors-darkModeTitle;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-darkModeBgHeader;
+    }
 
     p,
     mat-icon {
