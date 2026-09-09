@@ -24,7 +24,7 @@
         color: #f5f5fe;
         height: 40px;
         padding: 0 16px;
-        background-color: #000091;
+        background-color: utils.$colors-primary;
         width: fit-content;
         margin-bottom: 18px;
       }
@@ -538,6 +538,12 @@
       padding-right: initial;
       height: 100%;
       position: relative;
+
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-bgSelect;
+      }
 
       label {
         cursor: pointer;
