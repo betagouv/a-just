@@ -13,6 +13,7 @@ import { HumanResourceInterface } from '../../interfaces/human-resource-interfac
 import { RHActivityInterface } from '../../interfaces/rh-activity'
 import { getShortMonthString, today } from '../../utils/dates'
 import { HRSituationInterface } from '../../interfaces/hr-situation'
+import { JuridictionGroupInterface } from '../../interfaces/juridictions.interface'
 
 /**
  * Service de récupération des fiches +
@@ -56,6 +57,14 @@ export class HumanResourceService {
    * Juridiction selectionnée
    */
   hrBackup: BehaviorSubject<BackupInterface | null> = new BehaviorSubject<BackupInterface | null>(null)
+  /**
+   * Liste des groupes de juridictions dont à accès l'utilisateur
+   */
+  juridictionGroups = signal<JuridictionGroupInterface[]>([])
+  /**
+   * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
+   */
+  backupsWithoutGroup = signal<BackupInterface[]>([])
   /**
    * Liste des catégories
    */

@@ -387,6 +387,14 @@ export class UserService implements OnInit {
   }
 
   /**
+   * API demande des groupes de juridictions et des juridictions sans groupe
+   * @returns
+   */
+  async getUserGroups() {
+    return this.serverService.get('users/get-user-groups').then((data) => data.data || null)
+  }
+
+  /**
    * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
    */
   async initDatas(force: boolean = false) {
@@ -397,17 +405,24 @@ export class UserService implements OnInit {
     }
 
     this.initDatasUserId = userId
-    this.initDatasPromise = this.getInitDatas()
-      .then((result) => {
+    this.initDatasPromise = Promise.all([
+      this.getInitDatas(),
+      // les groupes ne sont pas critiques : un échec ne doit pas bloquer le chargement
+      this.getUserGroups().catch(() => null),
+    ])
+      .then(([result, groupsResult]) => {
         this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
         this.humanResourceService.fonctions.next(result.fonctions)
         this.humanResourceService.categories.next(result.categories)
-        this.humanResourceService.backups.next(
-          result.backups.map((b: BackupInterface) => ({
-            ...b,
-            date: new Date(b.date),
+        this.humanResourceService.juridictionGroups.set(
+          (groupsResult?.groups || []).map((group: JuridictionGroupInterface) => ({
+            ...group,
+            backups: (group.backups || []).map(this.formatBackupDate),
           })),
         )
+        this.humanResourceService.backupsWithoutGroup.set((groupsResult?.backupsWithoutGroup || []).map(this.formatBackupDate))
+        // les groupes sont alimentés avant les juridictions car les écrans réagissent à `backups`
+        this.humanResourceService.backups.next(result.backups.map(this.formatBackupDate))
 
         // if no backup we need onboarding
         if (result.backups.length === 0) {
@@ -423,6 +438,18 @@ export class UserService implements OnInit {
       })
 
     return this.initDatasPromise
+  }
+
+  /**
+   * Transforme la date d'une juridiction en objet date
+   * @param backup
+   * @returns
+   */
+  private formatBackupDate(backup: BackupInterface): BackupInterface {
+    return {
+      ...backup,
+      date: new Date(backup.date),
+    }
   }
 
   /**

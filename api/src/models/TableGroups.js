@@ -2,6 +2,7 @@
  * Gestion des groupes
  */
 import { Op } from 'sequelize'
+import { orderBy } from 'lodash'
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -50,6 +51,49 @@ export default (sequelizeInstance, Model) => {
     })
 
     return hrbackupAlone
+  }
+
+  /**
+   * Liste des groupes de juridictions accessibles à un utilisateur,
+   * ainsi que ses juridictions qui n'appartiennent à aucun groupe
+   * @param {*} userId
+   * @returns
+   */
+  Model.listGroupsForUser = async (userId) => {
+    const adminLocalIds = await Model.models.Users.getUserAdminLocal(userId)
+    const backups = (await Model.models.HRBackups.list(userId)).map((backup) => ({
+      ...backup,
+      isAdminLocal: adminLocalIds.includes(backup.id),
+    }))
+
+    const groupsById = new Map()
+    const backupsWithoutGroup = []
+
+    backups.forEach((backup) => {
+      const group = (backup.groups || [])[0]
+
+      if (!group) {
+        backupsWithoutGroup.push(backup)
+        return
+      }
+
+      if (!groupsById.has(group.id)) {
+        groupsById.set(group.id, { id: group.id, label: group.label, backups: [] })
+      }
+
+      groupsById.get(group.id).backups.push(backup)
+    })
+
+    return {
+      groups: orderBy(
+        Array.from(groupsById.values()).map((group) => ({
+          ...group,
+          backups: orderBy(group.backups, ['groupIdRank', 'label']),
+        })),
+        'label',
+      ),
+      backupsWithoutGroup: orderBy(backupsWithoutGroup, 'label'),
+    }
   }
 
   Model.assignHrBackups = async (groupId, backupIds) => {

@@ -417,6 +417,22 @@ export default class RouteUsers extends Route {
   }
 
   /**
+   * Interface pour avoir les groupes de juridictions d'un utilisateur connecté
+   * ainsi que ses juridictions n'appartenant à aucun groupe
+   */
+  @Route.Get({
+    accesses: [Access.isExist],
+  })
+  async getUserGroups(ctx) {
+    const { groups, backupsWithoutGroup } = await this.models.Groups.listGroupsForUser(ctx.state.user.id)
+
+    this.sendOk(ctx, {
+      groups,
+      backupsWithoutGroup,
+    })
+  }
+
+  /**
    * Liste des utilisateurs ayant accès à la juridiction
    */
   @Route.Post({

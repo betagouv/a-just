@@ -1,4 +1,17 @@
-import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild, AfterViewInit } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  inject,
+  Input,
+  OnDestroy,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core'
 import * as Sentry from '@sentry/browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import html2canvas from 'html2canvas'
@@ -249,6 +262,18 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Liste des juridictions à disposition de l'utilisateur
    */
   hrBackups: BackupInterface[] = []
+  /**
+   * Liste des groupes de juridictions à disposition de l'utilisateur
+   */
+  juridictionGroups = this.humanResourceService.juridictionGroups
+  /**
+   * Liste des juridictions à disposition de l'utilisateur n'appartenant à aucun groupe
+   */
+  backupsWithoutGroup = this.humanResourceService.backupsWithoutGroup
+  /**
+   * Affiche le menu par groupes, sinon on retombe sur la liste à plat des juridictions
+   */
+  showGroupedJuridictions = computed(() => this.juridictionGroups().length > 0 || this.backupsWithoutGroup().length > 0)
   /**
    * URL de la documentation
    */

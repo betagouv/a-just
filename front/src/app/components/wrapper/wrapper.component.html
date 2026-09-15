@@ -25,11 +25,29 @@
                 @if (hrBackups && hrBackups.length > 1) {
                 <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
                 }
-                <mat-menu #menu="matMenu">
+                <mat-menu #menu="matMenu" class="juridiction-menu">
+                    @if (showGroupedJuridictions()) {
+                    @for (group of juridictionGroups(); track group.id) {
+                    <button mat-menu-item [matMenuTriggerFor]="groupMenu" [title]="group.label">
+                        {{ group.label }}
+                    </button>
+                    <mat-menu #groupMenu="matMenu" class="juridiction-menu">
+                        @for (bu of group.backups || []; track bu.id) {
+                        <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+                            {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
+                        </button> }
+                    </mat-menu>
+                    }
+                    @for (bu of backupsWithoutGroup(); track bu.id) {
+                    <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+                        {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
+                    </button> }
+                    } @else {
                     @for (bu of hrBackups; track bu.id) {
                     <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
                         {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
                     </button> }
+                    }
                 </mat-menu>
             </div>
         </div>
