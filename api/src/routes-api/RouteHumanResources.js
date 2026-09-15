@@ -53,6 +53,10 @@ export default class RouteHumanResources extends Route {
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
     backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
 
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     this.sendOk(ctx, {
       backups,
       backupId,
@@ -70,6 +74,10 @@ export default class RouteHumanResources extends Route {
   })
   async removeBackup(ctx) {
     const { backupId } = ctx.params
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
 
     await this.model.models.HRBackups.removeBackup(backupId)
 
@@ -90,6 +98,10 @@ export default class RouteHumanResources extends Route {
   })
   async duplicateBackup(ctx) {
     const { backupId, backupName } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
 
     this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId, backupName))
   }
@@ -118,6 +130,10 @@ export default class RouteHumanResources extends Route {
   })
   async updateHr(ctx) {
     const { backupId, hr } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
 
     // Étape 1 : Mise à jour en base de données
     const updatedAgent = await this.model.updateHR(hr, backupId)
@@ -197,6 +213,7 @@ export default class RouteHumanResources extends Route {
   })
   async removeSituation(ctx) {
     const { situationId } = ctx.params
+
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
@@ -254,8 +271,9 @@ export default class RouteHumanResources extends Route {
   })
   async filterList(ctx) {
     let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, subContentieuxIds } = this.body(ctx)
+
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     date = today(date)
@@ -387,7 +405,7 @@ export default class RouteHumanResources extends Route {
     let { backupId, date, contentieuxId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     date = today(date)
@@ -422,10 +440,11 @@ export default class RouteHumanResources extends Route {
   })
   async readHr(ctx) {
     const { hrId } = ctx.params
+
     if (await this.model.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getHrDetails(hrId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -437,6 +456,11 @@ export default class RouteHumanResources extends Route {
   })
   async logVentilationView(ctx) {
     const { backupId } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id, { backupId })
     this.sendOk(ctx, 'Ok')
   }
@@ -449,6 +473,11 @@ export default class RouteHumanResources extends Route {
   })
   async logHumanResourceView(ctx) {
     const { hrId } = this.body(ctx)
+
+    if (!(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(HUMAN_RESOURCE_PAGE_LOAD, ctx.state.user.id, { hrId })
     this.sendOk(ctx, 'Ok')
   }
@@ -465,6 +494,11 @@ export default class RouteHumanResources extends Route {
   })
   async logSituationSave(ctx) {
     const { hrId, dateStart, categoryId, fonctionId, etp } = this.body(ctx)
+
+    if (!(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(HUMAN_RESOURCE_NEW_SITUATION_SAVED, ctx.state.user.id, {
       hrId,
       dateStart,
@@ -488,6 +522,11 @@ export default class RouteHumanResources extends Route {
   })
   async logSituationUpdate(ctx) {
     const { hrId, situationId, dateStart, categoryId, fonctionId, etp } = this.body(ctx)
+
+    if (!(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(HUMAN_RESOURCE_SITUATION_UPDATED, ctx.state.user.id, {
       hrId,
       situationId,
@@ -508,6 +547,11 @@ export default class RouteHumanResources extends Route {
   })
   async logVentilationDateChange(ctx) {
     const { backupId, date } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(VENTILATION_DATE_CHANGE, ctx.state.user.id, { backupId, date })
     this.sendOk(ctx, 'Ok')
   }
@@ -522,6 +566,11 @@ export default class RouteHumanResources extends Route {
   })
   async logVentilationCategoryChange(ctx) {
     const { backupId, categoryId, selected } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, categoryId, selected })
     this.sendOk(ctx, 'Ok')
   }
@@ -541,6 +590,11 @@ export default class RouteHumanResources extends Route {
   })
   async logVentilationOptionsChange(ctx) {
     const { backupId, ...changes } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
+
     await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, ...changes })
     this.sendOk(ctx, 'Ok')
   }
@@ -561,7 +615,7 @@ export default class RouteHumanResources extends Route {
     if (await this.model.haveAccess(agentId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.copyAgent(agentId, situationId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }

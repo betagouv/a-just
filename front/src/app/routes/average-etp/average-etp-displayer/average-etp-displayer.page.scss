@@ -174,7 +174,7 @@ aj-back-button {
     .container {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: calc(100vh - 99px);
 
         .content-list {
             flex: 1;
@@ -194,7 +194,7 @@ aj-back-button {
         left: 0px;
         bottom: 0;
         width: 100%;
-        padding-right: 120px;
+        padding-right: 200px;
 
         button:first-child {
             margin-right: 16px;
@@ -300,7 +300,7 @@ aj-back-button {
                 width: 300px;
                 height: 80px;
                 font-size: 12px;
-                line-height: 2;
+                line-height: 45px;
                 letter-spacing: normal;
                 color: utils.$colors-cblack;
                 padding: 16px;

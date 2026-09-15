@@ -38,9 +38,15 @@ export default class RouteActivities extends Route {
     accesses: [Access.canEditActivities],
   })
   async updateBy(ctx) {
-    const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
-    await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
-    this.sendOk(ctx, 'Ok')
+    const { hrBackupId } = this.body(ctx)
+
+    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+      const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
+      await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
+      this.sendOk(ctx, 'Ok')
+    } else {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
   }
 
   /**
@@ -62,10 +68,7 @@ export default class RouteActivities extends Route {
       const dateLastMonth = await this.model.getLastMonth(hrBackupId)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
-      console.time('new')
-      //console.log('LA DATE', date)
       const list = await this.model.getByMonthNew(date, hrBackupId)
-      console.timeEnd('new')
 
       this.sendOk(ctx, {
         list,
@@ -73,7 +76,7 @@ export default class RouteActivities extends Route {
         date,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -95,7 +98,7 @@ export default class RouteActivities extends Route {
         date,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -117,7 +120,7 @@ export default class RouteActivities extends Route {
         list,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -141,7 +144,7 @@ export default class RouteActivities extends Route {
         list,
       })
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }

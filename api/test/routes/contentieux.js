@@ -1,10 +1,11 @@
 import { instanceAxios } from '../utils/axios'
 
-export const onGetAllContentieuxReferentiels = async ({ userToken, jirs = false }) => {
+export const onGetAllContentieuxReferentiels = async ({ userToken, backupId, jirs = false }) => {
   return await instanceAxios
     .post(
       '/contentieux-referentiels/get-referentiels',
       {
+        backupId,
         isJirs: jirs,
       },
       {

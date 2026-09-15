@@ -88,6 +88,10 @@ export default class RouteCalculator extends Route {
   async rangeValues(ctx) {
     let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
 
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+
     dateStart = today(dateStart)
     dateStop = month(dateStop, 0, 'lastday')
     let hrList = null
@@ -470,6 +474,10 @@ export default class RouteCalculator extends Route {
   })
   async hasError(ctx) {
     let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
 
     switch (type) {
       case COCKPIT_ERROR_NO_ENTRIES_OR_EXITS: {

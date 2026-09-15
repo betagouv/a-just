@@ -14,14 +14,13 @@ import {
   getJuridictionData,
   getViewModel,
   isHumanPresentOnInterval,
-  replaceIfZero,
   runExtractsInParallel,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, groupBy, isNumber, last, orderBy, sumBy } from 'lodash'
+import { groupBy, isNumber, orderBy } from 'lodash'
 import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
-import { buildIdToLabelMap, completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
+import { buildIdToLabelMap, updateLabels } from '../utils/referentiel'
 import { generateHRIndexes } from '../utils/human-resource'
 import { loadOrWarmHR, printKeys } from '../utils/redis'
 import { getJob } from '../utils/jobStore'
@@ -94,7 +93,7 @@ export default class RouteExtractor extends Route {
         printKeys('*')
 
         if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-          ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+          ctx.throw(403, "Vous n'avez pas accès")
         }
 
         await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
@@ -195,7 +194,7 @@ export default class RouteExtractor extends Route {
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.isAdmin],
   })
   async juridictionAjustedDataList(ctx) {
     let { dateStart /*, dateStop */ } = this.body(ctx)
@@ -237,7 +236,7 @@ export default class RouteExtractor extends Route {
 
     if (!Access.isAdmin(ctx)) {
       if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-        ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+        ctx.throw(403, "Vous n'avez pas accès")
       }
     }
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
@@ -294,7 +293,7 @@ export default class RouteExtractor extends Route {
     if (!userId) return ctx.throw(401, 'Non authentifié')
 
     if (!(await this.models.HRBackups.haveAccess(backupId, userId))) {
-      return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
@@ -358,7 +357,10 @@ export default class RouteExtractor extends Route {
   })
   async filterListNew(ctx) {
     const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
-    console.time('NEW PERF')
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
 
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
 
@@ -448,8 +450,6 @@ export default class RouteExtractor extends Route {
       allJuridiction,
       ongletLogs,
     })
-
-    console.timeEnd('NEW PERF')
 
     this.sendOk(ctx, {
       fonctions: formatedFunctions,

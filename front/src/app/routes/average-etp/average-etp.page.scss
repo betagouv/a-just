@@ -46,6 +46,10 @@
         font-size: 16px;
         position: relative;
 
+        p {
+          white-space: nowrap;
+        }
+
         .mat-icon {
           padding: 4px;
           font-size: 0.875em;

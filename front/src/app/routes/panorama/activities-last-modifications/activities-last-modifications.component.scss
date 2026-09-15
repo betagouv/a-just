@@ -19,6 +19,11 @@
     align-items: center;
     text-decoration: none;
     margin-bottom: 4px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-bgSelect;
+    }
 
     .preview {
       flex: 1;

@@ -16,6 +16,12 @@
   padding: 4px 8px;
   cursor: pointer;
 
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: utils.$colors-bgTag;
+  }
+
   &.new-fonction {
     border-color: utils.$colors-borderSelect;
     display: flex;
@@ -66,6 +72,11 @@
   &.dark-mode {
     background-color: utils.$colors-darkModeBgMenu;
     border: 1px solid utils.$colors-darkModeBgMenu;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-darkModeBgHeader;
+    }
 
     p,
     mat-icon {

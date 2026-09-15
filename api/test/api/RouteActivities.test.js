@@ -9,9 +9,12 @@ module.exports = function (datas) {
 
   describe('Test Activities', () => {
     it('load Referentiel', async () => {
-      const response = await onGetAllContentieuxReferentiels({ userToken: datas.adminToken, jirs: true })
+      // La route contrôle l'accès à la juridiction demandée: sans backupId elle répond 403
+      const response = await onGetAllContentieuxReferentiels({ userToken: datas.adminToken, backupId: datas.adminBackupId, jirs: true })
 
-      referentiels = response.data && response.data.data
+      referentiels = (response.data && response.data.data && response.data.data.referentiels) || []
+
+      assert.strictEqual(response.status, 200)
       assert.isOk(referentiels.length !== 0, 'missing contentieux referentiels')
     })
 

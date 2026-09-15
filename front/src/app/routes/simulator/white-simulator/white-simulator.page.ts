@@ -1028,8 +1028,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         this.paramsToAjust.param2.label = inputField.id
         this.paramsToAjust.param2.input = 3
         this.paramsToAjust.param2.button = inputField
-        this.paramsToAjust.param1.percentage = null
-        this.paramsToAjust.param1.addition = this.valueToAjust.addition
+        this.paramsToAjust.param2.percentage = null
+        this.paramsToAjust.param2.addition = this.valueToAjust.addition
 
         // disable all buttons excepted those already filled
         allButton.map((x: any) => {
@@ -1199,7 +1199,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
         if (!isFinite(pct)) return 'NA'
         return pct >= 0 ? '+' + pct : String(pct)
       }
-      return this.ratioStr(String(param.value), baseline)
+      return this.ratio(String(param.value), baseline)
     }
 
     return this.difference(String(param.value), baseline, id)

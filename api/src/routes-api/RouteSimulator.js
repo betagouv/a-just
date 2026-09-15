@@ -10,7 +10,6 @@ import {
 } from '../constants/log-codes'
 import { loadOrWarmHR } from '../utils/redis'
 import { generateHRIndexes } from '../utils/human-resource'
-import { month, today } from '../utils/date'
 
 /**
  * Route pour la page du simulateur
@@ -54,7 +53,7 @@ export default class RouteSimulator extends Route {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     console.time('simulator-1')
@@ -124,7 +123,7 @@ export default class RouteSimulator extends Route {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId, referentielId, functionIds } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     console.time('simulator-1')
@@ -176,7 +175,7 @@ export default class RouteSimulator extends Route {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     const categories = await this.models.HRCategories.getAll()
