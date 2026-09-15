@@ -6,7 +6,7 @@
       background-color: utils.$colors-darkModeTitle;
 
       &:hover {
-        background-color: #a0a0ff;
+        background-color: utils.$colors-bgHoverBackButtonDark;
       }
     }
 
@@ -21,9 +21,9 @@
     padding: 4px 8px 4px 6px;
     border-radius: 4px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    background-color: #fff;
+    background-color: utils.$colors-white;
     text-decoration: none;
-    color: #3a3a3a;
+    color: utils.$colors-cblack;
     cursor: pointer;
     user-select: none;
 
