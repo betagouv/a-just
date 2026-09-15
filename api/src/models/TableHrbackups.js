@@ -56,8 +56,6 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    console.log('listAll', listAll);
-
     const list = []
     const groups = groupBy(listAll, 'id')
     for (const [key, value] of Object.entries(groups)) {
