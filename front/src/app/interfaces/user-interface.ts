@@ -42,4 +42,8 @@ export interface UserInterface {
    * Liste des referentiels sur lequels il a accès
    */
   referentielIds?: number[]
+  /**
+   * Liste des sauvegardes sur lequels il a accès
+   */
+  backupIds?: number[]
 }

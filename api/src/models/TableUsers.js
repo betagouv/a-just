@@ -36,7 +36,7 @@ import { getNbDay, humanDate, today } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
 import { differenceInMinutes } from 'date-fns'
 import { Op } from 'sequelize'
-import { groupBy } from 'lodash'
+import { groupBy, uniq } from 'lodash'
 
 /**
  * Table des utilisateurs
@@ -521,6 +521,11 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    const ventilationsIds = await Model.models.UserVentilations.findAll({
+      attributes: ['user_id', 'hr_backup_id'],
+      raw: true,
+    })
+
     return Object.values(groupBy(users, 'id')).map(([user]) => ({
       id: user.id,
       email: user.email,
@@ -528,11 +533,12 @@ export default (sequelizeInstance, Model) => {
       lastName: user.lastName,
       role: user.role,
       referentielIds: user.referentielIds,
-      access: users.filter((u) => u.id === user.id).map((u) => u['UsersAccesses.access_id']),
+      access: uniq(users.filter((u) => u.id === user.id && u['UsersAccesses.access_id']).map((u) => u['UsersAccesses.access_id'])),
+      backupIds: uniq(ventilationsIds.filter((v) => v.user_id === user.id).map((v) => v.hr_backup_id)),
     }))
   }
 
-  Model.updateUserOfJuridictionsByLocalAdmin = async (ownerId, { userId, juridictionId, access, referentielIds }) => {
+  Model.updateUserOfJuridictionsByLocalAdmin = async (ownerId, { userId, juridictionId, access, referentielIds, backupIds }) => {
     const user = await Model.findOne({
       where: {
         id: userId,
@@ -546,11 +552,29 @@ export default (sequelizeInstance, Model) => {
     const ownerHasAdminAccess = await Model.hasAdminAccessToJuridiction(ownerId, juridictionId)
     const userHasAccess = await Model.models.HRBackups.haveAccess(juridictionId, userId)
     if (ownerHasAdminAccess && userHasAccess) {
+      let ventilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((ventilation) => ventilation.id)
+
+      // on recupére le groupe de la juridiction
+      const group = await Model.models.Groups.getGroupsByBackupId(juridictionId, ownerId)
+      const options = {}
+
+      if (group && group.backups.length) {
+        const groupBackupIds = group.backups.map((backup) => backup.id)
+        const allowedBackupIds = (backupIds || []).filter((id) => groupBackupIds.includes(id))
+        const unAllowedBackupIds = groupBackupIds.filter((id) => !backupIds.includes(id))
+
+        ventilations = ventilations.filter((ventilation) => !unAllowedBackupIds.includes(ventilation))
+        ventilations = [...ventilations, ...allowedBackupIds]
+
+        options.ventilations = uniq(ventilations)
+      }
+
       await Model.models.Logs.addLog(UPDATE_USER_JURIDICTION, ownerId, { userId, juridictionId, access, referentielIds })
       await Model.updateAccount({
         userId,
         access,
         referentielIds,
+        ...options,
       })
     }
   }

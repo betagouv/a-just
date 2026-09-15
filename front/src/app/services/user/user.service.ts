@@ -33,6 +33,7 @@ import {
   USER_ACCESS_VENTILATIONS_WRITER,
   USER_ACCESS_DASHBOARD_WRITER,
 } from '../../constants/user-access'
+import { JuridictionGroupInterface } from '../../interfaces/juridictions.interface'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -546,18 +547,29 @@ export class UserService implements OnInit {
    * API demande les utilisateurs de la juridiction
    * @returns
    */
-  async getUsersJuridictions(): Promise<UserInterface[]> {
+  async getUsersJuridictions(): Promise<{ users: UserInterface[]; group: JuridictionGroupInterface | null }> {
     const data = await this.serverService.post('users/get-users-juridictions', {
       juridictionId: this.humanResourceService.backupId.getValue(),
     })
-    return data.data.users || []
+    return data.data || { users: [], group: null }
   }
 
-  async updatePersonByLocalAdmin({ userId, access, referentielIds }: { userId: number; access: number[]; referentielIds: number[] }) {
+  async updatePersonByLocalAdmin({
+    userId,
+    access,
+    referentielIds,
+    backupIds,
+  }: {
+    userId: number
+    access: number[]
+    referentielIds: number[]
+    backupIds: number[]
+  }) {
     await this.serverService.put('users/update-user-of-juridictions-by-local-admin', {
       userId,
       access,
       referentielIds,
+      backupIds,
       juridictionId: this.humanResourceService.backupId.getValue(),
     })
   }

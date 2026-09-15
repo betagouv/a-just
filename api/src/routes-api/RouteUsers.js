@@ -430,7 +430,7 @@ export default class RouteUsers extends Route {
 
     const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
     if (hasAccess) {
-      const group = await this.model.models.Groups.getGroupsByJuridictionId(juridictionId);
+      const group = await this.model.models.Groups.getGroupsByBackupId(juridictionId, ctx.state.user.id);
       const users = await this.model.getUsersJuridictions(juridictionId)
       this.sendOk(ctx, {
         users,
@@ -439,6 +439,7 @@ export default class RouteUsers extends Route {
     } else {
       this.sendOk(ctx, {
         users: [],
+        group: null,
       })
     }
   }
@@ -451,14 +452,15 @@ export default class RouteUsers extends Route {
       userId: Types.number(),
       access: Types.any(),
       referentielIds: Types.any(),
+      backupIds: Types.any(),
       juridictionId: Types.number(),
     }),
     accesses: [Access.isLogin],
   })
   async updateUserOfJuridictionsByLocalAdmin(ctx) {
-    const { userId, access, referentielIds, juridictionId } = this.body(ctx)
+    const { userId, access, referentielIds, backupIds, juridictionId } = this.body(ctx)
 
-    await this.model.updateUserOfJuridictionsByLocalAdmin(ctx.state.user.id, { userId, access, referentielIds, juridictionId })
+    await this.model.updateUserOfJuridictionsByLocalAdmin(ctx.state.user.id, { userId, access, referentielIds, backupIds, juridictionId })
 
     this.sendOk(ctx, 'Ok')
   }

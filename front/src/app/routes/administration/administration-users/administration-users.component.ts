@@ -9,6 +9,7 @@ import { UserInterface } from '../../../interfaces/user-interface'
 import { accessToString, CATEGORIES_ACCESS_IDS, PAGES_ACCESS_IDS, USER_ACCESS_LIST } from '../../../constants/user-access'
 import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe'
 import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
+import { JuridictionGroupInterface } from '../../../interfaces/juridictions.interface'
 /**
  * List des utilisateurs de la juridiction
  */
@@ -20,8 +21,7 @@ import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-r
   styleUrls: ['./administration-users.component.scss'],
 })
 export class AdministrationUsersComponent extends MainClass implements OnInit, OnDestroy {
-  editedUsers: Record<number, { access: number[]; referentielIds: number[] }> = {}
-
+  editedUsers: Record<number, { access: number[]; referentielIds: number[]; backupIds: number[] }> = {}
   /**
    * Service pour gérer les utilisateurs
    */
@@ -42,6 +42,10 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
    * Referentiels
    */
   referentiels: ContentieuReferentielInterface[] = []
+  /**
+   * Groupe de juridictions
+   */
+  group: JuridictionGroupInterface | null = null
   /**
    * Pages access ids
    */
@@ -92,6 +96,7 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     this.editedUsers[userId] = {
       access: [...(user.access || [])],
       referentielIds: [...(user.referentielIds || this.referentiels.map((referentiel) => referentiel.id))],
+      backupIds: [...(user.backupIds || this.group?.backups?.map((backup) => backup.id) || [])],
     }
 
     this.onEditUserIds = [...this.onEditUserIds, userId]
@@ -132,9 +137,14 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
 
     const userEdition = this.editedUsers[user.id]
     const access = user.access || []
+    const backupIds = user.backupIds || []
     const referentielIds = user.referentielIds || this.referentiels.map((referentiel) => referentiel.id)
 
-    return !this.areIdsEqual(userEdition.access, access) || !this.areIdsEqual(userEdition.referentielIds, referentielIds)
+    return (
+      !this.areIdsEqual(userEdition.access, access) ||
+      !this.areIdsEqual(userEdition.referentielIds, referentielIds) ||
+      !this.areIdsEqual(userEdition.backupIds, backupIds)
+    )
   }
 
   private areIdsEqual(firstIds: number[], secondIds: number[]) {
@@ -179,7 +189,9 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
   }
 
   async onLoad() {
-    this.users = sortBy(await this.userService.getUsersJuridictions(), [
+    const { users, group } = await this.userService.getUsersJuridictions()
+    this.group = group
+    this.users = sortBy(users, [
       function (o) {
         return (o?.lastName || '').toLocaleLowerCase()
       },
@@ -255,7 +267,7 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
   }
 
   async onUpdateById(userId: number) {
-    const userEdition = this.editedUsers[userId] || { access: [], referentielIds: [] }
+    const userEdition = this.editedUsers[userId] || { access: [], referentielIds: [], backupIds: [] }
     let newRefIds: any = userEdition.referentielIds || []
     if (newRefIds.length === this.referentiels.length) {
       newRefIds = null
@@ -265,15 +277,17 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
       userId,
       access: userEdition.access,
       referentielIds: newRefIds,
+      backupIds: userEdition.backupIds,
     })
 
     if (confirm("Confirmer la modification des accès de l'utilisateur ?")) {
-      await this.userService.updatePersonByLocalAdmin({ userId, access: userEdition.access, referentielIds: newRefIds })
+      await this.userService.updatePersonByLocalAdmin({ userId, access: userEdition.access, referentielIds: newRefIds, backupIds: userEdition.backupIds })
 
       const userIndex = this.users.findIndex((u) => u.id === userId)
       if (userIndex !== -1) {
         this.users[userIndex].access = [...userEdition.access]
         this.users[userIndex].referentielIds = [...userEdition.referentielIds]
+        this.users[userIndex].backupIds = [...userEdition.backupIds]
 
         delete this.editedUsers[userId]
         this.onEditUserIds = this.onEditUserIds.filter((id) => id !== userId)
@@ -295,5 +309,28 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
         console.error("Erreur lors de l'invitation de l'utilisateur", error)
       }
     }
+  }
+
+  onToggleBackupAccess(userId: number | undefined, backupId: number, checked: boolean) {
+    if (!userId || !this.editedUsers[userId]) {
+      return
+    }
+
+    if (checked) {
+      if (!this.editedUsers[userId].backupIds.includes(backupId)) {
+        this.editedUsers[userId].backupIds = [...this.editedUsers[userId].backupIds, backupId]
+        return
+      }
+    }
+
+    this.editedUsers[userId].backupIds = this.editedUsers[userId].backupIds.filter((id) => id !== backupId)
+  }
+
+  hasBackupAccess(userId: number | undefined, backupId: number) {
+    if (!userId || !this.editedUsers[userId]) {
+      return false
+    }
+
+    return this.editedUsers[userId].backupIds.includes(backupId)
   }
 }

@@ -43,9 +43,18 @@ export interface BackupInterface {
    * Est administrateur local
    */
   isAdminLocal?: boolean
+  /**
+   * Liste des groupes de juridictions
+   */
+  groups?: BackupGroupInterface[]
 }
 
 export interface UpdateInterface {
   date: Date
   user: Object
+}
+
+export interface BackupGroupInterface {
+  id: number
+  label: string
 }

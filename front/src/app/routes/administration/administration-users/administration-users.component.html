@@ -80,6 +80,20 @@
             }
           </div>
         </div>
+        @if(group && group.backups && group.backups.length > 0) {
+        <div class="detail-group">
+          <div class="detail-label">Groupe de juridictions</div>
+          <div class="detail-value">
+            @for(backup of group.backups; track backup.id) {
+            <div>
+              <input type="checkbox" [checked]="hasBackupAccess(user.id, backup.id)" #backupCheckbox
+                (change)="onToggleBackupAccess(user.id, backup.id, backupCheckbox.checked)">
+              <p class="s" (click)="backupCheckbox.click()">{{ backup.label }}</p>
+            </div>
+            }
+          </div>
+        </div>
+        }
       </div>
       <div class="details-actions">
         @if(hasUserChanges(user)) {

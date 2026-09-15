@@ -95,15 +95,38 @@ export default (sequelizeInstance, Model) => {
     return true
   }
 
-  Model.getGroupsByJuridictionId = async (juridictionId) => {
-    /*const groups = await Model.findAll({
-      attributes: ['id', 'label'],
-      where: { juridiction_id: juridictionId },
+  Model.getGroupsByBackupId = async (backupId, userId) => {
+    // récupére le groupe de la juridition
+    const backup = await Model.models.HRBackups.findOne({ where: { id: backupId }, raw: true })
+
+    if (!backup) {
+      return null
+    }
+
+    // on récupère le contenu du groupe
+    const group = await Model.findOne({ where: { id: backup.group_id }, raw: true })
+    if (!group) {
+      return null
+    }
+
+    // on récupère les juridictions du groupe
+    const backups = await Model.models.HRBackups.findAll({
+      attributes: ['id', 'label', 'group_id', 'group_id_rank'],
+      where: {
+        group_id: backup.group_id,
+      },
+      order: [
+        ['group_id_rank', 'ASC'],
+        ['label', 'ASC'],
+      ],
       raw: true,
     })
-    console.log('groups', groups);
-    return groups*/
-    return []
+
+    return {
+      id: group.id,
+      label: group.label,
+      backups: backups.map((backup) => ({ id: backup.id, label: backup.label })),
+    }
   }
 
   return Model
