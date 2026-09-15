@@ -1030,10 +1030,20 @@ function renderEntity(entity, config) {
 
   const attributes = getAttributes(model);
   const lines = [`  ${alias} {`];
+  const columns = new Map();
 
   for (const [attributeName, attribute] of Object.entries(attributes)) {
-    const type = getTypeName(attribute);
     const fieldName = getFieldName(attributeName, attribute);
+    // Explicit snake_case timestamps and Sequelize's generated camelCase
+    // attributes can refer to the same physical column. Prefer the explicit
+    // definition so its comments and constraints are retained.
+    if (!columns.has(fieldName) || attributeName === fieldName) {
+      columns.set(fieldName, attribute);
+    }
+  }
+
+  for (const [fieldName, attribute] of columns) {
+    const type = getTypeName(attribute);
 
     // Keep field identifiers Mermaid-safe.
     const safeFieldName = String(fieldName)
@@ -1210,7 +1220,12 @@ function renderMermaid(diagram, config) {
 
 function renderOutput(mermaid, config, stats) {
   if (config.format === "mermaid") {
-    return mermaid;
+    return [
+      "%% Legend: || = 1; |o / o| = 0..1; }o / o{ = 0..N; }| / |{ = 1..N",
+      "%% A ||--o{ B: each B has exactly one A; each A has zero or many B.",
+      "%% A }o--o{ B: N:N, optional on both sides.",
+      mermaid,
+    ].join("\n");
   }
 
   return `# Database ER Diagram
@@ -1221,6 +1236,26 @@ function renderOutput(mermaid, config, stats) {
 - Models: ${stats.models}
 - Foreign-key relationships: ${stats.foreignKeyRelations}
 - Many-to-many relationships: ${stats.manyToManyRelations}
+
+## Relationship legend
+
+The symbol next to an entity says how many of that entity can relate to one entity at the other end. Symbols are mirrored on the left and right.
+
+- \`||\` = exactly **1**.
+- \`|o\` (left) or \`o|\` (right) = **0..1** (optional).
+- \`}o\` (left) or \`o{\` (right) = **0..N** (zero or many).
+- \`}|\` (left) or \`|{\` (right) = **1..N** (at least one).
+
+Examples:
+
+- \`Parent ||--o{ Child\` = **1:N**: each child has exactly one parent; a parent can have zero or many children.
+- \`Parent |o--o{ Child\` = **1:N with an optional parent**: each child has zero or one parent; a parent can have zero or many children.
+- \`Parent ||--o| Child\` = **1:1**: each child has exactly one parent; a parent can have zero or one child.
+- \`A }o--o{ B\` = **N:N**: both sides can have zero or many matches, via a junction table.
+
+Line labels name the Sequelize association and its foreign key. **PK** = primary key, **FK** = foreign key, **UK** = unique key. Cardinalities reflect the model declarations; a collection is shown as optional because declaring an association does not require a parent to have children.
+
+## Diagram
 
 \`\`\`mermaid
 ${mermaid.trim()}

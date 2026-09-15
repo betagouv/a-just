@@ -7,6 +7,26 @@
 - Foreign-key relationships: 39
 - Many-to-many relationships: 0
 
+## Relationship legend
+
+The symbol next to an entity says how many of that entity can relate to one entity at the other end. Symbols are mirrored on the left and right.
+
+- `||` = exactly **1**.
+- `|o` (left) or `o|` (right) = **0..1** (optional).
+- `}o` (left) or `o{` (right) = **0..N** (zero or many).
+- `}|` (left) or `|{` (right) = **1..N** (at least one).
+
+Examples:
+
+- `Parent ||--o{ Child` = **1:N**: each child has exactly one parent; a parent can have zero or many children.
+- `Parent |o--o{ Child` = **1:N with an optional parent**: each child has zero or one parent; a parent can have zero or many children.
+- `Parent ||--o| Child` = **1:1**: each child has exactly one parent; a parent can have zero or one child.
+- `A }o--o{ B` = **N:N**: both sides can have zero or many matches, via a junction table.
+
+Line labels name the Sequelize association and its foreign key. **PK** = primary key, **FK** = foreign key, **UK** = unique key. Cardinalities reflect the model declarations; a collection is shown as optional because declaring an association does not require a parent to have children.
+
+## Diagram
+
 ```mermaid
 erDiagram
   direction LR
@@ -25,9 +45,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   Comments {
@@ -39,18 +56,12 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   CompetenceMappings {
     INTEGER id PK,UK "AUTO INCREMENT"
     INTEGER code_nac "NOT NULL"
     INTEGER rh_position_id "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -65,9 +76,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
     DOUBLE_PRECISION average_processing_time_fonc
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   ContentieuxReferentiels {
@@ -87,17 +95,11 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   Groups {
     INTEGER id PK,FK,UK "AUTO INCREMENT"
     VARCHAR_255 label "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -112,18 +114,12 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   HistoriesContentieuxUpdate {
     INTEGER id PK,UK "AUTO INCREMENT"
     INTEGER backup_id "NOT NULL"
     INTEGER user_id "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -134,9 +130,6 @@ erDiagram
     INTEGER hr_situation_id FK "NOT NULL"
     INTEGER nac_id "NOT NULL"
     FLOAT percent "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -153,17 +146,11 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   HRBackupsGroups {
     INTEGER id PK,FK,UK "AUTO INCREMENT"
     VARCHAR_255 label "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -173,9 +160,6 @@ erDiagram
     INTEGER id PK,UK "AUTO INCREMENT"
     INTEGER hr_backup_group_id "NOT NULL"
     INTEGER hr_backup_id FK "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -190,18 +174,12 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   HRCategories {
     INTEGER id PK,FK,UK "AUTO INCREMENT"
     VARCHAR_255 label "NOT NULL"
     INTEGER rank
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -212,9 +190,6 @@ erDiagram
     INTEGER human_id FK "NOT NULL"
     TEXT comment
     INTEGER user_id "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -234,9 +209,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE deleted_at
     BOOLEAN calculatrice_is_active
     VARCHAR_255 position
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   HRIndisponibilities {
@@ -246,9 +218,6 @@ erDiagram
     FLOAT percent "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE date_start
     TIMESTAMP_WITH_TIME_ZONE date_stop
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -264,9 +233,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   HRVentilations {
@@ -277,9 +243,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE date_start
     TIMESTAMP_WITH_TIME_ZONE date_stop
     INTEGER backup_id
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -299,9 +262,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   Logs {
@@ -310,9 +270,6 @@ erDiagram
     TEXT datas
     TEXT datas2
     INTEGER user_id
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -334,9 +291,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   NewsUserLog {
@@ -344,9 +298,6 @@ erDiagram
     INTEGER user_id "NOT NULL"
     INTEGER news_id FK "NOT NULL"
     VARCHAR_255 event_type "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -361,18 +312,12 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   OptionsBackupJuridictions {
     INTEGER id PK,FK,UK "AUTO INCREMENT"
     INTEGER option_backup_id FK "NOT NULL"
     INTEGER juridiction_id "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -387,9 +332,6 @@ erDiagram
     VARCHAR_255 type "NOT NULL"
     VARCHAR_255 status "NOT NULL"
     INTEGER user_id
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   TJ {
@@ -407,9 +349,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   TJDetails {
@@ -417,9 +356,6 @@ erDiagram
     INTEGER juridiction_id "NOT NULL"
     INTEGER category_id "NOT NULL"
     VARCHAR_255 value
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -436,9 +372,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   UserFeedback {
@@ -448,9 +381,6 @@ erDiagram
     TEXT comment
     VARCHAR_255 page
     BOOLEAN recontact "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -475,9 +405,6 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   UsersAccess {
@@ -487,18 +414,12 @@ erDiagram
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
   }
 
   UserVentilations {
     INTEGER id PK,UK "AUTO INCREMENT"
     INTEGER user_id FK "NOT NULL"
     INTEGER hr_backup_id FK "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
-    TIMESTAMP_WITH_TIME_ZONE deleted_at
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
