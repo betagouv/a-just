@@ -34,66 +34,71 @@ export default (sequelizeInstance, Model) => {
       isJirs = true
     }
 
-    const formatToGraph = async (parentId = null, index = 0, displayAll = true) => {
-      const where = {}
-      if (displayAll == false) {
-        if (backupId) {
-          where[Op.or] = [
-            {
-              only_to_hr_backup: null,
-            },
-            {
-              only_to_hr_backup: { [Op.contains]: [backupId] },
-            },
-          ]
-        }
-        // filter by referentiel only for level 3
-        if (filterReferentielsId && index === 2) {
-          where.id = filterReferentielsId
-        }
-      }
-
-      if (refIds && index === 2) {
-        if (where.id) {
-          where.id = [...(Array.isArray(where.id) ? where.id : [where.id]), ...refIds]
-        } else {
-          where.id = refIds
-        }
-      }
-
-      let list = await Model.findAll({
-        attributes: [
-          'id',
-          'label',
-          'code_import',
-          'rank',
-          ['value_quality_in', 'valueQualityIn'],
-          ['value_quality_out', 'valueQualityOut'],
-          ['value_quality_stock', 'valueQualityStock'],
-          ['help_url', 'helpUrl'],
-          'compter',
-          'category',
-          ['only_to_hr_backup', 'onlyToHrBackup'],
-          ['check_ventilation', 'checkVentilation'],
-        ],
-        where: {
-          parent_id: parentId,
-          ...where,
+    const where = {}
+    if (displayAll == false && backupId) {
+      where[Op.or] = [
+        {
+          only_to_hr_backup: null,
         },
-        order: [['rank', 'asc']],
-        raw: true,
-      })
+        {
+          only_to_hr_backup: { [Op.contains]: [backupId] },
+        },
+      ]
+    }
 
-      if (list && list.length && index < 3) {
+    const rows = await Model.findAll({
+      attributes: [
+        'id',
+        'label',
+        'code_import',
+        'rank',
+        'parent_id',
+        ['value_quality_in', 'valueQualityIn'],
+        ['value_quality_out', 'valueQualityOut'],
+        ['value_quality_stock', 'valueQualityStock'],
+        ['help_url', 'helpUrl'],
+        'compter',
+        'category',
+        ['only_to_hr_backup', 'onlyToHrBackup'],
+        ['check_ventilation', 'checkVentilation'],
+      ],
+      where,
+      order: [['rank', 'asc']],
+      raw: true,
+    })
+
+    const toIdList = (value) => (Array.isArray(value) ? value : [value])
+    let allowedLevel3Ids = null
+    if (displayAll == false && filterReferentielsId) {
+      allowedLevel3Ids = toIdList(filterReferentielsId)
+    }
+    if (refIds) {
+      allowedLevel3Ids = [...(allowedLevel3Ids || []), ...toIdList(refIds)]
+    }
+    const allowedLevel3Set = allowedLevel3Ids ? new Set(allowedLevel3Ids) : null
+
+    const byParent = new Map()
+    for (const row of rows) {
+      const parentId = row.parent_id ?? null
+      delete row.parent_id
+      if (!byParent.has(parentId)) byParent.set(parentId, [])
+      byParent.get(parentId).push(row)
+    }
+
+    const formatToGraph = (parentId = null, index = 0) => {
+      let list = byParent.get(parentId) || []
+      if (allowedLevel3Set && index === 2) {
+        list = list.filter((node) => allowedLevel3Set.has(node.id))
+      }
+      if (list.length && index < 3) {
         for (let i = 0; i < list.length; i++) {
-          list[i].childrens = await formatToGraph(list[i].id, index + 1, displayAll)
+          list[i].childrens = formatToGraph(list[i].id, index + 1)
         }
       }
-
       return list
     }
 
-    const mainList = await formatToGraph(undefined, undefined, displayAll)
+    const mainList = formatToGraph()
     let list = []
     mainList.map((main) => {
       if (main.code_import) {
