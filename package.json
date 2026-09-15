@@ -7,6 +7,7 @@
   "scripts": {
     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+    "db:erd": "node scripts/generate-erd.js",
     "test": "npm run test:e2e",
     "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
     "test:e2e": "bash scripts/run-e2e.sh",
