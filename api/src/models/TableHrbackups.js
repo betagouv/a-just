@@ -14,37 +14,70 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.list = async (userId) => {
-    const listAll = await Model.findAll({
-      attributes: ['id', 'label', ['updated_at', 'date'], 'jirs', 'stat_exclusion'],
+    const userVentilations = await Model.models.UserVentilations.findAll({
+      attributes: ['id'],
+      where: {
+        user_id: userId,
+      },
       include: [
         {
           attributes: ['id'],
-          model: Model.models.UserVentilations,
-          where: {
-            user_id: userId,
-          },
-        },
-        {
-          model: Model.models.TJ,
+          model: Model.models.HRBackups,
+          required: true,
+          include: [
+            {
+              attributes: ['id', 'enabled'],
+              model: Model.models.TJ,
+              required: true,
+              where: {
+                enabled: true,
+              },
+            }
+          ]
         }
+      ],
+      raw: true,
+    })
+
+    const listAll = await Model.findAll({
+      attributes: ['id', 'label', ['updated_at', 'date'], 'jirs', 'stat_exclusion', 'group_id_rank'],
+      where: {
+        id: {
+          [Op.in]: userVentilations.map((item) => item['HRBackup.id']),
+        },
+      },
+      include: [
+        {
+          attributes: ['id', 'label'],
+          model: Model.models.Groups,
+        },
       ],
       order: [['label', 'asc']],
       raw: true,
     })
-    const list = []
 
-    for (let i = 0; i < listAll.length; i++) {
-      if (listAll[i]['TJ.enabled']) {
-        list.push({
-          id: listAll[i].id,
-          label: listAll[i].label,
-          date: listAll[i].date,
-          jirs: listAll[i].jirs,
-          stat_exclusion: listAll[i].stat_exclusion,
+    console.log('listAll', listAll);
+
+    const list = []
+    const groups = groupBy(listAll, 'id')
+    for (const [key, value] of Object.entries(groups)) {
+      list.push({
+        id: +key,
+        label: value[0].label,
+        date: value[0].date,
+        jirs: value[0].jirs,
+        stat_exclusion: value[0].stat_exclusion,
+        groupIdRank: value[0].group_id_rank,
+        groups: value.filter((item) => item['Group.id'] !== null).map((item) =>
+        ({
+          id: item['Group.id'],
+          label: item['Group.label'],
         })
-      }
+        ),
+      })
     }
-    return list
+
+    return orderBy(list, 'label')
   }
 
   /**

@@ -44,6 +44,10 @@ export interface BackupInterface {
    */
   isAdminLocal?: boolean
   /**
+   * Rank dans le groupe de juridictions
+   */
+  groupIdRank?: number
+  /**
    * Liste des groupes de juridictions
    */
   groups?: BackupGroupInterface[]
