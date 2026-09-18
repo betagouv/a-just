@@ -137,13 +137,15 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
 
     const userEdition = this.editedUsers[user.id]
     const access = user.access || []
-    const backupIds = user.backupIds || []
+    const groupBackupIds = this.getGroupBackupIds()
+    const backupIds = (user.backupIds || []).filter((id) => groupBackupIds.includes(id))
+    const editionBackupIds = userEdition.backupIds.filter((id) => groupBackupIds.includes(id))
     const referentielIds = user.referentielIds || this.referentiels.map((referentiel) => referentiel.id)
 
     return (
       !this.areIdsEqual(userEdition.access, access) ||
       !this.areIdsEqual(userEdition.referentielIds, referentielIds) ||
-      !this.areIdsEqual(userEdition.backupIds, backupIds)
+      !this.areIdsEqual(editionBackupIds, backupIds)
     )
   }
 
@@ -319,8 +321,8 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     if (checked) {
       if (!this.editedUsers[userId].backupIds.includes(backupId)) {
         this.editedUsers[userId].backupIds = [...this.editedUsers[userId].backupIds, backupId]
-        return
       }
+      return
     }
 
     this.editedUsers[userId].backupIds = this.editedUsers[userId].backupIds.filter((id) => id !== backupId)
@@ -332,5 +334,43 @@ export class AdministrationUsersComponent extends MainClass implements OnInit, O
     }
 
     return this.editedUsers[userId].backupIds.includes(backupId)
+  }
+
+  hasAllGroupBackupAccess(userId: number | undefined) {
+    const groupBackupIds = this.getGroupBackupIds()
+
+    return groupBackupIds.length > 0 && groupBackupIds.every((backupId) => this.hasBackupAccess(userId, backupId))
+  }
+
+  hasPartialGroupBackupAccess(userId: number | undefined) {
+    const selectedCount = this.getSelectedGroupBackupIds(userId).length
+    const groupBackupCount = this.getGroupBackupIds().length
+
+    return selectedCount > 0 && selectedCount < groupBackupCount
+  }
+
+  onToggleGroupBackupAccess(userId: number | undefined, checked: boolean) {
+    if (!userId || !this.editedUsers[userId]) {
+      return
+    }
+
+    const groupBackupIds = this.getGroupBackupIds()
+    const otherBackupIds = this.editedUsers[userId].backupIds.filter((id) => !groupBackupIds.includes(id))
+
+    this.editedUsers[userId].backupIds = checked ? [...otherBackupIds, ...groupBackupIds] : otherBackupIds
+  }
+
+  private getGroupBackupIds() {
+    return this.group?.backups?.map((backup) => backup.id) || []
+  }
+
+  private getSelectedGroupBackupIds(userId: number | undefined) {
+    if (!userId || !this.editedUsers[userId]) {
+      return []
+    }
+
+    const groupBackupIds = this.getGroupBackupIds()
+
+    return this.editedUsers[userId].backupIds.filter((id) => groupBackupIds.includes(id))
   }
 }

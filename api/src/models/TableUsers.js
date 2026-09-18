@@ -503,7 +503,22 @@ export default (sequelizeInstance, Model) => {
     return false
   }
 
-  Model.getUsersJuridictions = async (juridicitonId) => {
+  Model.getUsersJuridictions = async (juridicitonId, ownerId) => {
+    const where = {
+    }
+    if (ownerId) {
+      where[Op.or] = [
+        {
+          id: ownerId,
+        },
+        {
+          role: null
+        },
+      ]
+    } else {
+      where.role = null
+    }
+
     const users = await Model.findAll({
       attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', ['referentiel_ids', 'referentielIds']],
       include: [{
@@ -515,9 +530,7 @@ export default (sequelizeInstance, Model) => {
       }, {
         model: Model.models.UsersAccess,
       }],
-      where: {
-        role: null
-      },
+      where,
       raw: true,
     })
 

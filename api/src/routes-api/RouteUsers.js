@@ -224,14 +224,12 @@ export default class RouteUsers extends Route {
     const allBackups = await this.model.models.HRBackups.getAll()
     const allIelst = await this.model.models.TJ.getAll()
 
-    const activeBackupIdSet = new Set(
-      allIelst
-        .filter((tj) => tj && tj.enabled === true)
-        .map((tj) => tj.backup_id)
-        .filter((id) => id !== null && id !== undefined),
-    )
+    const activeBackupIdSet = {}
+    allIelst.forEach((tj) => {
+      activeBackupIdSet[tj.backup_id] = tj.enabled
+    })
 
-    const filteredBackups = (Array.isArray(allBackups) ? allBackups : []).filter((b) => activeBackupIdSet.has(b.id))
+    const filteredBackups = (Array.isArray(allBackups) ? allBackups : []).filter((b) => activeBackupIdSet[b.id] || activeBackupIdSet[b.id] === undefined)
 
     this.sendOk(ctx, {
       list,
@@ -447,7 +445,7 @@ export default class RouteUsers extends Route {
     const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
     if (hasAccess) {
       const group = await this.model.models.Groups.getGroupsByBackupId(juridictionId, ctx.state.user.id);
-      const users = await this.model.getUsersJuridictions(juridictionId)
+      const users = await this.model.getUsersJuridictions(juridictionId, ctx.state.user.id)
       this.sendOk(ctx, {
         users,
         group,

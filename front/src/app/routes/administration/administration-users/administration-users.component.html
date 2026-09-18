@@ -84,6 +84,12 @@
         <div class="detail-group">
           <div class="detail-label">Groupe de juridictions</div>
           <div class="detail-value">
+            <div class="is-group">
+              <input type="checkbox" [checked]="hasAllGroupBackupAccess(user.id)"
+                [indeterminate]="hasPartialGroupBackupAccess(user.id)" #groupBackupCheckbox
+                (change)="onToggleGroupBackupAccess(user.id, groupBackupCheckbox.checked)">
+              <p class="s" (click)="groupBackupCheckbox.click()">Arrondissement {{ group.label }}</p>
+            </div>
             @for(backup of group.backups; track backup.id) {
             <div>
               <input type="checkbox" [checked]="hasBackupAccess(user.id, backup.id)" #backupCheckbox

@@ -136,6 +136,14 @@
       >input {
         cursor: pointer;
       }
+
+      &.is-group {
+        margin-bottom: 12px;
+
+        >p {
+          font-weight: 700;
+        }
+      }
     }
 
     .access-grid {

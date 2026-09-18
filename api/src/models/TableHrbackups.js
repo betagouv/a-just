@@ -28,10 +28,7 @@ export default (sequelizeInstance, Model) => {
             {
               attributes: ['id', 'enabled'],
               model: Model.models.TJ,
-              required: true,
-              where: {
-                enabled: true,
-              },
+              required: false,
             }
           ]
         }
@@ -43,7 +40,9 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', 'label', ['updated_at', 'date'], 'jirs', 'stat_exclusion', 'group_id_rank'],
       where: {
         id: {
-          [Op.in]: userVentilations.map((item) => item['HRBackup.id']),
+          [Op.in]: userVentilations
+            .filter((item) => item['HRBackup.TJ.id'] == null || item['HRBackup.TJ.enabled'])
+            .map((item) => item['HRBackup.id']),
         },
       },
       include: [
@@ -388,18 +387,19 @@ export default (sequelizeInstance, Model) => {
           },
         },
         {
-          attributes: ['id'],
+          attributes: ['id', 'enabled'],
           model: Model.models.TJ,
-          required: true,
-          where: {
-            enabled: true,
-          },
+          required: false,
         }
       ],
       raw: true,
     })
 
-    return backup ? true : false
+    if (!backup || (backup['TJ.id'] != null && !backup['TJ.enabled'])) {
+      return false
+    }
+
+    return true
   }
 
   /**
