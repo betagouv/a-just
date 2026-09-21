@@ -18,38 +18,55 @@
         </div>
 
         @if (hrBackups.length) {
-        <div class="juridiction">
+        <div class="juridiction" [class.expandable]="hrBackups.length > 1"
+            [matMenuTriggerFor]="hrBackups.length > 1 ? menu : null" #juridictionTrigger="matMenuTrigger">
             <div class="juridiction-title">
                 <h6 [title]="hrBackup && hrBackup.label">{{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup
                     && hrBackup.label }}</h6>
                 @if (hrBackups && hrBackups.length > 1) {
-                <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
+                <mat-icon [class.open]="juridictionTrigger.menuOpen">expand_more</mat-icon>
                 }
-                <mat-menu #menu="matMenu" class="juridiction-menu">
-                    @if (showGroupedJuridictions()) {
-                    @for (group of juridictionGroups(); track group.id) {
-                    <button mat-menu-item [matMenuTriggerFor]="groupMenu" [title]="group.label">
-                        {{ group.label }}
-                    </button>
-                    <mat-menu #groupMenu="matMenu" class="juridiction-menu">
-                        @for (bu of group.backups || []; track bu.id) {
-                        <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-                            {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
-                        </button> }
-                    </mat-menu>
-                    }
-                    @for (bu of backupsWithoutGroup(); track bu.id) {
-                    <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-                        {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
-                    </button> }
-                    } @else {
-                    @for (bu of hrBackups; track bu.id) {
-                    <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-                        {{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}
-                    </button> }
-                    }
-                </mat-menu>
             </div>
+            <mat-menu #menu="matMenu" class="juridiction-menu juridiction-menu-root">
+                @if (showGroupedJuridictions()) {
+                @for (group of juridictionGroups(); track group.id) {
+                @if ((group.backups || []).length > 1) {
+                <button mat-menu-item class="juridiction-item" [class.current]="isCurrentGroup(group)"
+                    [matMenuTriggerFor]="groupMenu" #groupTrigger="matMenuTrigger" [title]="group.label">
+                    <span class="item-label">{{ group.label }}</span>
+                    <span class="item-description">Description</span>
+                    <mat-icon [class.open]="groupTrigger.menuOpen">expand_more</mat-icon>
+                </button>
+                <mat-menu #groupMenu="matMenu" class="juridiction-menu">
+                    @for (bu of group.backups || []; track bu.id) {
+                    <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
+                        (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
+                        <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
+                        <span class="item-description">{{ group.label }}</span>
+                    </button> }
+                </mat-menu>
+                } @else {
+                @for (bu of group.backups || []; track bu.id) {
+                <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
+                    (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
+                    <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
+                    <span class="item-description">{{ group.label }}</span>
+                </button> }
+                }
+                }
+                @for (bu of backupsWithoutGroup(); track bu.id) {
+                <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
+                    (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
+                    <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
+                </button> }
+                } @else {
+                @for (bu of hrBackups; track bu.id) {
+                <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
+                    (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
+                    <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
+                </button> }
+                }
+            </mat-menu>
         </div>
         }
         <div class="menu-scrollable">

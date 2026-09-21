@@ -75,18 +75,18 @@
         }
 
         #content {
-            background-image: linear-gradient(to bottom, #f6f6f6, #fff 14%);
+            background-image: linear-gradient(to bottom, utils.$colors-bgSelect, utils.$colors-white 14%);
         }
     }
 
     .sub-tools {
-        background-color: #f6f6f6;
+        background-color: utils.$colors-bgSelect;
         display: flex;
         flex-direction: column;
 
         p,
         a {
-            color: #3a3a3a;
+            color: utils.$colors-cblack;
             font-size: 14px;
             padding: 8px 16px 8px 32px;
             cursor: pointer;
@@ -329,7 +329,7 @@
 .menu {
     width: 222px;
     margin-right: 1px;
-    background-color: white;
+    background-color: utils.$colors-white;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -351,23 +351,48 @@
     }
 
     .juridiction {
-        padding: 19px 10px 23px 10px;
         background-color: utils.$colors-cblue;
-        border: 1px solid utils.$colors-cblack;
+        transition: all ease-in-out 0.2s;
+
+        &.expandable {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
 
         .juridiction-title {
             display: flex;
+            align-items: center;
+            gap: 8px;
+            align-self: stretch;
+            padding: 24px 16px;
 
             h6 {
-                color: white;
+                color: utils.$colors-white;
                 flex: 1;
+                font-size: 16px;
+                line-height: 20px;
+                font-weight: 700;
+                text-transform: uppercase;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             mat-icon {
-                margin-left: 2px;
-                margin-top: 4px;
-                color: white;
-                cursor: pointer;
+                margin-left: 4px;
+                color: utils.$colors-white;
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                line-height: 16px;
+                transition: rotate ease-in-out 0.2s;
+
+                &.open {
+                    rotate: -90deg;
+                }
             }
         }
     }
@@ -392,7 +417,7 @@
         display: block;
         padding: 13px 4px 13px 13px;
         text-decoration: none;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
 
         &.top {
             cursor: pointer;
@@ -419,7 +444,7 @@
 
         a {
             text-decoration: none;
-            color: #000091;
+            color: utils.$colors-primary;
 
             p {
                 margin-top: 8px;
@@ -440,7 +465,7 @@
         }
 
         &.selected {
-            color: #000091;
+            color: utils.$colors-primary;
 
             a,
             p {
@@ -523,7 +548,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: white;
+        background-color: utils.$colors-white;
         position: relative;
 
         .top-header-back-title {
@@ -610,7 +635,7 @@
     left: 0;
     bottom: 0;
     z-index: 1000;
-    background-color: white;
+    background-color: utils.$colors-white;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -643,7 +668,7 @@
 
         h6,
         p {
-            color: white;
+            color: utils.$colors-white;
         }
 
         p {
@@ -662,7 +687,7 @@
     >iframe {
         border-radius: 4px;
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: utils.$colors-white;
         border: none;
         height: calc(100% + 80px);
     }
@@ -680,34 +705,34 @@
         background: rgba(245, 245, 254, 0.30);
         border-radius: 48px;
         backdrop-filter: blur(4px);
-        border: 1px solid #000091;
+        border: 1px solid utils.$colors-primary;
         font-size: 14px;
         height: 40px;
         line-height: 20px;
         font-weight: 700;
-        color: #000091;
+        color: utils.$colors-primary;
     }
 
     .help-content {
         position: absolute;
         bottom: 100%;
         right: 0;
-        background-color: white;
+        background-color: utils.$colors-white;
         border-radius: 8px;
         width: 420px;
-        border: 1px solid #000091;
+        border: 1px solid utils.$colors-primary;
         margin-bottom: 16px;
 
         .help-content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #000091;
+            background-color: utils.$colors-primary;
             padding: 8px 16px;
             border-radius: 7px 7px 0 0;
 
             p:first-child {
-                color: white;
+                color: utils.$colors-white;
                 font-size: 14px;
                 font-weight: 700;
             }
@@ -715,7 +740,7 @@
             p:last-child {
                 cursor: pointer;
                 font-size: 12px;
-                color: white;
+                color: utils.$colors-white;
             }
         }
 
@@ -735,8 +760,8 @@
 
                     a:first-child {
                         margin-bottom: 8px;
-                        color: #000091;
-                        border: 1px solid #000091;
+                        color: utils.$colors-primary;
+                        border: 1px solid utils.$colors-primary;
                         background: #F5F5FE;
                     }
                 }
@@ -754,7 +779,7 @@
                             width: 50px;
                             height: 50px;
                             border-radius: 50px;
-                            border: 1px solid white;
+                            border: 1px solid utils.$colors-white;
 
                             &:last-child {
                                 margin-left: -10px;
@@ -769,14 +794,126 @@
                     align-items: center;
                     justify-content: center;
                     text-decoration: none;
-                    color: white;
-                    background-color: #000091;
+                    color: utils.$colors-white;
+                    background-color: utils.$colors-primary;
                     font-size: 14px;
                     font-weight: 400;
                     gap: 4px;
                     border-radius: 4px;
                     padding: 4px 8px;
                 }
+            }
+        }
+    }
+}
+
+// Le panneau du menu est rendu dans l'overlay du CDK, hors du composant.
+// Le trigger occupe toute la largeur du menu latéral : le panneau racine est
+// donc décalé de cette largeur pour s'ouvrir à droite. Les sous-panneaux sont
+// positionnés par le CDK à partir du panneau parent, sans décalage supplémentaire.
+::ng-deep .cdk-overlay-pane:has(.juridiction-menu-root) {
+    margin-left: 224px;
+}
+
+::ng-deep .juridiction-menu.mat-mdc-menu-panel {
+    width: 224px;
+    max-width: 224px;
+    border-radius: 0;
+    background-color: utils.$colors-white;
+
+    .mat-mdc-menu-content {
+        padding: 0;
+    }
+
+    .juridiction-item.mat-mdc-menu-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        // le style global des boutons impose height/line-height/border-radius
+        height: auto;
+        min-height: 42px;
+        line-height: normal;
+        border-radius: 0;
+        margin: 0;
+        padding: 4px 12px;
+        border-bottom: 1px solid utils.$colors-cgrayDefault;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        // flèche de sous-menu ajoutée par défaut par Material
+        .mat-mdc-menu-submenu-icon {
+            display: none;
+        }
+
+        .mat-mdc-menu-item-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            line-height: normal;
+        }
+
+        .item-label {
+            font-size: 14px;
+            line-height: 18px;
+            color: utils.$colors-cblackdark;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-description {
+            font-size: 12px;
+            line-height: 16px;
+            color: utils.$colors-cgraylightv2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        // Material projette l'icône avant le texte, on la replace à droite
+        // et on annule le décalage du style global `button mat-icon`
+        mat-icon {
+            order: 2;
+            position: static;
+            margin: 0 0 0 8px;
+            color: utils.$colors-cblack;
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            transition: rotate ease-in-out 0.2s;
+
+            &.open {
+                rotate: -90deg;
+            }
+        }
+
+        &:hover:not([disabled]),
+        &.cdk-keyboard-focused:not([disabled]) {
+            background-color: #d8e7fc;
+        }
+
+        // un sous-menu ouvert ne garde pas le fond de survol
+        &.mat-mdc-menu-item-highlighted:not(:hover):not(.cdk-keyboard-focused),
+        &.cdk-program-focused:not(:hover):not(.cdk-keyboard-focused) {
+            background-color: transparent;
+        }
+
+        &.current {
+
+            // la barre suit la hauteur du bloc texte, comme dans la maquette
+            .mat-mdc-menu-item-text {
+                border-left: 2px solid utils.$colors-primary;
+                padding-left: 7px;
+            }
+
+            .item-label {
+                color: utils.$colors-primary;
+                font-weight: 700;
             }
         }
     }

@@ -25,6 +25,7 @@ import { MainClass } from '../../libs/main-class'
 import { DocumentationInterface } from '../../interfaces/documentation'
 import { DateSelectorinterface } from '../../interfaces/date'
 import { BackupInterface } from '../../interfaces/backup'
+import { JuridictionGroupInterface } from '../../interfaces/juridictions.interface'
 import {
   CALCULATE_DOWNLOAD_URL,
   DATA_GITBOOK,
@@ -422,6 +423,15 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   isSelected(item: any) {
     return `/${item.path}` === window.location.pathname
+  }
+
+  /**
+   * Dit si la juridiction sélectionnée appartient à un groupe
+   * @param group
+   * @returns
+   */
+  isCurrentGroup(group: JuridictionGroupInterface) {
+    return (group.backups || []).some((b) => b.id === this.hrBackupId)
   }
 
   /**
