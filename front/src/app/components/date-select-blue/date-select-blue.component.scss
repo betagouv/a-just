@@ -22,7 +22,7 @@ mat-datepicker-popup {
             display: inline-block;
             height: 0;
             width: 0;
-            border-top: 4px solid #ececfe;
+            border-top: 4px solid utils.$colors-bgReadETPDark;
             border-right: 4px solid transparent;
             border-left: 4px solid transparent;
             position: absolute;
@@ -46,7 +46,7 @@ mat-datepicker-popup {
     }
 
     p.title {
-        color: #0063cb;
+        color: utils.$colors-bgSelectSelected;
         white-space: nowrap;
         font-size: 14px;
         align-self: center;
@@ -73,7 +73,7 @@ mat-datepicker-popup {
             width: 16px;
             height: 16px;
             margin: 0px 16px;
-            color: white;
+            color: utils.$colors-white;
         }
 
         .triangle {
@@ -138,10 +138,10 @@ mat-datepicker-popup {
         align-self: center;
         font-family: inherit;
         font-size: 14px;
-        color: #0063cb;
+        color: utils.$colors-bgSelectSelected;
 
         &::placeholder {
-            color: #0063cb;
+            color: utils.$colors-bgSelectSelected;
             opacity: 0.6;
         }
     }

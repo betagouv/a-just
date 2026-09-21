@@ -13,8 +13,6 @@
     display: none !important;
   }
 
-
-
   &.button-filter {
 
     position: relative;
@@ -47,7 +45,7 @@
       }
 
       .title-list {
-        color: #666666;
+        color: utils.$colors-cgray;
         white-space: nowrap;
         font-size: 14px;
         position: relative;
@@ -170,10 +168,10 @@
   &:not(.multiple) {
     .selected {
       background-color: utils.$colors-bgSelectSelected;
-      color: white;
+      color: utils.$colors-white;
 
       p {
-        color: white;
+        color: utils.$colors-white;
       }
     }
   }
@@ -203,10 +201,10 @@
 
     &:hover {
       background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
-      color: #0063cb;
+      color: utils.$colors-bgSelectSelected;
 
       p {
-        color: #0063cb;
+        color: utils.$colors-bgSelectSelected;
       }
     }
 

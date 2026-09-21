@@ -18,7 +18,7 @@
   &.greffe {
     &.selected {
       .title-select {
-        border-right: 1px solid #a558a0 !important;
+        border-right: 1px solid utils.$colors-cpink !important;
       }
     }
   }
@@ -26,8 +26,8 @@
   &.calculator {
     height: 32px;
     border-radius: 4px;
-    border: solid 1px #ddd;
-    background-color: #fff;
+    border: solid 1px utils.$colors-lightBorder;
+    background-color: utils.$colors-white;
     display: flex;
     padding: 0px 8px;
     flex-direction: row;
@@ -74,7 +74,7 @@
     height: 32px;
     border-radius: 4px;
     border: solid 1px utils.$colors-borderSelect;
-    background-color: #fff;
+    background-color: utils.$colors-white;
     padding: 0px 8px;
     width: 130px;
 
@@ -90,7 +90,7 @@
         width: initial;
         line-height: 28px;
         height: 30px;
-        border-right: solid 1px #ddd;
+        border-right: solid 1px utils.$colors-lightBorder;
         color: utils.$colors-cblack;
       }
 
@@ -137,7 +137,7 @@
   }
 
   &.bg-white {
-    background-color: white;
+    background-color: utils.$colors-white;
   }
 
   &.dark-mode {
@@ -146,7 +146,7 @@
 
     p,
     mat-icon {
-      color: white;
+      color: utils.$colors-white;
     }
 
     p.title-select {

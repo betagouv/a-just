@@ -18,12 +18,12 @@
         </div>
 
         @if (hrBackups.length) {
-        <div class="juridiction">
+        <div class="juridiction" [matMenuTriggerFor]="menu">
             <div class="juridiction-title">
                 <h6 [title]="hrBackup && hrBackup.label">{{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup
                     && hrBackup.label }}</h6>
                 @if (hrBackups && hrBackups.length > 1) {
-                <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
+                <mat-icon>expand_more</mat-icon>
                 }
                 <mat-menu #menu="matMenu">
                     @for (bu of hrBackups; track bu.id) {

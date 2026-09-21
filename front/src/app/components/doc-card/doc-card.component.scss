@@ -1,19 +1,21 @@
+@use '../../styles/utils.scss' as utils;
+
 :host {
     cursor: pointer;
     margin-top: 24px;
     display: flex;
-    border: solid 1px #ddd;
-    background-color: white;
+    border: solid 1px utils.$colors-lightBorder;
+    background-color: utils.$colors-white;
 
     .tag {
         font-size: 12px;
         line-height: 1.67;
-        color: #161616;
+        color: utils.$colors-cblackdark;
         height: 24px;
         width: auto;
         padding: 2px 8px;
         border-radius: 12px;
-        background-color: #eee;
+        background-color: utils.$colors-borderSelect;
     }
 
     .title {
@@ -22,14 +24,14 @@
         font-size: 20px;
         font-weight: bold;
         line-height: 1.4;
-        color: #000091;
+        color: utils.$colors-primary;
     }
 
     .description {
         margin: 0 0 12px 0;
         font-size: 14px;
         line-height: 1.71;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
     }
 
     .first-col {
@@ -37,7 +39,7 @@
         display: flex;
         align-items: center;
         width: 130px;
-        border-right: solid 1px #ddd;
+        border-right: solid 1px utils.$colors-lightBorder;
         justify-content: center;
 
         img {
@@ -56,7 +58,7 @@
     mat-icon {
         align-self: flex-end;
         font-size: 16px;
-        color: #000091;
+        color: utils.$colors-primary;
         margin-top: 12px;
     }
 

@@ -33,7 +33,7 @@
         .input-container {
           input {
             &::placeholder {
-              color: white;
+              color: utils.$colors-white;
               opacity: 1;
             }
           }
@@ -48,7 +48,7 @@
     p,
     mat-icon,
     input {
-      color: white;
+      color: utils.$colors-white;
     }
 
     p.title {
@@ -103,7 +103,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: white;
+      background-color: utils.$colors-white;
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
       border: 1px solid utils.$colors-cbluedark;
