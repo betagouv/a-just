@@ -61,7 +61,7 @@
     padding: 16px;
     border: 2px solid utils.$colors-creddark;
     border-radius: 8px;
-    background-color: white;
+    background-color: utils.$colors-white;
     color: utils.$colors-creddark;
     width: 300px;
     font-size: 14px;
@@ -104,14 +104,14 @@ input[type="file"] {
 }
 
 input[type="number"] {
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid utils.$colors-cblackdark;
 }
 
 .drop-down {
   display: flex;
   border-radius: 4px;
   border: 1px solid utils.$colors-lightBorder;
-  background-color: white;
+  background-color: utils.$colors-white;
   justify-content: center;
   align-items: center;
   padding: 4px 8px;
@@ -143,7 +143,7 @@ input[type="number"] {
 
   .drop-down-content {
     position: absolute;
-    background-color: white;
+    background-color: utils.$colors-white;
     display: none;
     flex-direction: column;
     align-items: end;
@@ -206,7 +206,6 @@ input[type="number"] {
     background-color: utils.$colors-bgSelect;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-
     border-bottom: solid 1px utils.$colors-lightBorder;
 
     pre {
@@ -292,13 +291,68 @@ input[type="number"] {
       border: solid 1px utils.$colors-lightBorder;
       background-color: utils.$colors-white;
 
+      .arrondissement-header-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        border-bottom: solid 1px utils.$colors-lightBorder;
+      }
+
+      .arrondissement-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: content;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 0px 16px;
+        border-top: solid 2px utils.$colors-white;
+        border-right: 1px solid utils.$colors-white;
+        border-left: 1px solid utils.$colors-white;
+        cursor: pointer;
+        color: utils.$colors-cblackdark;
+
+        &:hover {
+          background-color: utils.$colors-bgSelect;
+        }
+
+        &.selected {
+          position: relative;
+          border-top: solid 2px utils.$colors-primary;
+          border-right: 1px solid utils.$colors-lightBorder;
+          border-left: 1px solid utils.$colors-lightBorder;
+          border-bottom: none;
+          color: utils.$colors-primary;
+
+          &:hover {
+            background-color: transparent;
+          }
+
+          &::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            height: 1px;
+            background-color: utils.$colors-white;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
+        label {
+          margin: auto;
+          cursor: pointer;
+        }
+      }
+
 
       >panel-activities {
         padding: 16px 16px;
       }
 
       >.top {
-        border-bottom: 1px solid utils.$colors-lightBorder;
         margin: initial;
         padding: 4px 16px;
         display: flex;

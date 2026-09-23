@@ -225,6 +225,24 @@
           </div>
         </div>
 
+        <div class="arrondissement-header-container">
+          <div class="arrondissement-header selected">
+            Arrondissement
+          </div>
+          <div class="arrondissement-header">
+            TJ
+          </div>
+          <div class="arrondissement-header">
+            TPROX C
+          </div>
+          <div class="arrondissement-header">
+            TPROX F
+          </div>
+          <div class="arrondissement-header">
+            +
+          </div>
+        </div>
+
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
           [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit"></panel-activities>
