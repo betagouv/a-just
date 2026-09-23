@@ -447,6 +447,11 @@ input[type="number"] {
           color: utils.$colors-cblackdark;
           font-size: 14px;
           font-weight: bold;
+
+          &:hover {
+            background-color: utils.$colors-hoverLightColor;
+          }
+
         }
       }
 

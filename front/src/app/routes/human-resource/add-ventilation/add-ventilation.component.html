@@ -240,11 +240,11 @@
             }
             <div class="flex-1"></div>
             @if (displayDuplicateLabels) {
-          <label class="import-confirmation" [ngStyle]="{ color: '#c3992a', 'background-color': '#feebd0' }">
-            <i class="ri-checkbox-circle-fill"></i>
-            à vérifier
-          </label>
-          } @else if (displayImportLabels===true) {
+            <label class="import-confirmation" [ngStyle]="{ color: '#c3992a', 'background-color': '#feebd0' }">
+              <i class="ri-checkbox-circle-fill"></i>
+              à vérifier
+            </label>
+            } @else if (displayImportLabels===true) {
             <label class="import-confirmation" [ngStyle]="{
                   color: form.get('activitiesStartDate')?.value === null ? '#c3992a' : '#18753c',
                   'background-color': form.get('activitiesStartDate')?.value === null ? '#feebd0' : '#b8fec9',
