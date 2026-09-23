@@ -502,6 +502,7 @@ input[type="number"] {
     color: utils.$colors-cbluedark;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease-in-out;
 
     svg {
       fill: utils.$colors-cbluedark;
@@ -509,5 +510,10 @@ input[type="number"] {
       width: 18px;
       margin-left: 8px;
     }
+
+    &:hover {
+      background-color: utils.$colors-hoverLightColor;
+    }
+
   }
 }

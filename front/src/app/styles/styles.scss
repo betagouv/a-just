@@ -5,7 +5,7 @@ body {
 	height: 100vh;
 	padding: 0;
 	margin: 0;
-	background-color: white;
+	background-color: utils.$colors-white;
 
 	&.remove-height {
 		height: inherit;
@@ -19,6 +19,10 @@ body {
 body {
 	margin: 0;
 	font-family: Marianne;
+}
+
+select {
+	cursor: pointer;
 }
 
 .flex-1 {
@@ -89,7 +93,7 @@ body {
 }
 
 .color-white {
-	color: white;
+	color: utils.$colors-white;
 }
 
 .width-auto {
@@ -127,5 +131,5 @@ body:not(.iIOS) .window-scrool-width-margin {
 
 .global-tooltiptext *,
 .global-tooltiptext * * {
-	color: white !important;
+	color: utils.$colors-white !important;
 }
