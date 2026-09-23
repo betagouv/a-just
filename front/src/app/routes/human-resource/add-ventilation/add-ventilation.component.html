@@ -136,7 +136,8 @@
           </div>
           <div class="admin-element"
             [ngClass]="{ error: form.get('fonctionId')?.value === null && displayImportLabels === true }"
-            [ngClass]="{ error: humanResourceService.alertList().includes('fonction') }">
+            [ngClass]="{ error: humanResourceService.alertList().includes('fonction') }"
+            [ngStyle]="form.get('categoryId')?.value !== null ? {} : { 'pointer-events': 'none', opacity: .5 }">
             <div class="label-aj">Fonction :</div>
             <select formControlName="fonctionId" (change)="setFonc($event.target)">
               @for (fonc of fonctions; track fonc.id) {
@@ -156,7 +157,7 @@
             <div class="label-aj">Temps de travail (en ETPT) :</div>
             <div class="calculatrice-button-container">
               @if (calculatriceIsActive) {
-              <div class="open-calculatrice" (click)="openCalculatricePopup = true">
+              <div class="open-calculatrice primary" (click)="openCalculatricePopup = true">
                 Calculer l'ETPT
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                   <path
@@ -240,11 +241,11 @@
             }
             <div class="flex-1"></div>
             @if (displayDuplicateLabels) {
-          <label class="import-confirmation" [ngStyle]="{ color: '#c3992a', 'background-color': '#feebd0' }">
-            <i class="ri-checkbox-circle-fill"></i>
-            à vérifier
-          </label>
-          } @else if (displayImportLabels===true) {
+            <label class="import-confirmation" [ngStyle]="{ color: '#c3992a', 'background-color': '#feebd0' }">
+              <i class="ri-checkbox-circle-fill"></i>
+              à vérifier
+            </label>
+            } @else if (displayImportLabels===true) {
             <label class="import-confirmation" [ngStyle]="{
                   color: form.get('activitiesStartDate')?.value === null ? '#c3992a' : '#18753c',
                   'background-color': form.get('activitiesStartDate')?.value === null ? '#feebd0' : '#b8fec9',
