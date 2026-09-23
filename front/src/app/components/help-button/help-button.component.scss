@@ -1,10 +1,12 @@
 @use '../../styles/utils.scss' as utils;
 
+
 :host {
   height: 32px;
   min-width: 32px;
   position: relative;
   z-index: 1;
+
 
   &.fit-content {
     >div {
@@ -12,9 +14,11 @@
     }
   }
 
+
   &.no-cursor>div {
     cursor: default;
   }
+
 
   >div {
     background-color: utils.$colors-bgHelper;
@@ -22,7 +26,7 @@
     top: 0;
     left: 0;
     font-size: 14px;
-    color: white;
+    color: utils.$colors-white;
     line-height: 32px;
     padding: 0 6px;
     border-radius: 32px;
@@ -32,11 +36,37 @@
     cursor: pointer;
     overflow: hidden;
 
-    >span {
-      display: inline;
-      white-space: nowrap;
+    .icon {
       margin-left: 6px;
       margin-right: 4px;
+      white-space: nowrap;
+    }
+
+
+    .text {
+      white-space: nowrap;
+      transform: translateX(-6px);
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-left: 0;
+      margin-right: 0;
+
+      transition:
+        max-width 0.2s ease-in-out,
+        opacity 0.2s ease-in-out,
+        transform 0.2s ease-in-out,
+        margin 0.2s ease-in-out;
+    }
+
+
+    &.expanded {
+      .text {
+        max-width: 300px;
+        opacity: 1;
+        transform: translateX(0);
+        margin: 0px 4px;
+      }
     }
   }
 }

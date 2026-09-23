@@ -59,7 +59,7 @@ button {
   }
 
   &.primary {
-    color: white;
+    color: utils.$colors-white;
     background-color: utils.$colors-cbluedark;
 
     &:hover {
@@ -68,7 +68,7 @@ button {
   }
 
   &.red {
-    color: white;
+    color: utils.$colors-white;
     background-color: utils.$colors-creddark;
   }
 
@@ -108,7 +108,7 @@ button {
 
       &:hover {
         background-color: utils.$colors-grayRow;
-        color: white;
+        color: utils.$colors-white;
       }
     }
 
@@ -134,7 +134,7 @@ button {
       &:enabled {
         &:hover {
           background-color: utils.$colors-grayRow;
-          color: white;
+          color: utils.$colors-white;
         }
       }
     }
@@ -203,7 +203,7 @@ button {
     }
 
     div.action {
-      border-left: 1px solid #ff5655;
+      border-left: 1px solid utils.$colors-cred;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -214,7 +214,7 @@ button {
         font-size: 16px;
         width: 16px;
         height: 16px;
-        color: #ff5655;
+        color: utils.$colors-cred;
       }
     }
   }

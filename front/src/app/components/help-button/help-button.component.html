@@ -1,7 +1,9 @@
 <div (mouseenter)="isChildVisible = true" (mouseleave)="isChildVisible = false"
-  [ngStyle]="{ backgroundColor: backgroundColor }">
-  <span>?</span>
-  @if (isChildVisible && canShowChildren) {
-  <span>{{ text || 'Comment ça marche ?' }}</span>
-  }
+  [ngStyle]="{ backgroundColor: backgroundColor }" [class.expanded]="isChildVisible && canShowChildren">
+  <span class="icon">?</span>
+
+
+  <span class="text">
+    {{ text || 'Comment ça marche ?' }}
+  </span>
 </div>
