@@ -11,14 +11,14 @@
   [actionsRightTemplate]="userService.isLocalAdmin() ? actionsRight : undefined">
   <div class="panorama-container">
     <div class="header-panorama" #header>
-      @if (canViewVentilation) {
+      @if (userService.canViewVentilation()) {
       <div class="effectifs" [ngClass]="{ selected: !titleSelectActivities }"
         (click)="scrollTo('effectif', container, 40)">
         Effectifs
       </div>
       }
-      @if (canViewActivities) {
-      <div class="activities" [ngClass]="{ selected: !canViewVentilation || titleSelectActivities }"
+      @if (userService.canViewActivities()) {
+      <div class="activities" [ngClass]="{ selected: !userService.canViewVentilation() || titleSelectActivities }"
         (click)="scrollTo('activites', container, 40)">
         Données d'activité
       </div>
@@ -26,12 +26,12 @@
     </div>
     <div class="container-panorama" #container>
       <panorama-alert></panorama-alert>
-      @if (canViewVentilation) {
+      @if (userService.canViewVentilation()) {
       <div class="effectifs-panels">
         <div class="effectif-title" id="effectif">Effectifs</div>
         <div class="workforce-panel">
-          @if(userService.canViewVentilation()) {<workforce-composition [backupId]="backupId"
-            [categoriesFiltered]="categoriesFiltered" [listFormated]="listFormated" [allPersons]="allPersons"
+          @if(userService.canViewVentilation()) {<workforce-composition [categoriesFiltered]="categoriesFiltered"
+            [listFormated]="listFormated" [allPersons]="allPersons"
             class="wordforce-composition"></workforce-composition>}
           <records-update [listFormated]="listFormated" [allPersons]="allPersons"
             [categoriesFiltered]="categoriesFiltered" class="records-update"></records-update>
@@ -42,7 +42,7 @@
         </div>
       </div>
       }
-      @if (canViewActivities) {
+      @if (userService.canViewActivities()) {
       <div class="activites-panels-helper">
         <div class="pano-title" id="activites" #titleActivities>Les données d’activité</div>
         <div class="activities-panel">

@@ -372,34 +372,62 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.haveAccess = async (id, userId) => {
-    const backup = await Model.findOne({
-      where: {
-        id,
-      },
-      attributes: ['id', 'label'],
-      include: [
-        {
+    console.log('HAVE ACCESS ', id)
+    // si id > 0, c'est un backup id
+    // si id < 0, c'est un group id
+    if (id > 0) {
+      const backup = await Model.findOne({
+        where: {
+          id,
+        },
+        attributes: ['id', 'label'],
+        include: [
+          {
+            attributes: ['id'],
+            model: Model.models.UserVentilations,
+            required: true,
+            where: {
+              user_id: userId,
+            },
+          },
+          {
+            attributes: ['id', 'enabled'],
+            model: Model.models.TJ,
+            required: false,
+          }
+        ],
+        raw: true,
+      })
+
+      if (!backup || (backup['TJ.id'] != null && !backup['TJ.enabled'])) {
+        return false
+      }
+
+      return true
+    } else if (id < 0) {
+      const backup = await Model.models.HRBackups.findOne({
+        attributes: ['id'],
+        include: [{
           attributes: ['id'],
           model: Model.models.UserVentilations,
           required: true,
           where: {
             user_id: userId,
           },
-        },
-        {
-          attributes: ['id', 'enabled'],
-          model: Model.models.TJ,
-          required: false,
-        }
-      ],
-      raw: true,
-    })
+        }],
+        raw: true,
+      })
 
-    if (!backup || (backup['TJ.id'] != null && !backup['TJ.enabled'])) {
-      return false
+      console.log('GROUP HAVE ACCESS', backup)
+
+      if (!backup) {
+        return false
+      }
+
+      return true
     }
 
-    return true
+    return false
   }
 
   /**

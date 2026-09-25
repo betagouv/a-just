@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, effect, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { listFormatedInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
@@ -94,14 +94,6 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
    */
   canViewContractuel: boolean = false
   /**
-   * Peux voir la partie ventilation
-   */
-  canViewVentilation: boolean = false
-  /**
-   * Peux voir la partie activities
-   */
-  canViewActivities: boolean = false
-  /**
    * En cour de chargement
    */
   isLoading: boolean = false
@@ -149,10 +141,6 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
    * Filter categories to view
    */
   categoriesFiltered: number[] | null = null
-  /**
-   * Juridiction id
-   */
-  backupId: number | null = null
   /**
    * Intro JS Steps
    */
@@ -230,6 +218,14 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
    */
   constructor() {
     super()
+
+    effect(() => {
+      const workspace = this.humanResourceService.workspaceSelected()
+      const canViewVentilation = this.userService.canViewVentilation()
+      if (workspace && canViewVentilation) {
+        this.onFilterList()
+      }
+    })
   }
 
   /**
@@ -245,25 +241,14 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
-        this.canViewVentilation = this.userService.canViewVentilation()
-        this.canViewActivities = this.userService.canViewActivities()
 
         if (this.userService.isCa()) this.introSteps = [...this.introSteps, this.lastStep]
         else this.introSteps = [...this.introSteps, ...this.stepsOnlyForTJ, this.lastStep]
 
         try {
           // @ts-ignore
-          this.introSteps[this.introSteps.length - 1]['actions']['onClickToIntro'].enable = this.canViewVentilation
+          this.introSteps[this.introSteps.length - 1]['actions']['onClickToIntro'].enable = this.userService.canViewVentilation()
         } catch (err) {}
-      }),
-    )
-
-    this.watch(
-      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
-        this.backupId = hrBackup?.id || null
-        if (this.canViewVentilation) {
-          this.onFilterList(hrBackup)
-        }
       }),
     )
   }
@@ -306,16 +291,12 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
   /**
    * Filtre liste RH
    */
-  onFilterList(backup: BackupInterface | null = null) {
-    if (!backup) {
-      return
-    }
-
+  onFilterList() {
     this.isLoading = true
     this.categoriesFiltered = null
 
     this.humanResourceService
-      .onFilterList(this.humanResourceService.backupId.getValue() || 0, this.dateSelected, null, null, [1, 2, 3])
+      .onFilterList(this.humanResourceService.backupIdS() || null, this.dateSelected, null, null, [1, 2, 3])
       .then(({ allPersons, list }) => {
         this.listFormated = list.map((l: any) => ({
           ...l,

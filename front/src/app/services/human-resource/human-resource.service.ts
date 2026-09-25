@@ -1,4 +1,4 @@
-import { inject, Injectable, Input, signal, WritableSignal } from '@angular/core'
+import { computed, effect, inject, Injectable, Input, signal, WritableSignal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
@@ -50,17 +50,33 @@ export class HumanResourceService {
    */
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<BackupInterface[]>([])
   /**
+   * Converti en signal la variable backups qui est une observable
+   */
+  backupsS = toSignal(this.backups, { initialValue: [] })
+  /**
    * Id de la juridiction selectionnée
    */
   backupId: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(null)
+  /**
+   * Converti en signal la variable backupId qui est une observable
+   */
+  backupIdS = toSignal(this.backupId, { initialValue: null })
   /**
    * Juridiction selectionnée
    */
   hrBackup: BehaviorSubject<BackupInterface | null> = new BehaviorSubject<BackupInterface | null>(null)
   /**
+   * Converti en signal la variable hrBackup qui est une observable
+   */
+  hrBackupS = toSignal(this.hrBackup, { initialValue: null })
+  /**
    * Liste des groupes de juridictions dont à accès l'utilisateur
    */
   juridictionGroups = signal<JuridictionGroupInterface[]>([])
+  /**
+   * Juridiction group selected
+   */
+  juridictionGroupSelected = signal<JuridictionGroupInterface | null>(null)
   /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
@@ -114,9 +130,11 @@ export class HumanResourceService {
    */
   lastBackupId: number | null = null
   /**
-   * Converti en signal la variable hrBackup qui est une observable
+   * Group ou juridiction selected => Workspace selected
    */
-  hrBackupS = toSignal(this.hrBackup, { initialValue: null })
+  workspaceSelected = computed(() => {
+    return this.juridictionGroupSelected() || this.hrBackupS() || null
+  })
   /**
    * Liste des alertes
    */
@@ -126,31 +144,29 @@ export class HumanResourceService {
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page
    */
   constructor() {
+    effect(() => {
+      const backupsS = this.backupsS()
+      const juridictionGroups = this.juridictionGroups()
+      const backupId = this.backupIdS()
+
+      if (backupsS && backupsS.length > 0 && juridictionGroups && juridictionGroups.length > 0 && backupId != null) {
+        this.onSelectBackupOrGroup(backupId)
+      }
+    })
+
+    effect(() => {
+      const backupId = this.backupIdS()
+      if (backupId !== null) {
+        this.activitiesService.hrBackupId = backupId || null
+        localStorage.setItem('backupId', '' + backupId)
+      }
+    })
+
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0
-      this.backupId.next(+backupId)
+      //this.backupId.next(+backupId)
+      this.backupId.next(-63)
     }
-
-    this.backupId.subscribe((id) => {
-      this.activitiesService.hrBackupId = id
-
-      if (id) {
-        localStorage.setItem('backupId', '' + id)
-      }
-
-      const bk: BackupInterface | undefined = this.backups.getValue().find((b) => b.id === id)
-      this.hrBackup.next(bk || null)
-    })
-
-    this.backups.subscribe((list) => {
-      let backup = list.find((b) => b.id === this.backupId.getValue())
-      if (list.length && !backup) {
-        this.backupId.next(list[0].id)
-        list.find((b) => b.id === this.backupId.getValue())
-      }
-      const bk: BackupInterface | undefined = list.find((b) => b.id === this.backupId.getValue())
-      this.hrBackup.next(bk || null)
-    })
   }
 
   /**
@@ -212,10 +228,9 @@ export class HumanResourceService {
   }
   /**
    * Création d'une fiche vide
-   * @param date
    * @returns
    */
-  async createHumanResource(date: Date) {
+  async createHumanResource() {
     const activities: RHActivityInterface[] = []
 
     const hr = {
@@ -228,18 +243,15 @@ export class HumanResourceService {
       updatedAt: new Date(),
     }
 
-    //if (hr.firstName !== 'Prénom' && hr.lastName !== 'Nom') {
     const newHR = await this.updateRemoteHR(hr)
     return newHR.id
-    return hr.id
-    //} else return null
   }
 
   /**
    * Suppression d'un jeu de donnée d'une juridiction
    * @returns
    */
-  removeBackup() {
+  async removeBackup() {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette sauvegarde?')) {
       return this.serverService.delete(`human-resources/remove-backup/${this.backupId.getValue()}`).then(() => {
         this.backupId.next(null)
@@ -660,7 +672,7 @@ export class HumanResourceService {
    * @returns
    */
   async onFilterList(
-    backupId: number,
+    workspaceId: number | null,
     date: Date,
     contentieuxIds: number[] | null,
     subContentieuxIds: number[] | null,
@@ -670,7 +682,7 @@ export class HumanResourceService {
   ) {
     return this.serverService
       .post(`human-resources/filter-list`, {
-        backupId,
+        workspaceId,
         date,
         contentieuxIds,
         categoriesIds,
@@ -679,10 +691,10 @@ export class HumanResourceService {
         endPeriodToCheck,
       })
       .then((data) => {
-        if (this.lastBackupId !== backupId) {
+        if (this.lastBackupId !== workspaceId) {
           this.tmpComponentIdsCanBeView = []
           this.componentIdsCanBeView.next([])
-          this.lastBackupId = backupId
+          this.lastBackupId = workspaceId
         }
         return data.data
       })
@@ -802,5 +814,28 @@ export class HumanResourceService {
         situationId,
       })
       .then((response) => response.data)
+  }
+
+  onSelectBackupOrGroup(backupIdOrGroupId: number | null) {
+    if (backupIdOrGroupId === null) {
+      this.hrBackup.next(null)
+      this.juridictionGroupSelected.set(null)
+      return
+    }
+
+    if (backupIdOrGroupId > 0) {
+      const bk: BackupInterface | undefined = this.backups.getValue().find((b) => b.id === backupIdOrGroupId)
+      this.hrBackup.next(bk || null)
+    } else {
+      this.hrBackup.next(null)
+    }
+
+    if (backupIdOrGroupId < 0) {
+      const group: JuridictionGroupInterface | undefined = this.juridictionGroups().find((g) => g.id === backupIdOrGroupId * -1)
+
+      this.juridictionGroupSelected.set(group || null)
+    } else {
+      this.juridictionGroupSelected.set(null)
+    }
   }
 }

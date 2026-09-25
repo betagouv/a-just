@@ -251,7 +251,7 @@ export default class RouteHumanResources extends Route {
 
   /**
    * Interface de la liste des fiches d'une juridiction
-   * @param {*} backupId
+   * @param {*} workspaceId
    * @param {*} date
    * @param {*} contentieuxIds
    * @param {*} categoriesIds
@@ -260,7 +260,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number().required(),
+      workspaceId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
       subContentieuxIds: Types.array(),
@@ -270,15 +270,15 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList(ctx) {
-    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, subContentieuxIds } = this.body(ctx)
+    let { workspaceId, date, endPeriodToCheck, categoriesIds, contentieuxIds, subContentieuxIds } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if (!(await this.models.HRBackups.haveAccess(workspaceId, ctx.state.user.id))) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
     date = today(date)
 
-    console.time('filter list 1')
+    /*console.time('filter list 1')
     let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('filter list 1')
 
@@ -384,7 +384,7 @@ export default class RouteHumanResources extends Route {
         }),
         ['categoryRank', 'fonctionRank', 'lastName'],
       ),
-    })
+    })*/
   }
 
   /**

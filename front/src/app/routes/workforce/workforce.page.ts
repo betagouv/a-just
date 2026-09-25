@@ -614,7 +614,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Ajout d'une RH
    */
   async addHR() {
-    const newId = await this.humanResourceService.createHumanResource(this.dateSelected)
+    const newId = await this.humanResourceService.createHumanResource()
     this.route.snapshot.fragment = newId + ''
     this.router.navigate(['/resource-humaine', newId])
   }

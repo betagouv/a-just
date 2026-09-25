@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, inject } from '@angular/core'
+import { Component, Input, OnChanges, effect, inject } from '@angular/core'
 import { HumanResourceSelectedInterface, listFormatedInterface } from '../../workforce/workforce.page'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
@@ -58,10 +58,6 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
    */
   @Input() categoriesFiltered: number[] | null = null
   /**
-   * List des categories
-   */
-  @Input() backupId: number | null = null
-  /**
    * Liste formatée des RH (passée par le parent)
    */
   @Input() listFormated: listFormatedInterface[] = []
@@ -90,16 +86,19 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
     private serverService: ServerService,
   ) {
     super()
+
+    effect(() => {
+      const workspace = this.humanResourceService.workspaceSelected()
+      if (workspace) {
+        this.getAllCle()
+      }
+    })
   }
 
   /**
    * Initialisation des datas au chargement de la page
    */
   ngOnChanges() {
-    if (this.backupId) {
-      this.getAllCle()
-    }
-
     if (this.listFormated && this.listFormated.length > 0) {
       this.formatList()
     }

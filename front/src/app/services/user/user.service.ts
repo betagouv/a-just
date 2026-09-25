@@ -168,6 +168,34 @@ export class UserService implements OnInit {
     return user && user.referentielIds === null ? true : false
   })
   /**
+   * Can view Ventilations
+   */
+  canViewPanorama = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_READER) !== -1 ? true : false
+  })
+  /**
+   * Can view Ventilations
+   */
+  canViewVentilation = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1 ? true : false
+  })
+  /**
+   * Can view Activites
+   */
+  canViewActivities = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
+  })
+  /**
+   * Can view Temps moyens
+   */
+  canViewAverageTime = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
+  })
+  /**
    * User is local admin
    */
   isLocalAdmin = computed(() => {
@@ -405,11 +433,7 @@ export class UserService implements OnInit {
     }
 
     this.initDatasUserId = userId
-    this.initDatasPromise = Promise.all([
-      this.getInitDatas(),
-      // les groupes ne sont pas critiques : un échec ne doit pas bloquer le chargement
-      this.getUserGroups().catch(() => null),
-    ])
+    this.initDatasPromise = Promise.all([this.getInitDatas(), this.getUserGroups()])
       .then(([result, groupsResult]) => {
         this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
         this.humanResourceService.fonctions.next(result.fonctions)
@@ -467,44 +491,12 @@ export class UserService implements OnInit {
   }
 
   /**
-   * Can view Ventilations
-   */
-  canViewPanorama(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_READER) !== -1 ? true : false
-  }
-
-  /**
-   * Can view Ventilations
-   */
-  canViewVentilation(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1 ? true : false
-  }
-
-  /**
-   * Can view Activites
-   */
-  canViewActivities(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
-  }
-
-  /**
-   * Can view Activites
-   */
-  canViewAverageTime(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
-  }
-
-  /**
    * Retourne la liste des toutes les pages qu'un utilisateur à accès
    */
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
 
-    if (this.canViewPanorama(user)) {
+    if (this.canViewPanorama()) {
       menu.push({
         label: 'Panorama',
         path: 'panorama',
@@ -531,14 +523,14 @@ export class UserService implements OnInit {
       })
     }
 
-    if (this.canViewVentilation(user)) {
+    if (this.canViewVentilation()) {
       menu.push({
         label: 'Ventilateur',
         path: 'ventilations',
       })
     }
 
-    if (this.canViewActivities(user)) {
+    if (this.canViewActivities()) {
       menu.push({
         label: "Données d'activité",
         path: 'donnees-d-activite',
