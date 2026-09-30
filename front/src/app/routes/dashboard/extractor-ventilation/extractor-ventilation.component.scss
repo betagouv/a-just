@@ -1,8 +1,9 @@
 @use "../../../styles/utils.scss" as utils;
+@use "../../../styles/animations.scss" as animations;
 
 :host {
   mat-icon {
-    color: white;
+    color: utils.$colors-white;
     margin-right: 8px;
   }
 
@@ -56,7 +57,7 @@
       padding: 4px 8px;
       height: 55px;
 
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-cblue;

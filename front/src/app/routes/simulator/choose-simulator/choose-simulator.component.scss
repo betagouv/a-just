@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
     display: flex;
@@ -12,9 +13,9 @@
     gap: 32px;
     align-self: stretch;
     border-radius: 8px;
-    border: 1px solid #DDD;
+    border: 1px solid utils.$colors-lightBorder;
     margin: 26px 0;
-    background-color: white;
+    background-color: utils.$colors-white;
     max-width: 850px;
 
     @media screen and (max-width: 1150px) {
@@ -36,9 +37,9 @@
 
         >div {
             flex: 1;
-            border: 1px solid #DDD;
+            border: 1px solid utils.$colors-lightBorder;
             align-self: flex-start;
-            transition: border-color 0.75s ease, box-shadow 0.75s ease;
+            transition: border-color animations.$duration-slow animations.$ease-secondary, box-shadow animations.$duration-slow animations.$ease-secondary;
 
             &:hover {
                 border-color: utils.$colors-primary;
@@ -63,7 +64,7 @@
                     padding-top: 8px;
 
                     p.circle:hover {
-                        background-color: #F5F5FE;
+                        background-color: utils.$colors-bgProgressBar;
                         cursor: pointer;
                     }
                 }
@@ -87,10 +88,10 @@
                 .title {
                     padding-top: 8px;
                     padding-bottom: 8px;
-                    transition: background-color 0.75s ease;
+                    transition: background-color animations.$duration-slow animations.$ease-secondary;
 
                     &:hover {
-                        background-color: #F5F5FE;
+                        background-color: utils.$colors-bgProgressBar;
                     }
                 }
             }
@@ -101,7 +102,7 @@
             }
 
             .header {
-                background-color: #F5F5FE;
+                background-color: utils.$colors-bgProgressBar;
                 height: 216px;
                 position: relative;
             }
@@ -117,7 +118,7 @@
                     line-height: 28px;
                     position: relative;
                     color: utils.$colors-primary;
-                    transition: background-color 0.75s ease;
+                    transition: background-color animations.$duration-slow animations.$ease-secondary;
                     padding-top: 14px;
                     padding-bottom: 14px;
                     padding-left: 32px;
@@ -129,7 +130,7 @@
 
                     &.circle-disable {
                         padding-left: 52px;
-                        color: #929292;
+                        color: utils.$colors-grayRow;
 
                         &:before {
                             content: " ";
@@ -137,15 +138,15 @@
                             width: 24px;
                             height: 24px;
                             border-radius: 24px;
-                            border: 1px solid #929292;
-                            background-color: #F6F6F6;
+                            border: 1px solid utils.$colors-grayRow;
+                            background-color: utils.$colors-bgRowEvent;
                             left: 17px;
                             top: 16px;
                         }
 
                         span {
                             border-radius: 4px;
-                            background: #EDEDED;
+                            background: utils.$colors-dataGreyBg;
                             padding: 0 8px;
                             line-height: 24px;
                             height: 24px;
@@ -186,7 +187,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
-                border-top: 1px solid #DDD;
+                border-top: 1px solid utils.$colors-lightBorder;
 
                 >p {
                     font-weight: 500;
@@ -212,9 +213,9 @@
     padding: 8px;
     border-radius: 4px;
     background: utils.$colors-primary;
-    color: white;
+    color: utils.$colors-white;
     transform: translate(-50%, 50%);
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity animations.$duration-slow animations.$ease-secondary;
     z-index: 100;
 }

@@ -2,7 +2,7 @@
  * Gestion des groupes
  */
 import { Op } from 'sequelize'
-import { orderBy } from 'lodash'
+import { countBy, orderBy } from 'lodash'
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -55,7 +55,9 @@ export default (sequelizeInstance, Model) => {
 
   /**
    * Liste des groupes de juridictions accessibles à un utilisateur,
-   * ainsi que ses juridictions qui n'appartiennent à aucun groupe
+   * ainsi que ses juridictions qui n'appartiennent à aucun groupe.
+   * Chaque groupe indique via `fullAccess` si l'utilisateur a accès à toutes
+   * ses juridictions (actives), condition pour lui proposer la vue arrondissement.
    * @param {*} userId
    * @returns
    */
@@ -84,11 +86,34 @@ export default (sequelizeInstance, Model) => {
       groupsById.get(group.id).backups.push(backup)
     })
 
+    // même filtre que HRBackups.list : une juridiction dont le TJ est désactivé
+    // n'est accessible à personne, elle ne compte donc pas dans le groupe
+    const groupIds = Array.from(groupsById.keys())
+    const allGroupBackups = groupIds.length
+      ? await Model.models.HRBackups.findAll({
+          attributes: ['id', 'group_id'],
+          where: { group_id: { [Op.in]: groupIds } },
+          include: [
+            {
+              attributes: ['id', 'enabled'],
+              model: Model.models.TJ,
+              required: false,
+            },
+          ],
+          raw: true,
+        })
+      : []
+    const enabledBackupsByGroup = countBy(
+      allGroupBackups.filter((backup) => backup['TJ.id'] == null || backup['TJ.enabled']),
+      'group_id',
+    )
+
     return {
       groups: orderBy(
         Array.from(groupsById.values()).map((group) => ({
           ...group,
           backups: orderBy(group.backups, ['groupIdRank', 'label']),
+          fullAccess: group.backups.length >= (enabledBackupsByGroup[group.id] || 0),
         })),
         'label',
       ),

@@ -805,6 +805,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.categoriesFilterListIds,
       )
       .then(({ list, allPersons }: { list: listFormatedInterface[]; allPersons: HumanResourceIsInInterface[] }) => {
+        console.log('List : ', list)
+        console.log('allPersons : ', allPersons)
+
         this.listFormated = list.map((l) => {
           return {
             ...l,

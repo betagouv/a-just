@@ -1,3 +1,6 @@
+@use '../../../../styles/utils.scss' as utils;
+@use '../../../../styles/animations.scss' as animations;
+
 :host {
     display: flex;
     margin-top: 1px;
@@ -10,15 +13,15 @@
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
         height: 0;
         width: 0;
-        border-bottom: 4px solid white;
+        border-bottom: 4px solid utils.$colors-white;
         border-right: 4px solid transparent;
         border-left: 4px solid transparent;
         position: absolute;
         bottom: -4px;
         left: 195px;
         transform: rotate(180deg) !important;
-        -webkit-transition: all .1s ease;
-        transition: all 1s ease;
+        -webkit-transition: all animations.$duration-fast animations.$ease-secondary;
+        transition: all animations.$duration-second animations.$ease-secondary;
         pointer-events: none;
         -webkit-transform: translate(-50%, 0);
         transform: translate(-50%, 0);
@@ -33,11 +36,11 @@
         opacity: 0;
         width: 381px;
         position: absolute;
-        background: white;
+        background: utils.$colors-white;
         padding: 16px;
         border-radius: 3px;
-        -webkit-transition: all .1s ease;
-        transition: all 1s ease;
+        -webkit-transition: all animations.$duration-fast animations.$ease-secondary;
+        transition: all animations.$duration-second animations.$ease-secondary;
         pointer-events: none;
         -webkit-transform: translate(-50%, 0);
         transform: translate(-50%, 0);

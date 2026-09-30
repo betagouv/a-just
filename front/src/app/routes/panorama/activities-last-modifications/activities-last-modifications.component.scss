@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   display: block;
@@ -19,7 +20,7 @@
     align-items: center;
     text-decoration: none;
     margin-bottom: 4px;
-    transition: all 0.2s ease-in-out;
+    transition: background-color animations.$duration-normal animations.$ease-default;
 
     &:hover {
       background-color: utils.$colors-bgSelect;

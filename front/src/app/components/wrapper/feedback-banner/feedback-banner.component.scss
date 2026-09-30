@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   position: relative;
@@ -29,7 +30,7 @@
         border: 1px solid utils.$colors-primary;
         color: utils.$colors-white;
         border-radius: 1000px;
-        transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        transition: background-color animations.$duration-normal animations.$ease-default, color animations.$duration-normal animations.$ease-default, box-shadow animations.$duration-normal animations.$ease-default;
         font-weight: bold;
         display: flex;
         flex-direction: column;
@@ -48,6 +49,6 @@
 .close {
   position: absolute;
   right: 32px;
-  transition: color 0.2s;
+  transition: color animations.$duration-normal;
   color: inherit;
 }

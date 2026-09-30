@@ -1,4 +1,5 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 .display-none {
   display: none !important;
@@ -107,7 +108,7 @@
 
       border: solid 1px utils.$colors-primary;
       background-color: transparent;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-hoverLightColor;
@@ -127,7 +128,7 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-cblue;
@@ -242,7 +243,7 @@
       cursor: pointer;
       border: 1px solid utils.$colors-borderSimulator;
       background-color: utils.$colors-white;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-hoverLightColor;
@@ -396,7 +397,7 @@
     height: 40px;
     padding: 8px 16px;
     border: solid 1px utils.$colors-primary;
-    transition: all 0.2s ease-in-out;
+    transition: all animations.$duration-normal animations.$ease-default;
 
     &:hover {
       background-color: utils.$colors-hoverLightColor;
@@ -412,7 +413,7 @@
         opacity: 1;
         cursor: pointer;
         pointer-events: initial;
-        transition: all 0.2s ease-in-out;
+        transition: all animations.$duration-normal animations.$ease-default;
 
         &:hover {
           background-color: utils.$colors-cblue;
@@ -874,7 +875,7 @@
       align-items: center;
       justify-content: center;
       border: solid 1px transparent;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:first-child {
         margin-right: 12px;
@@ -909,7 +910,7 @@
       color: utils.$colors-bgTag;
       border: solid 1px utils.$colors-bgTag;
 
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-hoverLightColor;
@@ -925,7 +926,7 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-cblue;
@@ -1143,7 +1144,7 @@
         border-top-right-radius: 0px;
         background-color: transparent;
         padding-bottom: 5px;
-        transition: all 0.2s ease-in-out;
+        transition: all animations.$duration-normal animations.$ease-default;
 
         &:hover {
           background-color: utils.$colors-bgBlueTag;
@@ -1311,7 +1312,7 @@
       color: utils.$colors-textCategoryAll;
       opacity: 1;
       margin-top: 30px;
-      transition: all 0.2s ease-in-out;
+      transition: all animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-cblue;

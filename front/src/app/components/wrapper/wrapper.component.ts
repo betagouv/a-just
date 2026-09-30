@@ -276,6 +276,38 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   showGroupedJuridictions = computed(() => this.juridictionGroups().length > 0 || this.backupsWithoutGroup().length > 0)
   /**
+   * Arrondissement actuellement sélectionné
+   */
+  juridictionGroupSelected = this.humanResourceService.juridictionGroupSelected
+  /**
+   * Juridiction ou arrondissement affiché dans le bandeau violet
+   */
+  workspaceSelected = this.humanResourceService.workspaceSelected
+  /**
+   * Un arrondissement est sélectionné (et non une juridiction)
+   */
+  isArrondissementSelected = computed(() => this.juridictionGroupSelected() != null)
+  /**
+   * Plusieurs groupes : les arrondissements restent au niveau 2.
+   * Un seul groupe : son contenu remonte au niveau 1.
+   */
+  nestJuridictionGroups = computed(() => this.juridictionGroups().length > 1)
+  /**
+   * Le sélecteur de juridiction s'ouvre s'il y a plus d'un choix (juridictions + arrondissements)
+   */
+  canExpandJuridictionMenu = computed(() => {
+    const groups = this.juridictionGroups()
+    const ungrouped = this.backupsWithoutGroup()
+    const boroughCount = groups.filter((group) => group.fullAccess).length
+    const backupCount = groups.reduce((count, group) => count + (group.backups || []).length, 0) + ungrouped.length
+
+    if (groups.length > 0 || ungrouped.length > 0) {
+      return boroughCount + backupCount > 1
+    }
+
+    return this.humanResourceService.backupsS().length > 1
+  })
+  /**
    * URL de la documentation
    */
   DOCUMENTATION_URL = DOCUMENTATION_URL
@@ -431,7 +463,33 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * @returns
    */
   isCurrentGroup(group: JuridictionGroupInterface) {
+    if (this.juridictionGroupSelected()?.id === group.id) {
+      return true
+    }
+
     return (group.backups || []).some((b) => b.id === this.hrBackupId)
+  }
+
+  /**
+   * Identifiant de workspace d'un arrondissement (négatif pour le distinguer d'une juridiction)
+   */
+  groupWorkspaceId(group: JuridictionGroupInterface) {
+    return -(group.id || 0)
+  }
+
+  /**
+   * Nom de l'arrondissement, sans le préfixe "Arrondissement"
+   */
+  arrondissementName(group: JuridictionGroupInterface | null | undefined) {
+    return (group?.label || '').trim().replace(/^arrondissement\s+/i, '')
+  }
+
+  /**
+   * Intitulé d'un arrondissement dans le menu : "Arrondissement" + nom
+   */
+  arrondissementLabel(group: JuridictionGroupInterface | null | undefined) {
+    const name = this.arrondissementName(group)
+    return name ? `Arrondissement ${name}` : 'Arrondissement'
   }
 
   /**

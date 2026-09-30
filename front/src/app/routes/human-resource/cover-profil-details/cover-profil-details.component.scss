@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   display: block;
@@ -6,7 +7,7 @@
   top: 0;
   z-index: 100;
   border-radius: 8px;
-  background-color: white;
+  background-color: utils.$colors-white;
 
   &.duringPrint {
     position: relative;
@@ -96,7 +97,7 @@
     height: 112px;
     padding: 6px;
     border-radius: 112px;
-    background-color: white;
+    background-color: utils.$colors-white;
     position: absolute;
     left: 100px;
     top: 14px;
@@ -268,8 +269,8 @@ input#lastName:-internal-autofill-selected {
   >.drop-down {
     display: flex;
     border-radius: 4px;
-    border: 1px solid #dddddd;
-    background-color: white;
+    border: 1px solid utils.$colors-lightBorder;
+    background-color: utils.$colors-white;
     justify-content: center;
     align-items: center;
     padding: 4px 8px;
@@ -278,7 +279,7 @@ input#lastName:-internal-autofill-selected {
     line-height: 24px;
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    transition: background-color animations.$duration-normal animations.$ease-default, color animations.$duration-normal animations.$ease-default, box-shadow animations.$duration-normal animations.$ease-default;
 
     &:hover {
       background-color: utils.$colors-hoverLightColor;
@@ -293,17 +294,17 @@ input#lastName:-internal-autofill-selected {
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    background-color: utils.$colors-white;
     border-radius: 4px;
     z-index: 100;
 
     button {
       text-align: right;
-      background-color: #ffffff;
+      background-color: utils.$colors-white;
       border-bottom: solid 1px lightgray;
       line-height: 32px;
       font-size: 14px;
-      transition: background-color 0.2s;
+      transition: background-color animations.$duration-normal animations.$ease-default;
 
       &:hover {
         background-color: utils.$colors-hoverLightColor;
@@ -335,7 +336,7 @@ input#lastName:-internal-autofill-selected {
   border: solid 1px utils.$colors-lightBorder;
   padding: 0 12px 3px 6px;
   font-size: 14px;
-  color: #c3992a;
+  color: utils.$colors-dataToVerifyBtn;
   background-color: #feebd0;
   margin-left: 8px;
 

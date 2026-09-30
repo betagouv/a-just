@@ -146,10 +146,14 @@ export class HumanResourceService {
   constructor() {
     effect(() => {
       const backupsS = this.backupsS()
-      const juridictionGroups = this.juridictionGroups()
       const backupId = this.backupIdS()
 
-      if (backupsS && backupsS.length > 0 && juridictionGroups && juridictionGroups.length > 0 && backupId != null) {
+      // les groupes sont posés avant `backups` dans initDatas : on peut
+      // résoudre un id négatif (arrondissement) dès que les juridictions arrivent.
+      // Ne pas exiger `juridictionGroups.length > 0`, sinon un utilisateur
+      // sans groupe — ou un nouvel onglet avant la réponse groupes — n'a jamais
+      // de workspace et le menu latéral reste incomplet.
+      if (backupsS && backupsS.length > 0 && backupId != null) {
         this.onSelectBackupOrGroup(backupId)
       }
     })
@@ -164,8 +168,7 @@ export class HumanResourceService {
 
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0
-      //this.backupId.next(+backupId)
-      this.backupId.next(-63)
+      this.backupId.next(+backupId)
     }
   }
 
@@ -833,7 +836,17 @@ export class HumanResourceService {
     if (backupIdOrGroupId < 0) {
       const group: JuridictionGroupInterface | undefined = this.juridictionGroups().find((g) => g.id === backupIdOrGroupId * -1)
 
-      this.juridictionGroupSelected.set(group || null)
+      if (group?.fullAccess) {
+        this.juridictionGroupSelected.set(group)
+        return
+      }
+
+      this.juridictionGroupSelected.set(null)
+      const fallback = group?.backups?.[0] || this.backups.getValue()[0] || null
+      this.hrBackup.next(fallback)
+      if (fallback) {
+        this.backupId.next(fallback.id)
+      }
     } else {
       this.juridictionGroupSelected.set(null)
     }

@@ -433,7 +433,7 @@ export class UserService implements OnInit {
     }
 
     this.initDatasUserId = userId
-    this.initDatasPromise = Promise.all([this.getInitDatas(), this.getUserGroups()])
+    this.initDatasPromise = Promise.all([this.getInitDatas(), this.getUserGroups().catch(() => null)])
       .then(([result, groupsResult]) => {
         this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
         this.humanResourceService.fonctions.next(result.fonctions)

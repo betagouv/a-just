@@ -1,4 +1,5 @@
 @use "../../styles/utils.scss" as utils;
+@use "../../styles/animations.scss" as animations;
 
 :host {
   display: block;
@@ -11,7 +12,7 @@
 }
 
 .card {
-  background: #fff;
+  background: utils.$colors-white;
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(utils.$colors-cblack, 0.12);
   padding: 16px;
@@ -114,7 +115,7 @@ tbody tr:hover {
 
 .btn-primary {
   background: utils.$colors-primary;
-  color: #fff;
+  color: utils.$colors-white;
   border: none;
   border-radius: 4px;
   padding: 8px 14px;
@@ -204,7 +205,7 @@ tbody tr:hover {
   .counter {
     padding: 0 6px;
     border-radius: 8px;
-    background: #fff;
+    background: utils.$colors-white;
     border: 1px solid utils.$colors-borderSelect;
     color: utils.$colors-titleSelect;
     font-size: 11px;
@@ -236,7 +237,7 @@ tbody tr:hover {
     background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity animations.$duration-normal;
   }
 
   &.has-scroll::after {

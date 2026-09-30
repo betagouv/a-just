@@ -1,3 +1,6 @@
+@use '../../../../styles/utils.scss' as utils;
+@use '../../../../styles/animations.scss' as animations;
+
 :host {
     display: flex;
     margin-top: 1px;
@@ -11,15 +14,15 @@
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
         height: 0;
         width: 0;
-        border-bottom: 4px solid white;
+        border-bottom: 4px solid utils.$colors-white;
         border-right: 4px solid transparent;
         border-left: 4px solid transparent;
         position: absolute;
         bottom: -4px;
         left: 195px;
         transform: rotate(180deg) !important;
-        -webkit-transition: all .1s ease;
-        transition: all 1s ease;
+        -webkit-transition: all animations.$duration-fast animations.$ease-secondary;
+        transition: all animations.$duration-second animations.$ease-secondary;
         pointer-events: none;
         -webkit-transform: translate(-50%, 0);
         transform: translate(-50%, 0);
@@ -39,11 +42,11 @@
         opacity: 0;
         width: 381px;
         position: absolute;
-        background: white;
+        background: utils.$colors-white;
         padding: 16px;
         border-radius: 3px;
-        -webkit-transition: all .1s ease;
-        transition: all 1s ease;
+        -webkit-transition: all animations.$duration-fast animations.$ease-secondary;
+        transition: all animations.$duration-second animations.$ease-secondary;
         pointer-events: none;
         -webkit-transform: translate(-50%, 0);
         transform: translate(-50%, 0);
@@ -75,7 +78,7 @@
                 display: flex;
                 font-size: 12px;
                 line-height: 1.33;
-                color: #666;
+                color: utils.$colors-cgray;
                 align-items: center;
 
                 b {
@@ -89,7 +92,7 @@
                 padding: 8px;
                 height: 32px;
                 flex: 1;
-                background-color: #f6f6f6;
+                background-color: utils.$colors-bgSelect;
                 line-height: 100%;
                 font-size: 16px;
                 font-weight: bold;
@@ -99,7 +102,7 @@
                     &::before {
                         content: "";
                         position: absolute;
-                        background-color: #f6f6f6;
+                        background-color: utils.$colors-bgSelect;
                         height: 50%;
                         width: 100%;
                         top: -50%;
@@ -115,7 +118,7 @@
                 padding: 8px;
                 height: 32px;
                 flex: 1;
-                background-color: #ededed;
+                background-color: utils.$colors-dataGreyBg;
                 line-height: 100%;
                 font-size: 16px;
                 font-weight: bold;
@@ -125,7 +128,7 @@
                     &::before {
                         content: "";
                         position: absolute;
-                        background-color: #ededed;
+                        background-color: utils.$colors-dataGreyBg;
                         height: 50%;
                         width: 100%;
                         top: -50%;
@@ -175,7 +178,7 @@
                 line-height: 100%;
                 font-size: 12px;
                 line-height: 1.33;
-                color: #666;
+                color: utils.$colors-cgray;
             }
 
             .low {
@@ -186,7 +189,7 @@
                 height: 32px;
                 flex: 1;
                 border-radius: 8px;
-                background-color: #ededed;
+                background-color: utils.$colors-dataGreyBg;
                 font-size: 12px;
                 line-height: 100%;
                 font-weight: bold;
@@ -226,23 +229,24 @@
         display: flex;
         flex-direction: column;
         width: 70%;
+
         .title {
             height: 73px;
             padding: 24px 24px;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            background-color: #fff;
+            background-color: utils.$colors-white;
             position: relative;
 
             p {
                 font-size: 16px;
                 font-weight: bold;
-                color: #3a3a3a;
+                color: utils.$colors-cblack;
             }
 
             label {
                 font-size: 14px;
                 line-height: 1.71;
-                color: #929292;
+                color: utils.$colors-grayRow;
             }
         }
 
@@ -250,7 +254,7 @@
             padding: 8px;
             flex: 1;
             z-index: 1;
-            background-color: #fff;
+            background-color: utils.$colors-white;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             position: relative;
             align-items: center;
@@ -268,7 +272,7 @@
         padding-top: 97px !important;
         flex: 1;
         padding: 24px;
-        background-color: #f5f5fe;
+        background-color: utils.$colors-bgProgressBar;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         align-items: center;
 
@@ -276,8 +280,4 @@
             height: 16px;
         }
     }
-
-
-
-
 }

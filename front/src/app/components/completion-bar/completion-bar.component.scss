@@ -1,4 +1,5 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 :host {
   &.flex-center .progression-bar {
@@ -23,7 +24,7 @@
     .level {
       height: 100%;
       border-radius: 4px;
-      transition: all 3s ease;
+      transition: all 3s animations.$ease-secondary;
     }
 
     .rouge {

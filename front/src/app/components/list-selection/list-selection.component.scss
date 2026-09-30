@@ -1,4 +1,5 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 ::ng-deep .mdc-checkbox__ripple {
   display: none;
@@ -170,10 +171,10 @@
   &:not(.multiple) {
     .selected {
       background-color: utils.$colors-bgSelectSelected;
-      color: white;
+      color: utils.$colors-white;
 
       p {
-        color: white;
+        color: utils.$colors-white;
       }
     }
   }
@@ -194,7 +195,7 @@
     padding: 0 16px;
     color: utils.$colors-cblack;
     cursor: pointer;
-    transition: background-color 0.5s;
+    transition: background-color animations.$duration-slow animations.$ease-default;
 
     >div {
       display: flex;

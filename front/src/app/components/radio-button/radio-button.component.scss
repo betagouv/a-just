@@ -1,3 +1,6 @@
+@use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
+
 :host {
   display: inline-flex;
   align-items: center;
@@ -6,7 +9,7 @@
 
 
   &:not(.selected) {
-    background-color: white !important;
+    background-color: utils.$colors-white !important;
   }
 
 
@@ -32,7 +35,7 @@
   }
 
   .panel {
-    transition: left 0.25s ease;
+    transition: left animations.$duration-slow animations.$ease-default;
     width: 50%;
     display: flex;
     align-items: center;

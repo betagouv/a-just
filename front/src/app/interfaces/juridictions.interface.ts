@@ -16,4 +16,8 @@ export interface JuridictionGroupInterface {
    * Liste des juridictions du groupe
    */
   backups?: BackupInterface[]
+  /**
+   * L'utilisateur a accès à toutes les juridictions actives du groupe
+   */
+  fullAccess?: boolean
 }
