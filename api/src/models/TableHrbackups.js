@@ -403,7 +403,7 @@ export default (sequelizeInstance, Model) => {
         return false
       }
 
-      return true
+      return [id]
     } else if (id < 0) {
       const backup = await Model.models.HRBackups.findOne({
         attributes: ['id'],
@@ -415,19 +415,28 @@ export default (sequelizeInstance, Model) => {
             user_id: userId,
           },
         }],
+        where: {
+          group_id: id * -1,
+        },
         raw: true,
       })
 
       console.log('GROUP HAVE ACCESS', backup)
 
       if (!backup) {
-        return false
+        return []
       }
 
-      return true
+      return (await Model.models.HRBackups.findAll({
+        attributes: ['id'],
+        where: {
+          group_id: id * -1,
+        },
+        raw: true,
+      })).map((item) => item.id)
     }
 
-    return false
+    return []
   }
 
   /**

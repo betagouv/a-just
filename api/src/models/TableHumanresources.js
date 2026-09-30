@@ -110,11 +110,15 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCurrentHrNew = async (backupId, logging = true) => {
+  Model.getCurrentHrNew = async (backupIds, logging = true) => {
+    if (!Array.isArray(backupIds)) {
+      backupIds = [backupIds]
+    }
+
     // 1. REQUÊTE PRINCIPALE
     const hrList = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
-      where: { backup_id: backupId },
+      where: { backup_id: { [Op.in]: backupIds } },
       include: [
         // Situation avec association
         {

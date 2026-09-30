@@ -563,7 +563,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const ownerHasAdminAccess = await Model.hasAdminAccessToJuridiction(ownerId, juridictionId)
-    const userHasAccess = await Model.models.HRBackups.haveAccess(juridictionId, userId)
+    const userHasAccess = (await Model.models.HRBackups.haveAccess(juridictionId, userId)).length > 0
     if (ownerHasAdminAccess && userHasAccess) {
       let ventilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((ventilation) => ventilation.id)
 

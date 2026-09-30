@@ -92,7 +92,7 @@ export default class RouteExtractor extends Route {
         const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
         printKeys('*')
 
-        if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+        if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
           ctx.throw(403, "Vous n'avez pas accès")
         }
 
@@ -235,7 +235,7 @@ export default class RouteExtractor extends Route {
     const { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!Access.isAdmin(ctx)) {
-      if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
         ctx.throw(403, "Vous n'avez pas accès")
       }
     }
@@ -292,7 +292,7 @@ export default class RouteExtractor extends Route {
     const userId = ctx.state?.user?.id
     if (!userId) return ctx.throw(401, 'Non authentifié')
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, userId))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, userId)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -358,7 +358,7 @@ export default class RouteExtractor extends Route {
   async filterListNew(ctx) {
     const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 

@@ -64,7 +64,7 @@ export class UserService implements OnInit {
    */
   canEditPanorama = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_WRITER) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_WRITER) !== -1 && (this.humanResourceService.backupIdS() ?? 0) > 0 ? true : false
   })
   /**
    * User can view simulator
@@ -100,14 +100,17 @@ export class UserService implements OnInit {
   canViewTempsMoyens = computed(() => {
     const user = this.user.getValue()
     //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
-    return user && user.referentielIds === null
+    return user && user.referentielIds === null ? true : false
   })
   /**
    * User can edit simulator
    */
   canEditSimulator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
+    return user &&
+      user.access &&
+      (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1) &&
+      (this.humanResourceService.backupIdS() ?? 0) > 0
       ? true
       : false
   })
@@ -118,7 +121,8 @@ export class UserService implements OnInit {
     const user = this.user.getValue()
     return user &&
       user.access &&
-      (user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
+      (user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1) &&
+      (this.humanResourceService.backupIdS() ?? 0) > 0
       ? true
       : false
   })
@@ -127,7 +131,10 @@ export class UserService implements OnInit {
    */
   canEditReaffectator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && (user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
+    return user &&
+      user.access &&
+      (user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1) &&
+      (this.humanResourceService.backupIdS() ?? 0) > 0
       ? true
       : false
   })
@@ -137,28 +144,28 @@ export class UserService implements OnInit {
   canEditTempsMoyens = computed(() => {
     const user = this.user.getValue()
     //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1 ? true : false
-    return user && user.referentielIds === null
+    return user && user.referentielIds === null && (this.humanResourceService.backupIdS() ?? 0) > 0
   })
   /**
    * User can edit activities
    */
   canEditActivities = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1 && (this.humanResourceService.backupIdS() ?? 0) > 0 ? true : false
   })
   /**
    * User can edit calculator
    */
   canEditCalculator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1 && (this.humanResourceService.backupIdS() ?? 0) > 0 ? true : false
   })
   /**
    * User can edit HR
    */
   canEditHR = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1 && (this.humanResourceService.backupIdS() ?? 0) > 0 ? true : false
   })
   /**
    * User can view all referentiel

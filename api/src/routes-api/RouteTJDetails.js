@@ -30,7 +30,7 @@ export default class RouteJuridictionsDetails extends Route {
   async getCle(ctx) {
     let { juridictionId } = this.body(ctx)
 
-    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
       const list = await this.model.getCle(juridictionId)
       this.sendOk(ctx, list)
     } else {
@@ -54,7 +54,7 @@ export default class RouteJuridictionsDetails extends Route {
   async updateCle(ctx) {
     const { juridictionId, categoryId, value } = this.body(ctx)
 
-    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
       await this.model.updateCle(juridictionId, categoryId, value)
       this.sendOk(ctx, 'Ok')
     } else {

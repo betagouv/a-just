@@ -52,7 +52,7 @@ export default class RouteReaffectator extends Route {
   })
   async filterList(ctx) {
     let { backupId, date, fonctionsIds, categoryId, referentielList, contentieuxIds } = this.body(ctx)
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 

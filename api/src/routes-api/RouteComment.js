@@ -32,7 +32,7 @@ export default class RouteComment extends Route {
   })
   async getComments(ctx) {
     const { type, juridictionId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
       this.sendOk(ctx, await this.model.getComments(type, juridictionId))
     } else {
       ctx.throw(403, "Vous n'avez pas accès")
@@ -55,7 +55,7 @@ export default class RouteComment extends Route {
   })
   async updateComment(ctx) {
     const { type, juridictionId, comment, commentId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
       this.sendOk(ctx, await this.model.updateComment(type, juridictionId, comment, ctx.state.user.id, commentId))
     } else {
       ctx.throw(403, "Vous n'avez pas accès")
@@ -76,7 +76,7 @@ export default class RouteComment extends Route {
   })
   async deleteComment(ctx) {
     const { juridictionId, commentId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
       this.sendOk(ctx, await this.model.deleteComment(commentId, juridictionId))
     } else {
       ctx.throw(403, "Vous n'avez pas accès")

@@ -110,7 +110,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if (!findOne || (userId && !(await Model.models.HRBackups.haveAccess(findOne.backup_id, userId)))) {
+    if (!findOne || (userId && (await Model.models.HRBackups.haveAccess(findOne.backup_id, userId)).length === 0)) {
       throw "Vous n'avez pas accès à cette juridiction !"
     }
 

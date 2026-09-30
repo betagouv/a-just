@@ -40,7 +40,7 @@ export default class RouteActivities extends Route {
   async updateBy(ctx) {
     const { hrBackupId } = this.body(ctx)
 
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0) {
       const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
       await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
       this.sendOk(ctx, 'Ok')
@@ -64,7 +64,7 @@ export default class RouteActivities extends Route {
   async getByMonth(ctx) {
     const { date, hrBackupId } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0 || Access.isAdmin(ctx)) {
       const dateLastMonth = await this.model.getLastMonth(hrBackupId)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
@@ -92,7 +92,7 @@ export default class RouteActivities extends Route {
   })
   async getLastMonth(ctx) {
     const { hrBackupId } = this.body(ctx)
-    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0 || Access.isAdmin(ctx)) {
       const date = await this.model.getLastMonth(hrBackupId)
       this.sendOk(ctx, {
         date,
@@ -114,7 +114,7 @@ export default class RouteActivities extends Route {
   })
   async getLastHumanActivities(ctx) {
     const { hrBackupId } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0) {
       const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId, ctx.state.user.id)
       this.sendOk(ctx, {
         list,
@@ -138,7 +138,7 @@ export default class RouteActivities extends Route {
   })
   async getNotCompleteActivities(ctx) {
     const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0) {
       const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd, ctx.state.user.id)
       this.sendOk(ctx, {
         list,

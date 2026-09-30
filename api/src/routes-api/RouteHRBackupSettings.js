@@ -34,7 +34,7 @@ export default class RouteHrBackupSettings extends Route {
   async list(ctx) {
     const { backupId, types } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -61,7 +61,7 @@ export default class RouteHrBackupSettings extends Route {
   async addOrUpdate(ctx) {
     const { backupId, id, label, type, datas } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 

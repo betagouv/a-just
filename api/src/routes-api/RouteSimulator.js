@@ -52,7 +52,7 @@ export default class RouteSimulator extends Route {
   async getSituation(ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -122,7 +122,7 @@ export default class RouteSimulator extends Route {
   async toSimulate(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId, referentielId, functionIds } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -174,7 +174,7 @@ export default class RouteSimulator extends Route {
   async toSimulateWhite(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 

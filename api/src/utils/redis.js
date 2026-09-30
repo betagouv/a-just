@@ -206,16 +206,21 @@ export const getObjectSizeInMB = (obj) => {
  * @param {*} models objet d'acces bdd
  * @returns
  */
-export const loadOrWarmHR = async (backupId, models, userId) => {
+export const loadOrWarmHR = async (backupIds, models, userId) => {
+  if (!Array.isArray(backupIds)) {
+    // on initialise avec un tableau si ca n'en est pas un
+    backupIds = [backupIds]
+  }
+
   const cacheKey = 'hrBackup'
-  let hr = await getCacheValue(backupId, cacheKey)
+  let hr = await getCacheValue(backupIds, cacheKey)
 
   if (!hr) {
     //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
-    hr = await models.HumanResources.getCurrentHrNew(backupId, false)
-    await setCacheValue(backupId, hr, cacheKey, 3600)
-    await invalidateBackup(backupId)
-    await invalidateAjustBackup(backupId)
+    hr = await models.HumanResources.getCurrentHrNew(backupIds, false)
+    await setCacheValue(backupIds, hr, cacheKey, 3600)
+    await invalidateBackup(backupIds)
+    await invalidateAjustBackup(backupIds)
   } else {
     //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
   }

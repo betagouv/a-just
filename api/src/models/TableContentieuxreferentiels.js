@@ -16,7 +16,11 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false, userId = null) => {
+  Model.getReferentiels = async (backupIds = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false, userId = null) => {
+    if (!Array.isArray(backupIds)) {
+      backupIds = [backupIds]
+    }
+
     let refIds = null
     let userPreview = null
     if (userId) {
@@ -24,10 +28,14 @@ export default (sequelizeInstance, Model) => {
       refIds = userPreview.referentielIds
     }
 
-    if (backupId) {
-      const juridiction = await Model.models.HRBackups.findById(backupId)
-      if (juridiction && !displayAll) {
-        isJirs = juridiction.jirs
+    if (backupIds) {
+      const juridictions = await Model.models.HRBackups.findAll({
+        where: {
+          id: { [Op.in]: backupIds },
+        },
+      })
+      if (juridictions.length > 0 && !displayAll) {
+        isJirs = juridictions.some((j) => j.jirs)
       }
     }
     if (displayAll === true) {
@@ -35,13 +43,13 @@ export default (sequelizeInstance, Model) => {
     }
 
     const where = {}
-    if (displayAll == false && backupId) {
+    if (displayAll == false && backupIds.length > 0) {
       where[Op.or] = [
         {
           only_to_hr_backup: null,
         },
         {
-          only_to_hr_backup: { [Op.contains]: [backupId] },
+          only_to_hr_backup: { [Op.contains]: backupIds },
         },
       ]
     }

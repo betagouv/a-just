@@ -54,7 +54,7 @@ export default class RouteCalculator extends Route {
   async filterList(ctx) {
     const { backupId } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
@@ -88,7 +88,7 @@ export default class RouteCalculator extends Route {
   async rangeValues(ctx) {
     let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
@@ -475,7 +475,7 @@ export default class RouteCalculator extends Route {
   async hasError(ctx) {
     let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 

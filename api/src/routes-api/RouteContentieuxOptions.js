@@ -60,7 +60,7 @@ export default class RouteContentieuxOptions extends Route {
   async removeBackup(ctx) {
     const { backupId } = ctx.params
 
-    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -117,7 +117,7 @@ export default class RouteContentieuxOptions extends Route {
     const { backupId, list, backupName, juridictionId, backupStatus, type } = this.body(ctx)
     if (
       (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
-      (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
+      (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0)
     ) {
       const newId = await this.model.models.OptionsBackups.saveBackup(ctx.state.user.id, list, backupId, backupName, juridictionId, backupStatus, type)
 
