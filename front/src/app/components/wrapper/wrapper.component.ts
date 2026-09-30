@@ -471,6 +471,31 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
   }
 
   /**
+   * Format de l'arrondissement en fonction du nom
+   * d'
+   * de
+   * du
+   */
+  formatGroupLabel(group: { label?: string } | null | undefined) {
+    const label = (group?.label || '').trim().replace(/^arrondissement\s+/i, '')
+
+    if (!label) return ''
+
+    // Article défini masculin : "Le Havre" → "du Havre"
+    if (/^le\s+/i.test(label)) {
+      return label.replace(/^le\s+/i, 'du ')
+    }
+
+    // Voyelle → "d'Avignon", "d'Angers", etc.
+    if (/^[aeiouyàâäéèêëîïôöùûüÿœæ]/i.test(label)) {
+      return `d'${label}`
+    }
+
+    // Cas général → "de Rennes", "de Paris", etc.
+    return `de ${label}`
+  }
+
+  /**
    * Identifiant de workspace d'un arrondissement (négatif pour le distinguer d'une juridiction)
    */
   groupWorkspaceId(group: JuridictionGroupInterface) {
@@ -481,7 +506,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Nom de l'arrondissement, sans le préfixe "Arrondissement"
    */
   arrondissementName(group: JuridictionGroupInterface | null | undefined) {
-    return (group?.label || '').trim().replace(/^arrondissement\s+/i, '')
+    return this.formatGroupLabel(group)
   }
 
   /**
