@@ -314,6 +314,19 @@ input[type="number"] {
         cursor: pointer;
         color: utils.$colors-cblackdark;
 
+        .icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          mat-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+          }
+        }
+
         &:hover {
           background-color: utils.$colors-bgSelect;
         }
