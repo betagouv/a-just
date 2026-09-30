@@ -30,8 +30,9 @@ export default class RouteJuridictionsDetails extends Route {
   async getCle(ctx) {
     let { juridictionId } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)).length > 0) {
-      const list = await this.model.getCle(juridictionId)
+    const backupIds = await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)
+    if (backupIds.length > 0) {
+      const list = await this.model.getCle(backupIds)
       this.sendOk(ctx, list)
     } else {
       ctx.throw(403, "Vous n'avez pas accès")
