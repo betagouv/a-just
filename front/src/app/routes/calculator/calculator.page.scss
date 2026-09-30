@@ -46,13 +46,13 @@
 
           .header {
             border-bottom: solid 1px utils.$colors-cpink !important;
-            background-color: utils.$colors-disabledPinkSimulato;
+            background-color: utils.$colors-disabledPinkSimulator;
             color: utils.$colors-cpink;
           }
 
           .content {
             .action {
-              background-color: utils.$colors-disabledPinkSimulato !important;
+              background-color: utils.$colors-disabledPinkSimulator !important;
 
               label {
                 color: utils.$colors-cpink !important;
@@ -285,7 +285,7 @@
           font-size: 14px;
 
           &.greffe {
-            background-color: utils.$colors-disabledPinkSimulato;
+            background-color: utils.$colors-disabledPinkSimulator;
             color: utils.$colors-cpink;
           }
         }
@@ -342,7 +342,7 @@
         font-size: 14px;
 
         &.greffe {
-          background-color: utils.$colors-disabledPinkSimulato;
+          background-color: utils.$colors-disabledPinkSimulator;
           color: utils.$colors-cpink;
         }
       }
@@ -504,7 +504,7 @@
       color: utils.$colors-tagText;
 
       &.Greffe {
-        background-color: utils.$colors-disabledPinkSimulato;
+        background-color: utils.$colors-disabledPinkSimulator;
         color: utils.$colors-cpink;
       }
     }
