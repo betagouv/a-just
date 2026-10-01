@@ -18,8 +18,8 @@
     }
     <div class="box-signup">
       @if (!provider) {
-      <label class="steps">Étape {{ signUpStep }} sur 2</label>
-      <label class="sub-title">Tous les champs de ce formulaire sont obligatoires</label>
+      <p class="steps">Étape {{ signUpStep }} sur 2</p>
+      <p class="sub-title">Tous les champs de ce formulaire sont obligatoires</p>
       }
       <p class="step-title">{{ signUpStep === 1 ? 'Je suis :' : 'Ma fonction' }}</p>
       @if (!provider) {
@@ -31,25 +31,25 @@
       @if (signUpStep === 1) {
       <div class="grid-double">
         <div>
-          <label>Prénom</label>
+          <label for="firstname-input">Prénom</label>
           <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
-            (keyup.enter)="focusNext($event)" autocomplete="off" />
+            (keyup.enter)="focusNext($event)" autocomplete="off" id="firstname-input" />
         </div>
         <div>
-          <label>Nom</label>
+          <label for="lastname-input">Nom</label>
           <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
-            (keyup.enter)="focusNext($event)" autocomplete="off" />
+            (keyup.enter)="focusNext($event)" autocomplete="off" id="lastname-input" />
         </div>
       </div>
-      <label>Courriel professionnel :</label>
-      <label class="sub-label">
+      <label for="email-input">Courriel professionnel :</label>
+      <input #input class="ethics-ui" placeholder="nom@exemple.fr" formControlName="email" type="email"
+        (keyup.enter)="focusNext($event)" autocomplete="off" id="email-input" />
+      <p class="sub-label">
         Adresse nominative uniquement, ne pas utiliser de boîte générique ou structurelle
-      </label>
-      <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
-        (keyup.enter)="focusNext($event)" autocomplete="off" />
+      </p>
       @if (!paramsUrl?.provider) {
       <div class="password-line">
-        <div><label>Créer un mot de passe :</label></div>
+        <div><label for="password-input">Créer un mot de passe :</label></div>
         <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">
           <input (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
             formControlName="checkboxPassword" />
@@ -58,27 +58,27 @@
       </div>
       <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
         type="{{ !form.controls['checkboxPassword'].value ? 'password' : 'text' }}" (keyup)="checkStrength($event)"
-        (keyup.enter)="focusNext($event)" autocomplete="off" />
-      <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
-      <label class="sub-label password" [ngStyle]="{ color: getParamColor(0) }">
+        (keyup.enter)="focusNext($event)" autocomplete="off" id="password-input" />
+      <p class="sub-title no-margin">Votre mot de passe doit contenir au moins :</p>
+      <p class="sub-label password" [ngStyle]="{ color: getParamColor(0) }">
         <span [ngStyle]="{ 'background-color': getParamColor(0) }">i</span>
         &nbsp; {{ MIN_PASSWORD_LENGTH }} caractères minimum
-      </label>
-      <label class="sub-label password" [ngStyle]="{ color: getParamColor(1) }">
+      </p>
+      <p class="sub-label password" [ngStyle]="{ color: getParamColor(1) }">
         <span [ngStyle]="{ 'background-color': getParamColor(1) }">i</span>
         &nbsp; 1 caractère spécial
-      </label>
-      <label class="sub-label password" [ngStyle]="{ color: getParamColor(2) }">
+      </p>
+      <p class="sub-label password" [ngStyle]="{ color: getParamColor(2) }">
         <span [ngStyle]="{ 'background-color': getParamColor(2) }">i</span>
         &nbsp; 1 chiffre minimum
-      </label>
-      <label class="sub-label password last" [ngStyle]="{ color: getParamColor(3) }">
+      </p>
+      <p class="sub-label password last" [ngStyle]="{ color: getParamColor(3) }">
         <span [ngStyle]="{ 'background-color': getParamColor(3) }">i</span>
         &nbsp; 1 majuscule
-      </label>
-      <label>Confirmation de votre mot de passe :</label>
+      </p>
+      <label for="retype-password-input">Confirmation de votre mot de passe :</label>
       <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"
-        (keyup.enter)="focusNext($event)" autocomplete="off" />
+        (keyup.enter)="focusNext($event)" autocomplete="off" id="retype-password-input" />
       }
       <div class="checkbox-container checkbox-row">
         <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)"
@@ -96,16 +96,18 @@
       </div>
       }
       @if (signUpStep === 2) {
-      <label>{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon tribunal' }} de rattachement :</label>
+      <label [attr.for]="'rattach-select'">{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon tribunal' }} de
+        rattachement :</label>
       <div class="tj">
         <aj-autocomplete #tjSelect [options]="tjOptions" [value]="selectedTjId"
           [placeholder]="'Choisir ' + (userService.interfaceType === 1 ? 'une CA' : 'un TJ')"
-          (optionChange)="setTj($event)"></aj-autocomplete>
+          (optionChange)="setTj($event)" [id]="'rattach-select'"></aj-autocomplete>
       </div>
-      <label>Ma fonction :</label>
+      <label [attr.for]="'fonction-select'">Ma fonction :</label>
       <div class="tj">
         <aj-autocomplete #fctSelect [options]="fonctionOptions()" [value]="selectedFonctionId"
-          placeholder="Choisir une fonction" (optionChange)="setFonc($event)"></aj-autocomplete>
+          placeholder="Choisir une fonction" (optionChange)="setFonc($event)"
+          [id]="'fonction-select'"></aj-autocomplete>
       </div>
       @if (form.controls['fonction'].value === 'Autre') {
       <label>Intitulé de ma fonction :</label>

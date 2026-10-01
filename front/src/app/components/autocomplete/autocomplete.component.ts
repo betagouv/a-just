@@ -46,6 +46,10 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
    */
   @Input() placeholder = ''
   /**
+   * Id pour les régles HTML (label)
+   */
+  @Input() id = ''
+  /**
    * Id de l'option sélectionnée
    */
   @Input() value: number | null = null

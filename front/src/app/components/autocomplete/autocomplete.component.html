@@ -1,7 +1,7 @@
 <div class="aj-autocomplete">
   <input #input class="ethics-ui" type="text" [formControl]="searchControl" [placeholder]="placeholder"
     autocomplete="off" (input)="onSearch()" (focus)="onInputFocus()" (blur)="onInputBlur()"
-    (keydown)="onKeydown($event)" />
+    (keydown)="onKeydown($event)" [id]="id" />
   <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
 
   @if (isOpen && filteredGroups.length) {

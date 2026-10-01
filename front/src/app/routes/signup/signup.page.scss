@@ -31,7 +31,7 @@
   .sub-label {
     font-size: 12px;
     color: utils.$colors-cgray;
-    margin-bottom: 12px;
+    margin-bottom: 24px;
 
     &.password {
       display: flex;
@@ -53,7 +53,7 @@
         width: 13.3px;
         height: 13.3px;
         background-color: utils.$colors-cblue;
-        color: white;
+        color: utils.$colors-white;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -136,10 +136,13 @@
     }
   }
 
-  input[type=text],
-  input[type=email],
-  input[type=password] {
+  input[type="text"],
+  input[type="password"] {
     margin-bottom: 24px;
+  }
+
+  input[type="email"] {
+    margin-bottom: 12px;
   }
 
   .no-margin {
@@ -148,23 +151,17 @@
 
   .password-line {
     display: flex;
+    justify-content: space-between;
+    flex: 1;
 
-    div {
-      &:last-child {
-        display: flex;
-        justify-content: flex-end;
+    span {
+      font-size: 14px;
+      user-select: none;
 
-        span {
-          font-size: 14px;
-
-          input {
-            position: relative;
-            top: 1px;
-          }
-        }
+      input {
+        position: relative;
+        top: 1px;
       }
-
-      flex: 1;
     }
   }
 
@@ -310,6 +307,6 @@
 
 .checkbox-container input.large:focus,
 .checkbox-container input.large:focus-visible {
-  outline: 2px solid #000091;
+  outline: 2px solid utils.$colors-primary;
   outline-offset: 2px;
 }

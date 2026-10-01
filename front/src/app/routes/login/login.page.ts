@@ -146,7 +146,6 @@ export class LoginPage implements OnInit {
   }
 
   onContinuToLogin(action: any, input: any) {
-    //console.log(action, input.value)
     switch (action.id) {
       case 'connect':
         this.authService.completeLogin({ code: input.value }).then((returnLogin) => {

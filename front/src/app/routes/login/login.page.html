@@ -6,7 +6,7 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
   <div class="signup">
-    <p class="intro-step-1">Vous n’avez pas encore de compte</p>
+    <p class="intro-step-1">Vous n'avez pas encore de compte</p>
     <p><b>Rejoindre A-JUST</b></p>
     <a routerLink="/inscription">
       <button class="outline white strict-border intro-step-2">
@@ -28,11 +28,11 @@
     </div>
     }
     <h3 class="intro-step-3">Se connecter avec son compte</h3>
-    <label>Email</label>
-    <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
-      (keyup.enter)="focusNext($event)" />
+    <label for="input-email">Email</label>
+    <input #input class="ethics-ui" placeholder="nom@exemple.fr" formControlName="email" type="email"
+      (keyup.enter)="focusNext($event)" id="input-email" />
     <div class="password-line">
-      <label>Mot de passe</label>
+      <label for="input-password">Mot de passe</label>
       <div>
         <span id="printPassword" class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">
           <input (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
@@ -42,19 +42,22 @@
       </div>
     </div>
     <input #input class="ethics-ui" placeholder="" formControlName="password"
-      [type]="form.get('checkboxPassword')?.value ? 'text' : 'password'" (keyup.enter)="focusNext($event)" />
-    <span class="remember-me">
-      <input type="checkbox" formControlName="remember" class="remember-check" />
-      <label>Se souvenir de moi</label>
-    </span>
-    @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-    }
+      [type]="form.get('checkboxPassword')?.value ? 'text' : 'password'" (keyup.enter)="focusNext($event)"
+      id="input-password" />
     <div class="remember-row">
+      <div></div>
       <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>
     </div>
+    <span class="remember-me">
+      <input type="checkbox" formControlName="remember" class="remember-check" id="remember-me-checkbox" />
+      <label for="remember-me-checkbox">Se souvenir de moi</label>
+    </span>
+    <!-- @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+    } -->
     <input type="submit" class="big-button" value="Se connecter" />
   </form>
+
   @if (needToGetCode !== null) {
   <aj-popup [actions]="[
           { id: 'close', content: 'Annuler' },

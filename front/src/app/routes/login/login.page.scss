@@ -1,18 +1,7 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 :host {
-
-  .remember-me {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    label {
-      flex: 1;
-      margin: initial;
-    }
-  }
-
   .logo {
     height: 7em;
 
@@ -25,6 +14,64 @@
   form {
     padding: 1.5em;
     border: solid 1px utils.$colors-cgraylightv3;
+
+    input[type="password"],
+    input[type="text"] {
+      margin-bottom: 8px;
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+
+      >div {
+        display: flex;
+        align-items: center;
+      }
+
+      a {
+        text-decoration: underline;
+        transition: opacity animations.$duration-normal animations.$ease-default;
+
+        &:hover {
+          opacity: .8;
+        }
+      }
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+
+      .remember-check {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        margin-bottom: 0;
+        cursor: pointer;
+      }
+
+      label {
+        flex: 1;
+        margin: initial;
+        user-select: none;
+        cursor: pointer;
+      }
+    }
+
+    .big-button {
+      cursor: pointer;
+      margin-bottom: 0;
+      transition: opacity animations.$duration-normal animations.$ease-default;
+
+      &:hover {
+        opacity: .8;
+      }
+    }
   }
 
   h3 {
@@ -47,136 +94,130 @@
     margin-top: 16px;
   }
 
+  .error-message {
+    margin: 8px 0px;
+    padding: 8px;
+    font-weight: bold;
+    text-align: center;
+    background-color: utils.$colors-credlight;
+    color: utils.$colors-cred;
+  }
+
   a {
     color: utils.$colors-primary;
   }
 
-  .remember-check {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-    margin-bottom: 0;
-  }
+  .signup {
+    margin-bottom: 24px;
+    padding: 1.5em;
+    background-color: utils.$colors-bgProgressBar;
 
-  .remember-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-
-    >div {
-      display: flex;
-      align-items: center;
+    p:last-child {
+      margin-top: 2px;
+      margin-bottom: 14px;
     }
-  }
-}
 
-.signup {
-  margin-bottom: 24px;
-  padding: 1.5em;
-  background-color: utils.$colors-bgProgressBar;
-
-  p:last-child {
-    margin-top: 2px;
-    margin-bottom: 14px;
-  }
-
-  b {
-    font-size: 20px;
-  }
-
-  a {
-    margin-top: 16px;
-    display: block;
-  }
-
-  button {
-    width: 100%;
-    font-size: 1.125em;
-    font-weight: 500;
-    height: 48px;
-    line-height: 42px;
-
-    i {
-      margin-right: 12px;
-      position: relative;
-      top: 0px;
+    b {
+      font-size: 20px;
     }
-  }
-}
 
-.sso-bt {
-  display: flex;
-  width: 100%;
-  margin-top: 1em;
-  font-size: 1.125em;
+    a {
+      margin-top: 16px;
+      display: block;
+    }
 
-  &.disabled {
-    opacity: 0.75;
-    border-color: utils.$colors-cblack;
-    color: utils.$colors-cblack;
-  }
+    button {
+      width: 100%;
+      font-size: 1.125em;
+      font-weight: 500;
+      height: 48px;
+      line-height: 42px;
 
-  img {
-    align-self: stretch;
-    margin-right: 16px;
-  }
-}
-
-.or {
-  margin: 1em 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  &::before {
-    content: " ";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1px;
-    background-color: utils.$colors-lightBorder;
-  }
-
-  p {
-    display: inline-block;
-    margin: 0;
-    padding: 8px;
-    background-color: utils.$colors-white;
-    z-index: 1;
-  }
-}
-
-.popin-code {
-  p {
-    margin-bottom: 16px;
-  }
-
-  input {
-    margin-bottom: 0;
-  }
-}
-
-.password-line {
-  display: flex;
-
-  div {
-    &:last-child {
-      display: flex;
-      justify-content: flex-end;
-
-      span {
-        font-size: 14px;
-
-        input {
-          position: relative;
-          top: 1px;
-        }
+      i {
+        margin-right: 12px;
+        position: relative;
+        top: 0px;
       }
     }
+  }
 
+  .sso-bt {
+    display: flex;
+    width: 100%;
+    margin-top: 1em;
+    font-size: 1.125em;
+
+    &.disabled {
+      opacity: 0.75;
+      border-color: utils.$colors-cblack;
+      color: utils.$colors-cblack;
+    }
+
+    img {
+      align-self: stretch;
+      margin-right: 16px;
+    }
+  }
+
+  .or {
+    margin: 1em 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::before {
+      content: " ";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background-color: utils.$colors-lightBorder;
+    }
+
+    p {
+      display: inline-block;
+      margin: 0;
+      padding: 8px;
+      background-color: utils.$colors-white;
+      z-index: 1;
+    }
+  }
+
+  .popin-code {
+    p {
+      margin-bottom: 16px;
+    }
+
+    input {
+      margin-bottom: 0;
+    }
+  }
+
+  .password-line {
+    display: flex;
+
+    label {
+      margin-bottom: 8px;
+    }
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
+
+    display: flex;
+    justify-content: space-between;
     flex: 1;
+
+    span {
+      font-size: 14px;
+      user-select: none;
+
+      input {
+        position: relative;
+        top: 1px;
+      }
+    }
   }
 }
