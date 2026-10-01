@@ -9,13 +9,16 @@ import { ServerService } from '../../services/http-server/server.service'
 import { SSOService } from '../../services/sso/sso.service'
 import { MIN_PASSWORD_LENGTH } from '../../utils/user'
 import { isProfessionalEmailDomain } from '../../utils/string'
+import { AutocompleteComponent, AutocompleteOption } from '../../components/autocomplete/autocomplete.component'
+import { arrondissementLabel } from '../../utils/arrondissement'
+import { JuridictionInterface } from '../../interfaces/juridiction'
 
 /**
  * Page d'inscription
  */
 @Component({
   standalone: true,
-  imports: [WrapperNoConnectedComponent, FormsModule, CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [WrapperNoConnectedComponent, FormsModule, CommonModule, RouterLink, ReactiveFormsModule, AutocompleteComponent],
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
 })
@@ -30,8 +33,8 @@ export class SignupPage {
 
   @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
 
-  @ViewChild('tjSelect') tjSelect!: ElementRef<HTMLSelectElement>
-  @ViewChild('fctSelect') fctSelect!: ElementRef<HTMLSelectElement>
+  @ViewChild('tjSelect') tjSelect!: AutocompleteComponent
+  @ViewChild('fctSelect') fctSelect!: AutocompleteComponent
   @ViewChild('checkbox') checkboxEl!: ElementRef<HTMLInputElement>
 
   /**
@@ -106,7 +109,14 @@ export class SignupPage {
           'Cadre greffier/ière',
         ]
   })
-  tjs: any[] = []
+  fonctionOptions: Signal<AutocompleteOption[]> = computed(() =>
+    [...this.fonctions(), 'Autre'].map((label, index) => ({
+      id: index + 1,
+      label,
+    })),
+  )
+  tjs: JuridictionInterface[] = []
+  tjOptions: AutocompleteOption[] = []
   provider: string = ''
 
   /**
@@ -123,6 +133,7 @@ export class SignupPage {
   constructor() {
     this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Embarquement')
     this.loadTj()
+    this.userService.getInterfaceType().then(() => this.buildTjOptions())
 
     this.route.queryParams.subscribe((p: any) => {
       this.paramsUrl = p
@@ -165,13 +176,13 @@ export class SignupPage {
       } else {
         alert('Vous devez saisir un TJ')
       }
-      this.focusSoon(() => this.tjSelect?.nativeElement.focus())
+      this.focusSoon(() => this.tjSelect?.focus())
       return
     }
 
     if (!fonction) {
       alert('Vous devez saisir une fonction')
-      this.focusSoon(() => this.fctSelect?.nativeElement.focus())
+      this.focusSoon(() => this.fctSelect?.focus())
       return
     }
 
@@ -316,16 +327,19 @@ export class SignupPage {
   }
 
   /**
-   * Enregistre la fonction
-   * @param event
+   * Id de la fonction actuellement choisie
    */
-  setFonc(event: any) {
-    this.fonctions().map((fct) => {
-      if (fct === event.value) {
-        this.form.controls['fonction'].setValue(fct)
-      }
-    })
-    if (event.value === 'Autre') this.form.controls['fonction'].setValue('Autre')
+  get selectedFonctionId(): number | null {
+    const selectedLabel = this.form.controls['fonction'].value
+    return this.fonctionOptions().find((option) => option.label === selectedLabel)?.id ?? null
+  }
+
+  /**
+   * Enregistre la fonction
+   * @param option
+   */
+  setFonc(option: AutocompleteOption | null) {
+    this.form.controls['fonction'].setValue(option?.label || null)
   }
 
   /**
@@ -333,21 +347,37 @@ export class SignupPage {
    */
   loadTj() {
     this.serverService.get('juridictions/get-all-visibles').then((data) => {
-      this.tjs = data.data
-      //this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
+      this.tjs = data.data || []
+      this.buildTjOptions()
     })
   }
 
   /**
-   * Enregistre la valeur de TJ choisie
-   * @param event
+   * Construit les options d'autocomplétion groupées par arrondissement
    */
-  setTj(event: any) {
-    this.tjs.map((tj) => {
-      if (tj.id === +event.value) {
-        this.form.controls['tj'].setValue(tj.label)
-      }
-    })
+  private buildTjOptions() {
+    this.tjOptions = this.tjs.map((tj) => ({
+      id: tj.id,
+      label: tj.label,
+      groupId: tj.group?.id ?? null,
+      groupLabel: tj.group ? arrondissementLabel(tj.group, !this.userService.isCa()) : '',
+    }))
+  }
+
+  /**
+   * Id du TJ / CA actuellement choisi
+   */
+  get selectedTjId(): number | null {
+    const selectedLabel = this.form.controls['tj'].value
+    return this.tjs.find((tj) => tj.label === selectedLabel)?.id ?? null
+  }
+
+  /**
+   * Enregistre la valeur de TJ choisie
+   * @param option
+   */
+  setTj(option: AutocompleteOption | null) {
+    this.form.controls['tj'].setValue(option?.label || null)
   }
 
   onUseSSO() {

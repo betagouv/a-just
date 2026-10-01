@@ -72,15 +72,18 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.getAllVisibles = async () => {
-    return await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+    const list = await Model.findAll({
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
         enabled: true,
         parent_id: null,
         i_elst: { [Op.ne]: 0 },
       },
       order: [['label', 'asc']],
+      raw: true,
     })
+
+    return Model.attachGroups(list)
   }
 
   /**
@@ -89,7 +92,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAllWithUser = async () => {
     const jurisdictions = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
         parent_id: null,
         i_elst: { [Op.ne]: 0 },
@@ -109,7 +112,44 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return filtered
+    return Model.attachGroups(filtered)
+  }
+
+  /**
+   * Ajoute le groupe / arrondissement de chaque juridiction via son backup.
+   * Ne change pas l'id ni le label utilisés à l'inscription.
+   * @param {*} list
+   * @returns
+   */
+  Model.attachGroups = async (list) => {
+    const backupIds = [...new Set(list.map((item) => item.backup_id).filter((id) => id != null))]
+
+    if (!backupIds.length) {
+      return list.map(({ backup_id, ...juridiction }) => ({ ...juridiction, group: null }))
+    }
+
+    const backups = await Model.models.HRBackups.findAll({
+      attributes: ['id', 'group_id'],
+      where: { id: { [Op.in]: backupIds } },
+      raw: true,
+    })
+
+    const groupIds = [...new Set(backups.map((backup) => backup.group_id).filter((id) => id != null))]
+    const groups = groupIds.length
+      ? await Model.models.Groups.findAll({
+          attributes: ['id', 'label'],
+          where: { id: { [Op.in]: groupIds } },
+          raw: true,
+        })
+      : []
+
+    const groupById = Object.fromEntries(groups.map((group) => [group.id, { id: group.id, label: group.label }]))
+    const groupByBackupId = Object.fromEntries(backups.map((backup) => [backup.id, backup.group_id ? groupById[backup.group_id] || null : null]))
+
+    return list.map(({ backup_id, ...juridiction }) => ({
+      ...juridiction,
+      group: backup_id ? groupByBackupId[backup_id] || null : null,
+    }))
   }
 
   /**

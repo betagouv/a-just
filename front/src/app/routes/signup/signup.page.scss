@@ -1,4 +1,5 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 :host {
   .logo {
@@ -23,6 +24,8 @@
 
   .tj {
     display: flex;
+    width: 100%;
+    margin-bottom: 24px;
   }
 
   .sub-label {
@@ -85,10 +88,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: opacity animations.$duration-normal animations.$ease-default;
 
     p {
       color: utils.$colors-bgProgressBar !important;
     }
+
+    &:hover {
+      opacity: .8;
+    }
+
+    &:focus {
+      border: 3px solid black;
+    }
+
   }
 
   .checkbox-container {
@@ -175,11 +188,18 @@
       font-size: 1.125em;
       height: 48px;
       line-height: 48px;
+      transition: opacity animations.$duration-normal animations.$ease-default;
+      cursor: pointer;
 
       i {
         margin-right: 12px;
         position: relative;
       }
+
+      &:hover {
+        opacity: .8;
+      }
+
     }
   }
 }
@@ -188,8 +208,19 @@
   margin-bottom: 32px;
   font-size: 16px;
 
+  p {
+    cursor: pointer;
+    user-select: none;
+  }
+
   a {
     color: utils.$colors-cblack;
+    transition: opacity animations.$duration-normal animations.$ease-default;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
   }
 
   input.large {
@@ -203,6 +234,7 @@
   input[type='checkbox'] {
     margin-right: 8px;
     margin-bottom: 0;
+    cursor: pointer;
   }
 }
 
@@ -256,6 +288,15 @@
 .box-signup {
   padding: 1.5em;
   border: solid 1px utils.$colors-cgraylightv3;
+
+  .big-button {
+    cursor: pointer;
+    transition: opacity animations.$duration-normal animations.$ease-default;
+
+    &:hover {
+      opacity: .8;
+    }
+  }
 }
 
 .back-step {

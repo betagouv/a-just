@@ -6,4 +6,8 @@ export interface JuridictionInterface {
 	longitude?: number;
 	population?: number;
 	enabled?: boolean;
+	group?: {
+		id: number;
+		label: string;
+	} | null;
 }

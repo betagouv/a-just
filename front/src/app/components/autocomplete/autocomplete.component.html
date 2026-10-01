@@ -1,0 +1,30 @@
+<div class="aj-autocomplete">
+  <input #input class="ethics-ui" type="text" [formControl]="searchControl" [placeholder]="placeholder"
+    autocomplete="off" (input)="onSearch()" (focus)="onInputFocus()" (blur)="onInputBlur()"
+    (keydown)="onKeydown($event)" />
+  <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+
+  @if (isOpen && filteredGroups.length) {
+  <div #panel class="aj-autocomplete-panel">
+    @for (group of filteredGroups; track group.id ?? 'ungrouped') {
+    @if (group.label) {
+    <div class="group-header">
+      <span class="item-label">{{ group.label }}</span>
+    </div>
+    }
+    @for (option of group.options; track option.id) {
+    <div class="juridiction-item" [class.current]="option.id === value" [class.active]="isHighlighted(option)"
+      (mousedown)="$event.preventDefault(); selectOption(option)">
+      <span class="item-label">{{ option.label }}</span>
+    </div>
+    }
+    }
+  </div>
+  } @else if (isOpen && searchControl.value) {
+  <div #panel class="aj-autocomplete-panel">
+    <div class="juridiction-item disabled">
+      <span class="item-label">Aucun résultat</span>
+    </div>
+  </div>
+  }
+</div>

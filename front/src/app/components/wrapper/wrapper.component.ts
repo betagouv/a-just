@@ -64,6 +64,7 @@ import { TourButtonComponent } from '../tour-button/tour-button.component'
 import { IntroJSStep, TourService } from '../../services/tour/tour.service'
 import { PopinFeedbackComponent } from './popin-feedback/popin-feedback.component'
 import { FeedbackService } from '../../services/feedback/feedback.service'
+import { arrondissementLabel as formatArrondissementLabel, formatGroupLabel as formatArrondissementName } from '../../utils/arrondissement'
 
 /**
  * Interface de génération d'un commentaire
@@ -477,22 +478,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * du
    */
   formatGroupLabel(group: { label?: string } | null | undefined) {
-    const label = (group?.label || '').trim().replace(/^arrondissement\s+/i, '')
-
-    if (!label) return ''
-
-    // Article défini masculin : "Le Havre" → "du Havre"
-    if (/^le\s+/i.test(label)) {
-      return label.replace(/^le\s+/i, 'du ')
-    }
-
-    // Voyelle → "d'Avignon", "d'Angers", etc.
-    if (/^[aeiouyàâäéèêëîïôöùûüÿœæ]/i.test(label)) {
-      return `d'${label}`
-    }
-
-    // Cas général → "de Rennes", "de Paris", etc.
-    return `de ${label}`
+    return formatArrondissementName(group)
   }
 
   /**
@@ -513,8 +499,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Intitulé d'un arrondissement dans le menu : "Arrondissement" + nom
    */
   arrondissementLabel(group: JuridictionGroupInterface | null | undefined) {
-    const name = this.arrondissementName(group)
-    return name ? `Arr. ${this.userService.isTJ() ? 'du TJ' : 'de la CA'} ${name}` : 'Arr.'
+    return formatArrondissementLabel(group, this.userService.isTJ())
   }
 
   /**
