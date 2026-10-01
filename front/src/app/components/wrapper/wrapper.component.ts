@@ -514,7 +514,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   arrondissementLabel(group: JuridictionGroupInterface | null | undefined) {
     const name = this.arrondissementName(group)
-    return name ? `Arr. ${name}` : 'Arr.'
+    return name ? `Arr. ${this.userService.isTJ() ? 'du TJ' : 'de la CA'} ${name}` : 'Arr.'
   }
 
   /**

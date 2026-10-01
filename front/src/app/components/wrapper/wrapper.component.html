@@ -23,7 +23,7 @@
             <div class="juridiction-title">
                 <div class="juridiction-title-text" [class.arrondissement]="isArrondissementSelected()">
                     @if (isArrondissementSelected()) {
-                    <h6>Arr. <span class="juridiction-title-name"
+                    <h6>Arr. {{ this.userService.isTJ() ? "du TJ" : "de la CA" }} <span class="juridiction-title-name"
                             [title]="arrondissementName(juridictionGroupSelected())">{{
                             arrondissementName(juridictionGroupSelected()) }}</span></h6>
                     } @else {
