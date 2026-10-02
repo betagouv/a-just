@@ -213,16 +213,18 @@ export const loadOrWarmHR = async (backupIds, models, userId) => {
   }
 
   const cacheKey = 'hrBackup'
-  let hr = await getCacheValue(backupIds, cacheKey)
+  let hr = []
+  for (const backupId of backupIds) {
+    let hrBackup = await getCacheValue(backupId, cacheKey)
 
-  if (!hr) {
-    //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
-    hr = await models.HumanResources.getCurrentHrNew(backupIds, false)
-    await setCacheValue(backupIds, hr, cacheKey, 3600)
-    await invalidateBackup(backupIds)
-    await invalidateAjustBackup(backupIds)
-  } else {
-    //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
+    if (!hrBackup) {
+      hrBackup = await models.HumanResources.getCurrentHrNew(backupId, false)
+      await setCacheValue(backupId, hrBackup, cacheKey, 3600)
+      await invalidateBackup(backupId)
+      await invalidateAjustBackup(backupId)
+    }
+
+    hr.push(...hrBackup)
   }
 
   // control if user has limited access to the contentieux

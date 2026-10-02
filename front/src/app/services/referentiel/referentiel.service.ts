@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core'
+import { effect, inject, Injectable, signal } from '@angular/core'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { ServerService } from '../http-server/server.service'
@@ -34,13 +34,22 @@ export class ReferentielService {
    * Constructor
    */
   constructor() {
-    this.humanResourceService.hrBackup.subscribe(async (backup) => {
-      if (backup) {
-        const datas = await this.onGetReferentiel(backup.id)
-        this.formatDatas(datas.referentielsComplete, datas.referentiels)
-        this.referentielIsComplete.set(datas.isComplete)
+    effect(() => {
+      const backupId = this.humanResourceService.backupIdS()
+      if (backupId != null) {
+        void this.loadReferentiel(backupId)
       }
     })
+  }
+
+  /**
+   * Récupération du référentiel en fonction de l'id du backup
+   * @param backupId
+   */
+  private async loadReferentiel(backupId: number) {
+    const datas = await this.onGetReferentiel(backupId || 0)
+    this.formatDatas(datas.referentielsComplete, datas.referentiels)
+    this.referentielIsComplete.set(datas.isComplete)
   }
 
   /**
@@ -97,6 +106,7 @@ export class ReferentielService {
         .filter((a) => idsSoutien.indexOf(a.id) === -1),
     )
 
+    console.log('list', list)
     this.humanResourceService.contentieuxReferentiel.next(list)
     this.humanResourceService.contentieuxReferentielOnly.next(list.filter((r) => idsIndispo.indexOf(r.id) === -1))
     this.humanResourceService.contentieuxReferentielOnlyFiltered.next(filteredList.filter((r) => idsIndispo.indexOf(r.id) === -1))
