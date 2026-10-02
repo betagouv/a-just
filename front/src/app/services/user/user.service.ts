@@ -167,6 +167,13 @@ export class UserService implements OnInit {
     return user && user.referentielIds === null ? true : false
   })
   /**
+   * User is local admin
+   */
+  isLocalAdmin = computed(() => {
+    const backup = this.humanResourceService.hrBackupS()
+    return !!backup?.isAdminLocal
+  })
+  /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null
@@ -371,8 +378,8 @@ export class UserService implements OnInit {
   /**
    * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
    */
-  initDatas() {
-    this.getInitDatas().then((result) => {
+  async initDatas() {
+    return this.getInitDatas().then((result) => {
       this.humanResourceService.categoriesFilterListIds = result.categories.map((c: HRCategoryInterface) => c.id)
       this.humanResourceService.fonctions.next(result.fonctions)
       this.humanResourceService.categories.next(result.categories)
@@ -507,5 +514,32 @@ export class UserService implements OnInit {
     }
 
     window.location.href = urlToRedirect
+  }
+
+  /**
+   * API demande les utilisateurs de la juridiction
+   * @returns
+   */
+  async getUsersJuridictions(): Promise<UserInterface[]> {
+    const data = await this.serverService.post('users/get-users-juridictions', {
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
+    return data.data.users || []
+  }
+
+  async updatePersonByLocalAdmin({ userId, access, referentielIds }: { userId: number; access: number[]; referentielIds: number[] }) {
+    await this.serverService.put('users/update-user-of-juridictions-by-local-admin', {
+      userId,
+      access,
+      referentielIds,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
+  }
+
+  async inviteUserByEmail(email: string) {
+    await this.serverService.post('users/invite-user-by-email', {
+      email,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    })
   }
 }

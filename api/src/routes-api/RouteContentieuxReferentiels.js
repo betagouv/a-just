@@ -37,12 +37,16 @@ export default class RouteContentieuxReferentiels extends Route {
     }
 
     const { backupId, isJirs } = this.body(ctx)
-    const userPreview = await this.models.Users.userPreview(ctx.state.user.id)
-    this.sendOk(ctx, {
-      referentiels: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null, null, false, false, ctx.state.user.id),
-      referentielsComplete: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null, null, false, false),
-      isComplete: userPreview.referentielIds === null ? true : false,
-    })
+    if (await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)) {
+      const userPreview = await this.models.Users.userPreview(ctx.state.user.id)
+      this.sendOk(ctx, {
+        referentiels: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null, null, false, false, ctx.state.user.id),
+        referentielsComplete: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null, null, false, false),
+        isComplete: userPreview.referentielIds === null ? true : false,
+      })
+    } else {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
   }
 
   /**

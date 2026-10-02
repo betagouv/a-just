@@ -1,7 +1,7 @@
 <div class="left-side">
   <div class="title">
     <p>
-      Evolution du stock et DTES &nbsp;
+      Évolution du stock et DTES &nbsp;
       <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }} {{ startRealValue }} au {{ stopRealValue }}</label>
     </p>
   </div>
@@ -58,35 +58,15 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label
-    [title]="'projectedStock'"
-    [label]="'Stock (projeté)'"
-    [dotColor]="'#62dda7'"
-    [bgColor]="'#c3fad5'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedStock'" [label]="'Stock (projeté)'" [dotColor]="'#62dda7'" [bgColor]="'#c3fad5'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedStock'"
-    [label]="'Stock (simulé)'"
-    [dotColor]="'#00a95f'"
-    [bgColor]="'#6fe49d'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedStock'" [label]="'Stock (simulé)'" [dotColor]="'#00a95f'" [bgColor]="'#6fe49d'"
+    (value)="display($event)"></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label
-    [title]="'projectedDTES'"
-    [label]="'DTES (projeté)'"
-    [dotColor]="'#869ece'"
-    [bgColor]="'#bfcdff'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedDTES'" [label]="'DTES (projeté)'" [dotColor]="'#869ece'" [bgColor]="'#bfcdff'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedDTES'"
-    [label]="'DTES (simulé)'"
-    [dotColor]="'#dee5fd'"
-    [bgColor]="'#7b99e4'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedDTES'" [label]="'DTES (simulé)'" [dotColor]="'#dee5fd'" [bgColor]="'#7b99e4'"
+    (value)="display($event)"></aj-legend-label>
 </div>

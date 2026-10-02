@@ -34,7 +34,7 @@ export default class RouteHrComment extends Route {
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getComment(hrId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -54,7 +54,7 @@ export default class RouteHrComment extends Route {
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getCommentById(id))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -77,7 +77,7 @@ export default class RouteHrComment extends Route {
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.updateComment(hrId, comment, userId, commentId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 
@@ -98,7 +98,7 @@ export default class RouteHrComment extends Route {
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.deleteComment(commentId, hrId))
     } else {
-      this.sendOk(ctx, null)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }

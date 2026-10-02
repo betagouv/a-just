@@ -649,11 +649,42 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Retourne le pourcentage d'une activité sous forme numérique pour l'export Excel
+   * @param activities
+   * @param referentielId
+   * @returns
+   */
+  private getActivityValue(activities: any[] | undefined, referentielId: number): number | '' {
+    const percent = activities?.find((a: any) => a.contentieux?.id === referentielId)?.percent
+    if (percent == null || percent === '') {
+      return ''
+    }
+    const num = Number(percent)
+    return Number.isFinite(num) ? num : ''
+  }
+
+  /**
+   * Somme les valeurs numériques de cellules Excel référencées par adresse
+   * @param report
+   * @param addresses
+   * @returns
+   */
+  private sumExcelCells(report: any, addresses: string[]): number {
+    const sheet = report.worksheets[0]
+    return addresses.reduce((total, address) => {
+      const raw = sheet.getCell(address).value
+      const num = typeof raw === 'number' ? raw : parseFloat(String(raw ?? ''))
+      return total + (Number.isFinite(num) ? num : 0)
+    }, 0)
+  }
+
+  /**
    * Génère un model de donnée de référentiel
    * @returns
    */
   generateModel(datas: any | null = null) {
     const referentiels = this.humanResourceService.contentieuxReferentielOnly.getValue()
+    const activities = datas?.activities
 
     let referentiel = new Array()
     let counter = 0
@@ -663,7 +694,7 @@ export class ExcelService extends MainClass {
       let hasChild = false
       if (r.childrens && r.childrens.length > 0) {
         r.childrens?.map((c) => {
-          const value = datas?.activities?.find((a: any) => a.contentieux.id === c.id)?.percent || ''
+          const value = this.getActivityValue(activities, c.id)
           if (value) {
             hasChild = true
           }
@@ -679,10 +710,7 @@ export class ExcelService extends MainClass {
           sumLists.push('E' + (counter + 8))
         })
       }
-      const value = datas?.activities?.find((a: any) => a.contentieux.id === r.id)?.percent || ''
-      if (value && !hasChild) {
-        console.log('value', value, r)
-      }
+      const value = this.getActivityValue(activities, r.id)
       counter++
       referentiel.push({
         code: r['code_import'],
@@ -785,17 +813,21 @@ export class ExcelService extends MainClass {
     }
 
     let globalSum = new Array()
+    let sectionTotals: number[] = []
 
     // sum by parent
     viewModel.referentiel.map((r: any) => {
       if (r.sum !== null) {
-        if ((Array.isArray(r.sum) && r.sum.length > 0) || typeof r.sum === 'number') {
-          report.worksheets[0].getCell(r.index).value = Array.isArray(r.sum)
-            ? {
-                formula: '=SUM(' + r.sum.join(',') + ')',
-                result: '0',
-              }
-            : r.sum
+        if (Array.isArray(r.sum) && r.sum.length > 0) {
+          const result = this.sumExcelCells(report, r.sum)
+          report.worksheets[0].getCell(r.index).value = {
+            formula: '=SUM(' + r.sum.join(',') + ')',
+            result,
+          }
+          sectionTotals.push(result)
+        } else if (typeof r.sum === 'number') {
+          report.worksheets[0].getCell(r.index).value = r.sum
+          sectionTotals.push(r.sum)
         }
         globalSum.push(r.index)
       }
@@ -804,7 +836,7 @@ export class ExcelService extends MainClass {
     // total sum
     report.worksheets[0].getCell('E7').value = {
       formula: '=SUM(' + globalSum.join(',') + ')/100',
-      result: '0',
+      result: sectionTotals.reduce((total, value) => total + value, 0) / 100,
     }
 
     // Calculatrice

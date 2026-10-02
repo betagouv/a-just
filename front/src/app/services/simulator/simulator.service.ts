@@ -168,11 +168,11 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   async toSimulate(params: any, simulation: SimulationInterface, white = false) {
-    console.log('SIMULATION', simulation)
+    //console.log('SIMULATION', simulation)
     this.isLoading.next(true)
     const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
-    console.log(params)
-    console.log(this.userService.user)
+    //console.log(params)
+    //console.log(this.userService.user)
 
     const l = startLatencyScope('simulator')
     const startAt = performance.now()
@@ -188,7 +188,7 @@ export class SimulatorService extends MainClass {
             selectedCategoryId: this.selectedCategory.getValue()?.id,
           })
           .then((data) => {
-            console.log('simu', data.data)
+            //console.log('simu', data.data)
             this.situationSimulated.next(data.data)
             return data.data
           })
@@ -205,7 +205,7 @@ export class SimulatorService extends MainClass {
             functionIds: this.selectedFonctionsIds.getValue(),
           })
           .then((data) => {
-            console.log('simu', data.data)
+            //console.log('simu', data.data)
             this.situationSimulated.next(data.data)
             return data.data
           })
@@ -246,7 +246,7 @@ export class SimulatorService extends MainClass {
         functionIds: params.fonctionsIds,
       })
       .then((data) => {
-        console.log('simu', data.data)
+        //console.log('simu', data.data)
         return data.data
       })
   }

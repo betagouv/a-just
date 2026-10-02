@@ -112,7 +112,7 @@
       <label>Ma fonction :</label>
       <select #fctSelect (change)="setFonc($event.target)">
         <option selected hidden>Choisir une fonction</option>
-        @for (fonc of fonctions; track fonc) {
+        @for (fonc of fonctions(); track fonc) {
         <option [value]="fonc">
           {{ fonc }}
         </option>

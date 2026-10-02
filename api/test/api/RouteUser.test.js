@@ -1,5 +1,6 @@
 import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onChangePasswordApi, onUpdateAccountApi} from '../routes/user'
 import { JURIDICTION_TEST_NAME } from '../constants/juridiction'
+import { USER_ACCESS_DASHBOARD_READER } from '../../src/constants/access'
 import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
 import { assert } from 'chai'
 
@@ -268,13 +269,34 @@ module.exports = function (datas) {
     })
 
     /**
-     * Get my datas as a connected user
+     * Get my datas as a connected user, sans droit ni ventilation (onboarding)
      */
     it('Get my datas as a connected user. Should return 200', async () => {
       const response = await onGetUserDataApi({
         userToken: datas.userToken,
       })
       assert.strictEqual(response.status, 200)
+      assert.isEmpty(response.data.data.backups)
+    })
+
+    /**
+     * Get my datas as a connected user, une fois les droits et la ventilation attribués
+     */
+    it('Get my datas once access and ventilation are granted. Should return 200', async () => {
+      const updateResponse = await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.userId,
+        accessIds: [USER_ACCESS_DASHBOARD_READER],
+        ventilations: [datas.adminBackupId],
+        referentielIds: null,
+      })
+      assert.strictEqual(updateResponse.status, 200)
+
+      const response = await onGetUserDataApi({
+        userToken: datas.userToken,
+      })
+      assert.strictEqual(response.status, 200)
+      assert.isNotEmpty(response.data.data.backups)
     })
 
     /**

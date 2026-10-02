@@ -7,7 +7,6 @@ import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import sslMiddleware from './routes-api/middlewares/ssl'
 import honeyTrap from './routes-api/middlewares/honeyTrap'
-import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
 import helmet from 'koa-helmet'
@@ -316,7 +315,6 @@ export default class App extends AppBase {
       logger(),
       addDefaultBody(),
       compress({}),
-      givePassword,
       helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
@@ -363,7 +361,6 @@ export default class App extends AppBase {
    * Montage des différentes routes de l'application
    */
   _mountRoutes() {
-    super.mountFolder(join(__dirname, 'routes-logs'), '/logs/')
     super.mountFolder(join(__dirname, 'routes-api'), '/api/')
     super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/')
     super.mountFolder(join(__dirname, 'routes'), '/')

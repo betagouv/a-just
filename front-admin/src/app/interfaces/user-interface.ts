@@ -12,6 +12,7 @@ export interface UserInterface {
   fonction?: string;
   token?: string;
   access?: number[];
+  localAdminIds?: number[];
   accessName?: string;
   ventilations?: BackupInterface[];
   ventilationsName?: string;

@@ -110,7 +110,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCurrentHrNew = async (backupId) => {
+  Model.getCurrentHrNew = async (backupId, logging = true) => {
     // 1. REQUÊTE PRINCIPALE
     const hrList = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
@@ -162,6 +162,7 @@ export default (sequelizeInstance, Model) => {
         },
       ],
       subQuery: false,
+      logging,
     })
 
     // 2. TRANSFORMATION DES DONNÉES
@@ -588,10 +589,12 @@ export default (sequelizeInstance, Model) => {
         {
           attributes: ['id'],
           model: Model.models.HRBackups,
+          required: true,
           include: [
             {
               attributes: ['id'],
               model: Model.models.UserVentilations,
+              required: true,
               where: {
                 user_id: userId,
               },
@@ -885,6 +888,7 @@ export default (sequelizeInstance, Model) => {
       `,
       {
         type: Model.sequelize.QueryTypes.SELECT,
+        logging: false,
       },
     )
 

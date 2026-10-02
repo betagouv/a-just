@@ -125,7 +125,7 @@ input[type="number"] {
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: utils.$colors-hoverLightColor;
   }
 
   mat-icon {
@@ -165,7 +165,7 @@ input[type="number"] {
       height: 40px;
 
       &:hover {
-        background-color: #f5f5f5;
+        background-color: utils.$colors-hoverLightColor;
       }
     }
 
@@ -179,7 +179,7 @@ input[type="number"] {
       font-size: 14px;
 
       &:hover {
-        background-color: #f5f5f5;
+        background-color: utils.$colors-hoverLightColor;
       }
     }
 

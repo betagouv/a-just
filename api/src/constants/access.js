@@ -172,7 +172,7 @@ export const accessList = [
       },
     ],
   },
-  /*{
+  {
     name: 'average-time',
     label: 'Temps moyens',
     orderRequired: true,
@@ -186,7 +186,7 @@ export const accessList = [
         label: 'Écriture',
       },
     ],
-  },*/
+  },
   {
     name: 'calculator',
     label: 'Cockpit',

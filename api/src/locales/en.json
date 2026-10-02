@@ -9,5 +9,8 @@
 	"Accès non autorisé": "Accès non autorisé",
 	"Utilisateur non trouvé": "Utilisateur non trouvé",
 	"Code non valide!": "Code non valide!",
-	"Information de contact ou code de vérification non valide!": "Information de contact ou code de vérification non valide!"
+	"Information de contact ou code de vérification non valide!": "Information de contact ou code de vérification non valide!",
+	"Vous n'avez pas les droits pour inviter un utilisateur.": "Vous n'avez pas les droits pour inviter un utilisateur.",
+	"Vous devez saisir une adresse e-mail professionnelle": "Vous devez saisir une adresse e-mail professionnelle",
+	"Cet utilisateur existe déjà": "Cet utilisateur existe déjà"
 }

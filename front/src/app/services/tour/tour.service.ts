@@ -173,5 +173,9 @@ export class TourService {
     }, 200)
   }
 
-  close() {}
+  close() {
+    document.querySelectorAll('.introjs-showElement').forEach((element) => {
+      element.classList.remove('introjs-showElement')
+    })
+  }
 }

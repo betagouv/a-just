@@ -1,20 +1,22 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { accessList } from '../constants/access'
-import { validateEmail } from '../utils/utils'
+import { isProfessionalEmailDomain, validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
 import {
   TEMPLATE_FORGOT_PASSWORD_ID,
   TEMPLATE_FORGOT_PASSWORD_ID_CA,
+  TEMPLATE_INVITE_USER_TO_SIGNUP,
   TEMPLATE_NEW_USER_SIGNIN,
   TEMPLATE_NEW_USER_SIGNIN_CA,
   TEMPLATE_USER_ONBOARDING,
 } from '../constants/email'
 import config from 'config'
-import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
+import { ADMIN_CHANGE_USER_ACCESS, INVITE_USER_JURIDICTION, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
+import { checkBannedChars, HTTP_FORBIDDEN_CODE } from './middlewares/honeyTrap'
 
 /**
  * Route de la gestion des utilisateurs
@@ -79,13 +81,16 @@ export default class RouteUsers extends Route {
 
     email = (email || '').toLowerCase() // force to lower case email
 
-    if (!email.includes('@justice.fr') && !email.includes('.gouv.fr') && !email.includes('@a-just.fr')) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
+    if (checkBannedChars(ctx, [email, firstName, lastName, tj, fonction])) {
+      ctx.throw(HTTP_FORBIDDEN_CODE)
       return
     }
 
-    if (!validateEmail(email)) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail valide')
+    const isValidEmail = validateEmail(email)
+    if (!isValidEmail || !isProfessionalEmailDomain(email)) {
+      ctx.throw(401, isValidEmail
+        ? 'Vous devez saisir une adresse e-mail professionnelle'
+        : 'Vous devez saisir une adresse e-mail valide')
       return
     }
 
@@ -247,11 +252,12 @@ export default class RouteUsers extends Route {
       access: Types.any(),
       ventilations: Types.any(),
       referentielIds: Types.any(),
+      localAdminIds: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
   async updateAccount(ctx) {
-    const { userId, referentielIds } = this.body(ctx)
+    const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
@@ -387,12 +393,26 @@ export default class RouteUsers extends Route {
 
   /**
    * Interface pour avoir une liste des données standard d'un utilisateur connecté
+   * Accessible sans droit ni ventilation: le front s'appuie sur une liste de
+   * juridictions vide pour rediriger l'utilisateur vers l'onboarding
    */
-  @Route.Get({
-    accesses: [Access.isLogin],
-  })
+  @Route.Get()
   async getUserDatas(ctx) {
-    const backups = await this.models.HRBackups.list(ctx.state.user.id)
+    if (!ctx.state.user) {
+      this.sendOk(ctx, {
+        backups: [],
+        categories: [],
+        fonctions: [],
+      })
+      return
+    }
+
+
+    const getUsersAdminLocal = await this.model.getUserAdminLocal(ctx.state.user.id);
+    const backups = (await this.models.HRBackups.list(ctx.state.user.id)).map((backup) => ({
+      ...backup,
+      isAdminLocal: getUsersAdminLocal.includes(backup.id),
+    }));
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
     const fonctions = await this.models.HRFonctions.getAll()
 
@@ -401,5 +421,94 @@ export default class RouteUsers extends Route {
       categories,
       fonctions,
     })
+  }
+
+  /**
+   * Liste des utilisateurs ayant accès à la juridiction
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async getUsersJuridictions(ctx) {
+    const { juridictionId } = this.body(ctx)
+
+    const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
+    if (hasAccess) {
+      const users = await this.model.getUsersJuridictions(juridictionId)
+      this.sendOk(ctx, {
+        users,
+      })
+    } else {
+      this.sendOk(ctx, {
+        users: [],
+      })
+    }
+  }
+
+  /**
+   * Liste des utilisateurs ayant accès à la juridiction
+   */
+  @Route.Put({
+    bodyType: Types.object().keys({
+      userId: Types.number(),
+      access: Types.any(),
+      referentielIds: Types.any(),
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async updateUserOfJuridictionsByLocalAdmin(ctx) {
+    const { userId, access, referentielIds, juridictionId } = this.body(ctx)
+
+    await this.model.updateUserOfJuridictionsByLocalAdmin(ctx.state.user.id, { userId, access, referentielIds, juridictionId })
+
+    this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+   * Invite a user by email to the juridiction
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string(),
+      juridictionId: Types.number(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async inviteUserByEmail(ctx) {
+    let { email, juridictionId } = this.body(ctx)
+    email = (email || '').trim().toLowerCase()
+
+    const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
+    if (hasAccess) {
+      if (validateEmail(email) && isProfessionalEmailDomain(email)) {
+
+        const findUser = await this.model.findOne({ where: { email } })
+        if (findUser) {
+          ctx.throw(401, ctx.state.__('Cet utilisateur existe déjà'))
+          return
+        }
+
+        await sentEmail(
+          {
+            email,
+          },
+          TEMPLATE_INVITE_USER_TO_SIGNUP,
+          {
+            email,
+            serverUrl: config.frontUrl,
+          },
+        )
+        await this.models.Logs.addLog(INVITE_USER_JURIDICTION, ctx.state.user.id, { email, juridictionId })
+        this.sendOk(ctx, 'Ok')
+      } else {
+        ctx.throw(401, ctx.state.__('Vous devez saisir une adresse e-mail professionnelle'))
+      }
+    } else {
+      ctx.throw(401, ctx.state.__("Vous n'avez pas les droits pour inviter un utilisateur !"))
+    }
   }
 }

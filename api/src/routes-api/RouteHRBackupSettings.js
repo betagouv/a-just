@@ -35,7 +35,7 @@ export default class RouteHrBackupSettings extends Route {
     const { backupId, types } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     this.sendOk(ctx, await this.model.list(backupId, types, ctx.state.user.id))
@@ -62,7 +62,7 @@ export default class RouteHrBackupSettings extends Route {
     const { backupId, id, label, type, datas } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+      ctx.throw(403, "Vous n'avez pas accès")
     }
 
     await this.model.addOrUpdate(id, backupId, label, type, datas)
@@ -88,7 +88,7 @@ export default class RouteHrBackupSettings extends Route {
       await this.model.removeSetting(id, ctx.state.user.id)
       this.sendOk(ctx, 'Ok')
     } catch (err) {
-      ctx.throw(401, err)
+      ctx.throw(403, "Vous n'avez pas accès")
     }
   }
 }

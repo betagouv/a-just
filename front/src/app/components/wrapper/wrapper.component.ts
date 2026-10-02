@@ -47,7 +47,7 @@ import { KPIService } from '../../services/kpi/kpi.service'
 import { REQUEST_USER_MANUAL, REQUET_HELP_PAGE } from '../../constants/log-codes'
 import { findHelpCenter } from '../../utils/help-center'
 import { TourButtonComponent } from '../tour-button/tour-button.component'
-import { IntroJSStep } from '../../services/tour/tour.service'
+import { IntroJSStep, TourService } from '../../services/tour/tour.service'
 import { PopinFeedbackComponent } from './popin-feedback/popin-feedback.component'
 import { FeedbackService } from '../../services/feedback/feedback.service'
 
@@ -119,6 +119,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   referentielService = inject(ReferentielService)
   feedbackService = inject(FeedbackService)
+  tourService = inject(TourService)
 
   /**
    * DOM qui pointe sur le conteneur
@@ -160,6 +161,10 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Parmétrage au niveau des boutons d'actions en haut à gauche
    */
   @Input() actionsLeftTemplate: TemplateRef<any> | undefined
+  /**
+   * Parmétrage au niveau des boutons d'actions en haut à droite
+   */
+  @Input() actionsRightTemplate: TemplateRef<any> | undefined
   /**
    * Titre de page
    */
@@ -364,6 +369,13 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   onDisconnect() {
     this.router.navigate(['/logout'])
+  }
+
+  openLogoutPopin() {
+    if (this.tourService.intro) {
+      this.tourService.intro.exit()
+    }
+    this.popin = true
   }
 
   onSelectAction(event: any) {

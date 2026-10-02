@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router'
 import {
   activitiesGuard,
+  administratorGuard,
   allSimulatorGuard,
-  authGuard,
   cockpitGuard,
   completeReferentielGuard,
   dashboardGuard,
@@ -137,6 +137,11 @@ export const routes: Routes = [
     path: 'panorama',
     component: PanoramaPage,
     canActivate: [dashboardGuard, typeGuard],
+  },
+  {
+    path: 'administration',
+    loadComponent: () => import('./administration/administration.page').then((m) => m.AdministrationPage),
+    canActivate: [administratorGuard, typeGuard],
   },
   {
     path: 'carte-juridictions',

@@ -49,6 +49,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      ressort: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

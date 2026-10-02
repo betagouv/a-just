@@ -10,6 +10,7 @@ export interface JuridictionInterface {
   enabled?: boolean;
   users?: UserInterface[];
   nbAgents?: number;
+  ressort: string;
   categoriesAgents?: CategoriesAgentsInterface[];
 }
 

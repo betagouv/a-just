@@ -319,7 +319,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.haveAccess = async (id, userId) => {
-    const hr = await Model.findOne({
+    const backup = await Model.findOne({
       where: {
         id,
       },
@@ -333,11 +333,19 @@ export default (sequelizeInstance, Model) => {
             user_id: userId,
           },
         },
+        {
+          attributes: ['id'],
+          model: Model.models.TJ,
+          required: true,
+          where: {
+            enabled: true,
+          },
+        }
       ],
       raw: true,
     })
 
-    return hr && (await Model.models.TJ.isVisible(hr.label)) ? true : false
+    return backup ? true : false
   }
 
   /**

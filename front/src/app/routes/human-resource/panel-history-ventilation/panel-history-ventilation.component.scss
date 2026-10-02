@@ -74,7 +74,14 @@
   }
 }
 
-
+.indisponibility-panel {
+  &>div {
+    &:hover {
+      background-color: utils.$colors-credlighthover;
+      transition: all 0.2s ease-in-out;
+    }
+  }
+}
 
 .actions-panel {
   border-bottom-left-radius: 8px;

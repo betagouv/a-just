@@ -273,14 +273,11 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     let min = Math.min(...mergeTabValues)
     let max = Math.max(...mergeTabValues) || 0
     if (min) {
-      min *= 0.7
-      if (min < 10) {
-        min = 0
-      }
+      min *= 0.95
     }
     this.showError = mergeTab.filter((v) => v && v.value !== null).length === 0 ? true : false
     if (max) {
-      max = max * 1.1
+      max = max * 1.05
     }
     if (max === 0) {
       max = 1

@@ -13,7 +13,7 @@ export default class RouteHrCategories extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HRCategories
@@ -25,7 +25,7 @@ export default class RouteHrCategories extends Route {
   @Route.Get({
     accesses: [Access.isLogin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     this.sendOk(ctx, getCategoriesByUserAccess(await this.model.getAll(), ctx.state.user))
   }
 }

@@ -187,7 +187,8 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           )
         }
 
-        console.log(this.data.projectedMag)
+        //console.log(this.data.projectedMag)
+
         if (this.myChart !== null) {
           this.myChart.config.data.labels = this.labels
           if (this.canViewMagistrat) {

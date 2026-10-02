@@ -1,8 +1,5 @@
 @use '../../styles/utils.scss' as utils;
 
-
-
-
 .display-none {
   display: none !important;
 }
@@ -90,7 +87,7 @@
       margin-top: 16px;
       margin-top: 1px;
       height: 110px;
-      background: white;
+      background: utils.$colors-white;
     }
 
     p {
@@ -109,7 +106,12 @@
       padding: 8px 16px;
 
       border: solid 1px utils.$colors-primary;
-      background-color: white;
+      background-color: transparent;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
 
       p {
         color: utils.$colors-primary;
@@ -125,6 +127,11 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       &.disabled {
         pointer-events: none;
@@ -133,7 +140,7 @@
       }
 
       p {
-        color: white;
+        color: utils.$colors-white;
       }
     }
   }
@@ -152,7 +159,7 @@
       background-color: utils.$colors-primary;
       height: 22px;
       border-radius: 6px;
-      color: white;
+      color: utils.$colors-white;
       text-align: center;
     }
 
@@ -194,7 +201,7 @@
   .date-bar-container {
     display: flex;
     width: 100%;
-    background-color: white;
+    background-color: utils.$colors-white;
     align-items: center;
     padding-left: 24px;
 
@@ -209,7 +216,7 @@
         content: '';
         border-bottom: solid 1px utils.$colors-bgColor;
         left: 0px;
-        background-color: white;
+        background-color: utils.$colors-white;
         position: absolute;
         height: 128px;
         right: 0px;
@@ -234,8 +241,12 @@
       padding: 0 16px;
       cursor: pointer;
       border: 1px solid utils.$colors-borderSimulator;
-      background-color: white;
+      background-color: utils.$colors-white;
       transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
 
       &.alone {
         border-radius: 4px;
@@ -265,7 +276,6 @@
         margin-right: 8px;
 
         .circle {
-
           top: 4px;
           left: 4px;
           position: relative;
@@ -288,6 +298,7 @@
         border: 1px solid utils.$colors-primary;
         background-color: utils.$colors-bgCategorySiege;
         color: utils.$colors-primary;
+
 
         p {
           color: utils.$colors-primary;
@@ -385,9 +396,13 @@
     height: 40px;
     padding: 8px 16px;
     border: solid 1px utils.$colors-primary;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: utils.$colors-hoverLightColor;
+    }
 
     &.export-b {
-
       margin-right: 8px;
       border: solid 1px utils.$colors-primary;
       background-color: utils.$colors-primary;
@@ -397,6 +412,11 @@
         opacity: 1;
         cursor: pointer;
         pointer-events: initial;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background-color: utils.$colors-cblue;
+        }
       }
 
       mat-icon {
@@ -406,7 +426,8 @@
       }
 
       p {
-        color: white;
+        color: utils.$colors-white;
+        white-space: nowrap;
       }
     }
 
@@ -424,6 +445,7 @@
 
     p {
       color: utils.$colors-primary;
+      white-space: nowrap;
       font-size: 14px;
     }
   }
@@ -452,7 +474,7 @@
     }
 
     .comment {
-      background-color: white;
+      background-color: utils.$colors-white;
       flex: 3;
       display: flex;
       flex-direction: column;
@@ -528,7 +550,7 @@
     }
 
     .simulation-table {
-      background-color: white;
+      background-color: utils.$colors-white;
       margin: 0px 24px;
     }
 
@@ -537,7 +559,7 @@
       position: relative;
       display: flex;
       align-items: flex-start;
-      background-color: white;
+      background-color: utils.$colors-white;
       border-bottom: solid 1px utils.$colors-editBtton;
       padding: 0px 24px;
 
@@ -653,7 +675,6 @@
         z-index: 1;
         position: absolute;
         bottom: -15px;
-        display: block;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -661,9 +682,15 @@
         background-color: utils.$colors-titleIndisponibilitiesPanel;
         border-radius: 4px;
         min-width: 74px;
-        height: 35px;
-        line-height: 31px;
-        font-size: 16px;
+        min-height: 35px;
+        height: auto;
+        line-height: 1.2;
+        font-size: 14px;
+        padding: 4px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         color: utils.$colors-bgSelect;
 
         &.simulated {
@@ -683,7 +710,7 @@
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
-          left: 30.5px;
+          left: 46%;
           top: -5px;
 
           &::before {
@@ -699,10 +726,12 @@
           }
 
           &.simulated {
-            bottom: -40px;
+            top: -5px;
 
             &.blue {
               border-bottom: 4px solid utils.$colors-primary;
+              // display: flex;
+              // flex-direction: row;
 
               &::before {
                 content: '';
@@ -761,6 +790,7 @@
       display: flex;
       align-items: center;
       margin-top: 8px;
+      border: solid 1px transparent;
 
       .title {
         flex: 1;
@@ -787,7 +817,6 @@
       }
 
       .no-border {
-
         &:focus {
           outline: none;
           border-bottom: solid 2px utils.$colors-cblack !important;
@@ -813,7 +842,7 @@
       }
 
       &:focus-within {
-        border: solid 1px utils.$colors-tooltipBgTitleColor;
+        border-color: utils.$colors-tooltipBgTitleColor;
         background-color: utils.$colors-activityGuideBg;
       }
     }
@@ -844,13 +873,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      border: solid 1px transparent;
+      transition: all 0.2s ease-in-out;
 
       &:first-child {
         margin-right: 12px;
       }
 
       &:hover {
-        border: solid 1px utils.$colors-sortHeaderSelected;
+        border-color: utils.$colors-sortHeaderSelected;
         background-color: utils.$colors-activityGuideButtonText;
       }
     }
@@ -877,6 +908,13 @@
       padding: 8px 16px;
       color: utils.$colors-bgTag;
       border: solid 1px utils.$colors-bgTag;
+
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-hoverLightColor;
+      }
+
     }
 
     .simulate-button {
@@ -887,6 +925,11 @@
       margin: 0 0 0 8px;
       padding: 8px 16px;
       background-color: utils.$colors-primary;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       &.disabled {
         pointer-events: none;
@@ -895,7 +938,7 @@
       }
 
       p {
-        color: white;
+        color: utils.$colors-white;
       }
     }
 
@@ -925,16 +968,16 @@
     }
 
     &.color-white {
-      background-color: white;
+      background-color: utils.$colors-white;
       border-bottom: solid 1px utils.$colors-bgTag;
 
       &::before {
-        background-color: white;
+        background-color: utils.$colors-white;
         border-bottom: solid 1px utils.$colors-bgTag;
       }
 
       &::after {
-        background-color: white;
+        background-color: utils.$colors-white;
         border-bottom: solid 1px utils.$colors-bgTag;
       }
     }
@@ -1026,8 +1069,11 @@
         cursor: pointer;
         z-index: 1;
         position: absolute;
-        bottom: -33px;
-        display: block;
+        bottom: -8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -1036,8 +1082,9 @@
         border-radius: 4px;
         min-width: 74px;
         height: 35px;
-        line-height: 31px;
-        font-size: 16px;
+        line-height: 1.2;
+        font-size: 14px;
+        padding: 4px 10px;
         color: utils.$colors-bgSelect;
 
         .triangle {
@@ -1047,7 +1094,7 @@
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
-          left: 30.5px;
+          left: 46%;
           top: -5px;
 
           &::before {
@@ -1096,10 +1143,19 @@
         border-top-right-radius: 0px;
         background-color: transparent;
         padding-bottom: 5px;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          background-color: utils.$colors-bgBlueTag;
+        }
 
         &.greffe {
           border-color: utils.$colors-cpink !important;
           color: utils.$colors-cpink;
+
+          &:hover {
+            background-color: utils.$colors-cpinkmiddle;
+          }
         }
 
         &.white-button {
@@ -1210,16 +1266,16 @@
       pointer-events: all;
       cursor: pointer;
       background-color: utils.$colors-primary;
-      color: white;
+      color: utils.$colors-white;
       opacity: 1;
 
       p.title {
-        color: white;
+        color: utils.$colors-white;
       }
 
       .shape {
         background-color: utils.$colors-primary;
-        color: white;
+        color: utils.$colors-white;
       }
     }
   }
@@ -1252,17 +1308,22 @@
       pointer-events: all;
       cursor: pointer;
       background-color: utils.$colors-primary;
-      color: white;
+      color: utils.$colors-textCategoryAll;
       opacity: 1;
       margin-top: 30px;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background-color: utils.$colors-cblue;
+      }
 
       p.title {
-        color: white;
+        color: utils.$colors-white;
       }
 
       .shape {
-        background-color: utils.$colors-primary;
-        color: white;
+        background-color: transparent;
+        color: utils.$colors-white;
       }
     }
 
@@ -1402,7 +1463,5 @@
         left: -3px;
       }
     }
-
-
   }
 }

@@ -1,3 +1,7 @@
+import user from "../fixtures/user.json";
+
+export const DEFAULT_BACKUP_LABEL = "TJ TEST";
+
 export const loginApi = (email: string, password: string) => {
   cy.log(`Logging in with email: ${email} and password: ${password}`);
   let serverUrl: string | null = null;
@@ -120,6 +124,23 @@ export const updateHumanResourcesApi = (hrData: any) => {
   });
 };
 
+/**
+ * Liste de tous les backups en base (route réservée aux administrateurs).
+ * Utilisable même quand l'utilisateur n'a plus aucun droit métier.
+ */
+export const getAllBackupsApi = (token: string) => {
+  return cy.env(["NG_APP_SERVER_URL"]).then(({ NG_APP_SERVER_URL }) => {
+    const serverUrl = NG_APP_SERVER_URL || "http://localhost:8081/api";
+    return cy.request({
+      method: "GET",
+      url: `${serverUrl}/juridictions/get-all-backup`,
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+  });
+};
+
 export const getUserDataApi = (token: string) => {
   let serverUrl: string | null = null;
 
@@ -206,5 +227,55 @@ export const resetToDefaultPermissions = (
     ventilations,
     referentielIds: null, // Set to null for dashboard access (completeReferentielGuard)
     token,
+  });
+};
+
+/**
+ * Prépare l'utilisateur E2E avant tout login UI: connexion API, rattachement à un
+ * backup puis réapplication des droits par défaut.
+ *
+ * Les droits sont restaurés sans passer par `get-user-datas`, qui exige désormais
+ * des droits et une ventilation non vides et échouerait donc quand un test
+ * précédent a laissé l'utilisateur sans accès.
+ */
+export const ensureE2EUserReady = (
+  options: { backupLabel?: string } = {},
+): Cypress.Chainable<{
+  userId: number;
+  token: string;
+  ventilations: number[];
+}> => {
+  const { backupLabel } = options;
+
+  return loginApi(user.email, user.password).then((resp) => {
+    const userId = resp.body.user.id;
+    const token = resp.body.token;
+    const currentVentilations: number[] = resp.body.user.ventilations || [];
+
+    if (!backupLabel && currentVentilations.length) {
+      return resetToDefaultPermissions(userId, currentVentilations, token).then(
+        () => ({ userId, token, ventilations: currentVentilations }),
+      );
+    }
+
+    return getAllBackupsApi(token).then((backupsResp) => {
+      const allBackups = Array.isArray(backupsResp.body)
+        ? backupsResp.body
+        : backupsResp.body.data || backupsResp.body.list || [];
+      const label = backupLabel || DEFAULT_BACKUP_LABEL;
+      const backup =
+        allBackups.find((b: any) => b.label === label) || allBackups[0];
+
+      if (!backup) {
+        throw new Error(
+          `Aucun backup disponible en base (recherché: ${label})`,
+        );
+      }
+
+      const ventilations = [backup.id];
+      return resetToDefaultPermissions(userId, ventilations, token).then(
+        () => ({ userId, token, ventilations }),
+      );
+    });
   });
 };

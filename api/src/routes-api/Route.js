@@ -87,21 +87,44 @@ export default class Route extends RouteBase {
     }
     this.assertUnauthorized(id)
 
-    let user = await this.models.Users.findOne({
+    const userRows = await this.models.Users.findAll({
       attributes: ['id', 'email', 'role', 'first_name', 'last_name', 'referentiel_ids'],
       where: {
         id,
         status: 1,
       },
+      include: [{
+        model: this.models.UserVentilations,
+        required: false,
+      }, {
+        model: this.models.UsersAccess,
+        required: false,
+      }],
       raw: true,
     })
-    user = {
-      ...user,
-      ...snakeToCamelObject(user),
-      access: await this.models.UsersAccess.getUserAccess(id),
+
+    const userRaw = userRows[0]
+    this.assertUnauthorized(userRaw)
+
+    const user = {
+      id: userRaw.id,
+      email: userRaw.email,
+      role: userRaw.role,
+      first_name: userRaw.first_name,
+      last_name: userRaw.last_name,
+      referentiel_ids: userRaw.referentiel_ids,
+      ...snakeToCamelObject({
+        id: userRaw.id,
+        email: userRaw.email,
+        role: userRaw.role,
+        first_name: userRaw.first_name,
+        last_name: userRaw.last_name,
+        referentiel_ids: userRaw.referentiel_ids,
+      }),
+      ventilations: [...new Set(userRows.map((row) => row['UserVentilations.hr_backup_id']).filter(Boolean))],
+      access: [...new Set(userRows.map((row) => row['UsersAccesses.access_id']).filter((accessId) => accessId != null))],
     }
 
-    this.assertUnauthorized(user)
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
 
@@ -119,23 +142,44 @@ export default class Route extends RouteBase {
       return
     }
 
-    let user = await this.models.Users.findOne({
+    const userRows = await this.models.Users.findAll({
       attributes: ['id', 'email', 'role', 'first_name', 'last_name', 'referentiel_ids'],
       where: {
         id,
         status: 1,
       },
+      include: [{
+        model: this.models.UserVentilations,
+        required: false,
+      }, {
+        model: this.models.UsersAccess,
+        required: false,
+      }],
       raw: true,
     })
-    if (!user) {
-      return
+
+    const userRaw = userRows[0]
+    this.assertUnauthorized(userRaw)
+
+    const user = {
+      id: userRaw.id,
+      email: userRaw.email,
+      role: userRaw.role,
+      first_name: userRaw.first_name,
+      last_name: userRaw.last_name,
+      referentiel_ids: userRaw.referentiel_ids,
+      ...snakeToCamelObject({
+        id: userRaw.id,
+        email: userRaw.email,
+        role: userRaw.role,
+        first_name: userRaw.first_name,
+        last_name: userRaw.last_name,
+        referentiel_ids: userRaw.referentiel_ids,
+      }),
+      ventilations: [...new Set(userRows.map((row) => row['UserVentilations.hr_backup_id']).filter(Boolean))],
+      access: [...new Set(userRows.map((row) => row['UsersAccesses.access_id']).filter((accessId) => accessId != null))],
     }
 
-    user = {
-      ...user,
-      ...snakeToCamelObject(user),
-      access: await this.models.UsersAccess.getUserAccess(id),
-    }
     ctx.body.user = user
     ctx.state.user = user // force to add to state with regenerated access
   }
@@ -164,8 +208,17 @@ export default class Route extends RouteBase {
  * @param {*} ctx
  * @returns
  */
-function isLogin(ctx) {
+function isExist(ctx) {
   return !!ctx.body.user
+}
+
+/**
+ * Control si l'utilisateur existe et à des accès
+ * @param {*} ctx
+ * @returns
+ */
+function isLogin(ctx) {
+  return !!ctx.body.user && ctx.body.user.access.length > 0 && ctx.body.user.ventilations.length > 0
 }
 
 /**
@@ -192,7 +245,7 @@ function isSuperAdmin(ctx) {
  * @returns
  */
 function canVewCalculator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1
 }
 
 /**
@@ -201,7 +254,7 @@ function canVewCalculator(ctx) {
  * @returns
  */
 function canEditCalculator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1
 }
 
 /**
@@ -210,7 +263,7 @@ function canEditCalculator(ctx) {
  * @returns
  */
 function canVewHR(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1
 }
 
 /**
@@ -219,7 +272,7 @@ function canVewHR(ctx) {
  * @returns
  */
 function canEditHR(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1
 }
 
 /**
@@ -228,7 +281,7 @@ function canEditHR(ctx) {
  * @returns
  */
 function canVewActivities(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1
 }
 
 /**
@@ -237,7 +290,7 @@ function canVewActivities(ctx) {
  * @returns
  */
 function canEditActivities(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1
 }
 
 /**
@@ -246,7 +299,7 @@ function canEditActivities(ctx) {
  * @returns
  */
 function canVewContentieuxOptions(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1
 }
 
 /**
@@ -255,7 +308,7 @@ function canVewContentieuxOptions(ctx) {
  * @returns
  */
 function canEditContentieuxOptions(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1
 }
 
 /**
@@ -264,7 +317,7 @@ function canEditContentieuxOptions(ctx) {
  * @returns
  */
 function canVewSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1
 }
 
 /**
@@ -274,7 +327,7 @@ function canVewSimulation(ctx) {
  */
 function canEditSimulation(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
   )
@@ -286,7 +339,7 @@ function canEditSimulation(ctx) {
  * @returns
  */
 function canVewWhiteSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1
 }
 
 /**
@@ -296,7 +349,7 @@ function canVewWhiteSimulation(ctx) {
  */
 function canEditWhiteSimulation(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
   )
@@ -308,7 +361,7 @@ function canEditWhiteSimulation(ctx) {
  * @returns
  */
 function canVewReaffectator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1
+  return isLogin(ctx) && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1
 }
 
 /**
@@ -318,7 +371,7 @@ function canVewReaffectator(ctx) {
  */
 function canEditReaffectator(ctx) {
   return (
-    !!ctx.body.user &&
+    isLogin(ctx) &&
     ctx.body.user.access &&
     (ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
   )
@@ -328,6 +381,7 @@ function canEditReaffectator(ctx) {
  * Model d'export
  */
 export const Access = {
+  isExist,
   isLogin,
   isAdmin,
   isSuperAdmin,

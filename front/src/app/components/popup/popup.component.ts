@@ -1,12 +1,5 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  HostBinding,
-  TemplateRef,
-} from '@angular/core';
+import { CommonModule } from '@angular/common'
+import { Component, Input, Output, EventEmitter, HostBinding, TemplateRef } from '@angular/core'
 
 /**
  * Interface des boutons d'actions de la popup
@@ -15,27 +8,27 @@ export interface ActionsInterface {
   /**
    * Type d'action
    */
-  type?: string;
+  type?: string
   /**
    * Force en rouge ou non
    */
-  red?: boolean;
+  red?: boolean
   /**
    * Couleur de bouton plainne
    */
-  fill?: boolean;
+  fill?: boolean
   /**
    * Texte du bouton
    */
-  content: string;
+  content: string
   /**
    * Id du bouton
    */
-  id: string;
+  id: string
   /**
    * Taille du bouton
    */
-  size?: string;
+  size?: string
 }
 
 /**
@@ -48,69 +41,72 @@ export interface ActionsInterface {
   imports: [CommonModule],
   templateUrl: './popup.component.html',
   styleUrls: ['./popup.component.scss'],
+  host: {
+    '(document:keydown.escape)': 'handleEscape()',
+  },
 })
 export class PopupComponent {
   /**
    * Class css qui donne une rendu mobile au besoin
    */
-  @HostBinding('class.is-mobile') isMobile = false;
+  @HostBinding('class.is-mobile') isMobile = false
   /**
    * setter du changement de visibilité du contenu
    */
   @Input()
   set visible(d) {
-    this._visible = d;
+    this._visible = d
   }
   /**
    * getter du changement de visibilité du contenu
    */
   get visible() {
-    return this._visible;
+    return this._visible
   }
   /**
    * Titre de la fenetre
    */
-  @Input() title: string = '';
+  @Input() title: string = ''
   /**
    * Titre de la fenetre
    */
-  @Input() titleTemplate: TemplateRef<any> | undefined;
+  @Input() titleTemplate: TemplateRef<any> | undefined
   /**
    * Liste des actions possibles données par le parent
    */
-  @Input() actions: ActionsInterface[] = [];
+  @Input() actions: ActionsInterface[] = []
   /**
    * Liste des actions mais sur la gauche
    */
-  @Input() actionsLeft: ActionsInterface[] = [];
+  @Input() actionsLeft: ActionsInterface[] = []
   /**
    * Affichage ou non du bouton fermeture icone
    */
-  @Input() closeIcon = false;
+  @Input() closeIcon = false
   /**
    * Saisie d'une hauteur minimal
    */
-  @Input() minHeight: string = '';
+  @Input() minHeight: string = ''
   /**
    * Suppression ou non de l'ombre si saisie de "noShadow"
    */
-  @Input() removeShadow: string = '';
+  @Input() removeShadow: string = ''
   /**
    * Remoté au parent de l'action choisie, que ce soit à gauche ou non
    */
-  @Output() selectedAction = new EventEmitter();
+  @Output() selectedAction = new EventEmitter<ActionsInterface & { optionValue: number }>()
   /**
    * Remonté au parent de l'envie de fermer la popin
    */
-  @Output() onClose = new EventEmitter();
+  @Output() onClose = new EventEmitter<void>()
   /**
    * Visible ou non
    */
-  _visible = true;
+  _visible = true
   /**
    * Index de l'option selectionnée
    */
-  selectedOptions = 0;
+  selectedOptions = 0
 
   /**
    * Constructeur
@@ -125,7 +121,7 @@ export class PopupComponent {
     this.selectedAction.emit({
       ...action,
       optionValue: this.selectedOptions,
-    });
+    })
   }
 
   /**
@@ -133,6 +129,15 @@ export class PopupComponent {
    * @param val
    */
   onChangeOption(val: any) {
-    this.selectedOptions = val;
+    this.selectedOptions = val
+  }
+
+  /**
+   * Gestion de la fermeture de la popin via la touche escape
+   */
+  handleEscape(): void {
+    if (this.visible) {
+      this.onClose.emit()
+    }
   }
 }

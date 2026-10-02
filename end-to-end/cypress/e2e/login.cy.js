@@ -1,6 +1,13 @@
 import user from "../../fixtures/user.json";
+import { ensureE2EUserReady } from "../../support/api";
 
 describe("Login Page", () => {
+  before(() => {
+    // Sans droits ni ventilation, le login redirige vers /bienvenue: on restaure
+    // les droits par défaut côté API avant de tester le login UI.
+    ensureE2EUserReady();
+  });
+
   beforeEach(() => {
     cy.clearAllLocalStorage();
     cy.visit(`/connexion`);

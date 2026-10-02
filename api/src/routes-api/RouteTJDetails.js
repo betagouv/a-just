@@ -29,8 +29,13 @@ export default class RouteJuridictionsDetails extends Route {
   })
   async getCle(ctx) {
     let { juridictionId } = this.body(ctx)
-    const list = await this.model.getCle(juridictionId)
-    this.sendOk(ctx, list)
+
+    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+      const list = await this.model.getCle(juridictionId)
+      this.sendOk(ctx, list)
+    } else {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
   }
 
   /**
@@ -48,7 +53,12 @@ export default class RouteJuridictionsDetails extends Route {
   })
   async updateCle(ctx) {
     const { juridictionId, categoryId, value } = this.body(ctx)
-    await this.model.updateCle(juridictionId, categoryId, value)
-    this.sendOk(ctx, 'Ok')
+
+    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+      await this.model.updateCle(juridictionId, categoryId, value)
+      this.sendOk(ctx, 'Ok')
+    } else {
+      ctx.throw(403, "Vous n'avez pas accès")
+    }
   }
 }

@@ -50,6 +50,16 @@ export function controlPassword(password) {
   return true
 }
 
+export function isProfessionalEmailDomain(email) {
+  const domain = String(email).toLowerCase().trim().split('@').pop()
+
+  if (!domain) {
+    return false
+  }
+
+  return domain === 'justice.fr' || domain.endsWith('.gouv.fr') || domain === 'a-just.fr'
+}
+
 export function validateEmail(email) {
   // Whitelist of approved domains that bypass regex validation
   // This allows domains with hyphens or other special chars that may not match the regex
@@ -202,17 +212,17 @@ export const compareResults = (
       differences.push(
         detailed
           ? {
-              index: i,
-              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
-              changes, // { clé: [old, new] }
-              old: oldItem,
-              new: newItem,
-            }
+            index: i,
+            id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+            changes, // { clé: [old, new] }
+            old: oldItem,
+            new: newItem,
+          }
           : {
-              index: i,
-              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
-              changes, // minimal et actionnable
-            },
+            index: i,
+            id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+            changes, // minimal et actionnable
+          },
       )
     }
   }

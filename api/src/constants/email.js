@@ -27,3 +27,5 @@ export const TEMPLATE_2_AUTH_USER_LOGIN_CA = 95
 export const TEMPLATE_NOTIFICATION = 126
 
 export const SENDING_BLUE_USER_LIST_ID = config.sendingBlue.usersListId
+
+export const TEMPLATE_INVITE_USER_TO_SIGNUP = 391

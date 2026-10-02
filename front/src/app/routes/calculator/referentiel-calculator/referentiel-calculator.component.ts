@@ -68,6 +68,9 @@ import { HelpButtonComponent } from '../../../components/help-button/help-button
   selector: 'aj-referentiel-calculator',
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
+  host: {
+    '(document:keydown.escape)': 'handleEscape()',
+  },
 })
 export class ReferentielCalculatorComponent extends MainClass implements AfterViewInit, OnChanges {
   /**
@@ -305,11 +308,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Initialisation des valeurs par défaut
    */
   initValues() {
-    if (this.currentProjection || this.calculator) {
-      this.canViewPreviousProjection = this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== 0
-      this.canViewNextProjection =
-        this.datas.findIndex((d) => d.contentieux.id === (this.currentProjection || this.calculator)?.contentieux.id) !== this.datas.length - 1
-    }
+    const target = this.currentProjection || this.calculator
+    if (!target) return
+
+    const currentIndex = this.datas.findIndex((d) => d.contentieux.id === target.contentieux.id)
+    const maxIndex = this.parentCalculator ? this.datas.length - 1 : this.datas.length - 2
+
+    this.canViewPreviousProjection = currentIndex > 0
+    this.canViewNextProjection = currentIndex !== -1 && currentIndex < maxIndex
   }
 
   /**
@@ -321,6 +327,17 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       this.calculator.childIsVisible = this.showChildren
     }
     if (this.showChildren === true) this.kpiService.register(CALCULATOR_OPEN_CONTENTIEUX, this.calculator?.contentieux.label + '')
+  }
+
+  /**
+   * Ferme la popin active via la touche escape
+   */
+  handleEscape(): void {
+    if (this.showProjectionPopin) {
+      this.showProjectionPopin = false
+    } else if (this.showAlertPopin) {
+      this.showAlertPopin = false
+    }
   }
 
   /**
@@ -693,7 +710,12 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
     const datasFuturs = datasProjected
 
     let max = [...datasPast, ...datasFuturs].reduce((max, d) => Math.max(max, d?.value || 0), 0)
-    max *= 2
+    max *= 1.2
+    let min = [...datasPast, ...datasFuturs].reduce((min, d) => Math.min(min, d?.value || 0), max)
+    min *= 0.95
+    if (min < 0) {
+      min = 0
+    }
 
     const defaultDataset = {
       cubicInterpolationMode: 'default',
@@ -836,7 +858,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
       scales: {
         y: {
           max,
-          min: 0,
+          min,
           grid: {
             display: false,
           },

@@ -65,6 +65,12 @@ aj-back-button {
         border-radius: 6px;
         cursor: pointer;
 
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: utils.$colors-cblue;
+        }
+
         p {
             font-size: 12px;
             color: utils.$colors-bgSelect;

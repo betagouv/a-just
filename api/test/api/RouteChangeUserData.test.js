@@ -33,7 +33,7 @@ module.exports = function (datas) {
       console.log('🔍 CREATE NEW HR - DEBUG INFO')
       console.log('========================================')
       console.log('📤 REQUEST PAYLOAD:')
-      console.log('  - backupId:', datas.adminBackupId || 11)
+      console.log('  - backupId:', datas.adminBackupId)
       console.log('  - hr:', JSON.stringify(hr, null, 2))
       console.log('  - userToken exists:', !!datas.adminToken)
       console.log('  - userToken (first 20 chars):', datas.adminToken?.substring(0, 20) + '...')
@@ -49,7 +49,7 @@ module.exports = function (datas) {
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: datas.adminBackupId || 11,
+        backupId: datas.adminBackupId,
       })
 
       console.log('\n📥 RESPONSE:')
@@ -90,7 +90,7 @@ module.exports = function (datas) {
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: 11,
+        backupId: hr.backupId,
       })
       current_hr = response.data.data
 
@@ -112,7 +112,7 @@ module.exports = function (datas) {
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: 11,
+        backupId: hr.backupId,
       })
       current_hr = response.data.data
       const tmp_lastName = response.data.data.lastName

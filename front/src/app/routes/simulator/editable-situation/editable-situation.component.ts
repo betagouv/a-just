@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { TimeSelectorComponent } from '../../../components/time-selector/time-selector.component'
 import { WHITE_SIMULATOR_START } from '../../../constants/log-codes'
 import { KPIService } from '../../../services/kpi/kpi.service'
+import { WORKING_DAYS_PER_YEAR } from '../../../constants/workforce'
 
 const etpMagFactor = (208 / 12) * 8
 const etpGreffeFactor = (229.57 / 12) * 7
@@ -672,7 +673,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     })
 
     //console.log('this.nbOfDays', this.nbOfDays)
-    const endStock = startLastStock + (this.nbOfDays / (365 / 12)) * startTotalIn - (this.nbOfDays / (365 / 12)) * startTotalOut
+    const endStock =
+      startLastStock + (this.nbOfDays / (WORKING_DAYS_PER_YEAR / 12)) * startTotalIn - (this.nbOfDays / (WORKING_DAYS_PER_YEAR / 12)) * startTotalOut
 
     this.endSituation = {
       totalIn: fixDecimal(startTotalIn),

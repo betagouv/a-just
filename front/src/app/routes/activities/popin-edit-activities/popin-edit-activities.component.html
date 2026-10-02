@@ -1,4 +1,4 @@
-<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{
+<aj-popup class="medium no-padding-content no-title border-radius" (onClose)="close()" [ngClass]="{
     'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
     'margin-left': wrapper?.panelHelper || showComments,
   }">
