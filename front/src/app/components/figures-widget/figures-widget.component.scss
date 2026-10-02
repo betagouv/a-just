@@ -1,7 +1,7 @@
 @use "../../styles/utils.scss" as utils;
 
 :host {
-    background-color: white;
+    background-color: utils.$colors-white;
     position: relative;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
 

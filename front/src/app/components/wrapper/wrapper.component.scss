@@ -75,18 +75,18 @@
         }
 
         #content {
-            background-image: linear-gradient(to bottom, #f6f6f6, #fff 14%);
+            background-image: linear-gradient(to bottom, utils.$colors-bgSelect, utils.$colors-white 14%);
         }
     }
 
     .sub-tools {
-        background-color: #f6f6f6;
+        background-color: utils.$colors-bgSelect;
         display: flex;
         flex-direction: column;
 
         p,
         a {
-            color: #3a3a3a;
+            color: utils.$colors-cblack;
             font-size: 14px;
             padding: 8px 16px 8px 32px;
             cursor: pointer;
@@ -260,17 +260,17 @@
             z-index: 200;
 
             .menu-item {
-                color: white;
+                color: utils.$colors-white;
                 text-decoration: none !important;
 
                 &.disconnect,
                 a,
                 p {
-                    color: white;
+                    color: utils.$colors-white;
                 }
 
                 .contact-us p {
-                    color: white !important;
+                    color: utils.$colors-white !important;
                 }
 
                 &.selected {
@@ -278,7 +278,7 @@
 
                     a,
                     p {
-                        color: white;
+                        color: utils.$colors-white;
                     }
                 }
             }
@@ -329,7 +329,7 @@
 .menu {
     width: 222px;
     margin-right: 1px;
-    background-color: white;
+    background-color: utils.$colors-white;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -354,20 +354,27 @@
         padding: 19px 10px 23px 10px;
         background-color: utils.$colors-cblue;
         border: 1px solid utils.$colors-cblack;
+        cursor: pointer;
+
+        transition: all ease-in-out 0.2s;
+
+        &:hover {
+            opacity: 0.9;
+        }
 
         .juridiction-title {
             display: flex;
 
             h6 {
-                color: white;
+                color: utils.$colors-white;
                 flex: 1;
             }
 
             mat-icon {
                 margin-left: 2px;
                 margin-top: 4px;
-                color: white;
-                cursor: pointer;
+                color: utils.$colors-white;
+                rotate: -90deg;
             }
         }
     }
@@ -392,7 +399,7 @@
         display: block;
         padding: 13px 4px 13px 13px;
         text-decoration: none;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
 
         &.top {
             cursor: pointer;
@@ -419,7 +426,7 @@
 
         a {
             text-decoration: none;
-            color: #000091;
+            color: utils.$colors-primary;
 
             p {
                 margin-top: 8px;
@@ -440,7 +447,7 @@
         }
 
         &.selected {
-            color: #000091;
+            color: utils.$colors-primary;
 
             a,
             p {
@@ -523,7 +530,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: white;
+        background-color: utils.$colors-white;
         position: relative;
 
         .top-header-back-title {
@@ -610,7 +617,7 @@
     left: 0;
     bottom: 0;
     z-index: 1000;
-    background-color: white;
+    background-color: utils.$colors-white;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -643,7 +650,7 @@
 
         h6,
         p {
-            color: white;
+            color: utils.$colors-white;
         }
 
         p {
@@ -662,7 +669,7 @@
     >iframe {
         border-radius: 4px;
         box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: utils.$colors-white;
         border: none;
         height: calc(100% + 80px);
     }
@@ -680,34 +687,34 @@
         background: rgba(245, 245, 254, 0.30);
         border-radius: 48px;
         backdrop-filter: blur(4px);
-        border: 1px solid #000091;
+        border: 1px solid utils.$colors-primary;
         font-size: 14px;
         height: 40px;
         line-height: 20px;
         font-weight: 700;
-        color: #000091;
+        color: utils.$colors-primary;
     }
 
     .help-content {
         position: absolute;
         bottom: 100%;
         right: 0;
-        background-color: white;
+        background-color: utils.$colors-white;
         border-radius: 8px;
         width: 420px;
-        border: 1px solid #000091;
+        border: 1px solid utils.$colors-primary;
         margin-bottom: 16px;
 
         .help-content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #000091;
+            background-color: utils.$colors-primary;
             padding: 8px 16px;
             border-radius: 7px 7px 0 0;
 
             p:first-child {
-                color: white;
+                color: utils.$colors-white;
                 font-size: 14px;
                 font-weight: 700;
             }
@@ -715,7 +722,7 @@
             p:last-child {
                 cursor: pointer;
                 font-size: 12px;
-                color: white;
+                color: utils.$colors-white;
             }
         }
 
@@ -735,9 +742,9 @@
 
                     a:first-child {
                         margin-bottom: 8px;
-                        color: #000091;
-                        border: 1px solid #000091;
-                        background: #F5F5FE;
+                        color: utils.$colors-primary;
+                        border: 1px solid utils.$colors-primary;
+                        background: utils.$colors-bgProgressBar;
                     }
                 }
 
@@ -754,7 +761,7 @@
                             width: 50px;
                             height: 50px;
                             border-radius: 50px;
-                            border: 1px solid white;
+                            border: 1px solid utils.$colors-white;
 
                             &:last-child {
                                 margin-left: -10px;
@@ -769,8 +776,8 @@
                     align-items: center;
                     justify-content: center;
                     text-decoration: none;
-                    color: white;
-                    background-color: #000091;
+                    color: utils.$colors-white;
+                    background-color: utils.$colors-primary;
                     font-size: 14px;
                     font-weight: 400;
                     gap: 4px;
