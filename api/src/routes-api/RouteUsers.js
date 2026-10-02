@@ -396,10 +396,18 @@ export default class RouteUsers extends Route {
    * Accessible sans droit ni ventilation: le front s'appuie sur une liste de
    * juridictions vide pour rediriger l'utilisateur vers l'onboarding
    */
-  @Route.Get({
-    accesses: [Access.isExist],
-  })
+  @Route.Get()
   async getUserDatas(ctx) {
+    if (!ctx.state.user) {
+      this.sendOk(ctx, {
+        backups: [],
+        categories: [],
+        fonctions: [],
+      })
+      return
+    }
+
+
     const getUsersAdminLocal = await this.model.getUserAdminLocal(ctx.state.user.id);
     const backups = (await this.models.HRBackups.list(ctx.state.user.id)).map((backup) => ({
       ...backup,
