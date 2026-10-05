@@ -129,28 +129,30 @@ export default (sequelizeInstance, Model) => {
     )
   }
 
-  Model.getNbByActivityTypes = async (contentieuxIds, hrBackupId) => {
+  Model.getNbByActivityTypes = async (contentieuxIds, hrBackupIds) => {
+    if (!Array.isArray(hrBackupIds)) {
+      hrBackupIds = [hrBackupIds]
+    }
+
     const types = contentieuxIds.map((id) => `activities_${id}`)
 
     if (types.length === 0) {
       return new Map()
     }
-    const rows = await Model.sequelize.query(
-      `
-      SELECT type, COUNT(*) AS nb
-      FROM "Comments"
-      WHERE hr_backup_id = :hrBackupId AND type IN (:types)
-      GROUP BY type
-      `,
-      {
-        replacements: { types, hrBackupId },
-        type: Model.sequelize.QueryTypes.SELECT,
+
+    const comments = await Model.findAll({
+      attributes: ['type', [sequelizeInstance.fn('COUNT', sequelizeInstance.literal('*')), 'nb']],
+      where: {
+        hr_backup_id: hrBackupIds,
+        type: types,
       },
-    )
+      group: ['type'],
+      raw: true,
+    })
 
     // Construction du Map avec contentieuxId comme clé
     return new Map(
-      rows.map(({ type, nb }) => {
+      comments.map(({ type, nb }) => {
         const match = type.match(/^activities_(\d+)$/)
         return [parseInt(match[1], 10), parseInt(nb, 10)]
       }),

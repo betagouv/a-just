@@ -89,10 +89,13 @@ export class ActivitiesLastDisponibilitiesComponent extends MainClass implements
    * @param maxDate
    */
   updateMonthActivity(maxDate: Date | null = null) {
+    const maxIndex = maxDate ? maxDate.getFullYear() * 12 + maxDate.getMonth() : null
+
     for (let i = 0; i < this.months.length; i++) {
       const m = this.months[i].month
-      this.months[i].active = maxDate && maxDate.getFullYear() >= m.getFullYear() && maxDate.getMonth() > m.getMonth() ? true : false
-      this.months[i].current = maxDate && maxDate.getFullYear() === m.getFullYear() && maxDate.getMonth() === m.getMonth() ? true : false
+      const monthIndex = m.getFullYear() * 12 + m.getMonth()
+      this.months[i].active = maxIndex !== null && maxIndex > monthIndex
+      this.months[i].current = maxIndex !== null && maxIndex === monthIndex
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, effect } from '@angular/core'
 import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
 import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
@@ -7,7 +7,6 @@ import { OPACITY_20 } from '../../../constants/colors'
 import { UserService } from '../../../services/user/user.service'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 import { ActivitiesService } from '../../../services/activities/activities.service'
-import { BackupInterface } from '../../../interfaces/backup'
 import { month } from '../../../utils/dates'
 
 /**
@@ -51,7 +50,7 @@ lastMonth.setDate(lastMonth.getDate() + 1)
   templateUrl: './activities-to-complete.component.html',
   styleUrls: ['./activities-to-complete.component.scss'],
 })
-export class ActivitiesToCompleteComponent extends MainClass implements OnInit, OnDestroy {
+export class ActivitiesToCompleteComponent extends MainClass {
   /**
    * Liste des tag d'interface
    */
@@ -94,49 +93,43 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
     private activitiesService: ActivitiesService,
   ) {
     super()
+
+    effect(() => {
+      const backupId = this.humanResourceService.backupIdS()
+      this.loadDatas(backupId)
+    })
   }
 
   /**
    * Initialisation des datas au chargement de la page
    */
-  ngOnInit() {
-    this.watch(
-      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
-        if (hrBackup) {
-          this.activitiesService.getLastMonthActivities().then((date) => {
-            let max = new Date()
+  async loadDatas(backupId: number | null = null) {
+    if (backupId) {
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        let max = new Date()
 
-            if (date !== null) {
-              date = new Date(date ? date : '')
-              max = month(date, 0, 'lastday') || new Date()
-            }
-
-            this.tags[this.tags.length - 1].label = `Dernier mois disponible : ${this.getShortMonthString(max)} ${max.getFullYear()}`
-            this.tags[this.tags.length - 1].dateStart = month(date, 0) || new Date()
-            this.tags[this.tags.length - 1].dateEnd = month(date, 0, 'lastday') || new Date()
-            this.tags[0].dateEnd = month(date, 0, 'lastday') || new Date()
-            this.tags[0].dateStart = month(this.tags[0].dateEnd, -11) || new Date()
-            this.tags[0].label = `Les 12 derniers mois disponibles : ${this.getShortMonthString(
-              this.tags[0].dateStart,
-            )} ${this.tags[0].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[0].dateEnd)} ${this.tags[0].dateEnd.getFullYear()}`
-            this.tags[1].dateEnd = month(date, 0, 'lastday') || new Date()
-            this.tags[1].dateStart = month(this.tags[1].dateEnd, -2) || new Date()
-            this.tags[1].label = `Dernier trimestre disponible : ${this.getShortMonthString(
-              this.tags[1].dateStart,
-            )} ${this.tags[1].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[1].dateEnd)} ${this.tags[1].dateEnd.getFullYear()}`
-
-            this.onLoad()
-          })
+        if (date !== null) {
+          date = new Date(date ? date : '')
+          max = month(date, 0, 'lastday') || new Date()
         }
-      }),
-    )
-  }
 
-  /**
-   * Destruction du composant
-   */
-  ngOnDestroy() {
-    this.watcherDestroy()
+        this.tags[this.tags.length - 1].label = `Dernier mois disponible : ${this.getShortMonthString(max)} ${max.getFullYear()}`
+        this.tags[this.tags.length - 1].dateStart = month(date, 0) || new Date()
+        this.tags[this.tags.length - 1].dateEnd = month(date, 0, 'lastday') || new Date()
+        this.tags[0].dateEnd = month(date, 0, 'lastday') || new Date()
+        this.tags[0].dateStart = month(this.tags[0].dateEnd, -11) || new Date()
+        this.tags[0].label = `Les 12 derniers mois disponibles : ${this.getShortMonthString(
+          this.tags[0].dateStart,
+        )} ${this.tags[0].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[0].dateEnd)} ${this.tags[0].dateEnd.getFullYear()}`
+        this.tags[1].dateEnd = month(date, 0, 'lastday') || new Date()
+        this.tags[1].dateStart = month(this.tags[1].dateEnd, -2) || new Date()
+        this.tags[1].label = `Dernier trimestre disponible : ${this.getShortMonthString(
+          this.tags[1].dateStart,
+        )} ${this.tags[1].dateStart.getFullYear()} à ${this.getShortMonthString(this.tags[1].dateEnd)} ${this.tags[1].dateEnd.getFullYear()}`
+
+        this.onLoad()
+      })
+    }
   }
 
   /**

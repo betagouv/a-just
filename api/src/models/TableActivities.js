@@ -15,11 +15,15 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HRBackupId
    * @returns
    */
-  Model.getLastMonth = async (HRBackupId) => {
+  Model.getLastMonth = async (HRBackupIds) => {
+    if (!Array.isArray(HRBackupIds)) {
+      HRBackupIds = [HRBackupIds]
+    }
+
     const theLast = await Model.findOne({
       attributes: ['periode'],
       where: {
-        hr_backup_id: HRBackupId,
+        hr_backup_id: HRBackupIds,
       },
       order: [['periode', 'desc']],
       raw: true,
@@ -441,11 +445,13 @@ export default (sequelizeInstance, Model) => {
           raw: true,
         })
 
+        const allLastStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild.map((c) => c.id), 'stock')
+
         // calcul stock of custom stock
         for (let i = 0; i < findAllChild.length; i++) {
           let currentStock = findAllChild[i].stock
           // if exist stock and is updated by user do not get previous stock
-          const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
+          const getUserUpdateStock = allLastStock.find((s) => s.activityId === findAllChild[i].id)
 
           const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
           // do not update if updated by user
@@ -617,7 +623,11 @@ export default (sequelizeInstance, Model) => {
     return null
   }
 
-  Model.getByMonthNew = async (date, HrBackupId, contentieuxId = null, details = true) => {
+  Model.getByMonthNew = async (date, HrBackupIds, contentieuxId = null, details = true) => {
+    if (!Array.isArray(HrBackupIds)) {
+      HrBackupIds = [HrBackupIds]
+    }
+
     date = today(date)
 
     const whereList = contentieuxId ? { contentieux_id: contentieuxId } : {}
@@ -634,7 +644,7 @@ export default (sequelizeInstance, Model) => {
         ['original_stock', 'originalStock'],
       ],
       where: {
-        hr_backup_id: HrBackupId,
+        hr_backup_id: HrBackupIds,
         periode: {
           [Op.between]: [startOfMonth(date), endOfMonth(date)],
         },
@@ -650,7 +660,10 @@ export default (sequelizeInstance, Model) => {
     })
 
     const contentieuxIds = [...new Set(rawActivities.map((a) => a['ContentieuxReferentiel.id']))]
-    const commentsMap = await Model.models.Comments.getNbByActivityTypes(contentieuxIds, HrBackupId)
+    const commentsMap = await Model.models.Comments.getNbByActivityTypes(contentieuxIds, HrBackupIds)
+    const allLastActivitesByTypes = (await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(rawActivities.map((a) => a.id), ['entrees', 'sorties', 'stock'])) || []
+
+    console.log('ALL LAST ACTIVITES BY TYPES', allLastActivitesByTypes)
 
     // ⏬ Construction finale avec mêmes valeurs que l’ancienne méthode
     return await Promise.all(
@@ -661,11 +674,9 @@ export default (sequelizeInstance, Model) => {
         let updatedBy = null
 
         if (details) {
-          const [entrees, sorties, stock] = await Promise.all([
-            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'entrees'),
-            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'sorties'),
-            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'stock'),
-          ])
+          const entrees = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'entrees')
+          const sorties = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'sorties')
+          const stock = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'stock')
 
           updatedBy = { entrees, sorties, stock }
         }
@@ -730,6 +741,8 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    const allLastActivitesByTypes = (await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list.map((a) => a.id), ['entrees', 'sorties', 'stock'])) || []
+
     for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
@@ -747,9 +760,9 @@ export default (sequelizeInstance, Model) => {
         nbComments: await Model.models.Comments.getNbConId(list[i]['ContentieuxReferentiel.id'], HrBackupId),
         updatedBy: details
           ? {
-            entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
-            sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
-            stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
+            entrees: allLastActivitesByTypes.find((e) => e.activityId === list[i].id && e.nodeUpdated === 'entrees'),
+            sorties: allLastActivitesByTypes.find((e) => e.activityId === list[i].id && e.nodeUpdated === 'sorties'),
+            stock: allLastActivitesByTypes.find((e) => e.activityId === list[i].id && e.nodeUpdated === 'stock'),
           }
           : null,
       }
@@ -874,12 +887,16 @@ export default (sequelizeInstance, Model) => {
    * @param {*} dateEnd
    * @returns
    */
-  Model.getNotCompleteActivities = async (HrBackupId, dateStart, dateEnd, userId) => {
+  Model.getNotCompleteActivities = async (HrBackupIds, dateStart, dateEnd, userId) => {
+    if (!Array.isArray(HrBackupIds)) {
+      HrBackupIds = [HrBackupIds]
+    }
+
     dateStart = new Date(dateStart)
     dateEnd = new Date(dateEnd)
 
-    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId, false, null, false, false, userId)) || []
-    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId, false, null, false, false, userId)) || [])
+    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, false, null, false, false, userId)) || []
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, false, null, false, false, userId)) || [])
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])
@@ -903,7 +920,7 @@ export default (sequelizeInstance, Model) => {
         }
       })
 
-      const monthActivitiesContentieuxIds = ((await Model.getByMonthNew(date, HrBackupId, contentieuxToFind)) || [])
+      const monthActivitiesContentieuxIds = ((await Model.getByMonthNew(date, HrBackupIds, contentieuxToFind)) || [])
         .filter(
           (a) =>
             (a.entrees !== null || a.originalEntrees !== null) &&

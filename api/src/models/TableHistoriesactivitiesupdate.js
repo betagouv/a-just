@@ -83,12 +83,19 @@ export default (sequelizeInstance, Model) => {
    * @param {*} nodeUpdated
    * @returns
    */
-  Model.getLastUpdateByActivityAndNode = async (activityId, nodeUpdated) => {
+  Model.getLastUpdateByActivityAndNode = async (activityIds, nodesUpdated) => {
+    if (!Array.isArray(activityIds)) {
+      activityIds = [activityIds]
+    }
+    if (!Array.isArray(nodesUpdated)) {
+      nodesUpdated = [nodesUpdated]
+    }
+
     const listUpdated = await Model.findAll({
       attributes: ['user_id', 'updated_at', 'value'],
       where: {
-        activity_id: activityId,
-        activity_node_updated: nodeUpdated,
+        activity_id: activityIds,
+        activity_node_updated: nodesUpdated,
       },
       include: [
         {
@@ -102,14 +109,14 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (listUpdated.length > 0) {
-      return {
+      return listUpdated.map((l) => ({
         user: {
-          firstName: listUpdated[0]['User.first_name'],
-          lastName: listUpdated[0]['User.last_name'],
+          firstName: l['User.first_name'],
+          lastName: l['User.last_name'],
         },
-        value: listUpdated[0].value,
-        date: listUpdated[0].updated_at,
-      }
+        value: l.value,
+        date: l.updated_at,
+      }))
     }
 
     return null
@@ -120,12 +127,16 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HRBackupId
    * @returns
    */
-  Model.getLasHumanActivites = async (HRBackupId, userId) => {
-    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, false, null, false, false, userId)) || []
+  Model.getLasHumanActivites = async (HRBackupIds, userId) => {
+    if (!Array.isArray(HRBackupIds)) {
+      HRBackupIds = [HRBackupIds]
+    }
+
+    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupIds, false, null, false, false, userId)) || []
 
     const getHistory = async (historyId = null, activityId = null, contentieuxId = null, activityDate = null) => {
       const whereActivity = {
-        hr_backup_id: HRBackupId,
+        hr_backup_id: HRBackupIds,
       }
       const whereHistory = {}
 
