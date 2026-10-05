@@ -29,6 +29,10 @@ export class ActivitiesService {
    * Dernier mois d'activité mis en cache, par juridiction
    */
   lastMonthByBackupId = new Map<number, Promise<string | null>>()
+  /**
+   * Dernier mois d'activité mis en cache, par juridiction
+   */
+  cacheLastMonthActivities: Record<number, string | null> = {}
 
   /**
    * API qui permet de mettre à jour l'entrée, sorties et stock d'un contentieux à un mois donnée
@@ -78,12 +82,23 @@ export class ActivitiesService {
    * API retourne le dernier mois qui possède une activité pour une juridiction
    * @returns
    */
-  getLastMonthActivities() {
+  async getLastMonthActivities() {
+    if (this.hrBackupId === null) {
+      return Promise.resolve(null)
+    }
+
+    if (this.cacheLastMonthActivities[this.hrBackupId]) {
+      return Promise.resolve(this.cacheLastMonthActivities[this.hrBackupId])
+    }
+
     return this.serverService
       .post(`activities/get-last-month`, {
         hrBackupId: this.hrBackupId,
       })
-      .then((data) => data.data.date || null)
+      .then((data) => {
+        this.cacheLastMonthActivities[this.hrBackupId ?? 0] = data.data.date || null
+        return data.data.date || null
+      })
   }
 
   /**
