@@ -302,6 +302,7 @@ class AdministratorPermissionsService {
       this.router.navigate(['/login'])
       return false
     }
+
     return true
   }
 }

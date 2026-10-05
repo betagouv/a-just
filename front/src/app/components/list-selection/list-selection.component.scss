@@ -1,5 +1,4 @@
 @use '../../styles/utils.scss' as utils;
-@use '../../styles/animations.scss' as animations;
 
 ::ng-deep .mdc-checkbox__ripple {
   display: none;
@@ -13,8 +12,6 @@
   .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
     display: none !important;
   }
-
-
 
   &.button-filter {
 
@@ -48,7 +45,7 @@
       }
 
       .title-list {
-        color: #666666;
+        color: utils.$colors-cgray;
         white-space: nowrap;
         font-size: 14px;
         position: relative;
@@ -195,7 +192,7 @@
     padding: 0 16px;
     color: utils.$colors-cblack;
     cursor: pointer;
-    transition: background-color animations.$duration-slow animations.$ease-default;
+    transition: background-color 0.5s;
 
     >div {
       display: flex;
@@ -204,10 +201,10 @@
 
     &:hover {
       background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
-      color: #0063cb;
+      color: utils.$colors-bgSelectSelected;
 
       p {
-        color: #0063cb;
+        color: utils.$colors-bgSelectSelected;
       }
     }
 

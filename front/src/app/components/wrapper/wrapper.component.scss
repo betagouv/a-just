@@ -81,22 +81,9 @@
     }
 
     .sub-tools {
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows animations.$ease-default animations.$duration-normal;
-
-        &.open {
-            grid-template-rows: 1fr;
-        }
-
-        .sub-tools-inner {
-            overflow: hidden;
-            min-height: 0;
-            background-color: utils.$colors-bgSelect;
-            display: flex;
-            flex-direction: column;
-            user-select: none;
-        }
+        background-color: utils.$colors-bgSelect;
+        display: flex;
+        flex-direction: column;
 
         p,
         a {
@@ -366,14 +353,13 @@
 
     .juridiction {
         background-color: utils.$colors-cblue;
-        transition: opacity animations.$ease-default animations.$duration-normal;
+        border: 1px solid utils.$colors-cblack;
+        cursor: pointer;
 
-        &.expandable {
-            cursor: pointer;
+        transition: all ease-in-out 0.2s;
 
-            &:hover {
-                opacity: 0.9;
-            }
+        &:hover {
+            opacity: 0.9;
         }
 
         .juridiction-title {
@@ -400,33 +386,14 @@
 
             h6 {
                 color: utils.$colors-white;
-                font-size: 16px;
-                line-height: 20px;
-                font-weight: 700;
-                text-transform: uppercase;
-                overflow-wrap: break-word;
-            }
-
-            .juridiction-title-name {
-                color: utils.$colors-white;
-                font-size: 16px;
-                line-height: 20px;
-                font-weight: 700;
-                overflow-wrap: break-word;
+                flex: 1;
             }
 
             mat-icon {
-                margin-left: 4px;
+                margin-left: 2px;
+                margin-top: 4px;
                 color: utils.$colors-white;
-                font-size: 16px;
-                width: 16px;
-                height: 16px;
-                line-height: 16px;
-                transition: rotate animations.$ease-default animations.$duration-normal;
-
-                &.open {
-                    rotate: -90deg;
-                }
+                rotate: -90deg;
             }
         }
     }
@@ -452,8 +419,6 @@
         padding: 13px 4px 13px 13px;
         text-decoration: none;
         color: utils.$colors-cblack;
-        user-select: none;
-
 
         &.top {
             cursor: pointer;

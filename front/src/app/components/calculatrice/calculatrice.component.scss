@@ -20,10 +20,6 @@
       cursor: pointer;
       color: utils.$colors-cblackdark;
 
-      &:hover {
-        background-color: utils.$colors-bgSelect;
-      }
-
       &.selected {
         position: relative;
         border-top: solid 2px utils.$colors-primary;
@@ -31,10 +27,6 @@
         border-left: 1px solid utils.$colors-lightBorder;
         border-bottom: none;
         color: utils.$colors-primary;
-
-        &:hover {
-          background-color: transparent;
-        }
 
         &::after {
           content: "";
@@ -62,14 +54,13 @@
     align-items: center;
     padding: 12px 24px;
     border-radius: 6px;
-    background-color: utils.$colors-bgSelect;
+    background-color: utils.$colors-popupLightBg;
     margin-top: 8px;
-    border: 1px solid utils.$colors-bgSelect;
+    border: 1px solid utils.$colors-popupLightBg;
 
     &:focus-within {
-      border: solid 1px utils.$colors-tooltipBgTitleColor;
+      border: solid 1px utils.$colors-darkModeTitle;
       background-color: utils.$colors-bgProgressBar;
-
     }
 
     span {
@@ -121,6 +112,7 @@
           display: inline-block;
           padding: 0px 11px;
           font-size: 16px;
+          border: utils.$colors-primary solid 1px;
           color: utils.$colors-primary;
           cursor: pointer;
           line-height: 32px;

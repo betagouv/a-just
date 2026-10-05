@@ -1,5 +1,4 @@
 @use '../../styles/utils.scss' as utils;
-@use '../../styles/animations.scss' as animations;
 
 :host {
   display: inline-flex;
@@ -35,7 +34,7 @@
   }
 
   .panel {
-    transition: left animations.$duration-slow animations.$ease-default;
+    transition: left 0.25s ease;
     width: 50%;
     display: flex;
     align-items: center;

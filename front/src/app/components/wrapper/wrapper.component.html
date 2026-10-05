@@ -18,22 +18,12 @@
         </div>
 
         @if (hrBackups.length) {
-        <div class="juridiction" [class.expandable]="canExpandJuridictionMenu()"
-            [matMenuTriggerFor]="canExpandJuridictionMenu() ? menu : null" #juridictionTrigger="matMenuTrigger">
+        <div class="juridiction" [matMenuTriggerFor]="menu">
             <div class="juridiction-title">
-                <div class="juridiction-title-text" [class.arrondissement]="isArrondissementSelected()">
-                    @if (isArrondissementSelected()) {
-                    <h6>Arr. {{ this.userService.isTJ() ? "du TJ" : "de la CA" }} <span class="juridiction-title-name"
-                            [title]="arrondissementName(juridictionGroupSelected())">{{
-                            arrondissementName(juridictionGroupSelected()) }}</span></h6>
-                    } @else {
-                    <h6 [title]="workspaceSelected()?.label || (hrBackup && hrBackup.label)">{{ hrBackup &&
-                        hrBackup.isAdminLocal ? '★ ' : '' }}{{ workspaceSelected()?.label || (hrBackup &&
-                        hrBackup.label) }}</h6>
-                    }
-                </div>
-                @if (canExpandJuridictionMenu()) {
-                <mat-icon [class.open]="juridictionTrigger.menuOpen">expand_more</mat-icon>
+                <h6 [title]="hrBackup && hrBackup.label">{{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup
+                    && hrBackup.label }}</h6>
+                @if (hrBackups && hrBackups.length > 1) {
+                <mat-icon>expand_more</mat-icon>
                 }
             </div>
             <mat-menu #menu="matMenu" class="juridiction-menu juridiction-menu-root">
@@ -302,8 +292,8 @@
             <div class="help-support-icon">
                 <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
                     alt="Accéder au centre d'aide" target="_blank">
-                    <img src="assets/icons/victor.webp" alt="victor">
-                    <img src="assets/icons/andre.webp" alt="andre">
+                    <img src="assets/icons/team/matteo.webp" alt="matteo">
+                    <img src="assets/icons/team/andre.webp" alt="andre">
                 </a>
             </div>
         </div>

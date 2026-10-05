@@ -1,5 +1,4 @@
 @use '../../styles/utils.scss' as utils;
-@use '../../styles/animations.scss' as animations;
 
 :host ::ng-deep .content {
   color: utils.$colors-headerColor;
@@ -64,7 +63,7 @@
       label {
         font-size: 14px;
         font-weight: 500;
-        color: #000091;
+        color: utils.$colors-primary;
 
         display: block;
       }
@@ -302,7 +301,7 @@
   &.margin-left .popup {
     margin-left: 18%;
     width: 100%;
-    transition: margin-left animations.$duration-slow;
+    transition: margin-left 1s;
   }
 
   &.no-scroll .popup .content {
