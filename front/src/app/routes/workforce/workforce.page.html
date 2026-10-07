@@ -1,11 +1,11 @@
 <aj-wrapper title="Visualisation instantanée des effectifs" [subtitle]="
-    hrBackup
+    humanResourceService.hrBackupS()
       ? 'Dernière mise à jour le ' +
-        hrBackup.date.getDate() +
+        getDate(humanResourceService.hrBackupS()?.date) +
         ' ' +
-        getMonthString(hrBackup.date) +
+        getMonthString(humanResourceService.hrBackupS()?.date) +
         ' ' +
-        hrBackup.date.getFullYear()
+        getFullYear(humanResourceService.hrBackupS()?.date)
       : ''
   " [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
   [isLoading]="isLoading" [tours]="listFormated && listFormated.length ? introSteps : []">
@@ -198,7 +198,7 @@
     <button class="white outline">Simuler des affectations</button>
   </a>
   }
-  @if(userService.canEditHR()) {
+  @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
   <button class="primary add-collaborator" (click)="addHR()">Ajouter un agent</button>
   }
 

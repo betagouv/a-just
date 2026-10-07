@@ -168,19 +168,12 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   async toSimulate(params: any, simulation: SimulationInterface, white = false) {
-    //console.log('SIMULATION', simulation)
     this.isLoading.next(true)
-    const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
-    //console.log(params)
-    //console.log(this.userService.user)
 
-    const l = startLatencyScope('simulator')
-    const startAt = performance.now()
     const run = async () => {
       if (white === true) {
         return await this.serverService
           .post(`simulator/to-simulate-white`, {
-            backupId: this.humanResourceService.backupId.getValue(),
             params: params,
             simulation: simulation,
             dateStart: setTimeToMidDay(this.dateStart.getValue()),
@@ -188,7 +181,6 @@ export class SimulatorService extends MainClass {
             selectedCategoryId: this.selectedCategory.getValue()?.id,
           })
           .then((data) => {
-            //console.log('simu', data.data)
             this.situationSimulated.next(data.data)
             return data.data
           })
@@ -205,27 +197,14 @@ export class SimulatorService extends MainClass {
             functionIds: this.selectedFonctionsIds.getValue(),
           })
           .then((data) => {
-            //console.log('simu', data.data)
             this.situationSimulated.next(data.data)
             return data.data
           })
       }
     }
-    return run()
-      .then((data) => {
-        this.isLoading.next(false)
-        try {
-          l.finish('success')
-        } catch {}
-        return data
-      })
-      .catch((e) => {
-        this.isLoading.next(false)
-        try {
-          l.finish('error')
-        } catch {}
-        throw e
-      })
+    return run().finally(() => {
+      this.isLoading.next(false)
+    })
   }
 
   /**

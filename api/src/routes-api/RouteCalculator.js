@@ -54,13 +54,12 @@ export default class RouteCalculator extends Route {
   async filterList(ctx) {
     const { backupId } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    //console.log('this.body(ctx)', this.body(ctx))
-
-    this.sendOk(ctx, await this.model.onCalculate(this.body(ctx), ctx.state.user, this.body(ctx).log === false ? false : true))
+    this.sendOk(ctx, await this.model.onCalculate({ ...this.body(ctx), backupIds }, ctx.state.user, this.body(ctx).log === false ? false : true))
   }
 
   /**
@@ -86,9 +85,10 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async rangeValues(ctx) {
-    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
+    let { dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
@@ -102,12 +102,12 @@ export default class RouteCalculator extends Route {
       }
     }
 
-    hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+    hrList = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
     indexes = await generateHRIndexes(hrList)
 
     const categoriesCache = await this.models.HRCategories.getAll()
     const fonctionsCache = await this.models.HRFonctions.getAll()
-    const allActivities = type === 'dtes' ? await this.models.Activities.getAll(backupId) : null
+    const allActivities = type === 'dtes' ? await this.models.Activities.getAll(backupIds) : null
 
     // calcul de l'ETP pour un mois donnée
     const onCalculateETPT = async (date = dateStart) => {
@@ -145,7 +145,7 @@ export default class RouteCalculator extends Route {
 
     // calcul du stock pour un mois donnée
     const onCalculateStock = async (date = dateStart, loop = false) => {
-      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      const activites = await this.models.Activities.getByMonthNew(date, backupIds, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
         if (acti.stock !== null) {
@@ -177,7 +177,7 @@ export default class RouteCalculator extends Route {
 
     // calcul des entrées pour un mois donnée
     const onCalculateEntrees = async (date = dateStart, loop = false) => {
-      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      const activites = await this.models.Activities.getByMonthNew(date, backupIds, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
         if (acti.entrees !== null) {
@@ -209,7 +209,7 @@ export default class RouteCalculator extends Route {
 
     // calcul des sorties pour un mois donnée
     const onCalculateSorties = async (date = dateStart, loop = false) => {
-      const activites = await this.models.Activities.getByMonthNew(date, backupId, contentieuxId, false)
+      const activites = await this.models.Activities.getByMonthNew(date, backupIds, contentieuxId, false)
       if (activites && activites.length) {
         const acti = activites[0]
         if (acti.sorties !== null) {
@@ -247,7 +247,7 @@ export default class RouteCalculator extends Route {
       const catId = categorySelected === 'magistrats' ? 1 : 2
       const datas = await this.model.onCalculate(
         {
-          backupId,
+          backupIds,
           dateStart,
           dateStop: endOfTheMonth,
           contentieuxIds: [contentieuxId],
@@ -417,7 +417,7 @@ export default class RouteCalculator extends Route {
         case 'taux-couverture':
         case 'coverage':
           {
-            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupIds, contentieuxId, false)
             if (activites.length) {
               const acti = activites[0]
 
@@ -473,16 +473,17 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async hasError(ctx) {
-    let { type, dateStart, dateStop, contentieuxId, backupId } = this.body(ctx)
+    let { type, dateStart, dateStop, contentieuxId } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     switch (type) {
       case COCKPIT_ERROR_NO_ENTRIES_OR_EXITS: {
 
-        if (!dateStart || !dateStop || !contentieuxId || !backupId) {
+        if (!dateStart || !dateStop || !contentieuxId) {
           this.sendOk(ctx, { status: false })
           return
         }
@@ -496,7 +497,7 @@ export default class RouteCalculator extends Route {
         }
 
         while (date.getTime() > dateStart.getTime() && !hasError) {
-          const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
+          const activites = await this.models.Activities.getByMonthNew(dateStart, backupIds, contentieuxId, false)
           if (activites && activites.length) {
             const acti = activites[0]
             if (acti.entrees === null && acti.originalEntrees === null && acti.sorties === null && acti.originalSorties === null) {

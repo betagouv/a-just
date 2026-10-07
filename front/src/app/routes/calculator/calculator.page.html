@@ -376,6 +376,7 @@
 
 <ng-template #actions>
   <div class="flex-1"></div>
+  @if(humanResourceService.hrBackupS()) {
   <button class="compare" [ngClass]="{ selected: compareTemplates }"
     (click)="showPicker = !showPicker; $event.stopPropagation()">
     <i class="ri-a-b" (click)="showPicker = !showPicker; $event.stopPropagation()"></i>
@@ -414,6 +415,7 @@
     </div>
     }
   </button>
+  }
 
   <button class="compare save" (click)="dropdownExport = !dropdownExport; $event.stopPropagation()">
     <label (click)="dropdownExport = !dropdownExport; $event.stopPropagation()">Enregistrer</label>

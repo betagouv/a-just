@@ -50,14 +50,15 @@ export default class RouteSimulator extends Route {
     accesses: [Access.canVewSimulation],
   })
   async getSituation(ctx) {
-    let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
+    let { referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
     console.time('simulator-1')
-    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
     console.timeEnd('simulator-1')
 
     console.time('🧩 Pré-formatage / Indexation')
@@ -71,7 +72,7 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-2')
 
     console.time('simulator-3')
-    const activities = await this.models.Activities.getAll(backupId)
+    const activities = await this.models.Activities.getAll(backupIds)
     console.timeEnd('simulator-3')
 
     const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true, true)
@@ -120,31 +121,20 @@ export default class RouteSimulator extends Route {
     accesses: [Access.canVewSimulation],
   })
   async toSimulate(ctx) {
-    let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId, referentielId, functionIds } = this.body(ctx)
+    let { params, simulation, dateStart, dateStop, selectedCategoryId, referentielId, functionIds } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
-    console.time('simulator-1')
-    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
-    console.timeEnd('simulator-1')
-
-    console.time('🧩 Pré-formatage / Indexation')
+    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
     const indexes = await generateHRIndexes(hr)
-    console.timeEnd('🧩 Pré-formatage / Indexation')
 
-    console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
-    //const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === selectedCategoryId).map((f) => f.id)
-    //const fctFilter = functionIds.length == fonctions.length ? undefined : functionIds
-    console.timeEnd('simulator-2')
-
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
-
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
-    //console.log(params)
     const simulatedSituation = await execSimulation(params, simulation, dateStart, dateStop, sufix, ctx, { indexes, referentielId, categories, dateStart, dateStop, fonctionIds: functionIds })
 
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
@@ -162,7 +152,6 @@ export default class RouteSimulator extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number().required(),
       params: Types.any().required(),
       simulation: Types.object().required(),
       dateStart: Types.date().required(),
@@ -172,11 +161,7 @@ export default class RouteSimulator extends Route {
     accesses: [Access.canVewWhiteSimulation],
   })
   async toSimulateWhite(ctx) {
-    let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
-
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
-      ctx.throw(403, "Vous n'avez pas accès")
-    }
+    let { params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     const categories = await this.models.HRCategories.getAll()
 

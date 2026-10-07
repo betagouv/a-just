@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core'
 import { orderBy, sortBy, sumBy, union } from 'lodash'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { FilterPanelComponent, FilterPanelInterface } from './filter-panel/filter-panel.component'
@@ -256,10 +256,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   indexValuesFinded: number = 0
   /**
-   * Backup des RH
-   */
-  hrBackup: BackupInterface | null = null
-  /**
    * Date selectionnée
    */
   dateSelected: Date = this.workforceService.dateSelected.getValue()
@@ -439,16 +435,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   constructor() {
     super()
+
+    effect(() => {
+      const hrBackupId = this.humanResourceService.backupIdS()
+      if (hrBackupId !== null && hrBackupId !== undefined && !this.hasTrackedVentilationView) {
+        this.hasTrackedVentilationView = true
+        this.humanResourceService.trackVentilationView(hrBackupId)
+      }
+      this.onFilterList()
+    })
   }
 
   /**
    * Initialisation du composent
    */
   ngOnInit() {
-    if (!this.userService.canViewVentilation()) {
-      this.userService.redirectToHome()
-    }
-
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((ref: ContentieuReferentielInterface[]) => {
         this.referentiel = ref.filter((a) => this.referentielService.idsIndispo.indexOf(a.id) === -1).map((r) => ({ ...r, selected: true }))
@@ -516,16 +517,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
         })
 
-        this.onFilterList()
-      }),
-    )
-    this.watch(
-      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
-        this.hrBackup = hrBackup
-        if (hrBackup && !this.hasTrackedVentilationView) {
-          this.hasTrackedVentilationView = true
-          this.humanResourceService.trackVentilationView(hrBackup.id)
-        }
         this.onFilterList()
       }),
     )
@@ -766,7 +757,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Filtre liste RH
    */
   onFilterList(memorizeScroolPosition = false, keepEmptyVentilation = true, isFirstLoad = false) {
-    if (!this.categoriesFilterList.length || !this.referentiel.length || !this.hrBackup) {
+    if (!this.categoriesFilterList.length || !this.referentiel.length || this.humanResourceService.backupIdS() === null) {
       return
     }
 
@@ -798,16 +789,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.appService.appLoading.next(true)
     this.humanResourceService
       .onFilterList(
-        this.humanResourceService.backupId.getValue() || 0,
+        this.humanResourceService.backupIdS() || 0,
         this.dateSelected,
         selectedReferentielIds,
         selectedSubReferentielIds,
         this.humanResourceService.categoriesFilterListIds,
       )
       .then(({ list, allPersons }: { list: listFormatedInterface[]; allPersons: HumanResourceIsInInterface[] }) => {
-        console.log('List : ', list)
-        console.log('allPersons : ', allPersons)
-
         this.listFormated = list.map((l) => {
           return {
             ...l,

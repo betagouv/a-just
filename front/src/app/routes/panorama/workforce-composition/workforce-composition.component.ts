@@ -50,6 +50,14 @@ interface cleInterface {
 })
 export class WorkforceCompositionComponent extends MainClass implements OnChanges {
   /**
+   * Service de la ressource humaine
+   */
+  humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de la connexion au serveur
+   */
+  serverService = inject(ServerService)
+  /**
    * Service de l'utilisateur
    */
   userService = inject(UserService)
@@ -81,10 +89,7 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
   /**
    * Constructor
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private serverService: ServerService,
-  ) {
+  constructor() {
     super()
 
     effect(() => {

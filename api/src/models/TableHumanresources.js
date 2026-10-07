@@ -823,7 +823,7 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
+  Model.onCalculate = async ({ backupIds, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
     console.time('Calculator-global')
     // console.log('LOG', log)
 
@@ -838,15 +838,15 @@ export default (sequelizeInstance, Model) => {
     const categories = await Model.models.HRCategories.getAll()
     const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
     selectedFonctionsIds = await loadFonctionsForMultiCategoryFiltered(categorySelected, selectedFonctionsIds, Model.models)
-    const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models, user.id)
-    const activities = await Model.models.Activities.getAll(backupId)
+    const referentiels = await loadReferentiels(backupIds, contentieuxIds, Model.models, user.id)
+    const activities = await Model.models.Activities.getAll(backupIds)
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
     const nbMonth = getNbMonth(dateStart, dateStop)
 
     let list = emptyCalulatorValues(referentiels)
 
     console.time('Mise en cache')
-    const hr = await loadOrWarmHR(backupId, Model.models, user.id)
+    const hr = await loadOrWarmHR(backupIds, Model.models, user.id)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

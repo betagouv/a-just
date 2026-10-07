@@ -527,10 +527,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
-    if (!this.userService.canViewRCockpit()) {
-      this.userService.redirectToHome()
-    }
-
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -691,6 +687,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Charge la liste des contentieux de comparaison
    */
   onLoadComparaisons(selectedByLabel: string | null = null) {
+    if (!this.humanResourceService.hrBackupS()) {
+      return
+    }
+
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
       // clean list from brokens saves
       l = l.filter((item) => item.datas && (item.datas.dateStart || item.datas.referentielId))

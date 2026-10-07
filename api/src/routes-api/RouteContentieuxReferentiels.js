@@ -34,6 +34,7 @@ export default class RouteContentieuxReferentiels extends Route {
         referentielsComplete: [],
         isComplete: false,
       })
+      return
     }
 
     const { backupId, isJirs } = this.body(ctx)

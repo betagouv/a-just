@@ -37,20 +37,26 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Retour la liste de l'ensemble des activités d'une jurdicition
-   * @param {*} HRBackupId
+   * Retourne les activités des juridictions demandées.
+   * Plusieurs hr_backup_id sont agrégés : une ligne par contentieux et par période,
+   * avec la somme des entrées, sorties et stocks.
+   * @param {*} HRBackupIds
    * @returns
    */
-  Model.getAll = async (HRBackupId, refIds = null) => {
+  Model.getAll = async (HRBackupIds, refIds = null) => {
+    if (!Array.isArray(HRBackupIds)) {
+      HRBackupIds = [HRBackupIds]
+    }
+
     const whereCon = {}
     if (refIds) {
       whereCon.id = refIds
     }
 
-    const list = await Model.findAll({
+    const activities = await Model.findAll({
       attributes: ['id', 'periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
       where: {
-        hr_backup_id: HRBackupId,
+        hr_backup_id: HRBackupIds,
       },
       include: [
         {
@@ -65,22 +71,41 @@ export default (sequelizeInstance, Model) => {
       logging: false,
     })
 
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i].id,
-        periode: list[i].periode,
-        entrees: list[i].entrees !== null ? list[i].entrees : list[i].original_entrees,
-        sorties: list[i].sorties !== null ? list[i].sorties : list[i].original_sorties,
-        stock: list[i].stock !== null ? list[i].stock : list[i].original_stock,
-        contentieux: {
-          id: list[i]['ContentieuxReferentiel.id'],
-          label: list[i]['ContentieuxReferentiel.label'],
-          code_import: list[i]['ContentieuxReferentiel.code_import'],
-        },
-      }
+    const add = (current, value) => {
+      if (value === null || value === undefined) return current
+      return (current || 0) + value
     }
 
-    return list
+    const byContentieuxAndPeriode = new Map()
+    for (let i = 0; i < activities.length; i++) {
+      const activity = activities[i]
+      const contentieuxId = activity['ContentieuxReferentiel.id']
+      const periode = month(activity.periode)
+      const key = `${contentieuxId}-${periode.getTime()}`
+
+      let row = byContentieuxAndPeriode.get(key)
+      if (!row) {
+        row = {
+          id: activity.id,
+          periode: activity.periode,
+          entrees: null,
+          sorties: null,
+          stock: null,
+          contentieux: {
+            id: contentieuxId,
+            label: activity['ContentieuxReferentiel.label'],
+            code_import: activity['ContentieuxReferentiel.code_import'],
+          },
+        }
+        byContentieuxAndPeriode.set(key, row)
+      }
+
+      row.entrees = add(row.entrees, activity.entrees !== null ? activity.entrees : activity.original_entrees)
+      row.sorties = add(row.sorties, activity.sorties !== null ? activity.sorties : activity.original_sorties)
+      row.stock = add(row.stock, activity.stock !== null ? activity.stock : activity.original_stock)
+    }
+
+    return [...byContentieuxAndPeriode.values()]
   }
 
   /**
@@ -662,8 +687,6 @@ export default (sequelizeInstance, Model) => {
     const contentieuxIds = [...new Set(rawActivities.map((a) => a['ContentieuxReferentiel.id']))]
     const commentsMap = await Model.models.Comments.getNbByActivityTypes(contentieuxIds, HrBackupIds)
     const allLastActivitesByTypes = (await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(rawActivities.map((a) => a.id), ['entrees', 'sorties', 'stock'])) || []
-
-    console.log('ALL LAST ACTIVITES BY TYPES', allLastActivitesByTypes)
 
     // ⏬ Construction finale avec mêmes valeurs que l’ancienne méthode
     return await Promise.all(

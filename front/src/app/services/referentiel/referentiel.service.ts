@@ -106,7 +106,6 @@ export class ReferentielService {
         .filter((a) => idsSoutien.indexOf(a.id) === -1),
     )
 
-    console.log('list', list)
     this.humanResourceService.contentieuxReferentiel.next(list)
     this.humanResourceService.contentieuxReferentielOnly.next(list.filter((r) => idsIndispo.indexOf(r.id) === -1))
     this.humanResourceService.contentieuxReferentielOnlyFiltered.next(filteredList.filter((r) => idsIndispo.indexOf(r.id) === -1))
