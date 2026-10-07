@@ -62,13 +62,14 @@ export default class RouteActivities extends Route {
     accesses: [Access.canVewActivities],
   })
   async getByMonth(ctx) {
-    const { date, hrBackupId } = this.body(ctx)
+    const { date } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)).length > 0 || Access.isAdmin(ctx)) {
-      const dateLastMonth = await this.model.getLastMonth(hrBackupId)
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).hrBackupId, ctx.state.user.id)
+    if (backupIds.length > 0 || Access.isAdmin(ctx)) {
+      const dateLastMonth = await this.model.getLastMonth(backupIds)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
-      const list = await this.model.getByMonthNew(date, hrBackupId)
+      const list = await this.model.getByMonthNew(date, backupIds)
 
       this.sendOk(ctx, {
         list,
@@ -115,6 +116,7 @@ export default class RouteActivities extends Route {
   })
   async getLastHumanActivities(ctx) {
     const { hrBackupId } = this.body(ctx)
+
     const backupIds = await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)
     if (backupIds.length > 0) {
       const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(backupIds, ctx.state.user.id)
@@ -140,6 +142,7 @@ export default class RouteActivities extends Route {
   })
   async getNotCompleteActivities(ctx) {
     const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
+
     const backupIds = await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)
     if (backupIds.length > 0) {
       const list = await this.model.getNotCompleteActivities(backupIds, dateStart, dateEnd, ctx.state.user.id)

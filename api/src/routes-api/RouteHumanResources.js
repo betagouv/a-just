@@ -452,6 +452,9 @@ export default class RouteHumanResources extends Route {
   async logHumanResourceView(ctx) {
     const { hrId } = this.body(ctx)
 
+    console.log('hrId', hrId)
+    console.log('ctx.state.user.id', ctx.state.user.id)
+
     if (!(await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id))) {
       ctx.throw(403, "Vous n'avez pas accès")
     }

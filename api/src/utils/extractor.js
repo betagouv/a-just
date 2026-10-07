@@ -453,7 +453,7 @@ export function fillAgentData(human, pData, etpts, filledReferentiel, flatRefere
 
   return {
     ['Réf.']: String(human.id),
-    ...(isCa() ? { Juridiction: juridictionName.label } : { Arrondissement: juridictionName.label }),
+    ...(isCa() ? { Juridiction: juridictionName } : { Arrondissement: juridictionName }),
     Nom: human.lastName,
     Prénom: human.firstName,
     Matricule: human.matricule,
@@ -586,9 +586,9 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
   }
   const agentDdg = {
     ['Réf.']: String(human.id),
-    Arrondissement: juridictionName.label,
+    Arrondissement: juridictionName,
     Jirs: isJirs ? 'x' : '',
-    Juridiction: (human.juridiction || juridictionName.label).toUpperCase(),
+    Juridiction: (human.juridiction || juridictionName).toUpperCase(),
     Nom: human.lastName,
     Prénom: human.firstName,
     Matricule: human.matricule,

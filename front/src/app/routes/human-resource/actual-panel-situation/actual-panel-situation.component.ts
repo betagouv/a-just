@@ -32,10 +32,25 @@ import { ExcelService } from '../../../services/excel/excel.service'
   styleUrls: ['./actual-panel-situation.component.scss'],
 })
 export class ActualPanelSituationComponent extends MainClass implements OnChanges {
+  /**
+   * Service de la ressource humaine
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de référentiel
+   */
   referentielService = inject(ReferentielService)
+  /**
+   * Service de serveur
+   */
   serverService = inject(ServerService)
+  /**
+   * Service de Excel
+   */
   excelService = inject(ExcelService)
   /**
    * Fiche courante

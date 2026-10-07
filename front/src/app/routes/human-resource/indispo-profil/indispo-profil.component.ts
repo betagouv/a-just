@@ -5,6 +5,7 @@ import { MainClass } from '../../../libs/main-class'
 import { RHActivityInterface } from '../../../interfaces/rh-activity'
 import { MatIconModule } from '@angular/material/icon'
 import { UserService } from '../../../services/user/user.service'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 
 /**
  * Panneau de présentation d'une fiche
@@ -18,7 +19,14 @@ import { UserService } from '../../../services/user/user.service'
   styleUrls: ['./indispo-profil.component.scss'],
 })
 export class IndispoProfilComponent extends MainClass implements OnChanges {
+  /**
+   * Service de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de la ressource humaine
+   */
+  humanResourceService = inject(HumanResourceService)
   /**
    * Liste des indispo courrante
    */

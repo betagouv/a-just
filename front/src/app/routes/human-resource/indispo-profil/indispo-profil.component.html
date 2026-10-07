@@ -4,7 +4,7 @@
   <aj-help-button (click)="openHelpPanel('indispo')" class="no-print help-icon"
     text="Qu'est-ce que c'est ?"></aj-help-button>
   <div class="flex-1"></div>
-  @if(userService.canEditHR()) {
+  @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
   <button class="primary light small outline no-print" (click)="addIndispiniblity.emit()">Ajouter</button>
   }
 </div>
@@ -13,8 +13,9 @@
   <p class="empty">Pas d'indisponibilité en cours</p>
   }
   @for (indisp of indisponibilitiesFiltered; track indisp.contentieux.id) {
-  <div class="cursor-pointer" (click)="userService.canEditHR() ? addIndispiniblity.emit(indisp) : null"
-    [class.not-clickable]="!userService.canEditHR()">
+  <div class="cursor-pointer"
+    (click)="userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null ? addIndispiniblity.emit(indisp) : null"
+    [class.not-clickable]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>
@@ -42,7 +43,7 @@
         }
       </p>
     </div>
-    @if(userService.canEditHR()) {
+    @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
     <div class="action no-print">
       <mat-icon>drive_file_rename_outline</mat-icon>
     </div>

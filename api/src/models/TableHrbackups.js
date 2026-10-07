@@ -372,7 +372,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.haveAccess = async (id, userId) => {
-    console.log('HAVE ACCESS ', id)
     // si id > 0, c'est un backup id
     // si id < 0, c'est un group id
     if (id > 0) {
@@ -420,8 +419,6 @@ export default (sequelizeInstance, Model) => {
         },
         raw: true,
       })
-
-      console.log('GROUP HAVE ACCESS', backup)
 
       if (!backup) {
         return []

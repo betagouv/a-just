@@ -24,7 +24,7 @@
       </div></label>
   </div>
   }
-  @if(userService.canEditHR()) {
+  @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
   <div id="panel-content" class="panel-content">
     @if (!isEditing) {
     <div class="placeholder">
@@ -38,7 +38,7 @@
       (click)="$event.stopPropagation()"></aj-text-editor>
   </div>
   }
-  @if (isEditing && userService.canEditHR()) {
+  @if (isEditing && userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
   <div class="footer-panel">
     <div class="back" (click)="back(); $event.stopPropagation()">Annuler</div>
     <div class="save" [ngClass]="{ disabled: !currentComment.length }" (click)="save(); $event.stopPropagation()">

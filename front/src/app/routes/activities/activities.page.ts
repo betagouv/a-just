@@ -46,12 +46,33 @@ import { IntroJSStep } from '../../services/tour/tour.service'
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service d'activités
+   */
   activitiesService = inject(ActivitiesService)
+  /**
+   * Service de ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de référentiel
+   */
   referentielService = inject(ReferentielService)
+  /**
+   * Route activée
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service d'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de KPI
+   */
   kpiService = inject(KPIService)
+  /**
+   * Service d'application
+   */
   appService = inject(AppService)
   /**
    * Dom du wrapper
@@ -927,6 +948,17 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     if (cont.showActivityGroup) {
       this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + '')
     }
+  }
+
+  selectContentieuxToUpdate(
+    ref: ContentieuReferentielActivitiesInterface,
+    itemGroup: ContentieuReferentielActivitiesInterface | ContentieuReferentielInterface,
+  ) {
+    if (this.humanResourceService.juridictionGroupSelected() != null) {
+      return
+    }
+    this.contentieuxToUpdate = ref
+    this.selectedReferentielId = itemGroup.id
   }
 
   showContComment(cont: ContentieuReferentielActivitiesInterface) {

@@ -18,10 +18,12 @@
           <i class="ri-upload-line"></i>
           Exporter la situation
         </button>
+        @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
         <button class="medium strict-border" (click)="toggleDropDown = false; onCopyAgent()">
           <i class="ri-file-copy-2-line"></i>
           Copier la situation sur A-JUST
         </button>
+        }
       </div>
     </div>
   </div>
@@ -38,9 +40,10 @@
       <div class="firstname">
         <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['firstName'] + 'px' }"
           [ngClass]="{ error: humanResourceService.alertList().includes('firstName') }">
-          <input [readonly]="!userService.canEditHR()" id="firstName" #firstNameDom #input [placeholder]="'Prénom'"
-            [ngModel]="currentHR?.firstName" (ngModelChange)="completeFormWithDomObject('firstName', $event)"
-            (keydown)="preventSubmit($event)" (keyup)="!userService.canEditHR() ? null : onFocusNext($event)"
+          <input [readonly]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)"
+            id="firstName" #firstNameDom #input [placeholder]="'Prénom'" [ngModel]="currentHR?.firstName"
+            (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
+            (keyup)="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) ? null : onFocusNext($event)"
             (input)="adjustInputWidth($event, 'firstName')" />
         </div>
         @if(humanResourceService.alertList().includes('firstName')) {
@@ -51,9 +54,10 @@
       <div class="lastname">
         <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }"
           [ngClass]="{ error: humanResourceService.alertList().includes('lastName') }">
-          <input [readonly]="!userService.canEditHR()" id="lastName" #input [placeholder]="'Nom'"
-            [ngModel]="currentHR?.lastName" (ngModelChange)="completeFormWithDomObject('lastName', $event)"
-            (keydown)="preventSubmit($event)" (keyup)="!userService.canEditHR() ? null : onFocusNext($event)"
+          <input [readonly]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)"
+            id="lastName" #input [placeholder]="'Nom'" [ngModel]="currentHR?.lastName"
+            (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
+            (keyup)="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) ? null : onFocusNext($event)"
             (input)="adjustInputWidth($event, 'lastName')" />
         </div>
         @if(humanResourceService.alertList().includes('lastName')) {
@@ -61,7 +65,7 @@
           (onClose)="removeAlertItem('lastName')"></aj-alert-small>
         }
       </div>
-      @if(userService.canEditHR()) {
+      @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
       }
@@ -122,9 +126,11 @@
       <aj-date-select title="Date d'arrivée" id="calendar" [value]="currentHR && currentHR.dateStart"
         (valueChange)="updateHuman('dateStart', $event)"
         [ngClass]="{ error: humanResourceService.alertList().includes('startDate') }"
-        [readonly]="!userService.canEditHR()" [manualInput]="true"></aj-date-select>
+        [readonly]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)"
+        [manualInput]="true"></aj-date-select>
       <aj-date-select #dateEndCalendar title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
-        (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true" [readonly]="!userService.canEditHR()"
+        (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true"
+        [readonly]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)"
         [manualInput]="true"></aj-date-select>
     </div>
   </div>

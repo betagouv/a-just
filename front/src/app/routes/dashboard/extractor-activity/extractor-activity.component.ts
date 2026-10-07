@@ -245,7 +245,7 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   getExportFileName() {
-    return `Extraction_données_d_activité_${this.humanResourceService.hrBackup.getValue()?.label}_${this.getTotalPeriodeLabel(
+    return `Extraction_données_d_activité_${this.humanResourceService.workspaceSelected()?.label}_${this.getTotalPeriodeLabel(
       this.dateStart || new Date(),
       this.dateStop || new Date(),
       true,
@@ -276,14 +276,13 @@ export class ExtractorActivityComponent extends MainClass {
     })
     return this.serverService
       .post(`extractor/filter-list-act`, {
-        backupId: this.humanResourceService.backupId.getValue(),
+        backupId: this.humanResourceService.backupIdS(),
         dateStart: setTimeToMidDay(this.dateStart || this.today),
         dateStop: setTimeToMidDay(this.dateStop || this.today),
       })
       .then((data) => {
         this.data = data.data.list
         this.sumTab = data.data.sumTab
-        let monthTabName = ''
 
         this.sumTab = this.sumTab
           .map((act: any) => {
@@ -408,7 +407,7 @@ export class ExtractorActivityComponent extends MainClass {
       (sumTab ? '                    ' : '     ') +
       "Extraction de données d'activité " +
       (this.userService.isTJ() ? ' du ' : ' de la ') +
-      this.humanResourceService.hrBackup.getValue()?.label
+      this.humanResourceService.workspaceSelected()?.label
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix
 
     report.worksheets[tabIndex]._rows[headerIndex - 1].height = 80

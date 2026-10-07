@@ -8,6 +8,7 @@ import { HRCommentService } from '../../../services/hr-comment/hr-comment.servic
 import { UserService } from '../../../services/user/user.service'
 import { MatIconModule } from '@angular/material/icon'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 
 /**
  * Panneau de présentation d'une fiche
@@ -21,9 +22,22 @@ import { TooltipsComponent } from '../../../components/tooltips/tooltips.compone
   styleUrls: ['./comment-profil.component.scss'],
 })
 export class CommentProfilComponent extends MainClass implements OnChanges, OnInit {
+  /**
+   * Service de détection des changements
+   */
   changeDetectorRef = inject(ChangeDetectorRef)
+  /**
+   * Service de gestion des commentaires
+   */
   hRCommentService = inject(HRCommentService)
+  /**
+   * Service de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de la ressource humaine
+   */
+  humanResourceService = inject(HumanResourceService)
   /**
    * Fiche courante
    */

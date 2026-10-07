@@ -341,7 +341,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * Ouverture du selecteur de date de material
    */
   onClick() {
-    this.readOnly === false ? this.picker.open() : null
+    this.readOnly === false && this.picker ? this.picker.open() : null
   }
 
   /**

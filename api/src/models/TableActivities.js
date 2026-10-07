@@ -91,6 +91,10 @@ export default (sequelizeInstance, Model) => {
           entrees: null,
           sorties: null,
           stock: null,
+          originalEntrees: null,
+          originalSorties: null,
+          originalStock: null,
+          idReferentiel: contentieuxId,
           contentieux: {
             id: contentieuxId,
             label: activity['ContentieuxReferentiel.label'],
@@ -103,52 +107,12 @@ export default (sequelizeInstance, Model) => {
       row.entrees = add(row.entrees, activity.entrees !== null ? activity.entrees : activity.original_entrees)
       row.sorties = add(row.sorties, activity.sorties !== null ? activity.sorties : activity.original_sorties)
       row.stock = add(row.stock, activity.stock !== null ? activity.stock : activity.original_stock)
+      row.originalEntrees = add(row.originalEntrees, activity.original_entrees)
+      row.originalSorties = add(row.originalSorties, activity.original_sorties)
+      row.originalStock = add(row.originalStock, activity.original_stock)
     }
 
     return [...byContentieuxAndPeriode.values()]
-  }
-
-  /**
-   * Retour la liste de l'ensemble des activités d'une jurdicition avec le détail des sorties
-   * @param {*} HRBackupId
-   * @returns
-   */
-  Model.getAllDetails = async (HRBackupId) => {
-    const list = await Model.findAll({
-      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
-      where: {
-        hr_backup_id: HRBackupId,
-      },
-      include: [
-        {
-          attributes: ['id', 'label', 'code_import'],
-          model: Model.models.ContentieuxReferentiels,
-        },
-      ],
-      order: [['periode', 'asc']],
-      raw: true,
-    })
-
-    for (let i = 0; i < list.length; i++) {
-      list[i] = {
-        id: list[i].id,
-        periode: list[i].periode,
-        entrees: list[i].entrees,
-        sorties: list[i].sorties,
-        stock: list[i].stock,
-        originalEntrees: list[i].original_entrees,
-        originalSorties: list[i].original_sorties,
-        originalStock: list[i].original_stock,
-        idReferentiel: list[i]['ContentieuxReferentiel.id'],
-        contentieux: {
-          id: list[i]['ContentieuxReferentiel.id'],
-          label: list[i]['ContentieuxReferentiel.label'],
-          code_import: list[i]['ContentieuxReferentiel.code_import'],
-        },
-      }
-    }
-
-    return list
   }
 
   /**

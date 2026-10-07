@@ -147,12 +147,12 @@ export default class RouteExtractor extends Route {
 
         const onglet1Data = {
           values: onglet1,
-          columnSize: await autofitColumns(onglet1, true),
+          columnSize: autofitColumns(onglet1, true),
         }
 
         const onglet2Data = {
           values: onglet2,
-          columnSize: await autofitColumns(onglet2, true, 13),
+          columnSize: autofitColumns(onglet2, true, 13),
           excelRef,
         }
 
@@ -232,25 +232,26 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterListAct(ctx) {
-    const { backupId, dateStart, dateStop } = this.body(ctx)
+    const { dateStart, dateStop } = this.body(ctx)
 
+    const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).backupId, ctx.state.user.id)
     if (!Access.isAdmin(ctx)) {
-      if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+      if (backupIds.length === 0) {
         ctx.throw(403, "Vous n'avez pas accès")
       }
     }
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
-    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    let referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined, false, ctx.state.user.id)
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
+    let referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, isJirs, undefined, undefined, false, ctx.state.user.id)
     referentiels = orderBy(referentiels, 'rank', 'asc')
 
     const flatReferentielsList = _buildOrderedFlatList([...referentiels])
 
-    const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
+    const list = await this.models.Activities.getByMonthNew(dateStart, backupIds)
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
-    let activities = await this.models.Activities.getAllDetails(backupId)
+    let activities = await this.models.Activities.getAll(backupIds)
     activities = activities.map((r) => ({ ...r, periode: today(r.periode) }))
     activities = activities
       .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
@@ -358,7 +359,8 @@ export default class RouteExtractor extends Route {
   async filterListNew(ctx) {
     const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
 
-    if ((await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)).length === 0) {
+    const backupIds = await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
@@ -367,15 +369,15 @@ export default class RouteExtractor extends Route {
     // ------------------------- 1) INITIALISATION -------------------------
     let query = { start: new Date(dateStart), end: new Date(dateStop) }
     let logs = new Array()
-    let hr = await loadOrWarmHR(backupId, this.models)
-    //hr = hr.filter((h) => h.id === 39886)
+    let hr = await loadOrWarmHR(backupIds, this.models)
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
+
     const indexes = await generateHRIndexes(hr, true)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, true, undefined, false, true)
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
-    const juridictionName = await this.models.HRBackups.findById(backupId)
-    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const { flatReferentiel, ctxL3, indispoL3 } = await createFlatReferentiel([...referentiels])
+    let juridictionName = backupId < -1 ? (await this.models.Groups.findById(backupId * -1)).label : (await this.models.HRBackups.findById(backupId)).label
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
+    const { flatReferentiel, ctxL3, indispoL3 } = createFlatReferentiel([...referentiels])
     const mapRefIdsToLabels = buildIdToLabelMap(flatReferentiel)
 
     let emptyFlatMapReferentiel = flatReferentiel.reduce((acc, item) => {
@@ -433,12 +435,12 @@ export default class RouteExtractor extends Route {
 
     const onglet1Data = {
       values: onglet1,
-      columnSize: await autofitColumns(onglet1, true),
+      columnSize: autofitColumns(onglet1, true),
     }
 
     const onglet2Data = {
       values: onglet2,
-      columnSize: await autofitColumns(onglet2, true, 13),
+      columnSize: autofitColumns(onglet2, true, 13),
       excelRef,
     }
 

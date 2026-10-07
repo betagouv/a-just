@@ -419,10 +419,22 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.isJirs = async (backupId) => {
+  Model.isJirs = async (backupIds) => {
+    if (!Array.isArray(backupIds)) {
+      backupIds = [backupIds]
+    }
+
     let isJirs = false
-    const juridiction = await Model.models.HRBackups.findById(backupId)
-    if (juridiction) isJirs = juridiction.jirs
+    const juridictions = await Model.models.HRBackups.findAll({
+      where: {
+        id: { [Op.in]: backupIds },
+      },
+      raw: true,
+    })
+    if (juridictions.length > 0) {
+      isJirs = juridictions.some((j) => j.jirs)
+    }
+
     return isJirs
   }
 

@@ -19,7 +19,7 @@
         <p>Stock</p>
       </div>
       <div class="column-item">
-        <p>Complétude</p>
+        @if(this.humanResourceService.juridictionGroupSelected() === null){<p>Complétude</p>}
       </div>
       <!--</ng-template>-->
     </div>
@@ -132,15 +132,17 @@
             }
           </div>
           <div class="column-item completion">
+            @if(this.humanResourceService.juridictionGroupSelected() === null){
             <p [id]="'referentiel-' + ref.id" [style.--percent]="ref.completion"> disponibles</p>
             <span class="completion-bar">
               <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
             </span>
             <p>
               {{ ref.completion !== undefined && ref.completion < 100 ? 'il reste des données à compléter' : '' }} </p>
+                }
           </div>
           <div class="nb-comments-zone">
-            @if ((ref?.nbComments || 0) > 0) {
+            @if ((ref?.nbComments || 0) > 0 && this.humanResourceService.juridictionGroupSelected() === null) {
             <div class="nb-comments" (click)="showContComment(ref)">
               <mat-icon class="material-icons-outlined">sms</mat-icon>
               <p>{{ ref?.nbComments || 0 }}</p>
@@ -158,7 +160,7 @@
                           itemGroup.valueQualityIn === 'facultatif' ||
                           itemGroup.valueQualityOut === 'facultatif' ||
                           itemGroup.valueQualityStock === 'facultatif',
-                      }" (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
+                      }" (click)="selectContentieuxToUpdate(ref, itemGroup)">
                 <div class="label" [ngClass]="{
                           'grey-txt':
                             itemGroup.valueQualityIn === 'facultatif' ||
@@ -196,24 +198,10 @@
                 </div>
                 <div class="column-item">
                   <div>
-                    <p [ngClass]="{
+                    <p
+                      [ngClass]="this.humanResourceService.juridictionGroupSelected() === null ? {
                               'to-complete':
-                                itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE &&
-                                itemGroup.in === null &&
-                                itemGroup.originalIn === null,
-                              'to-verify':
-                                itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null,
-                              'blue-bottom': checkIfBlue({
-                                cont: itemGroup,
-                                node: 'entrees',
-                                isForBulbOrBottom: false,
-                              }),
-                              'blue-txt': checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: false }),
-                              grey:
-                                itemGroup.valueQualityIn === 'facultatif' ||
-                                itemGroup.valueQualityOut === 'facultatif' ||
-                                itemGroup.valueQualityStock === 'facultatif',
-                            }">
+                                itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null, 'to-verify': itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null, 'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: true }), 'blue-txt': checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: false }), grey: itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif', } : {}">
                       {{
                       itemGroup.in !== null
                       ? itemGroup.in
@@ -241,24 +229,10 @@
                 </div>
                 <div class="column-item">
                   <div>
-                    <p [ngClass]="{
+                    <p
+                      [ngClass]="this.humanResourceService.juridictionGroupSelected() === null ? {
                               'to-complete':
-                                itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE &&
-                                itemGroup.out === null &&
-                                itemGroup.originalOut === null,
-                              'to-verify':
-                                itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null,
-                              'blue-bottom': checkIfBlue({
-                                cont: itemGroup,
-                                node: 'sorties',
-                                isForBulbOrBottom: false,
-                              }),
-                              'blue-txt': checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: false }),
-                              'grey-txt':
-                                itemGroup.valueQualityIn === 'facultatif' ||
-                                itemGroup.valueQualityOut === 'facultatif' ||
-                                itemGroup.valueQualityStock === 'facultatif',
-                            }">
+                                itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null && itemGroup.originalOut === null, 'to-verify': itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null, 'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: true }), 'blue-txt': checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: false }), grey: itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif', } : {}">
                       {{
                       itemGroup.out !== null
                       ? itemGroup.out
@@ -285,21 +259,13 @@
                   }
                 </div>
                 <div class="column-item">
-                  <div (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
-                    <p [ngClass]="{
+                  <div (click)="selectContentieuxToUpdate(ref, itemGroup)">
+                    <p
+                      [ngClass]="this.humanResourceService.juridictionGroupSelected() === null ? {
                               'to-complete':
                                 itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE &&
                                 itemGroup.stock === null &&
-                                itemGroup.originalStock === null,
-                              'to-verify':
-                                itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null,
-                              'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: true }),
-                              'blue-txt': checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }),
-                              grey:
-                                itemGroup.valueQualityIn === 'facultatif' ||
-                                itemGroup.valueQualityOut === 'facultatif' ||
-                                itemGroup.valueQualityStock === 'facultatif',
-                            }">
+                                itemGroup.originalStock === null, 'to-verify': itemGroup.valueQualityStock === VALUE_QUALITY_TO_VERIFY && itemGroup.stock === null, 'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: true }), 'blue-txt': checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }), grey: itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif', } : {}">
                       {{
                       itemGroup.stock !== null
                       ? itemGroup.stock
@@ -337,8 +303,9 @@
                             getCompletionStatus(itemGroup).includes('A-JUSTer'),
                           'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
                           'blue-txt': getCompletionStatus(itemGroup).includes('A compléter'),
-                        }" (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
-                  @if(userService.canEditActivities()){@if (getCompletionStatus(itemGroup).includes('A compléter')) {
+                        }" (click)="selectContentieuxToUpdate(ref, itemGroup)">
+                  @if(userService.canEditActivities() && this.humanResourceService.juridictionGroupSelected() ===
+                  null){@if (getCompletionStatus(itemGroup).includes('A compléter')) {
                   <p>
                     {{ getCompletionStatus(itemGroup) }}
                     <span class="pastille">+{{ itemGroup.possibleGainCompletion }}%</span>
@@ -367,6 +334,7 @@
 
 <ng-template #ressources>
   <div class="top-right-header">
+    @if(this.humanResourceService.juridictionGroupSelected() === null){
     <div class="left-panel">
       <p [id]="'total-completion'" [style.--percent]="totalCompletion"
         [ngStyle]="{ color: getAcivityPercentColor(totalCompletion) }">
@@ -376,6 +344,9 @@
         <aj-completion-bar [value]="totalCompletion" class="flex-center height-24"></aj-completion-bar>
       </div>
     </div>
+    } @else {
+    <div></div>
+    }
     <div class="right-panel">
       <h2>Ressources :</h2>
       <div class="elements">
