@@ -306,7 +306,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
       return boroughCount + backupCount > 1
     }
 
-    return this.humanResourceService.backupsS().length > 1
+    return this.humanResourceService.backupsS()?.length ?? 0 > 1
   })
   /**
    * URL de la documentation

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, effect } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
@@ -89,14 +89,9 @@ export class ContentieuxOptionsService extends MainClass {
     private humanResourceService: HumanResourceService,
   ) {
     super()
-  }
 
-  /**
-   * Récupération des données générales pour un utilisateur
-   * @returns
-   */
-  initDatas() {
-    this.humanResourceService.backupId.subscribe(() => {
+    effect(() => {
+      this.humanResourceService.backupIdS()
       this.loadBackupsAndId()
     })
   }
@@ -106,13 +101,12 @@ export class ContentieuxOptionsService extends MainClass {
    * @returns
    */
   async loadBackupsAndId() {
-    const juridictionId = this.humanResourceService.backupId.getValue()
-    if (juridictionId !== null) {
+    const backupId = this.humanResourceService.backupIdS()
+    if (backupId != null) {
       this.optionsIsModify.next(false)
-      return this.getAllContentieuxOptions(juridictionId).then((result) => {
-        this.nbOfBackups.next(result.backups.length)
-        this.backups.next(result.backups)
-      })
+      const result = await this.getAllContentieuxOptions()
+      this.nbOfBackups.next(result.backups.length)
+      this.backups.next(result.backups)
     }
   }
 
@@ -130,11 +124,10 @@ export class ContentieuxOptionsService extends MainClass {
    * @param juridictionId
    * @returns
    */
-  getAllContentieuxOptions(juridictionId: number) {
+  async getAllContentieuxOptions() {
     return this.serverService
       .post('contentieux-options/get-all', {
-        juridictionId,
-        backupId: this.backupId.getValue(),
+        backupId: this.humanResourceService.backupIdS(),
       })
       .then((r) => r.data)
   }

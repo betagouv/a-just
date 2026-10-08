@@ -11,38 +11,38 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionId
    * @returns
    */
-  Model.getBackup = async (userId, juridictionId) => {
+  Model.getBackup = async (backupIds) => {
+    if (!Array.isArray(backupIds)) {
+      backupIds = [backupIds]
+    }
+
     const list = await Model.findAll({
       attributes: ['id', 'label', ['created_at', 'date'], 'type', 'status', 'user_id'],
       include: [
         {
-          attributes: ['id', 'first_name', 'last_name'],
-          model: Model.models.Users,
-        },
-        {
           model: Model.models.OptionsBackupJuridictions,
           required: true,
           where: {
-            juridiction_id: juridictionId,
+            juridiction_id: backupIds,
           },
-          include: [
-            {
-              model: Model.models.UserVentilations,
-              required: true,
-              where: {
-                user_id: userId,
-              },
-            },
-          ],
         },
       ],
       raw: true,
     })
 
+    const users = await Model.models.Users.findAll({
+      attributes: ['id', 'first_name', 'last_name'],
+      where: {
+        id: list.map((b) => b.user_id),
+      },
+      raw: true,
+    })
+
     for (let i = 0; i < list.length; i++) {
       const lastUpdate = await Model.models.HistoriesContentieuxUpdate.getLastUpdate(list[i].id)
-      let user = null
-      if (list[i]['User.first_name'] && list[i]['User.last_name']) user = list[i]['User.first_name'] + ' ' + list[i]['User.last_name']
+      const findedUser = users.find((u) => u.id === list[i].user_id)
+      let user = findedUser ? findedUser.first_name + ' ' + findedUser.last_name : null
+
       list[i] = {
         id: list[i].id,
         label: list[i].label,

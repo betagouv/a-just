@@ -27,7 +27,6 @@ export default class RouteContentieuxOptions extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number(),
-      juridictionId: Types.number().required(),
     }),
     accesses: [Access.isLogin],
   })
@@ -35,18 +34,21 @@ export default class RouteContentieuxOptions extends Route {
     if (!(await this.models.Users.canViewCompleteReferentiel(ctx.state.user.id))) {
       this.sendOk(ctx, {
         backups: [],
-        backupId: null,
       })
     }
 
-    let { juridictionId, backupId } = this.body(ctx)
+    let { backupId } = this.body(ctx)
+    const backupIds = await this.model.models.HRBackups.haveAccess(backupId, ctx.state.user.id)
+    if (backupIds.length === 0) {
+      this.sendOk(ctx, {
+        backups: [],
+      })
+    }
 
-    const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id, juridictionId)
-    backupId = backups.find((b) => b.id === backupId) ? backupId : backups.length ? backups[backups.length - 1].id : null
+    const backups = await this.model.models.OptionsBackups.getBackup(backupIds)
 
     this.sendOk(ctx, {
       backups,
-      backupId,
     })
   }
 

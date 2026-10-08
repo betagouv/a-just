@@ -125,7 +125,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   constructor(
     private route: ActivatedRoute,
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private humanResourceService: HumanResourceService,
+    public humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     public userService: UserService,
     private router: Router,

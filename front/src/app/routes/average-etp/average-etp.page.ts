@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core'
+import { AfterViewInit, Component, inject } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { CommonModule, Location } from '@angular/common'
 import { orderBy } from 'lodash'
@@ -14,6 +14,7 @@ import { ContentieuxOptionsService } from '../../services/contentieux-options/co
 import { userCanViewGreffier, userCanViewMagistrat } from '../../utils/user'
 import { findRealValueCustom, getTime } from '../../utils/dates'
 import { DateAgoPipe } from '../../pipes/date-ago/date-ago.pipe'
+import { HumanResourceService } from '../../services/human-resource/human-resource.service'
 
 /**
  * Page des temps moyens par dossier
@@ -25,6 +26,30 @@ import { DateAgoPipe } from '../../pipes/date-ago/date-ago.pipe'
   styleUrls: ['./average-etp.page.scss'],
 })
 export class AverageEtpPage extends MainClass implements AfterViewInit {
+  /**
+   * Human resource service
+   */
+  humanResourceService = inject(HumanResourceService)
+  /**
+   * Services
+   */
+  userService = inject(UserService)
+  /**
+   * Contentieux options service
+   */
+  contentieuxOptionsService = inject(ContentieuxOptionsService)
+  /**
+   * Router
+   */
+  router = inject(Router)
+  /**
+   * Route
+   */
+  route = inject(ActivatedRoute)
+  /**
+   * Location
+   */
+  location = inject(Location)
   /**
    * Lien de la doc
    */
@@ -82,13 +107,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Constructor
    * @param userService
    */
-  constructor(
-    public userService: UserService,
-    private contentieuxOptionsService: ContentieuxOptionsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private location: Location,
-  ) {
+  constructor() {
     super()
 
     // Vérification des droits
