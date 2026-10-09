@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   computed,
+  effect,
   ElementRef,
   EventEmitter,
   HostBinding,
@@ -361,11 +362,16 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   constructor() {
     super()
+
+    effect(() => {
+      const user = this.userService.userS()
+      console.log('effect - user', user)
+      this.updateMenu(user)
+    })
+
     this.appService.appLoading.next(true)
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.updateMenu(u)
-
         if (u) {
           if (!this.feedbackAutoPopupChecked) {
             this.feedbackAutoPopupChecked = true
@@ -446,7 +452,9 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * @param user
    */
   updateMenu(user: UserInterface | null) {
+    console.log('updateMenu - user 1', user, user?.access)
     this.menu = user ? this.userService.getAllUserPageUrl(user) : []
+    console.log('updateMenu - menu 2', this.menu)
   }
 
   /**

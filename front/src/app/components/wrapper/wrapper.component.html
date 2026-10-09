@@ -20,8 +20,11 @@
         @if (hrBackups.length) {
         <div class="juridiction" [matMenuTriggerFor]="menu">
             <div class="juridiction-title">
-                <h6 [title]="hrBackup && hrBackup.label">{{ hrBackup && hrBackup.isAdminLocal ? '★ ' : '' }}{{ hrBackup
-                    && hrBackup.label }}</h6>
+                @if (humanResourceService.workspaceSelected()) {
+                <h6 [title]="workspaceSelected()?.label">
+                    {{ workspaceSelected()?.isAdminLocal ? '★ ' : '' }}{{ workspaceSelected()?.label }}
+                </h6>
+                }
                 @if (hrBackups && hrBackups.length > 1) {
                 <mat-icon>expand_more</mat-icon>
                 }
@@ -48,7 +51,8 @@
                         (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
                         <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
                         <!-- <span class="item-description">{{ arrondissementLabel(group) }}</span> -->
-                    </button> }
+                    </button>
+                    }
                 </mat-menu>
                 } @else {
                 @if (group.fullAccess) {
@@ -64,20 +68,23 @@
                     (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
                     <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
                     <!-- <span class="item-description">{{ arrondissementLabel(group) }}</span> -->
-                </button> }
+                </button>
+                }
                 }
                 }
                 @for (bu of backupsWithoutGroup(); track bu.id) {
                 <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
                     (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
                     <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
-                </button> }
+                </button>
+                }
                 } @else {
                 @for (bu of hrBackups; track bu.id) {
                 <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
                     (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
                     <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
-                </button> }
+                </button>
+                }
                 }
             </mat-menu>
         </div>
@@ -98,6 +105,7 @@
                 </div>
             </div>
 
+            @if(openTools) {
             <div class="sub-tools" [class.open]="openTools">
                 <div class="sub-tools-inner">
                     <p (click)="downloadAsset('guide-utilisateur')">
@@ -119,17 +127,22 @@
                         La calculatrice
                         <i class="ri-download-line"></i>
                     </p>
-                    @if ((userService.canViewVentilation() || userService.canViewActivities()) &&
-                    referentielService.referentielIsComplete()) {
-                    <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">Les extracteurs</a> }
+                    @if (
+                    (userService.canViewVentilation() || userService.canViewActivities()) &&
+                    referentielService.referentielIsComplete()
+                    ) {
+                    <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">Les extracteurs</a>
+                    }
                     <p (click)="downloadAsset('fiche-agent', true)">
                         Modèle de feuille de temps
                         <i class="ri-download-line"></i>
                     </p>
                     @if (referentielService.referentielIsComplete()) {
-                    <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens</a> }
+                    <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens</a>
+                    }
                 </div>
             </div>
+            }
             <div class="flex-1"></div>
 
             <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
@@ -144,16 +157,18 @@
                 <div class="top-header-back-title">
                     @if (backUrl) {
                     <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" class="back-url"
-                        [ngClass]="{ 'is-dark-screen': isDarkScreen }" /> }
+                        [ngClass]="{ 'is-dark-screen': isDarkScreen }" />
+                    }
                     @if (actionsLeftTemplate) {
                     <ng-container *ngTemplateOutlet="actionsLeftTemplate"></ng-container>
                     }
                     <div>
                         <div class="title-with-doc">
                             <h3 [innerHTML]="title"></h3>
-                            @if(tours && tours.length) {
+                            @if (tours && tours.length) {
                             <aj-tour-button class="no-print" [tours]="tours"></aj-tour-button>
-                            } @if (documentation) {
+                            }
+                            @if (documentation) {
                             <aj-help-button (click)="onTogglePanelHelper()"
                                 class="documentation no-print"></aj-help-button>
                             }
@@ -176,7 +191,7 @@
                     @if (titleTemplate) {
                     <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
                     }
-                    @if(actionsRightTemplate) {
+                    @if (actionsRightTemplate) {
                     <div class="space"></div>
                     <ng-container *ngTemplateOutlet="actionsRightTemplate"></ng-container>
                     }
@@ -186,9 +201,11 @@
                     [value]="dateSelector.value" [min]="dateSelector.minDate" [max]="dateSelector.maxDate"
                     [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
                     class="date-selector"></aj-date-select>
-                } @if (titleTemplate) {
+                }
+                @if (titleTemplate) {
                 <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-                } @if (!alignLeft) {
+                }
+                @if (!alignLeft) {
                 <div class="space"></div>
                 }
                 <div class="actions">
@@ -249,8 +266,10 @@
 <ng-template #defaultActionTemplate></ng-template>
 
 <ng-template #defaultSubtitleTemplate>
-    {{ subtitle }} @if (subtitleName !== '') {
-    <label class="subtitle-name">{{ subtitleName }}</label> }
+    {{ subtitle }}
+    @if (subtitleName !== '') {
+    <label class="subtitle-name">{{ subtitleName }}</label>
+    }
 </ng-template>
 
 @if (promptComment) {
@@ -269,8 +288,8 @@
 }
 
 <div class="help-section" alt="">
-    <button class="help-button" (click)="helpSectionVisible = !helpSectionVisible">Besoin d'aide ?</button> @if
-    (helpSectionVisible) {
+    <button class="help-button" (click)="helpSectionVisible = !helpSectionVisible">Besoin d'aide ?</button>
+    @if (helpSectionVisible) {
     <div class="help-content animate__animated animate__fadeIn">
         <div class="help-content-header">
             <p>Bonjour, comment l'équipe A-JUST peut vous aider ?</p>
@@ -278,22 +297,32 @@
         </div>
         <div class="help-content-body">
             <div>
-                <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
-                    alt="Nous contacter" target="_blank">⏺️ Échanger avec l'équipe</a>
-                <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')"
-                    alt="Être rappelé" target="_blank">📞 Être rappelé</a>
-                <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"
-                    alt="Prendre rendez-vous" target="_blank">📆 Prendre
-                    rendez-vous</a>
-                <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true': '')"
-                    alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
-
+                <a [href]="
+              findHelpCenter('/contact') +
+              (referentielService.isDroitLocal() ? '?dl=true&contact=true' : '?contact=true')
+            " alt="Nous contacter" target="_blank">
+                    ⏺️ Échanger avec l'équipe
+                </a>
+                <a [href]="findHelpCenter('/etre-appele') + (referentielService.isDroitLocal() ? '?dl=true' : '')"
+                    alt="Être rappelé" target="_blank">
+                    📞 Être rappelé
+                </a>
+                <a [href]="findHelpCenter('/prendre-rendez-vous') + (referentielService.isDroitLocal() ? '?dl=true' : '')"
+                    alt="Prendre rendez-vous" target="_blank">
+                    📆 Prendre rendez-vous
+                </a>
+                <a [href]="findHelpCenter('/') + (referentielService.isDroitLocal() ? '?dl=true' : '')"
+                    alt="Accéder au centre d'aide" target="_blank">
+                    📚 Accéder au centre d'aide
+                </a>
             </div>
             <div class="help-support-icon">
-                <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
-                    alt="Accéder au centre d'aide" target="_blank">
-                    <img src="assets/icons/team/matteo.webp" alt="matteo">
-                    <img src="assets/icons/team/andre.webp" alt="andre">
+                <a [href]="
+              findHelpCenter('/contact') +
+              (referentielService.isDroitLocal() ? '?dl=true&contact=true' : '?contact=true')
+            " alt="Accéder au centre d'aide" target="_blank">
+                    <img src="assets/icons/team/matteo.webp" alt="matteo" />
+                    <img src="assets/icons/team/andre.webp" alt="andre" />
                 </a>
             </div>
         </div>

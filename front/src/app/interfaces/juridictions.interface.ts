@@ -20,4 +20,8 @@ export interface JuridictionGroupInterface {
    * L'utilisateur a accès à toutes les juridictions actives du groupe
    */
   fullAccess?: boolean
+  /**
+   * Is admin local
+   */
+  isAdminLocal?: boolean
 }

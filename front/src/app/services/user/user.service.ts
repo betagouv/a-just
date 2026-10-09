@@ -171,6 +171,7 @@ export class UserService implements OnInit {
    */
   canViewPanorama = computed(() => {
     const user = this.user.getValue()
+    console.log('canViewPanorama - user', user, user?.access)
     return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_READER) !== -1 ? true : false
   })
   /**
@@ -494,6 +495,7 @@ export class UserService implements OnInit {
    */
   getAllUserPageUrl(user: UserInterface) {
     const menu = []
+    console.log('getAllUserPageUrl - user', user, this.canViewPanorama())
 
     if (this.canViewPanorama()) {
       menu.push({
