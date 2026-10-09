@@ -10,8 +10,9 @@ import { SSOService } from '../../services/sso/sso.service'
 import { MIN_PASSWORD_LENGTH } from '../../utils/user'
 import { isProfessionalEmailDomain } from '../../utils/string'
 import { AutocompleteComponent, AutocompleteOption } from '../../components/autocomplete/autocomplete.component'
-import { arrondissementLabel } from '../../utils/arrondissement'
+import { arrondissementLabel, formatGroupLabel } from '../../utils/arrondissement'
 import { JuridictionInterface } from '../../interfaces/juridiction'
+import { sortBy } from 'lodash'
 
 /**
  * Page d'inscription
@@ -356,12 +357,30 @@ export class SignupPage {
    * Construit les options d'autocomplétion groupées par arrondissement
    */
   private buildTjOptions() {
-    this.tjOptions = this.tjs.map((tj) => ({
-      id: tj.id,
-      label: tj.label,
-      groupId: tj.group?.id ?? null,
-      groupLabel: tj.group ? arrondissementLabel(tj.group, !this.userService.isCa()) : '',
-    }))
+    const list: JuridictionInterface[] = this.tjs.reduce((acc: JuridictionInterface[], tj: JuridictionInterface) => {
+      const groupId = tj.group?.id
+      if (groupId && !acc.find((t) => t.group?.id === groupId)) {
+        acc.push({
+          ...tj,
+          id: groupId * -1,
+          label: arrondissementLabel(tj.group, !this.userService.isCa()),
+        })
+      }
+
+      acc.push(tj)
+
+      return acc
+    }, [])
+
+    this.tjOptions = sortBy(
+      list.map((tj) => ({
+        id: tj.id,
+        label: tj.label,
+        groupId: tj.group?.id ?? null,
+        groupLabel: tj.group ? arrondissementLabel(tj.group, !this.userService.isCa()) : '',
+      })),
+      ['groupId', 'label'],
+    )
   }
 
   /**

@@ -76,8 +76,8 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
         enabled: true,
-        parent_id: null,
         i_elst: { [Op.ne]: 0 },
+        type: { [Op.notIn]: ['CPH', 'TGI'] },
       },
       order: [['label', 'asc']],
       raw: true,
@@ -94,7 +94,6 @@ export default (sequelizeInstance, Model) => {
     const jurisdictions = await Model.findAll({
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
-        parent_id: null,
         i_elst: { [Op.ne]: 0 },
         enabled: true,
       },
@@ -137,10 +136,10 @@ export default (sequelizeInstance, Model) => {
     const groupIds = [...new Set(backups.map((backup) => backup.group_id).filter((id) => id != null))]
     const groups = groupIds.length
       ? await Model.models.Groups.findAll({
-          attributes: ['id', 'label'],
-          where: { id: { [Op.in]: groupIds } },
-          raw: true,
-        })
+        attributes: ['id', 'label'],
+        where: { id: { [Op.in]: groupIds } },
+        raw: true,
+      })
       : []
 
     const groupById = Object.fromEntries(groups.map((group) => [group.id, { id: group.id, label: group.label }]))
