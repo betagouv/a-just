@@ -25,6 +25,10 @@ export default sequelizeInstance => {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
+      backup_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -47,8 +51,10 @@ export default sequelizeInstance => {
     }
   )
 
-  Model.associate = function (models) {    
-    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'nac_id' })  
+  Model.associate = function (models) {
+    Model.hasOne(models.ContentieuxReferentiels, { foreignKey: 'id', sourceKey: 'nac_id' })
+    Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'backup_id' })
+    Model.hasOne(models.HRSituations, { foreignKey: 'id', sourceKey: 'hr_situation_id' })
 
     return models
   }

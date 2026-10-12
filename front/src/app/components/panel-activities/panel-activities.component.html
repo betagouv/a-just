@@ -22,6 +22,7 @@
   }
 </div>
 }
+
 <div class="activities-panel" [ngStyle]="{ 'grid-template-columns': 'repeat(' + referentiel.length + ', 1fr)' }">
   @for (ref of referentiel; track ref.id; let index = $index) {
   <div class="sub-item">
@@ -45,6 +46,23 @@
   </div>
   }
 </div>
+
+<!-- Show backups -->
+@if (currentBackups.length >= 2) {
+<div class="backups-panel">
+  @for (backup of currentBackups; track backup.id) {
+  <p class="backup-item">
+    {{ backup.label }}
+  </p>
+  }
+</div>
+} @else if (currentBackups.length === 1 && humanResourceService.backupIdS() !== currentBackups[0].id) {
+<div class="backups-panel">
+  <p class="backup-item">
+    {{ currentBackups[0].label }}
+  </p>
+</div>
+}
 
 @if (!forceToShowContentieuxDetail && refIndexSelected !== -1) {
 <div class="sub-panel-activites" [ngStyle]="{

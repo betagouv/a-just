@@ -5,6 +5,37 @@ import { Op } from 'sequelize'
  */
 
 export default (sequelizeInstance, Model) => {
+
+  Model.getDefaultBackup = async (HRActivityId) => {
+    const item = await Model.findOne({
+      where: {
+        hr_situation_id: HRActivityId,
+      },
+      include: [
+        {
+          model: Model.models.HRSituations,
+          attributes: ['id'],
+          required: true,
+          include: [{
+            model: Model.models.HumanResources,
+            attributes: ['backup_id'],
+            required: true,
+            include: [{
+              model: Model.models.HRBackups,
+              attributes: ['id', 'label'],
+              required: true,
+            }],
+          }],
+        }],
+      raw: true,
+    })
+
+    return item && item['HRSituation.HumanResource.backup_id'] ? {
+      id: item['HRSituation.HumanResource.backup_id'],
+      label: item['HRSituation.HumanResource.HRBackup.label'],
+    } : null
+  }
+
   /**
    * Liste des activitiés d'une situatioj
    * @param {*} HRActivityId
@@ -12,7 +43,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async (HRActivityId) => {
     let list = await Model.findAll({
-      attributes: ['id', 'percent', 'updated_at'],
+      attributes: ['id', 'percent', 'updated_at', 'backup_id'],
       where: {
         hr_situation_id: HRActivityId,
       },
@@ -21,19 +52,33 @@ export default (sequelizeInstance, Model) => {
           required: true,
           model: Model.models.ContentieuxReferentiels,
         },
+        {
+          model: Model.models.HRBackups,
+          attributes: ['id', 'label'],
+        },
       ],
       raw: true,
     })
+
+    const defaultBackup = await Model.getDefaultBackup(HRActivityId)
 
     for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         percent: list[i].percent,
         updated_at: list[i].updated_at,
+        backupId: list[i].backup_id || defaultBackup?.id,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
+        backup: list[i]['HRBackup.id'] ? {
+          id: list[i]['HRBackup.id'],
+          label: list[i]['HRBackup.label'],
+        } : defaultBackup ? {
+          id: defaultBackup.id,
+          label: defaultBackup.label,
+        } : null,
       }
     }
 
@@ -56,6 +101,7 @@ export default (sequelizeInstance, Model) => {
         nac_id: contentieuxId,
         hr_situation_id: hRSituationId,
         percent: hRActivity.percent,
+        backup_id: hRActivity.backupId || null,
       }
       let findToBdd = (findToBdd = await Model.findOne({
         where: {

@@ -1,3 +1,4 @@
+import { BackupInterface } from './backup'
 import { ContentieuReferentielInterface } from './contentieu-referentiel'
 
 /**
@@ -32,6 +33,14 @@ export interface RHActivityInterface {
    * Contentieux au complet
    */
   contentieux: ContentieuReferentielInterface
+  /**
+   * Backup associé
+   */
+  backupId?: number
+  /**
+   * Backup associé
+   */
+  backup?: BackupInterface
   /**
    * Etat transitoir de demande de suppression d'une ventilation
    */

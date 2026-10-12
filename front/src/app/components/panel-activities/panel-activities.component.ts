@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core'
-import { cloneDeep, sumBy } from 'lodash'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
+import { cloneDeep, groupBy, sumBy, uniqBy } from 'lodash'
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component'
 import { MainClass } from '../../libs/main-class'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
@@ -22,6 +22,7 @@ import { UserService } from '../../services/user/user.service'
 import { importedVentillation } from '../../routes/human-resource/add-ventilation/add-ventilation.component'
 import { fixDecimal } from '../../utils/numbers'
 import { CommonModule } from '@angular/common'
+import { BackupInterface } from '../../interfaces/backup'
 
 /**
  * Composant d'affichage de la liste des ventilations en grilles
@@ -35,6 +36,14 @@ import { CommonModule } from '@angular/common'
   styleUrls: ['./panel-activities.component.scss'],
 })
 export class PanelActivitiesComponent extends MainClass implements OnChanges, OnDestroy {
+  /**
+   * Service de gestion des ressources humaines
+   */
+  humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des utilisateurs
+   */
+  userService = inject(UserService)
   /**
    * ID de la fiche
    */
@@ -123,15 +132,16 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Opacité du background des contentieux
    */
   OPACITY = OPACITY_20
+  /**
+   * Current backups
+   */
+  currentBackups: BackupInterface[] = []
 
   /**
    * Constructeur
    * @param humanResourceService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    public userService: UserService,
-  ) {
+  constructor() {
     super()
 
     this.watch(
@@ -160,6 +170,18 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
 
     // copy list of activities
     this.activities = JSON.parse(JSON.stringify(this.activities)) as RHActivityInterface[]
+    console.log('ACTIVITIES', this.activities)
+
+    const localBackups = groupBy(
+      this.activities.filter((a) => a.backup),
+      'backup.id',
+    )
+    this.currentBackups = uniqBy(
+      Object.values(localBackups)
+        .map((activities) => activities[0].backup)
+        .filter((backup): backup is BackupInterface => backup !== undefined),
+      'id',
+    )
 
     this.onLoadReferentiel()
   }

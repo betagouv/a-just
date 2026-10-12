@@ -111,6 +111,8 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCurrentHrNew = async (backupId, logging = true) => {
+    const backup = await Model.models.HRBackups.findById(backupId)
+
     // 1. REQUÊTE PRINCIPALE
     const hrList = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
@@ -133,6 +135,9 @@ export default (sequelizeInstance, Model) => {
               include: [
                 {
                   model: Model.models.ContentieuxReferentiels,
+                },
+                {
+                  model: Model.models.HRBackups,
                 },
               ],
             },
@@ -209,6 +214,13 @@ export default (sequelizeInstance, Model) => {
                     id: act.ContentieuxReferentiel.dataValues.id,
                     label: act.ContentieuxReferentiel.dataValues.label,
                   },
+                  backup: act.HRBackup ? {
+                    id: act.HRBackup.dataValues.id,
+                    label: act.HRBackup.dataValues.label,
+                  } : backup ? {
+                    id: backup.id,
+                    label: backup.label,
+                  } : null,
                 }
               }),
             })

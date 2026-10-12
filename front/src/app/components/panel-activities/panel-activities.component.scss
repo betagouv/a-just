@@ -253,3 +253,21 @@
     }
   }
 }
+
+.backups-panel {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  .backup-item {
+    border-radius: 8px;
+    background-color: utils.$colors-cblue;
+    padding: 4px 8px;
+    color: utils.$colors-white;
+    font-size: 12px;
+  }
+}
