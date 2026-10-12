@@ -22,21 +22,21 @@
           </div>
           <div class="column-item">
             <div class="label col">
-              <app-time-selector [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+              <app-time-selector [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                 null)" [value]="getInputValue(ref.averageProcessingTime, 'hour')"
                 (valueChange)="onUpdateOptions(ref, $event, 'hour')" [outsideChange]="ref.isModified"
                 [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
                 [category]="categorySelected" (click)="$event.stopPropagation()"></app-time-selector>
             </div>
             <div class="label col">
-              <input #jour [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+              <input #jour [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                 null)" type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: ref.isModified === true }"
                 [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime, 'nbPerDay'), 100)"
                 (blur)="getField(ref, $event, 'nbPerDay')" (keydown.enter)="getField(ref, $event, 'nbPerDay')"
                 (click)="$event.stopPropagation()" min="0" />
             </div>
             <div class=" label col no-margin">
-              <input #semaine [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+              <input #semaine [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                 null)" type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: ref.isModified === true }"
                 [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime, 'nbPerMonth'))"
                 (blur)="getField(ref, $event, 'nbPerMonth')" (keydown.enter)="getField(ref, $event, 'nbPerMonth')"
@@ -55,7 +55,7 @@
                 <app-time-selector [value]="getInputValue(itemGroup.averageProcessingTime, 'hour')"
                   (valueChange)="onUpdateOptions(itemGroup, $event, 'hour')" [outsideChange]="itemGroup.isModified"
                   [defaultValue]="itemGroup.defaultValue" [defaultValueFonc]="itemGroup.defaultValueFonc"
-                  [category]="categorySelected" (click)="$event.stopPropagation()" [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+                  [category]="categorySelected" (click)="$event.stopPropagation()" [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                   null)"></app-time-selector>
               </div>
               <div class="label col">
@@ -64,7 +64,7 @@
                   [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime, 'nbPerDay'))"
                   (blur)="getField(itemGroup, $event, 'nbPerDay')"
                   (keydown.enter)="getField(itemGroup, $event, 'nbPerDay')" (click)="$event.stopPropagation()" min="0"
-                  [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+                  [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                 null)" />
               </div>
               <div class="label col no-margin">
@@ -73,7 +73,7 @@
                   [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime, 'nbPerMonth'))"
                   (blur)="getField(itemGroup, $event, 'nbPerMonth')"
                   (keydown.enter)="getField(itemGroup, $event, 'nbPerMonth')" (click)="$event.stopPropagation()" min="0"
-                  [readonly]="!(!userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
+                  [readonly]="!(userService.canEditTempsMoyens() && this.humanResourceService.juridictionGroupSelected() ===
                 null)" />
               </div>
             </div>

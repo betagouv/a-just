@@ -176,6 +176,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     this.watch(
       this.contentieuxOptionsService.initValue.subscribe((b) => {
         if (b === true) {
+          console.log('initValue', b)
           this.referentiel.map((v) => {
             v.isModified = false
             v.averageProcessingTime = v.defaultValue
@@ -268,6 +269,14 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * @param backupId
    */
   onLoad(backupId: number) {
+    // Si le referentiel est vide, on attend 500ms et on relance la fonction
+    if (this.humanResourceService.contentieuxReferentiel.getValue().length === 0) {
+      setTimeout(() => {
+        this.onLoad(backupId)
+      }, 500)
+      return
+    }
+
     if (this.isLoading) return
 
     this.isLoading = true
