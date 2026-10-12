@@ -55,6 +55,7 @@ export class AuthService {
    */
   userInfos() {
     return this.serverService.get('auths/auto-login').then((data) => {
+      this.userService.setUser(data.user)
       return data
     })
   }
@@ -65,6 +66,7 @@ export class AuthService {
    */
   userInfosWithoutError() {
     return this.serverService.getWithoutError('auths/auto-login').then((data) => {
+      this.userService.setUser(data.user)
       return data
     })
   }

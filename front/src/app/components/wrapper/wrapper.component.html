@@ -54,7 +54,7 @@
                 </button>
                 }
 
-                } @else if(backupsWithoutGroup().length === 1) {
+                } @else if(juridictionGroups().length === 1) {
                 @for (group of juridictionGroups(); track group.id) {
                 @for (bu of group.backups; track bu.id) {
                 <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
@@ -74,7 +74,7 @@
         </div>
         }
         <div class="menu-scrollable">
-            @for (item of menu; track item.path) {
+            @for (item of menu(); track item.path) {
             <div class="menu-item top" [class.selected]="isSelected(item)" [routerLink]="['/' + item.path]"
                 (click)="onSelect('/' + item.path)">
                 <a>

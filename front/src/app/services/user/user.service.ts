@@ -62,42 +62,42 @@ export class UserService implements OnInit {
    * User can edit panorama
    */
   canEditPanorama = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_WRITER) !== -1 ? true : false
   })
   /**
    * User can view simulator
    */
   canViewSimulator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 ? true : false
   })
   /**
    * User can view white simulator
    */
   canViewWhiteSimulator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 ? true : false
   })
   /**
    * User can view reaffectator
    */
   canViewReaffectator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 ? true : false
   })
   /**
    * User can view cockpit
    */
   canViewRCockpit = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1 ? true : false
   })
   /**
    * User can view white simulator
    */
   canViewTempsMoyens = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
     return user && user.referentielIds === null ? true : false
   })
@@ -105,7 +105,7 @@ export class UserService implements OnInit {
    * User can edit simulator
    */
   canEditSimulator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
       ? true
       : false
@@ -114,7 +114,7 @@ export class UserService implements OnInit {
    * User can edit white simulator
    */
   canEditWhiteSimulator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user &&
       user.access &&
       (user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
@@ -125,7 +125,7 @@ export class UserService implements OnInit {
    * User can edit reaffectator
    */
   canEditReaffectator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && (user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
       ? true
       : false
@@ -134,7 +134,7 @@ export class UserService implements OnInit {
    * User can edit average time
    */
   canEditTempsMoyens = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1 ? true : false
     return user && user.referentielIds === null
   })
@@ -142,57 +142,56 @@ export class UserService implements OnInit {
    * User can edit activities
    */
   canEditActivities = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1 ? true : false
   })
   /**
    * User can edit calculator
    */
   canEditCalculator = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1 ? true : false
   })
   /**
    * User can edit HR
    */
   canEditHR = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1 ? true : false
   })
   /**
    * User can view all referentiel
    */
   canViewCompleteReferentiel = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.referentielIds === null ? true : false
   })
   /**
    * Can view Ventilations
    */
   canViewPanorama = computed(() => {
-    const user = this.user.getValue()
-    console.log('canViewPanorama - user', user, user?.access)
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_READER) !== -1 ? true : false
   })
   /**
    * Can view Ventilations
    */
   canViewVentilation = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1 ? true : false
   })
   /**
    * Can view Activites
    */
   canViewActivities = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
   })
   /**
    * Can view Temps moyens
    */
   canViewAverageTime = computed(() => {
-    const user = this.user.getValue()
+    const user = this.userS()
     return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
   })
   /**
@@ -481,7 +480,8 @@ export class UserService implements OnInit {
    */
   getUserPageUrl(user: UserInterface) {
     if (user) {
-      const allPages = this.getAllUserPageUrl(user)
+      this.user.next(user)
+      const allPages = this.getAllUserPageUrl()
       if (allPages) {
         return `/${allPages[0].path}`
       }
@@ -493,9 +493,8 @@ export class UserService implements OnInit {
   /**
    * Retourne la liste des toutes les pages qu'un utilisateur à accès
    */
-  getAllUserPageUrl(user: UserInterface) {
+  getAllUserPageUrl() {
     const menu = []
-    console.log('getAllUserPageUrl - user', user, this.canViewPanorama())
 
     if (this.canViewPanorama()) {
       menu.push({
@@ -504,20 +503,14 @@ export class UserService implements OnInit {
       })
     }
 
-    if (user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1) {
+    if (this.canViewRCockpit()) {
       menu.push({
         label: 'Cockpit',
         path: 'cockpit',
       })
     }
 
-    if (
-      user &&
-      user.access &&
-      (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 ||
-        user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 ||
-        user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1)
-    ) {
+    if (this.canViewSimulator()) {
       menu.push({
         label: 'Simulateurs',
         path: 'simulateur',

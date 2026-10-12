@@ -10,6 +10,7 @@ import {
   Input,
   OnDestroy,
   Output,
+  signal,
   TemplateRef,
   ViewChild,
 } from '@angular/core'
@@ -320,7 +321,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
   /**
    * Menu de gauche
    */
-  menu: { label: string; path: string }[] = []
+  menu = signal<{ label: string; path: string }[]>([])
   /**
    * Answer of question
    */
@@ -364,9 +365,8 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
     super()
 
     effect(() => {
-      const user = this.userService.userS()
-      console.log('effect - user', user)
-      this.updateMenu(user)
+      this.userService.userS()
+      this.updateMenu()
     })
 
     this.appService.appLoading.next(true)
@@ -451,10 +451,8 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * Mise à jour du menu qui affiche les pages accéssibles
    * @param user
    */
-  updateMenu(user: UserInterface | null) {
-    console.log('updateMenu - user 1', user, user?.access)
-    this.menu = user ? this.userService.getAllUserPageUrl(user) : []
-    console.log('updateMenu - menu 2', this.menu)
+  updateMenu() {
+    this.menu.set(this.userService.getAllUserPageUrl())
   }
 
   /**

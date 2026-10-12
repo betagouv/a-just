@@ -15,7 +15,7 @@
   @for (indisp of indisponibilitiesFiltered; track indisp.contentieux.id) {
   <div class="cursor-pointer"
     (click)="userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null ? addIndispiniblity.emit(indisp) : null"
-    [class.not-clickable]="!(!userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)">
+    [class.not-clickable]="!(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null)">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>

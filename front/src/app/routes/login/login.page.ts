@@ -117,8 +117,6 @@ export class LoginPage implements OnInit {
         if (returnLogin && returnLogin.data && returnLogin.data.status === LOGIN_STATUS_GET_CODE) {
           this.needToGetCode = returnLogin.data.datas.code || ''
         } else {
-          this.userService.setUser(returnLogin.user)
-
           if (returnLogin && returnLogin.user && (returnLogin.user.ventilations.length === 0 || returnLogin.user.access.length === 0)) {
             this.router.navigate(['/bienvenue'])
             return
@@ -151,7 +149,6 @@ export class LoginPage implements OnInit {
     switch (action.id) {
       case 'connect':
         this.authService.completeLogin({ code: input.value }).then((returnLogin) => {
-          this.userService.setUser(returnLogin.user)
           if (returnLogin && returnLogin.user && (returnLogin.user.ventilations.length === 0 || returnLogin.user.access.length === 0)) {
             this.router.navigate(['/bienvenue'])
             return
