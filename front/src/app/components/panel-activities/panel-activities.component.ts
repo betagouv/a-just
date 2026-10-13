@@ -97,6 +97,10 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    */
   @Input() readonly: boolean = false
   /**
+   * Permet de savoir si le panel doit afficher les sous backups
+   */
+  @Input() showSubBackups: boolean = true
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> = new EventEmitter()
@@ -170,7 +174,6 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
 
     // copy list of activities
     this.activities = JSON.parse(JSON.stringify(this.activities)) as RHActivityInterface[]
-    console.log('ACTIVITIES', this.activities)
 
     const localBackups = groupBy(
       this.activities.filter((a) => a.backup),

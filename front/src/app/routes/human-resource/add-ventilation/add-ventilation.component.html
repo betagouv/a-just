@@ -225,30 +225,29 @@
           </div>
         </div>
 
+        @if(humanResourceService.juridictionGroupSelected()) {
         <!-- // Temp values waiting for the backend to provide the dynamic values -->
         <div class="arrondissement-header-container">
+          @if(!humanResourceService.juridictionGroupSelected()?.fullAccess) {
           <div class="arrondissement-header selected">
-            Arrondissement
+            <p>Arrondissement</p>
+            <span class="pins">1</span>
           </div>
+          }
+
+          @for (backup of humanResourceService.juridictionGroupSelected()?.backups; track backup.id) {
           <div class="arrondissement-header">
-            TJ
+            <p>{{ backup.label }}</p>
+            <span class="pins">1</span>
           </div>
-          <div class="arrondissement-header">
-            TPROX C
-          </div>
-          <div class="arrondissement-header">
-            TPROX F
-          </div>
-          <div class="arrondissement-header">
-            <div class="icon">
-              <mat-icon>add</mat-icon>
-            </div>
-          </div>
+          }
         </div>
+        }
 
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
-          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit"></panel-activities>
+          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit"
+          [showSubBackups]="false"></panel-activities>
       </div>
       <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"

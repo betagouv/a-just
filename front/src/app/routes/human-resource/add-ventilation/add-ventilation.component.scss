@@ -298,6 +298,13 @@ input[type="number"] {
         justify-content: flex-start;
         align-items: center;
         border-bottom: solid 1px utils.$colors-lightBorder;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
 
       .arrondissement-header {
@@ -305,7 +312,6 @@ input[type="number"] {
         justify-content: center;
         align-items: center;
         height: 40px;
-        width: content;
         font-size: 16px;
         padding: 0px 16px;
         border-top: solid 2px utils.$colors-white;
@@ -358,6 +364,28 @@ input[type="number"] {
         label {
           margin: auto;
           cursor: pointer;
+        }
+
+        p {
+          font-size: inherit;
+          font-weight: inherit;
+          color: inherit;
+          white-space: nowrap;
+        }
+
+        span.pins {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background-color: utils.$colors-primary;
+          color: utils.$colors-white;
+          font-size: 10px;
+          margin-left: 6px;
+          position: relative;
+          top: 1px;
         }
       }
 

@@ -595,8 +595,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.showActuelPanel = true
     }
 
-    console.log('this.showActuelPanel', this.histories)
-
     if (prepopon) {
       this.preOpenSituation()
     }

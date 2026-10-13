@@ -48,6 +48,7 @@
 </div>
 
 <!-- Show backups -->
+@if (showSubBackups) {
 @if (currentBackups.length >= 2) {
 <div class="backups-panel">
   @for (backup of currentBackups; track backup.id) {
@@ -62,6 +63,7 @@
     {{ currentBackups[0].label }}
   </p>
 </div>
+}
 }
 
 @if (!forceToShowContentieuxDetail && refIndexSelected !== -1) {

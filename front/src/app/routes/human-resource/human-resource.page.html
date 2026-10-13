@@ -47,13 +47,13 @@
     }
     @if (!duringPrint && currentHR && onEditIndex === null) {
     <div class="new-action text-center">
-      @if (userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
+      @if (userService.canEditHR() && (humanResourceService.backupIdS() ?? 0 > 0)) {
       <button class="fill primary small" (click)="onSelectSituationToEdit()">
         Renseigner une nouvelle situation
       </button>
       }
 
-      @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null){
+      @if(userService.canEditHR() && (humanResourceService.backupIdS() ?? 0 > 0)){
       <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
         text="Qu'est-ce que c'est ?"></aj-help-button>
       }
@@ -91,9 +91,9 @@
       <panel-history-ventilation [category]="h.category" [id]="h.id" [fonction]="h.fonction" [etp]="h.etp"
         [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
         [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && humanResourceService.juridictionGroupSelected() === null && h.situationForTheFirstTime && h.id !== -1"
+        [canRemoveSituation]="!duringPrint && (humanResourceService.backupIdS() ?? 0 > 0 ? true : false) && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint && humanResourceService.juridictionGroupSelected() === null"
+        [canEditSituation]="!duringPrint && (humanResourceService.backupIdS() ?? 0 > 0 ? true : false)"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
         [forceToShowContentieuxDetail]="duringPrint" [isPast]="false"
         (exportSituation)="onExportSituation(i)"></panel-history-ventilation>
@@ -114,9 +114,9 @@
       <panel-history-ventilation [id]="h.id" [category]="h.category" [fonction]="h.fonction" [etp]="h.etp"
         [indisponibilities]="h.indisponibilities" [activities]="h.activities" [dateStart]="h.dateStart"
         [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && humanResourceService.juridictionGroupSelected() === null && h.situationForTheFirstTime && h.id !== -1"
+        [canRemoveSituation]="!duringPrint && (humanResourceService.backupIdS() ?? 0 > 0 ? true : false) && h.situationForTheFirstTime && h.id !== -1"
         (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint && humanResourceService.juridictionGroupSelected() === null"
+        [canEditSituation]="!duringPrint && (humanResourceService.backupIdS() ?? 0 > 0 ? true : false)"
         (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
         [forceToShowContentieuxDetail]="duringPrint" [isPast]="true"
         (exportSituation)="onExportSituation(i, historiesOfThePast)"></panel-history-ventilation>
@@ -124,7 +124,7 @@
     </div>
     }
 
-    @if (userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null && currentHR && onEditIndex
+    @if (userService.canEditHR() && (humanResourceService.backupIdS() ?? 0 > 0) && currentHR && onEditIndex
     === null && histories.length === 0) {
     <div class="text-center">
       <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>

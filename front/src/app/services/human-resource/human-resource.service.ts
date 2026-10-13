@@ -76,7 +76,17 @@ export class HumanResourceService {
   /**
    * Juridiction group selected
    */
-  juridictionGroupSelected = signal<JuridictionGroupInterface | null>(null)
+  juridictionGroupSelected = computed<JuridictionGroupInterface | null>(() => {
+    if (this.backupIdS() === null || this.backupIdS() === undefined) {
+      return null
+    }
+
+    if (this.backupIdS() ?? 0 > 0) {
+      return this.juridictionGroups().find((g) => g.backups?.some((b) => b.id === (this.backupIdS() ?? 0))) || null
+    }
+
+    return this.juridictionGroups().find((g) => g.id === (this.backupIdS() ?? 0) * -1) || null
+  })
   /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
@@ -133,7 +143,7 @@ export class HumanResourceService {
    * Group ou juridiction selected => Workspace selected
    */
   workspaceSelected = computed(() => {
-    return this.juridictionGroupSelected() || this.hrBackupS() || null
+    return ((this.backupIdS() ?? 0 < 0) ? this.juridictionGroupSelected() : this.hrBackupS()) || null
   })
   /**
    * Liste des alertes
@@ -822,7 +832,6 @@ export class HumanResourceService {
   onSelectBackupOrGroup(backupIdOrGroupId: number | null) {
     if (backupIdOrGroupId === null) {
       this.hrBackup.next(null)
-      this.juridictionGroupSelected.set(null)
       return
     }
 
@@ -834,21 +843,18 @@ export class HumanResourceService {
     }
 
     if (backupIdOrGroupId < 0) {
+      // TODO ICI
       const group: JuridictionGroupInterface | undefined = this.juridictionGroups().find((g) => g.id === backupIdOrGroupId * -1)
 
       if (group?.fullAccess) {
-        this.juridictionGroupSelected.set(group)
         return
       }
 
-      this.juridictionGroupSelected.set(null)
       const fallback = group?.backups?.[0] || this.backups.getValue()[0] || null
       this.hrBackup.next(fallback)
       if (fallback) {
         this.backupId.next(fallback.id)
       }
-    } else {
-      this.juridictionGroupSelected.set(null)
     }
   }
 }

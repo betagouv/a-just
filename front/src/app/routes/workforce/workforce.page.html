@@ -198,7 +198,7 @@
     <button class="white outline">Simuler des affectations</button>
   </a>
   }
-  @if(userService.canEditHR() && humanResourceService.juridictionGroupSelected() === null) {
+  @if(userService.canEditHR() && (humanResourceService.backupIdS() ?? 0 > 0)) {
   <button class="primary add-collaborator" (click)="addHR()">Ajouter un agent</button>
   }
 
