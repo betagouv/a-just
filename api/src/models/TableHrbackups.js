@@ -26,8 +26,13 @@ export default (sequelizeInstance, Model) => {
           required: true,
           include: [
             {
-              attributes: ['id', 'enabled'],
+              attributes: ['id', 'enabled', 'type'],
               model: Model.models.TJ,
+              where: {
+                type: {
+                  [Op.notIn]: ['CPH'],
+                },
+              },
               required: false,
             }
           ]

@@ -92,7 +92,7 @@ export class OptionsBackupPanelComponent extends MainClass implements OnDestroy,
     }
 
     this.formDatas = this.backups.map((back) => {
-      const date = new Date(back.date)
+      const date = new Date(back.date || new Date())
 
       return {
         id: back.id,

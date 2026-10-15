@@ -31,7 +31,8 @@
       class="no-opacity-to-background"></progression-bar>
     }
     @if (!showPlaceHolder) {
-    <progression-bar [readonly]="readonly" [percent]="ref.percent" [selected]="canSelectedTopReferentiel" [color]="
+    <progression-bar [readonly]="readonly" [percent]="ref.percentFiltered" [selected]="canSelectedTopReferentiel"
+      [color]="
             userService.referentielMappingColorActivityByInterface(
               userService.referentielMappingNameByInterface(ref.label)
             )
@@ -73,7 +74,7 @@
       ),
     }">
   <div class="sub-item">
-    <progression-bar [readonly]="readonly" [percent]="referentiel[refIndexSelected].percent"
+    <progression-bar [readonly]="readonly" [percent]="referentiel[refIndexSelected].percentFiltered"
       [ddg]="isDdgContentieux(referentiel[refIndexSelected].label)" [lockedMessage]="
           selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1
             ? 'Pour les “' +
@@ -89,8 +90,8 @@
             userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label),
             OPACITY
           )
-        " [selected]="selected" (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)"
-      class="dark-mode"></progression-bar>
+        " [selected]="selected" [lockedMessage]="forceErrorOnEditElement"
+      (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode"></progression-bar>
     <p>{{ referentiel[refIndexSelected].label }}</p>
   </div>
   @if ((referentiel[refIndexSelected].childrens || []).length) {
@@ -106,7 +107,8 @@
     <!-- Add element to put the next to an other line -->
     <div class="sub-item" (mouseover)="setMouseHovering(userService.referentielMappingNameByInterface(ref.label))"
       (mouseout)="setMouseHovering()">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent" [color]="
+      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percentFiltered"
+        [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
               )
@@ -115,7 +117,8 @@
                 userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label),
                 OPACITY
               )
-            " [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
+            " [selected]="selected" [lockedMessage]="forceErrorOnEditElement"
+        (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
         class="dark-mode"></progression-bar>
       <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
       @if (this.mouseHovering === true && checkHoveredRef(ref.label)) {
@@ -142,7 +145,7 @@
 }
 @if (forceToShowContentieuxDetail) {
 @for (mainReferentiel of referentiel; track mainReferentiel.id) {
-@if (mainReferentiel.percent) {
+@if (mainReferentiel.percentFiltered) {
 <div class="sub-panel-activites" [ngStyle]="{
           'border-top-color': userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(mainReferentiel.label)
@@ -151,7 +154,7 @@
   <div class="sub-item">
     <progression-bar [readonly]="readonly"
       [ddg]="isDdgContentieux(userService.referentielMappingNameByInterface(mainReferentiel.label))"
-      [percent]="mainReferentiel.percent" [color]="
+      [percent]="mainReferentiel.percentFiltered" [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(mainReferentiel.label)
               )
@@ -174,9 +177,10 @@
     <div class="sub-item"></div>
     }
     <!-- Add element to put the next to an other line -->
-    @if (ref.percent) {
+    @if (ref.percentFiltered) {
     <div class="sub-item">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent" [color]="
+      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percentFiltered"
+        [color]="
                     userService.referentielMappingColorActivityByInterface(
                       userService.referentielMappingNameByInterface(mainReferentiel.label)
                     )

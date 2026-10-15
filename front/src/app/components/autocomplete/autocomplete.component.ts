@@ -74,8 +74,10 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['options'] || changes['value']) {
-      this.syncInputFromValue()
-      this.filteredGroups = this.filterGroups(this.getQuery())
+      if (!this.isOpen) {
+        this.syncInputFromValue()
+      }
+      this.filteredGroups = this.filterGroups(this.isOpen ? '' : this.getQuery())
     }
   }
 
@@ -98,8 +100,17 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
    * Ouvre le panneau
    */
   onInputFocus() {
-    this.filteredGroups = this.filterGroups(this.getQuery())
-    this.openPanel()
+    this.openWithFullList()
+  }
+
+  /**
+   * Un clic sur le champ doit rouvrir la liste même s'il a déjà le focus
+   * (la sélection garde le focus pour ne pas perdre le clic).
+   */
+  onInputPointerDown() {
+    if (!this.isOpen) {
+      this.openWithFullList()
+    }
   }
 
   /**
@@ -142,6 +153,18 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
     this.searchControl.setValue(option.label, { emitEvent: false })
     this.optionChange.emit(option)
     this.closePanel()
+  }
+
+  /**
+   * L'en-tête de groupe reprend le libellé de l'arrondissement : un clic doit le sélectionner.
+   */
+  selectGroup(group: AutocompleteGroup) {
+    const option =
+      this.options.find((item) => item.groupId === group.id && item.label === group.label) ||
+      group.options.find((item) => item.label === group.label)
+    if (option) {
+      this.selectOption(option)
+    }
   }
 
   /**
@@ -188,6 +211,13 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
 
   isHighlighted(option: AutocompleteOption) {
     return this.flatOptions()[this.highlightedIndex]?.id === option.id
+  }
+
+  private openWithFullList() {
+    // La valeur déjà choisie ne doit pas filtrer la liste, sinon les autres éléments disparaissent.
+    this.filteredGroups = this.filterGroups('')
+    this.highlightedIndex = -1
+    this.openPanel()
   }
 
   private openPanel() {

@@ -10,27 +10,27 @@ export interface BackupInterface {
   /**
    * Intitulé de sauvegarde
    */
-  label: string
+  label?: string
   /**
    * Status local ou importé
    */
-  status: string
+  status?: string
   /**
    * Type siege ou greffe
    */
-  type: string
+  type?: string
   /**
    * Date de création
    */
-  date: Date
+  date?: Date
   /**
    * Date de dernière mise à jour de lui ou de ses enfants
    */
-  update: UpdateInterface
+  update?: UpdateInterface
   /**
    * Interface du référentiel associé à la juridiction = contentieux
    */
-  referentiels: ContentieuReferentielInterface[]
+  referentiels?: ContentieuReferentielInterface[]
   /**
    * Nom du créateur du referentiel
    */

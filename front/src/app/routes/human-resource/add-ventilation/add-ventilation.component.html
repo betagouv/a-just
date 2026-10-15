@@ -227,18 +227,24 @@
 
         @if(humanResourceService.juridictionGroupSelected()) {
         <!-- // Temp values waiting for the backend to provide the dynamic values -->
-        <div class="arrondissement-header-container">
+        <div class="arrondissement-header-container" #arrondissementHeader>
           @if(!humanResourceService.juridictionGroupSelected()?.fullAccess) {
-          <div class="arrondissement-header selected">
+          <div class="arrondissement-header" data-backup-id="" [ngClass]="{ selected: backupIdSelected() === null }"
+            (click)="backupIdSelected.set(null)">
             <p>Arrondissement</p>
-            <span class="pins">1</span>
+            @if(getNbContentieux()) {
+            <span class="pins">{{ getNbContentieux() }}</span>
+            }
           </div>
           }
 
           @for (backup of humanResourceService.juridictionGroupSelected()?.backups; track backup.id) {
-          <div class="arrondissement-header">
+          <div class="arrondissement-header" [attr.data-backup-id]="backup.id"
+            [ngClass]="{ selected: backupIdSelected() === backup.id }" (click)="backupIdSelected.set(backup.id)">
             <p>{{ backup.label }}</p>
-            <span class="pins">1</span>
+            @if(getNbContentieux(backup.id)) {
+            <span class="pins">{{ getNbContentieux(backup.id) }}</span>
+            }
           </div>
           }
         </div>
@@ -246,8 +252,9 @@
 
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
-          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit"
-          [showSubBackups]="false"></panel-activities>
+          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit" [showSubBackups]="false"
+          [filterBackupId]="backupIdSelected()" (activitiesChange)="onActivitiesChange($event)"
+          [forceErrorOnEditElement]="backupIdSelected() === null ? 'Vous ne pouvez pas modifier la ventilation si vous avez sélectionné un arrondissement' : null"></panel-activities>
       </div>
       <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"

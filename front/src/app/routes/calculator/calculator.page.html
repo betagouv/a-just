@@ -343,8 +343,8 @@
                         greffe: categorySelected === 'fonctionnaires' && backup.selected === true,
                       }">
               <p class="element-list">
-                <label class="name">{{ trunc(backup.label) }}</label>
-                <label>{{ getRealValue(getLastDate(backup)) }}</label>
+                <label class="name">{{ trunc(backup.label || '') }}</label>
+                <label>{{ getRealValue(getLastDate(backup) || null) }}</label>
               </p>
             </div>
             }

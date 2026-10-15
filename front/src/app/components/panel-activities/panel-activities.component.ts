@@ -25,6 +25,20 @@ import { CommonModule } from '@angular/common'
 import { BackupInterface } from '../../interfaces/backup'
 
 /**
+ * Interface pour les référentiels avec les pourcentages filtrés
+ */
+interface ContentieuReferentielInterfaceWithPercentFiltered extends ContentieuReferentielInterface {
+  /**
+   * Pourcentage filtré
+   */
+  percentFiltered?: number
+  /**
+   * Liste des sous référentiels avec les pourcentages filtrés
+   */
+  childrens?: ContentieuReferentielInterfaceWithPercentFiltered[]
+}
+
+/**
  * Composant d'affichage de la liste des ventilations en grilles
  */
 
@@ -101,13 +115,29 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    */
   @Input() showSubBackups: boolean = true
   /**
+   * Id du backup sélectionné
+   */
+  @Input() filterBackupId: number | null = null
+  /**
+   * Force l'erreur sur l'élément en cours d'édition
+   */
+  @Input() forceErrorOnEditElement: string | null = null
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> = new EventEmitter()
   /**
+   * Informe le parent d'une modification des activités
+   */
+  @Output() activitiesChange: EventEmitter<RHActivityInterface[]> = new EventEmitter()
+  /**
    * Liste du référentiel
    */
-  referentiel: ContentieuReferentielInterface[] = []
+  referentiel: ContentieuReferentielInterfaceWithPercentFiltered[] = []
+  /**
+   * Liste des activités filtrées par backup
+   */
+  filteredActivites: RHActivityInterface[] = []
   /**
    * Total pourcent affecté
    */
@@ -153,7 +183,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
         this.activities = []
         if (referentiel?.index === this.indexSituation && referentiel?.index !== null) {
           referentiel?.ventillation.map((elem: importedVentillation) => {
-            this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
+            this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0)
           })
         }
       }),
@@ -186,7 +216,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
       'id',
     )
 
-    this.onLoadReferentiel()
+    this.updateFilteredActivites()
   }
 
   /**
@@ -197,13 +227,24 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
   }
 
   /**
+   * Met à jour la liste des activités filtrées
+   */
+  updateFilteredActivites() {
+    this.filteredActivites = this.filterBackupId ? this.activities.filter((ca) => ca.backup?.id === this.filterBackupId) : this.activities
+
+    this.cleanFilteredActivites()
+
+    this.onLoadReferentiel()
+  }
+
+  /**
    * Total de la ventilation affectée
    * @param ref
    * @returns
    */
-  getPercentAffected(ref: ContentieuReferentielInterface) {
-    const activity = this.activities.find((a) => (a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id))
-    const percent = fixDecimal(activity && activity.percent ? activity.percent : 0)
+  getPercentAffected(ref: ContentieuReferentielInterface, activities: RHActivityInterface[] = this.activities) {
+    const filterActivities = activities.filter((a) => (a.contentieux ? a.contentieux.id === ref.id : a.referentielId === ref.id))
+    const percent = fixDecimal(sumBy(filterActivities, 'percent'))
 
     return {
       percent,
@@ -215,18 +256,22 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Chargement du référentiel et calcul des pourcents
    */
   onLoadReferentiel() {
-    /*const backupLabel = localStorage.getItem('backupLabel')
-    backupLabel && filterReferentiels(this.referentiel, backupLabel)*/
-
     this.referentiel = this.referentiel.map((ref) => {
       const { percent, totalAffected } = this.getPercentAffected(ref)
       ref.percent = percent
       ref.totalAffected = totalAffected
 
+      const { percent: percentFiltered } = this.getPercentAffected(ref, this.filteredActivites)
+      ref.percentFiltered = percentFiltered
+
       ref.childrens = (ref.childrens || []).map((c) => {
         const { percent, totalAffected } = this.getPercentAffected(c)
         c.percent = percent
         c.totalAffected = totalAffected
+
+        const { percent: percentFiltered } = this.getPercentAffected(c, this.filteredActivites)
+        c.percentFiltered = percentFiltered
+
         return c
       })
       return ref
@@ -261,12 +306,12 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Changement du pourcentage d'une activitié
    * @param referentiel
    * @param percent
-   * @param parentReferentiel
    */
   onChangePercent(referentiel: ContentieuReferentielInterface, percent: number, parentReferentiel: ContentieuReferentielInterface | null = null) {
-    //console.log('REF', referentiel.id)
-    // memorise list
-    const activity = this.activities.find((a) => a.contentieux.id === referentiel.id)
+    const sameBackup = (activity: RHActivityInterface) => !this.filterBackupId || activity.backup?.id === this.filterBackupId
+    const backup = this.filterBackupId ? { id: this.filterBackupId } : undefined
+
+    const activity = this.activities.find((a) => a.contentieux.id === referentiel.id && sameBackup(a))
     if (activity) {
       activity.percent = percent
     } else {
@@ -277,17 +322,17 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
           label: '',
           averageProcessingTime: 0,
         },
+        backup,
         referentielId: referentiel.id,
         percent,
       })
     }
 
-    // clean parent réferentiel
     if (parentReferentiel) {
-      const mainActivity = this.activities.find((a) => a.contentieux.id === parentReferentiel.id)
       const childId = (parentReferentiel.childrens || []).map((r) => r.id)
-      const childActivities = this.activities.filter((a) => childId.indexOf(a.contentieux.id) !== -1)
+      const childActivities = this.activities.filter((a) => childId.indexOf(a.contentieux.id) !== -1 && sameBackup(a))
       const mainPercent = sumBy(childActivities, 'percent')
+      const mainActivity = this.activities.find((a) => a.contentieux.id === parentReferentiel.id && sameBackup(a))
       if (mainActivity) {
         mainActivity.percent = mainPercent
       } else {
@@ -298,18 +343,21 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
             label: '',
             averageProcessingTime: 0,
           },
+          backup,
           referentielId: parentReferentiel.id,
-          percent,
+          percent: mainPercent,
         })
       }
     } else {
-      // remove activities of childs
       const childId = (referentiel.childrens || []).map((r) => r.id)
-      this.activities = this.activities.filter((a) => childId.indexOf(a.contentieux.id) === -1)
+      this.activities = this.activities.filter((a) => childId.indexOf(a.contentieux.id) === -1 || !sameBackup(a))
     }
 
-    this.onLoadReferentiel()
+    this.activities = this.activities.filter((a) => a.percent)
+
+    this.updateFilteredActivites()
     this.referentielChange.emit(this.referentiel)
+    this.activitiesChange.emit(this.activities)
     this.onTotalAffected()
   }
 
@@ -319,11 +367,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * @param percent
    * @param parentReferentiel
    */
-  onChangePercentWithoutTotalComputation(
-    referentiel: ContentieuReferentielInterface,
-    percent: number,
-    parentReferentiel: ContentieuReferentielInterface | null = null,
-  ) {
+  onChangePercentWithoutTotalComputation(referentiel: ContentieuReferentielInterface, percent: number) {
     // memorise list
     const activity = this.activities.find((a) => a.contentieux.id === referentiel.id)
     if (activity) {
@@ -406,5 +450,12 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
   checkHoveredRef(label: string) {
     const labelMapping = this.getInterfaceType() === true ? this.referentielCAMappingName(label) : this.referentielMappingName(label)
     return this.hoveredReferentielLabel === labelMapping
+  }
+
+  /**
+   * cleanFilteredActivites
+   */
+  cleanFilteredActivites() {
+    // on s'assure que le niveau 4 ait un parent
   }
 }

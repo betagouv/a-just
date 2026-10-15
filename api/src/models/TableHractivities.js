@@ -101,14 +101,15 @@ export default (sequelizeInstance, Model) => {
         nac_id: contentieuxId,
         hr_situation_id: hRSituationId,
         percent: hRActivity.percent,
-        backup_id: hRActivity.backupId || null,
+        backup_id: hRActivity.backupId || hRActivity.backup?.id || null,
       }
-      let findToBdd = (findToBdd = await Model.findOne({
+      let findToBdd = await Model.findOne({
         where: {
           nac_id: contentieuxId,
           hr_situation_id: hRSituationId,
+          backup_id: options.backup_id,
         },
-      }))
+      })
 
       if (findToBdd) {
         await findToBdd.update(options)

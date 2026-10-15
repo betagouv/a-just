@@ -135,7 +135,6 @@ export default class RouteHumanResources extends Route {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
-    // Étape 1 : Mise à jour en base de données
     const updatedAgent = await this.model.updateHR(hr, backupId)
 
     if (!updatedAgent?.id) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef, inject, effect } from '@angular/core'
+import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef, inject, effect, signal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
 import * as xlsx from 'xlsx'
@@ -74,9 +74,50 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  /**
+   * Services de gestion des human resources
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Services de gestion des fonctions, catégories, app, calculatrice, serveur, user, excel, referentiel
+   */
+  hrFonctionService = inject(HRFonctionService)
+  /**
+   * Services de gestion des catégories
+   */
+  hrCategoryService = inject(HRCategoryService)
+  /**
+   * Services de gestion de l'application
+   */
+  appService = inject(AppService)
+  /**
+   * Services de gestion de la calculatrice
+   */
+  calculatriceService = inject(CalculatriceService)
+  /**
+   * Services de gestion du serveur
+   */
+  serverService = inject(ServerService)
+  /**
+   * Services de gestion de l'utilisateur
+   */
+  userService = inject(UserService)
+  /**
+   * Services de gestion de l'excel
+   */
+  excelService = inject(ExcelService)
+  /**
+   * Services de gestion du référentiel
+   */
+  referentielService = inject(ReferentielService)
+  /**
+   * View du panneau des ventilations
+   */
   @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef
-
+  /**
+   * View du panneau des arrondissements
+   */
+  @ViewChild('arrondissementHeader') arrondissementHeaderRef?: ElementRef<HTMLElement>
   /**
    * Fiche
    */
@@ -130,6 +171,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() setValueEtp: (val: number | null) => void = () => {}
   /**
+   * Affiche les étiquettes « à vérifier » après duplication
+   */
+  @Input() displayDuplicateLabels: boolean = false
+  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter()
@@ -152,6 +197,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     tag: string
     remove?: boolean
   }>()
+  /**
+   * Id du backup sélectionné
+   */
+  backupIdSelected = signal<number | null>(null)
   /**
    * Réferentiel des indispo
    */
@@ -206,10 +255,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   displayImportLabels = false
   /**
-   * Affiche les étiquettes « à vérifier » après duplication
-   */
-  @Input() displayDuplicateLabels: boolean = false
-  /**
    * Somme des valeurs importés
    */
   sumPercentImported = 0
@@ -236,17 +281,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param hrCategoryService
    * @param appService
    */
-  constructor(
-    private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService,
-    private appService: AppService,
-    private calculatriceService: CalculatriceService,
-    private serverService: ServerService,
-    private userService: UserService,
-    private excelService: ExcelService,
-    private referentielService: ReferentielService,
-  ) {
+  constructor() {
     super()
+
+    effect(() => {
+      this.backupIdSelected()
+      this.scrollToArrondissementHeader()
+    })
   }
 
   /**
@@ -365,9 +406,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   async onStart() {
     const situation =
-      this.isEdit || this.saveActions
-        ? this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
-        : null
+      this.isEdit || this.saveActions ? this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined) : null
 
     let etp = situation && situation.etp !== undefined ? situation.etp : null
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
@@ -563,7 +602,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
     }
 
-    const situations = this.generateAllNewSituations(this.updatedReferentiels, activitiesStartDate, { ...this.form.value, etp }, cat, fonct)
+    const situations = this.generateAllNewSituations(activitiesStartDate, { ...this.form.value, etp }, cat, fonct)
 
     if (this.human) {
       if (
@@ -608,34 +647,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param fonct
    * @returns
    */
-  generateAllNewSituations(
-    newReferentiel: ContentieuReferentielInterface[],
-    activitiesStartDate: Date,
-    profil: any,
-    cat: HRCategoryInterface,
-    fonct: HRFonctionInterface,
-  ) {
+  generateAllNewSituations(activitiesStartDate: Date, profil: any, cat: HRCategoryInterface, fonct: HRFonctionInterface) {
     let situations = this.human?.situations || []
 
-    //console.log('Situations:', situations, newReferentiel, activitiesStartDate, this.editId)
-
-    const activities: any[] = []
-    newReferentiel
-      .filter((r) => r.percent && r.percent > 0)
-      .map((r) => {
-        activities.push({
-          percent: r.percent || 0,
-          contentieux: r,
-        })
-        ;(r.childrens || [])
-          .filter((r) => r.percent && r.percent > 0)
-          .map((child) => {
-            activities.push({
-              percent: child.percent || 0,
-              contentieux: child,
-            })
-          })
-      })
+    console.log('fx generateAllNewSituations', this.activities)
 
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
@@ -648,7 +663,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       etp: profil.etp,
       category: cat,
       fonction: fonct,
-      activities,
+      activities: this.activities,
     }
 
     if (isSameDate !== -1) {
@@ -991,6 +1006,28 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     })
   }
 
+  scrollToArrondissementHeader() {
+    const container = this.arrondissementHeaderRef?.nativeElement
+    if (!container) {
+      return
+    }
+
+    const selectedId = this.backupIdSelected()
+    const selected = Array.from(container.querySelectorAll<HTMLElement>('.arrondissement-header')).find(
+      (header) => header.dataset['backupId'] === (selectedId === null ? '' : String(selectedId)),
+    )
+    if (!selected) {
+      return
+    }
+
+    const delta = selected.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - selected.offsetWidth) / 2
+
+    container.scrollTo({
+      left: container.scrollLeft + delta,
+      behavior: 'smooth',
+    })
+  }
+
   /**
    * Saisie manuelle de la date « A compter du »
    */
@@ -1023,5 +1060,27 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.form.get('activitiesStartDate')?.setValue(normalized, { emitEvent: false })
     this.humanResourceService.removeAlert('activitiesStartDate')
+  }
+
+  /**
+   * Calcul le nombre de contentieux pour un backup
+   * @param backupId
+   * @returns
+   */
+  getNbContentieux(backupId?: number) {
+    const mainIds = this.humanResourceService.mainContentieuxReferentiel().map((c) => c.id)
+    const activities = this.activities.filter(
+      (activity) => activity.percent && (!backupId || activity.backup?.id === backupId) && mainIds.includes(activity.contentieux.id),
+    )
+
+    return backupId ? activities.length : new Set(activities.map((activity) => activity.contentieux.id)).size
+  }
+
+  /**
+   * Événement de changement des activités
+   * @param activities
+   */
+  onActivitiesChange(activities: RHActivityInterface[]) {
+    this.activities = JSON.parse(JSON.stringify(activities)) as RHActivityInterface[]
   }
 }

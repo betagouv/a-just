@@ -538,7 +538,7 @@ export class HumanResourceService {
    * @param hr
    * @returns
    */
-  updateRemoteHR(hr: any) {
+  async updateRemoteHR(hr: any) {
     return this.serverService
       .post(`human-resources/update-hr`, {
         hr,

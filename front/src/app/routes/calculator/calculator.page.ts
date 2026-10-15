@@ -1173,7 +1173,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       else this.categorySelected = this.MAGISTRATS
 
       this.backupSettingsService
-        .addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, {
+        .addOrUpdate(backupSelected.label || '', BACKUP_SETTING_COMPARE, {
           referentielId: backupSelected.id,
         })
         .then(() => this.onLoadComparaisons())
@@ -1555,7 +1555,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           return
         }
         const refDetails = await this.contentieuxOptionsService.loadDetails(refSelected.id)
-        this.compareAtString = refSelected.label
+        this.compareAtString = refSelected.label || ''
 
         const value2TempsMoyen = this.referentiel.map((ref) => {
           const findDetail = refDetails.find((r) => r.contentieux.id === ref.id)
@@ -1600,7 +1600,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               showArrow: true,
             },
             {
-              label: refSelected.label,
+              label: refSelected.label || '',
               values: stringValue2TempsMoyen,
               subTitle: 'heures',
             },
@@ -1638,7 +1638,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               subTitle: '%',
               showArrow: true,
             },
-            { label: refSelected.label, values: value2DTES, subTitle: 'mois' },
+            { label: refSelected.label || '', values: value2DTES, subTitle: 'mois' },
             { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
           ],
         })
@@ -1675,7 +1675,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               showArrow: true,
             },
             {
-              label: refSelected.label,
+              label: refSelected.label || '',
               values: value2TauxCouverture.map((t) => (t === null ? 'N/R' : Math.floor(t * 100) + ' %')),
             },
             {
@@ -1699,7 +1699,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               subTitle: '%',
               showArrow: true,
             },
-            { label: refSelected.label, values: value2Sorties },
+            { label: refSelected.label || '', values: value2Sorties },
             { label: actualRangeString, values: value1Sorties },
           ],
         })
@@ -1723,7 +1723,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */
   getLastDate(backup: BackupInterface) {
-    if (backup.update !== null) return backup.update.date
+    if (backup.update !== null) return backup.update?.date || new Date()
     else return backup.date
   }
 

@@ -39,10 +39,10 @@
                     <mat-icon [class.open]="groupTrigger.menuOpen">expand_more</mat-icon>
                 </button>
                 <mat-menu #groupMenu="matMenu" class="juridiction-menu">
-                    @for (bu of group.backups; track bu.id) {
-                    <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
-                        (click)="onChangeHRBackup(bu.id)" [title]="bu.label">
-                        <span class="item-label">{{ bu.isAdminLocal ? '★ ' : '' }}{{ bu.label }}</span>
+                    @if(group.fullAccess) {
+                    <button mat-menu-item class="juridiction-item" [class.current]="group.id === hrBackupId"
+                        (click)="onChangeHRBackup(group.id ?? 0)" [title]="group.label">
+                        <span class="item-label">{{ group.isAdminLocal ? '★ ' : '' }}{{ group.label }}</span>
                     </button>
                     }
                 </mat-menu>

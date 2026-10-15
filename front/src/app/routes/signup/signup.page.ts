@@ -388,7 +388,7 @@ export class SignupPage {
    */
   get selectedTjId(): number | null {
     const selectedLabel = this.form.controls['tj'].value
-    return this.tjs.find((tj) => tj.label === selectedLabel)?.id ?? null
+    return this.tjOptions.find((option) => option.label === selectedLabel)?.id ?? null
   }
 
   /**

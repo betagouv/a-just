@@ -170,7 +170,8 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @param date
    * @returns
    */
-  realValue(date: Date) {
+  realValue(date: Date | null | undefined) {
+    if (!date) return ''
     return findRealValueCustom(new Date(date))
   }
 

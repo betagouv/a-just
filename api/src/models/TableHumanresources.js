@@ -647,6 +647,7 @@ export default (sequelizeInstance, Model) => {
       hr.id = newHr.dataValues.id
     }
 
+    console.log('fx updateHR', hr.situations)
     await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
     await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)

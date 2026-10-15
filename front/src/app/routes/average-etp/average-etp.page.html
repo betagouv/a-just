@@ -119,7 +119,7 @@
     <label class="modify">{{ backup.update ? (backup.update.date | dateAgo) : '' }}</label>
     <div class="status">
       <label class="tag"
-        [ngStyle]="{ 'background-color': getBackgroundColor(backup.status), color: getColor(backup.status) }">
+        [ngStyle]="{ 'background-color': getBackgroundColor(backup.status ?? ''), color: getColor(backup.status ?? '') }">
         {{ backup.status }}
       </label>
     </div>
@@ -129,7 +129,7 @@
         <i class="ri-edit-line"></i>
         Renommer
       </div>
-      <div class="duplicate" (click)="duplicate(backup.id, backup.type); $event.stopPropagation()">
+      <div class="duplicate" (click)="duplicate(backup.id, backup.type ?? ''); $event.stopPropagation()">
         <i class="ri-file-copy-line"></i>
         Dupliquer
       </div>

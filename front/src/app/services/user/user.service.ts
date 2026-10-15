@@ -471,7 +471,7 @@ export class UserService implements OnInit {
   private formatBackupDate(backup: BackupInterface): BackupInterface {
     return {
       ...backup,
-      date: new Date(backup.date),
+      date: new Date(backup.date || new Date()),
     }
   }
 

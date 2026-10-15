@@ -91,17 +91,22 @@ export default (sequelizeInstance, Model) => {
     const groupIds = Array.from(groupsById.keys())
     const allGroupBackups = groupIds.length
       ? await Model.models.HRBackups.findAll({
-          attributes: ['id', 'group_id'],
-          where: { group_id: { [Op.in]: groupIds } },
-          include: [
-            {
-              attributes: ['id', 'enabled'],
-              model: Model.models.TJ,
-              required: false,
+        attributes: ['id', 'group_id'],
+        where: { group_id: { [Op.in]: groupIds } },
+        include: [
+          {
+            attributes: ['id', 'enabled', 'type'],
+            model: Model.models.TJ,
+            where: {
+              type: {
+                [Op.notIn]: ['CPH'],
+              },
             },
-          ],
-          raw: true,
-        })
+            required: false,
+          },
+        ],
+        raw: true,
+      })
       : []
     const enabledBackupsByGroup = countBy(
       allGroupBackups.filter((backup) => backup['TJ.id'] == null || backup['TJ.enabled']),
