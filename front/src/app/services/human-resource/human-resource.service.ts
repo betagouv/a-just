@@ -1,6 +1,6 @@
-import { computed, effect, inject, Injectable, Input, signal, WritableSignal } from '@angular/core'
+import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
-import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
+import { isNaN, maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
@@ -162,7 +162,7 @@ export class HumanResourceService {
   /**
    * Liste des alertes
    */
-  @Input() alertList: WritableSignal<string[]> = signal([])
+  alertList: WritableSignal<string[]> = signal([])
   /**
    * backupId lu dans le localStorage, appliqué seulement une fois la liste
    * des juridictions autorisées connue.
@@ -238,33 +238,24 @@ export class HumanResourceService {
     }
   }
 
-  /**
-   * Liste des fiches d'une juridiction
-   * @param id
-   * @returns
-   */
-  getCurrentHR(id: number | null) {
-    return this.serverService
-      .post('human-resources/get-current-hr', {
-        backupId: id,
-      })
-      .then((r) => r.data)
+  private track(path: string, payload: object) {
+    return this.serverService.post(path, payload)
   }
 
   trackVentilationView(backupId: number) {
-    return this.serverService.post('human-resources/log-ventilation-view', { backupId })
+    return this.track('human-resources/log-ventilation-view', { backupId })
   }
 
   trackHumanResourceView(hrId: number) {
-    return this.serverService.post('human-resources/log-human-resource-view', { hrId })
+    return this.track('human-resources/log-human-resource-view', { hrId })
   }
 
   trackVentilationDateChange(backupId: number, date: Date | string) {
-    return this.serverService.post('human-resources/log-ventilation-date-change', { backupId, date })
+    return this.track('human-resources/log-ventilation-date-change', { backupId, date })
   }
 
   trackVentilationCategoryChange(backupId: number, categoryId: number, selected: boolean) {
-    return this.serverService.post('human-resources/log-ventilation-category-change', { backupId, categoryId, selected })
+    return this.track('human-resources/log-ventilation-category-change', { backupId, categoryId, selected })
   }
 
   trackVentilationOptionsChange(
@@ -409,49 +400,6 @@ export class HumanResourceService {
     }
 
     return Promise.resolve()
-  }
-
-  /**
-   * Filtre des activités saisies à une date précise
-   * @param list
-   * @param date
-   * @returns
-   */
-  filterActivitiesByDate(list: RHActivityInterface[], date: Date): RHActivityInterface[] {
-    list = orderBy(list || [], ['dateStart'], ['desc'])
-    list = list.filter((a: any) => {
-      const dateStop = a.dateStop ? today(a.dateStop) : null
-      const dateStart = a.dateStart ? today(a.dateStart) : null
-
-      return (
-        (dateStart === null && dateStop === null) ||
-        (dateStart && dateStart.getTime() <= date.getTime() && dateStop === null) ||
-        (dateStart === null && dateStop && dateStop.getTime() >= date.getTime()) ||
-        (dateStart && dateStart.getTime() <= date.getTime() && dateStop && dateStop.getTime() >= date.getTime())
-      )
-    })
-
-    return uniqBy(list, 'referentielId')
-  }
-
-  /**
-   * Suppression des doublons de situations
-   * @param situations
-   * @returns
-   */
-  distinctSituations(situations: HRSituationInterface[]) {
-    const listTimeTamps: number[] = []
-
-    return situations.reduce((previousValue: HRSituationInterface[], currentValue: HRSituationInterface) => {
-      const d = today(currentValue.dateStart)
-      const getTime = d.getTime()
-      if (listTimeTamps.indexOf(getTime) === -1) {
-        listTimeTamps.push(getTime)
-        previousValue.push(currentValue)
-      }
-
-      return previousValue
-    }, [])
   }
 
   /**

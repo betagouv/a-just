@@ -45,8 +45,7 @@ export default class RouteImports extends Route {
     const cacheKey = 'hrBackup'
 
     for (const backupId of uniqueBackupIds) {
-      //recalculer uniquement le cache pour chaque juridiction
-      const hr = await models.HumanResources.getCurrentHrNew(backupId)
+      const hr = await this.models.HumanResources.getCurrentHrNew(backupId)
 
       await setCacheValue(backupId, hr, cacheKey, 3600)
       await invalidateBackup(backupId)

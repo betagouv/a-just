@@ -1,5 +1,4 @@
 import { Component } from '@angular/core'
-import * as Sentry from '@sentry/browser'
 import * as FileSaver from 'file-saver'
 import { orderBy } from 'lodash'
 import * as xlsx from 'xlsx'
@@ -12,39 +11,17 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { AppService } from '../../../services/app/app.service'
 import { UserService } from '../../../services/user/user.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
-import { generalizeTimeZone, getShortMonthString, setTimeToMidDay } from '../../../utils/dates'
+import { getShortMonthString, setTimeToMidDay } from '../../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { Renderer } from 'xlsx-renderer'
 import { startLatencyScope } from '../../../utils/sentry-latency'
 import { exposeDownloadToCypress } from '../../../utils/test-download'
 
 /**
- * Excel file details
- */
-const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-/**
  * Excel file extension
  */
 const EXCEL_EXTENSION = '.xlsx'
 
-/**
- * Excel file headers
- */
-const headers = [' ', 'Période', 'Entrées logiciel', 'Entrées A-JUSTées', 'Sorties logiciel', 'Sorties A-JUSTées', 'Stock logiciel', 'Stock A-JUSTé']
-
-/**
- * Excel file headers sum
- */
-const headersSum = [
-  ' ',
-  'Période',
-  'Total entrées logiciel',
-  'Total entrées après A-JUSTements',
-  'Total sorties logiciel',
-  'Total sorties après A-JUSTements',
-  'Stock logiciel',
-  'Stock après A-JUSTements',
-]
 @Component({
   selector: 'aj-extractor-activity',
   standalone: true,

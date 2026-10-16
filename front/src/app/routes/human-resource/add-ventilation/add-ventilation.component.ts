@@ -27,7 +27,6 @@ import {
   DOCUMENTATION_VENTILATEUR_PERSON_CA,
   DOCUMENTATION_VENTILATEUR_PERSON_TJ,
   IMPORT_ETP_TEMPLATE,
-  IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
@@ -731,17 +730,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const fonctions = this.humanResourceService.fonctions.getValue()
     const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value, event.value)
     if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
-  }
-
-  async downloadCalculator() {
-    await this.serverService
-      .post('centre-d-aide/log-documentation-link', {
-        value: CALCULATE_DOWNLOAD_URL,
-      })
-      .then((r) => {
-        return r.data
-      })
-    window.open(CALCULATE_DOWNLOAD_URL)
   }
 
   async downloadAsset(type: string, download = false) {

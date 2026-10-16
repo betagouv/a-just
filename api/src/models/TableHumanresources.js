@@ -7,12 +7,10 @@ import config from 'config'
 import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { orderBy } from 'lodash'
-import { checkAbort } from '../utils/abordTimeout'
 import { generateHRIndexes, loadFonctionsForCategory, loadFonctionsForMultiCategoryFiltered, loadReferentiels } from '../utils/human-resource'
 import { cleanCalculationItemForUser } from '../utils/hrAccess'
 import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
 import { invalidateBackup } from '../utils/hrExtractorCache'
-import { invalidateAjustBackup } from '../utils/hrExtAjustCache'
 
 export default (sequelizeInstance, Model) => {
   Model.asyncForEach = async (array, fn) => {
@@ -47,7 +45,6 @@ export default (sequelizeInstance, Model) => {
           // Suppression du cache existant
           await redis.del(fullKey)
           await invalidateBackup(jurId)
-          await invalidateAjustBackup(jurId)
 
           // Recalcul et stockage dans le cache
           await loadOrWarmHR(jurId, Model.models)
@@ -65,45 +62,6 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.sleep = (ms) => new Promise((res) => setTimeout(res, ms))
-
-  /**
-   * Retour des détails d'une juridiction
-   * @param {*} backupId
-   * @returns
-   */
-  Model.getCurrentHr = async (backupId, signal = null) => {
-    checkAbort(signal)
-    const list = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
-      where: {
-        backup_id: backupId,
-      },
-      raw: true,
-    })
-    checkAbort(signal)
-
-    for (let i = 0; i < list.length; i++) {
-      checkAbort(signal)
-      const comment = await Model.models.HRComments.getLastComment(list[i].id)
-      list[i] = {
-        id: list[i].id,
-        firstName: list[i].first_name,
-        lastName: list[i].last_name,
-        matricule: list[i].matricule,
-        dateStart: list[i].date_entree,
-        dateEnd: list[i].date_sortie,
-        coverUrl: list[i].cover_url,
-        updatedAt: list[i].updated_at,
-        backupId: list[i].backup_id,
-        juridiction: list[i].juridiction,
-        comment: comment && comment.comment,
-        situations: await Model.models.HRSituations.getListByHumanId(list[i].id, list[i].date_entree),
-        indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
-      }
-    }
-
-    return list
-  }
 
   /**
    * Retour des détails d'une juridiction
@@ -759,8 +717,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.removeHRTest = async (hrId) => {
     if (process.env.NODE_ENV !== 'test') {
-      ctx.throw(401, "Cette route n'est pas disponible")
-      return
+      throw new Error("Cette suppression n'est disponible qu'en test")
     }
 
     const hrFromDB = await Model.findOne({

@@ -105,10 +105,6 @@ export class ActualPanelSituationComponent extends MainClass implements OnChange
    */
   indisponibility: number = 0
   /**
-   * Temps de travail en text
-   */
-  timeWorked: string = ''
-  /**
    * Liste des activités de la situation
    */
   activities: RHActivityInterface[] = []

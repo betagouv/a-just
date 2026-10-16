@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, WritableSignal, inject } from '@angular/core'
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, inject } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import _, { maxBy, minBy, orderBy } from 'lodash'
@@ -205,14 +205,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Current etp
    */
   currentETP: number | null = null
-  /**
-   * Liste des alertes à afficher
-   */
-  alertList: WritableSignal<string[]> = signal([])
-
-  hasInitCalendars = false
-  hasInitInputs = false
-  calendarsOpened: number[] = []
   lastLoggedHrId: number | null = null
 
   /**
@@ -302,13 +294,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
-  }
-
-  ngAfterViewChecked() {
-    if (!this.hasInitCalendars && !this.hasInitInputs && this.coverDetails) {
-      this.hasInitCalendars = true
-      this.hasInitInputs = true
-    }
   }
 
   /**
@@ -598,16 +583,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (prepopon) {
       this.preOpenSituation()
     }
-  }
-
-  /**
-   * Amélioration du chargement de la liste
-   * @param index
-   * @param item
-   * @returns
-   */
-  trackByDate(index: number, item: any) {
-    return item.dateStart
   }
 
   /**
@@ -993,14 +968,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         parent2?.removeChild(child as Node)
         parent?.appendChild(child as Node)
       })
-  }
-
-  /**
-   * Enlever le focus du champ d'édition
-   * @param event mouse event
-   */
-  blur(event: any) {
-    event.target.blur()
   }
 
   /**
