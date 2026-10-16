@@ -267,50 +267,6 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   hrBackups: BackupInterface[] = []
   /**
-   * Liste des groupes de juridictions à disposition de l'utilisateur
-   */
-  juridictionGroups = this.humanResourceService.juridictionGroups
-  /**
-   * Liste des juridictions à disposition de l'utilisateur n'appartenant à aucun groupe
-   */
-  backupsWithoutGroup = this.humanResourceService.backupsWithoutGroup
-  /**
-   * Affiche le menu par groupes, sinon on retombe sur la liste à plat des juridictions
-   */
-  showGroupedJuridictions = computed(() => this.juridictionGroups().length > 0 || this.backupsWithoutGroup().length > 0)
-  /**
-   * Arrondissement actuellement sélectionné
-   */
-  juridictionGroupSelected = this.humanResourceService.juridictionGroupSelected
-  /**
-   * Juridiction ou arrondissement affiché dans le bandeau violet
-   */
-  workspaceSelected = this.humanResourceService.workspaceSelected
-  /**
-   * Un arrondissement est sélectionné (et non une juridiction)
-   */
-  isArrondissementSelected = computed(() => this.juridictionGroupSelected() != null)
-  /**
-   * Plusieurs groupes : les arrondissements restent au niveau 2.
-   * Un seul groupe : son contenu remonte au niveau 1.
-   */
-  nestJuridictionGroups = computed(() => this.juridictionGroups().length > 1)
-  /**
-   * Le sélecteur de juridiction s'ouvre s'il y a plus d'un choix (juridictions + arrondissements)
-   */
-  canExpandJuridictionMenu = computed(() => {
-    const groups = this.juridictionGroups()
-    const ungrouped = this.backupsWithoutGroup()
-    const boroughCount = groups.filter((group) => group.fullAccess).length
-    const backupCount = groups.reduce((count, group) => count + (group.backups || []).length, 0) + ungrouped.length
-
-    if (groups.length > 0 || ungrouped.length > 0) {
-      return boroughCount + backupCount > 1
-    }
-
-    return this.humanResourceService.backupsS()?.length ?? 0 > 1
-  })
-  /**
    * URL de la documentation
    */
   DOCUMENTATION_URL = DOCUMENTATION_URL
@@ -462,19 +418,6 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    */
   isSelected(item: any) {
     return `/${item.path}` === window.location.pathname
-  }
-
-  /**
-   * Dit si la juridiction sélectionnée appartient à un groupe
-   * @param group
-   * @returns
-   */
-  isCurrentGroup(group: JuridictionGroupInterface) {
-    if (this.juridictionGroupSelected()?.id === group.id) {
-      return true
-    }
-
-    return (group.backups || []).some((b) => b.id === this.hrBackupId)
   }
 
   /**

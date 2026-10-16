@@ -77,16 +77,21 @@ export class HumanResourceService {
    * Juridiction group selected
    */
   juridictionGroupSelected = computed<JuridictionGroupInterface | null>(() => {
-    if (this.backupIdS() === null || this.backupIdS() === undefined) {
+    const backupId = this.backupIdS()
+    if (backupId === null || backupId === undefined) {
       return null
     }
 
-    if (this.backupIdS() ?? 0 > 0) {
-      return this.juridictionGroups().find((g) => g.backups?.some((b) => b.id === (this.backupIdS() ?? 0))) || null
+    if (backupId > 0) {
+      return this.juridictionGroups().find((g) => g.backups?.some((b) => b.id === backupId)) || null
     }
 
-    return this.juridictionGroups().find((g) => g.id === (this.backupIdS() ?? 0) * -1) || null
+    return this.juridictionGroups().find((g) => g.id === backupId * -1) || null
   })
+  /**
+   * La juridiction sélectionnée appartient à un groupe auquel l'utilisateur a un accès complet
+   */
+  canEditSelectedJuridiction = computed(() => this.juridictionGroupSelected()?.fullAccess === true && (this.backupIdS() ?? 0) > 0)
   /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
@@ -149,23 +154,56 @@ export class HumanResourceService {
    * Liste des alertes
    */
   @Input() alertList: WritableSignal<string[]> = signal([])
+  /**
+   * backupId lu dans le localStorage, appliqué seulement une fois la liste
+   * des juridictions autorisées connue.
+   */
+  private pendingBackupId: number | null = null
 
   /**
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page
    */
   constructor() {
+    const storedBackupId = localStorage.getItem('backupId')
+    if (storedBackupId != null && storedBackupId !== '') {
+      const id = Number(storedBackupId)
+      // 0 n'est ni une juridiction ni un arrondissement : la valeur sera écartée
+      // dès que la liste autorisée est connue.
+      this.pendingBackupId = Number.isFinite(id) ? id : 0
+    }
+
     effect(() => {
-      const backupsS = this.backupsS()
-      const backupId = this.backupIdS()
+      const backups = this.backupsS()
+      if (!backups || backups.length === 0) {
+        return
+      }
+
+      const current = this.backupIdS()
+      const candidate = current ?? this.pendingBackupId
+      if (candidate == null) {
+        return
+      }
 
       // les groupes sont posés avant `backups` dans initDatas : on peut
       // résoudre un id négatif (arrondissement) dès que les juridictions arrivent.
-      // Ne pas exiger `juridictionGroups.length > 0`, sinon un utilisateur
-      // sans groupe — ou un nouvel onglet avant la réponse groupes — n'a jamais
-      // de workspace et le menu latéral reste incomplet.
-      if (backupsS && backupsS.length > 0 && backupId != null) {
-        this.onSelectBackupOrGroup(backupId)
+      if (!this.isWorkspaceAllowed(candidate, backups)) {
+        this.pendingBackupId = null
+        localStorage.removeItem('backupId')
+        const fallbackId = backups[0].id
+        if (current !== fallbackId) {
+          this.backupId.next(fallbackId)
+        }
+        return
       }
+
+      if (current !== candidate) {
+        this.pendingBackupId = null
+        this.backupId.next(candidate)
+        return
+      }
+
+      this.pendingBackupId = null
+      this.onSelectBackupOrGroup(candidate)
     })
 
     effect(() => {
@@ -175,11 +213,6 @@ export class HumanResourceService {
         localStorage.setItem('backupId', '' + backupId)
       }
     })
-
-    if (localStorage.getItem('backupId')) {
-      const backupId = localStorage.getItem('backupId') || 0
-      this.backupId.next(+backupId)
-    }
   }
 
   /**
@@ -829,32 +862,29 @@ export class HumanResourceService {
       .then((response) => response.data)
   }
 
+  /**
+   * Une juridiction (id positif) est autorisée si elle est dans la liste de l'utilisateur.
+   * Un arrondissement (id négatif) l'est seulement avec un accès complet au groupe.
+   */
+  private isWorkspaceAllowed(id: number, backups: BackupInterface[]): boolean {
+    if (!Number.isFinite(id) || id === 0) {
+      return false
+    }
+
+    if (id > 0) {
+      return backups.some((backup) => backup.id === id)
+    }
+
+    return this.juridictionGroups().some((group) => group.id === id * -1 && !!group.fullAccess)
+  }
+
   onSelectBackupOrGroup(backupIdOrGroupId: number | null) {
-    if (backupIdOrGroupId === null) {
+    if (backupIdOrGroupId === null || backupIdOrGroupId < 0) {
       this.hrBackup.next(null)
       return
     }
 
-    if (backupIdOrGroupId > 0) {
-      const bk: BackupInterface | undefined = this.backups.getValue().find((b) => b.id === backupIdOrGroupId)
-      this.hrBackup.next(bk || null)
-    } else {
-      this.hrBackup.next(null)
-    }
-
-    if (backupIdOrGroupId < 0) {
-      // TODO ICI
-      const group: JuridictionGroupInterface | undefined = this.juridictionGroups().find((g) => g.id === backupIdOrGroupId * -1)
-
-      if (group?.fullAccess) {
-        return
-      }
-
-      const fallback = group?.backups?.[0] || this.backups.getValue()[0] || null
-      this.hrBackup.next(fallback)
-      if (fallback) {
-        this.backupId.next(fallback.id)
-      }
-    }
+    const bk: BackupInterface | undefined = this.backups.getValue().find((b) => b.id === backupIdOrGroupId)
+    this.hrBackup.next(bk || null)
   }
 }

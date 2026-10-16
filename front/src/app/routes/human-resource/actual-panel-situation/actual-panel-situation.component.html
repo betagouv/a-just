@@ -36,7 +36,7 @@
       </div>
     </div>
   </div>
-  @if(userService.canEditHR() && (humanResourceService.backupIdS() ?? 0 > 0)){
+  @if(userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()){
   <div class="right-panel">
     @if (canEdit) {
     <button class="primary light small outline no-print class-export-situation" (click)="exportSituation.emit()">
@@ -44,7 +44,7 @@
       Exporter
     </button>
     <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
-    @if (canRemoveSituation && (humanResourceService.backupIdS() ?? 0 > 0)) {
+    @if (canRemoveSituation) {
     <button (click)="onRemove.emit()" class="light small outline red no-print">Supprimer</button>
     }
     }

@@ -356,7 +356,6 @@
         background-color: utils.$colors-cblue;
         border: 1px solid utils.$colors-cblack;
         cursor: pointer;
-
         transition: all ease-in-out 0.2s;
 
         &:hover {
@@ -818,9 +817,10 @@
 }
 
 // Le panneau du menu est rendu dans l'overlay du CDK, hors du composant.
-// Le trigger occupe toute la largeur du menu latéral : le panneau racine est
-// donc décalé de cette largeur pour s'ouvrir à droite. Les sous-panneaux sont
-// positionnés par le CDK à partir du panneau parent, sans décalage supplémentaire.
+// overlapTrigger aligne son haut sur le haut de .juridiction. Le trigger occupe
+// toute la largeur du menu latéral : le panneau racine est donc décalé de cette
+// largeur pour s'ouvrir à droite. Les sous-panneaux sont positionnés par le CDK
+// à partir du panneau parent, sans décalage supplémentaire.
 ::ng-deep .cdk-overlay-pane:has(.juridiction-menu-root) {
     margin-left: 224px;
 }

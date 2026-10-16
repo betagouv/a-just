@@ -19,7 +19,7 @@
         <p>Stock</p>
       </div>
       <div class="column-item">
-        @if(this.humanResourceService.backupIdS() ?? 0 > 0){<p>Complétude</p>}
+        @if(humanResourceService.canEditSelectedJuridiction()){<p>Complétude</p>}
       </div>
       <!--</ng-template>-->
     </div>
@@ -132,7 +132,7 @@
             }
           </div>
           <div class="column-item completion">
-            @if(this.humanResourceService.backupIdS() ?? 0 > 0){
+            @if(humanResourceService.canEditSelectedJuridiction()){
             <p [id]="'referentiel-' + ref.id" [style.--percent]="ref.completion"> disponibles</p>
             <span class="completion-bar">
               <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
@@ -142,7 +142,7 @@
                 }
           </div>
           <div class="nb-comments-zone">
-            @if ((ref?.nbComments || 0) > 0 && (this.humanResourceService.backupIdS() ?? 0 > 0)) {
+            @if ((ref?.nbComments || 0) > 0 && humanResourceService.canEditSelectedJuridiction()) {
             <div class="nb-comments" (click)="showContComment(ref)">
               <mat-icon class="material-icons-outlined">sms</mat-icon>
               <p>{{ ref?.nbComments || 0 }}</p>
@@ -199,7 +199,7 @@
                 <div class="column-item">
                   <div>
                     <p
-                      [ngClass]="(this.humanResourceService.backupIdS() ?? 0 > 0) ? {
+                      [ngClass]="humanResourceService.canEditSelectedJuridiction() ? {
                               'to-complete':
                                 itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE && itemGroup.in === null && itemGroup.originalIn === null, 'to-verify': itemGroup.valueQualityIn === VALUE_QUALITY_TO_VERIFY && itemGroup.in === null, 'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: true }), 'blue-txt': checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: false }), grey: itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif', } : {}">
                       {{
@@ -230,7 +230,7 @@
                 <div class="column-item">
                   <div>
                     <p
-                      [ngClass]="(this.humanResourceService.backupIdS() ?? 0 > 0) ? {
+                      [ngClass]="humanResourceService.canEditSelectedJuridiction() ? {
                               'to-complete':
                                 itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE && itemGroup.out === null && itemGroup.originalOut === null, 'to-verify': itemGroup.valueQualityOut === VALUE_QUALITY_TO_VERIFY && itemGroup.out === null, 'blue-bottom': checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: true }), 'blue-txt': checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: false }), grey: itemGroup.valueQualityIn === 'facultatif' || itemGroup.valueQualityOut === 'facultatif' || itemGroup.valueQualityStock === 'facultatif', } : {}">
                       {{
@@ -261,7 +261,7 @@
                 <div class="column-item">
                   <div (click)="selectContentieuxToUpdate(ref, itemGroup)">
                     <p
-                      [ngClass]="(this.humanResourceService.backupIdS() ?? 0 > 0) ? {
+                      [ngClass]="humanResourceService.canEditSelectedJuridiction() ? {
                               'to-complete':
                                 itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE &&
                                 itemGroup.stock === null &&
@@ -304,7 +304,7 @@
                           'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
                           'blue-txt': getCompletionStatus(itemGroup).includes('A compléter'),
                         }" (click)="selectContentieuxToUpdate(ref, itemGroup)">
-                  @if(userService.canEditActivities() && (this.humanResourceService.backupIdS() ?? 0 > 0)){
+                  @if(userService.canEditActivities() && humanResourceService.canEditSelectedJuridiction()){
                   @if (getCompletionStatus(itemGroup).includes('A compléter')) {
                   <p>
                     {{ getCompletionStatus(itemGroup) }}
@@ -334,7 +334,7 @@
 
 <ng-template #ressources>
   <div class="top-right-header">
-    @if(this.humanResourceService.backupIdS() ?? 0 > 0){
+    @if(humanResourceService.canEditSelectedJuridiction()){
     <div class="left-panel">
       <p [id]="'total-completion'" [style.--percent]="totalCompletion"
         [ngStyle]="{ color: getAcivityPercentColor(totalCompletion) }">
