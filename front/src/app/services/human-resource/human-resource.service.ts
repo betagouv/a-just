@@ -148,7 +148,16 @@ export class HumanResourceService {
    * Group ou juridiction selected => Workspace selected
    */
   workspaceSelected = computed(() => {
-    return ((this.backupIdS() ?? 0 < 0) ? this.juridictionGroupSelected() : this.hrBackupS()) || null
+    const backupId = this.backupIdS()
+    if (backupId === null || backupId === undefined || backupId === 0) {
+      return null
+    }
+
+    if (backupId > 0) {
+      return this.hrBackupS() || null
+    }
+
+    return this.juridictionGroupSelected() || null
   })
   /**
    * Liste des alertes

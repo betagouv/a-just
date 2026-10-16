@@ -228,7 +228,7 @@
         @if(humanResourceService.juridictionGroupSelected()) {
         <!-- // Temp values waiting for the backend to provide the dynamic values -->
         <div class="arrondissement-header-container" #arrondissementHeader>
-          @if(!humanResourceService.juridictionGroupSelected()?.fullAccess) {
+          @if(humanResourceService.juridictionGroupSelected()?.fullAccess) {
           <div class="arrondissement-header" data-backup-id="" [ngClass]="{ selected: backupIdSelected() === null }"
             (click)="backupIdSelected.set(null)">
             <p>Arrondissement</p>

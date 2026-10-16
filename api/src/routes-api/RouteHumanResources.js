@@ -18,7 +18,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { loadOrWarmHR } from '../utils/redis'
+import { loadHrWithActivityOnBackups, loadOrWarmHR } from '../utils/redis'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
@@ -279,6 +279,7 @@ export default class RouteHumanResources extends Route {
     date = today(date)
 
     let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    hr = hr.concat(await loadHrWithActivityOnBackups(backupIds, this.models, ctx.state.user.id, date, hr))
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck)
     const allCategories = await this.models.HRCategories.getAll()

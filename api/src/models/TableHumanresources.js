@@ -206,6 +206,7 @@ export default (sequelizeInstance, Model) => {
                 : null,
               activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
                 act = act.dataValues
+                const activityBackupId = act.backup_id || hr.backup_id
                 return {
                   id: act.id,
                   percent: act.percent,
@@ -214,12 +215,13 @@ export default (sequelizeInstance, Model) => {
                     id: act.ContentieuxReferentiel.dataValues.id,
                     label: act.ContentieuxReferentiel.dataValues.label,
                   },
+                  backupId: activityBackupId,
                   backup: act.HRBackup ? {
                     id: act.HRBackup.dataValues.id,
                     label: act.HRBackup.dataValues.label,
-                  } : backup ? {
-                    id: backup.id,
-                    label: backup.label,
+                  } : activityBackupId ? {
+                    id: activityBackupId,
+                    label: typeof backup === 'string' ? backup : null,
                   } : null,
                 }
               }),

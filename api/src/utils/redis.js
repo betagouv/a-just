@@ -4,6 +4,7 @@ import zlib from 'zlib'
 import { promisify } from 'util'
 import { invalidateAgentEverywhere, invalidateBackup } from './hrExtractorCache'
 import { invalidateAjustBackup } from './hrExtAjustCache'
+import { findSituation } from './human-resource'
 import { cloneDeep } from 'lodash'
 
 const gzip = promisify(zlib.gzip)
@@ -247,6 +248,69 @@ export const loadOrWarmHR = async (backupIds, models, userId) => {
   }
 
   return hr
+}
+
+const activityBackupId = (activity) => activity?.backupId ?? activity?.backup?.id ?? null
+
+/**
+ * Agents rattachés à une autre juridiction, mais ventilés sur les backups demandés.
+ * Seules les activités de ces backups sont conservées.
+ * @param {number[]} backupIds
+ * @param {*} models
+ * @param {*} userId
+ * @param {Date} date
+ * @param {Array<{ id: number }>} alreadyLoaded
+ * @returns
+ */
+export const loadHrWithActivityOnBackups = async (backupIds, models, userId, date, alreadyLoaded = []) => {
+  if (!Array.isArray(backupIds) || backupIds.length === 0) {
+    return []
+  }
+
+  const selectedBackupIds = new Set(backupIds.map((id) => Number(id)))
+  const alreadyLoadedIds = new Set(alreadyLoaded.map((person) => Number(person.id)))
+  const ventilated = await models.HRActivities.listHumanResourcesByActivityBackupIds(backupIds)
+  const missingByHomeBackup = new Map()
+
+  for (const person of ventilated) {
+    const id = Number(person?.id)
+    const homeBackupId = Number(person?.backupId)
+    if (!id || alreadyLoadedIds.has(id) || selectedBackupIds.has(homeBackupId)) {
+      continue
+    }
+
+    if (!missingByHomeBackup.has(homeBackupId)) {
+      missingByHomeBackup.set(homeBackupId, new Set())
+    }
+    missingByHomeBackup.get(homeBackupId).add(id)
+  }
+
+  const extra = []
+  for (const [homeBackupId, ids] of missingByHomeBackup) {
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    for (const person of homeHr) {
+      if (!ids.has(Number(person.id))) {
+        continue
+      }
+
+      const { currentSituation } = findSituation(person, date) || {}
+      const hasActivityOnSelectedBackup = (currentSituation?.activities || []).some((activity) =>
+        selectedBackupIds.has(Number(activityBackupId(activity))),
+      )
+      if (!hasActivityOnSelectedBackup) {
+        continue
+      }
+
+      const clone = cloneDeep(person)
+      clone.situations = (clone.situations || []).map((situation) => ({
+        ...situation,
+        activities: (situation.activities || []).filter((activity) => selectedBackupIds.has(Number(activityBackupId(activity)))),
+      }))
+      extra.push(clone)
+    }
+  }
+
+  return extra
 }
 
 /**

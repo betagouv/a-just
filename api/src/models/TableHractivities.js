@@ -139,6 +139,32 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  /**
+   * Agents dont une activité est ventilée sur une des juridictions demandées.
+   * @param {number[]} backupIds
+   * @returns {Promise<Array<{ id: number, backupId: number }>>}
+   */
+  Model.listHumanResourcesByActivityBackupIds = async (backupIds) => {
+    if (!Array.isArray(backupIds) || backupIds.length === 0) {
+      return []
+    }
+
+    return sequelizeInstance.query(
+      `
+        SELECT DISTINCT hr.id, hr.backup_id AS "backupId"
+        FROM "HRActivities" act
+        INNER JOIN "HRSituations" sit ON sit.id = act.hr_situation_id AND sit.deleted_at IS NULL
+        INNER JOIN "HumanResources" hr ON hr.id = sit.human_id AND hr.deleted_at IS NULL
+        WHERE act.deleted_at IS NULL
+          AND act.backup_id IN (:backupIds)
+      `,
+      {
+        replacements: { backupIds },
+        type: sequelizeInstance.QueryTypes.SELECT,
+      },
+    )
+  }
+
   Model.syncAllVentilationByContentieux = async (contentieuxId) => {
     const listAllMainContentieux = await Model.findAll({
       where: {
