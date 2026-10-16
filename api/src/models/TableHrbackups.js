@@ -28,11 +28,6 @@ export default (sequelizeInstance, Model) => {
             {
               attributes: ['id', 'enabled', 'type'],
               model: Model.models.TJ,
-              where: {
-                type: {
-                  [Op.notIn]: ['CPH'],
-                },
-              },
               required: false,
             }
           ]
@@ -41,11 +36,13 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    const backupsWithoutTpi = userVentilations.filter((item) => item['HRBackup.TJ.type'] !== 'TPI' && item['HRBackup.TJ.type'] !== 'CPH')
+
     const listAll = await Model.findAll({
       attributes: ['id', 'label', ['updated_at', 'date'], 'jirs', 'stat_exclusion', 'group_id_rank'],
       where: {
         id: {
-          [Op.in]: userVentilations
+          [Op.in]: backupsWithoutTpi
             .filter((item) => item['HRBackup.TJ.id'] == null || item['HRBackup.TJ.enabled'])
             .map((item) => item['HRBackup.id']),
         },

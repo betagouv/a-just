@@ -5,6 +5,9 @@ export default (sequelizeInstance, Model) => {
     const list = await Model.findAll({
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id', 'ressort'],
       order: [['label', 'asc']],
+      where: {
+        type: { [Op.notIn]: ['CPH', 'TPI'] },
+      },
       raw: true,
     })
 

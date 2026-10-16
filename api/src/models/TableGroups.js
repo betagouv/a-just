@@ -18,6 +18,11 @@ export default (sequelizeInstance, Model) => {
 
     const backups = await Model.models.HRBackups.findAll({
       attributes: ['id', 'label', 'group_id', 'group_id_rank'],
+      include: [{
+        attributes: ['type'],
+        model: Model.models.TJ,
+        required: false,
+      }],
       where: {
         group_id: { [Op.ne]: null },
       },
@@ -28,18 +33,25 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+    const backupsWithoutTpi = backups.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
+
     return groups.map((group) => ({
       id: group.id,
       label: group.label,
-      backups: backups
+      backups: backupsWithoutTpi
         .filter((backup) => backup.group_id === group.id)
-        .map((backup) => ({ id: backup.id, label: backup.label })),
+      //.map((backup) => ({ id: backup.id, label: backup.label })),
     }))
   }
 
   Model.listHrbackupAlone = async () => {
     const hrbackupAlone = await Model.models.HRBackups.findAll({
       attributes: ['id', 'label'],
+      include: [{
+        attributes: ['type'],
+        model: Model.models.TJ,
+        required: false,
+      }],
       where: {
         group_id: null,
       },
@@ -50,7 +62,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    return hrbackupAlone
+    return hrbackupAlone.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
   }
 
   /**
@@ -89,7 +101,7 @@ export default (sequelizeInstance, Model) => {
     // même filtre que HRBackups.list : une juridiction dont le TJ est désactivé
     // n'est accessible à personne, elle ne compte donc pas dans le groupe
     const groupIds = Array.from(groupsById.keys())
-    const allGroupBackups = groupIds.length
+    let allGroupBackups = groupIds.length
       ? await Model.models.HRBackups.findAll({
         attributes: ['id', 'group_id'],
         where: { group_id: { [Op.in]: groupIds } },
@@ -97,22 +109,18 @@ export default (sequelizeInstance, Model) => {
           {
             attributes: ['id', 'enabled', 'type'],
             model: Model.models.TJ,
-            where: {
-              type: {
-                [Op.notIn]: ['CPH'],
-              },
-            },
             required: false,
           },
         ],
         raw: true,
       })
       : []
+
+    allGroupBackups = allGroupBackups.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
     const enabledBackupsByGroup = countBy(
       allGroupBackups.filter((backup) => backup['TJ.id'] == null || backup['TJ.enabled']),
       'group_id',
     )
-
     return {
       groups: orderBy(
         Array.from(groupsById.values()).map((group) => ({
