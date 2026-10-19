@@ -531,6 +531,8 @@
 
     &.duringPrint {
         overflow: inherit;
+        height: auto;
+        min-height: auto;
     }
 
     .content {

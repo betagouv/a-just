@@ -935,7 +935,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Demande d'extraction de la page au format pdf
    */
-  onExport() {
+  async onExport() {
     this.hrCommentService.forceOpenAll.next(true)
     const parent = document.getElementById('first-panel')
     const child = document.getElementById('comment-profil')
@@ -953,21 +953,22 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     reduire2?.classList.add('hide')
 
     this.duringPrint = true
-    this.wrapper
-      ?.exportAsPdf(
+
+    try {
+      await this.wrapper?.exportAsPdf(
         `Fiche individuelle${this.currentHR ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName : ''} en date du ${new Date()
           .toJSON()
           .slice(0, 10)}.pdf`,
       )
-      .then(() => {
-        details?.classList.remove('size')
-        reduire1?.classList.remove('hide')
-        reduire2?.classList.remove('hide')
-        this.hrCommentService.forceOpenAll.next(false)
-        this.duringPrint = false
-        parent2?.removeChild(child as Node)
-        parent?.appendChild(child as Node)
-      })
+    } finally {
+      details?.classList.remove('size')
+      reduire1?.classList.remove('hide')
+      reduire2?.classList.remove('hide')
+      this.hrCommentService.forceOpenAll.next(false)
+      this.duringPrint = false
+      parent2?.removeChild(child as Node)
+      parent?.appendChild(child as Node)
+    }
   }
 
   /**

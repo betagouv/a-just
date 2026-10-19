@@ -63,7 +63,7 @@
   </a>
 </div>
 
-@if (!isHmr) {
+@if (!isHmr && !forceToShowContentieuxDetail) {
 @defer (on viewport; prefetch on idle) {
 
 <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"

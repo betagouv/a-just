@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ApplicationRef,
   Component,
   computed,
   effect,
@@ -47,6 +48,7 @@ import { ServerService } from '../../services/http-server/server.service'
 import { ActivitiesService } from '../../services/activities/activities.service'
 import { UserInterface } from '../../interfaces/user-interface'
 import { addHTML } from '../../utils/js-pdf'
+import { waitForViewReady } from '../../utils/wait-for-view-ready'
 import { downloadFile } from '../../utils/system'
 import { MatIconModule } from '@angular/material/icon'
 import { CommonModule } from '@angular/common'
@@ -137,6 +139,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
   referentielService = inject(ReferentielService)
   feedbackService = inject(FeedbackService)
   tourService = inject(TourService)
+  appRef = inject(ApplicationRef)
 
   /**
    * DOM qui pointe sur le conteneur
@@ -520,96 +523,102 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
       })
 
-    setTimeout(() => {
-      html2canvas(element, {
+    const resolveExport = this.exportAsPdfPromiseResolve
+
+    try {
+      await waitForViewReady(this.appRef)
+
+      const canvas = await html2canvas(element, {
         scale: 1.5,
-      }).then(async (canvas) => {
-        var width = canvas.width
-        var height = canvas.height
-        var doc
-
-        if (comment) {
-          const mainHtmlContainer = document.createElement('div')
-          mainHtmlContainer.style.position = 'absolute'
-          mainHtmlContainer.style.left = '200%'
-          mainHtmlContainer.style.width = '400px'
-
-          const htmlContainer = document.createElement('div')
-          htmlContainer.style.position = 'relative'
-          htmlContainer.style.padding = '16px 32px 32px 32px'
-
-          const logo = document.createElement('img')
-          logo.src = '/assets/icons/logos/white-192x192.png'
-          logo.style.width = '50px'
-          logo.style.height = '50px'
-          logo.style.position = 'absolute'
-          logo.style.top = '20px'
-          logo.style.left = '30px'
-
-          const title = document.createElement('p')
-          title.style.fontSize = '18px'
-          title.style.textAlign = 'left'
-          title.style.fontFamily = 'Helvetica'
-          title.style.marginTop = '64px'
-          title.style.fontWeight = 'bold'
-          title.innerHTML = exportName || ''
-
-          const pCom = document.createElement('p')
-          pCom.style.marginTop = '32px'
-          pCom.style.fontSize = '14px'
-          pCom.style.textAlign = 'left'
-          pCom.style.fontFamily = 'Helvetica'
-          pCom.innerHTML = 'Commentaire :'
-
-          const commentDom = document.createElement('p')
-          commentDom.style.fontSize = '10px'
-          commentDom.style.textAlign = 'left'
-          commentDom.style.fontFamily = 'Helvetica'
-          commentDom.classList.add('p-with-child-Helvetica')
-          comment = comment || ''
-          if (comment.includes('<ol>')) {
-            comment = comment.replace(/<ol>/gm, '<ul>')
-            comment = comment.replace(/<\/ol>/gm, '</ul>')
-            comment = comment.replace(/<span class="ql-ui" contenteditable="false"><\/span>/gm, '')
-            comment = comment.replace(/<li data-list="bullet">/gm, '<li>&nbsp;&nbsp;&nbsp; • ')
-            for (let i = 1; i < 10; i++) {
-              const newCheck = new RegExp(`<li([^>]*)ql-indent-${i}([^>]*)>`, 'gm')
-              const nbspList = '&nbsp;'.repeat(i * 3)
-              comment = comment.replace(newCheck, `<li style="margin-left:${i * 30}px">${nbspList} • `)
-            }
-          }
-          commentDom.innerHTML = comment
-          //console.log('comment', comment);
-
-          htmlContainer.appendChild(logo)
-          htmlContainer.appendChild(title)
-          htmlContainer.appendChild(pCom)
-          htmlContainer.appendChild(commentDom)
-          mainHtmlContainer.appendChild(htmlContainer)
-          document.body.appendChild(mainHtmlContainer)
-
-          const { width: w, height: h } = mainHtmlContainer.getBoundingClientRect()
-          doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
-          await addHTML(doc, htmlContainer)
-          mainHtmlContainer.remove()
-
-          doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
-        } else {
-          doc = new jsPDF(width > height ? 'l' : 'p', 'px', [width / 2, height / 2], true)
-        }
-
-        doc.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', 0, 0, width / 2, height / 2, '', 'FAST')
-        doc.save(filename)
-
-        this.duringPrint = false
-        document.body.classList.remove('remove-height')
-        document.body.classList.remove('on-print')
-
-        if (this.exportAsPdfPromiseResolve) {
-          this.exportAsPdfPromiseResolve(true)
-        }
       })
-    })
+      var width = canvas.width
+      var height = canvas.height
+      var doc
+
+      if (comment) {
+      const mainHtmlContainer = document.createElement('div')
+      mainHtmlContainer.style.position = 'absolute'
+      mainHtmlContainer.style.left = '200%'
+      mainHtmlContainer.style.width = '400px'
+
+      const htmlContainer = document.createElement('div')
+      htmlContainer.style.position = 'relative'
+      htmlContainer.style.padding = '16px 32px 32px 32px'
+
+      const logo = document.createElement('img')
+      logo.src = '/assets/icons/logos/white-192x192.png'
+      logo.style.width = '50px'
+      logo.style.height = '50px'
+      logo.style.position = 'absolute'
+      logo.style.top = '20px'
+      logo.style.left = '30px'
+
+      const title = document.createElement('p')
+      title.style.fontSize = '18px'
+      title.style.textAlign = 'left'
+      title.style.fontFamily = 'Helvetica'
+      title.style.marginTop = '64px'
+      title.style.fontWeight = 'bold'
+      title.innerHTML = exportName || ''
+
+      const pCom = document.createElement('p')
+      pCom.style.marginTop = '32px'
+      pCom.style.fontSize = '14px'
+      pCom.style.textAlign = 'left'
+      pCom.style.fontFamily = 'Helvetica'
+      pCom.innerHTML = 'Commentaire :'
+
+      const commentDom = document.createElement('p')
+      commentDom.style.fontSize = '10px'
+      commentDom.style.textAlign = 'left'
+      commentDom.style.fontFamily = 'Helvetica'
+      commentDom.classList.add('p-with-child-Helvetica')
+      comment = comment || ''
+      if (comment.includes('<ol>')) {
+        comment = comment.replace(/<ol>/gm, '<ul>')
+        comment = comment.replace(/<\/ol>/gm, '</ul>')
+        comment = comment.replace(/<span class="ql-ui" contenteditable="false"><\/span>/gm, '')
+        comment = comment.replace(/<li data-list="bullet">/gm, '<li>&nbsp;&nbsp;&nbsp; • ')
+        for (let i = 1; i < 10; i++) {
+          const newCheck = new RegExp(`<li([^>]*)ql-indent-${i}([^>]*)>`, 'gm')
+          const nbspList = '&nbsp;'.repeat(i * 3)
+          comment = comment.replace(newCheck, `<li style="margin-left:${i * 30}px">${nbspList} • `)
+        }
+      }
+      commentDom.innerHTML = comment
+
+      htmlContainer.appendChild(logo)
+      htmlContainer.appendChild(title)
+      htmlContainer.appendChild(pCom)
+      htmlContainer.appendChild(commentDom)
+      mainHtmlContainer.appendChild(htmlContainer)
+      document.body.appendChild(mainHtmlContainer)
+
+      const { width: w, height: h } = mainHtmlContainer.getBoundingClientRect()
+      doc = new jsPDF(w > h ? 'l' : 'p', 'px', [w, h + 50], true)
+      await addHTML(doc, htmlContainer)
+      mainHtmlContainer.remove()
+
+      doc.addPage([width / 2, height / 2], width > height ? 'l' : 'p')
+    } else {
+      doc = new jsPDF(width > height ? 'l' : 'p', 'px', [width / 2, height / 2], true)
+    }
+
+      doc.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', 0, 0, width / 2, height / 2, '', 'FAST')
+      doc.save(filename)
+    } finally {
+      if (!noPopup) {
+        this.appService.alert.next(null)
+      }
+
+      this.duringPrint = false
+      document.body.classList.remove('remove-height')
+      document.body.classList.remove('on-print')
+
+      if (resolveExport) {
+        resolveExport(true)
+      }
+    }
   }
 
   /**
