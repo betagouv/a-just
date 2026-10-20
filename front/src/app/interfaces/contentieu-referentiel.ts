@@ -136,6 +136,10 @@ export interface ContentieuReferentielInterface {
    */
   helpUrl?: string | null;
   /**
+   * Contextes de visibilité : partout, extracteur, cockpit ou données d'activité
+   */
+  visibleIn?: Array<'everywhere' | 'extractor' | 'cockpit' | 'activity'> | null;
+  /**
    * Possible gain sur le taux de complétion si complété par l'utilistateur
    */
   possibleGainCompletion?: number;

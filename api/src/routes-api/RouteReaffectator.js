@@ -58,7 +58,7 @@ export default class RouteReaffectator extends Route {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupIds, false, null, false, false)).filter(
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupIds, null, false, null, false, false)).filter(
       (r) => r.label !== 'Indisponibilité',
     )
 

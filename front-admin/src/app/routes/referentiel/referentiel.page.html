@@ -10,6 +10,7 @@
     <div class="select">Qualité du Stock</div>
     <div class="input">Url de l'aide</div>
     <div class="select-big">Pour tous</div>
+    <div class="visibility">Visibilité</div>
   </div>
   @for (ref of referentiels; track ref.id) {
   <div>
@@ -62,6 +63,16 @@
         <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
           (valueChange)="onUpdateElement(items, 'onlyToHrBackup', $event)"></aj-select>
       </div>
+      }
+    </div>
+    <div class="visibility">
+      @for (option of REFERENTIEL_VISIBILITY_OPTIONS; track option.value) {
+      <label>
+        <input type="checkbox" [name]="'visibility-' + items.id + '-' + option.value"
+          [ngModel]="isZoneChecked(items, option.value)"
+          (ngModelChange)="onUpdateVisibility(items, option.value, $event)" />
+        {{ option.label }}
+      </label>
       }
     </div>
   </div>

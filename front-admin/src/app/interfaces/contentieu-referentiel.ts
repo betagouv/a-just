@@ -1,3 +1,5 @@
+import { ReferentielVisibility } from '../constants/referentiels';
+
 export enum ValueQualityEnum {
   ptional = 'facultatif',
   good = 'good',
@@ -25,4 +27,9 @@ export interface ContentieuReferentielInterface {
   valueQualityStock?: ValueQualityEnum | null;
   helpUrl?: string | null;
   onlyToHrBackup: number[] | null;
+  /**
+   * Contextes dans lesquels le contentieux est visible.
+   * everywhere = partout. Tableau vide = masqué partout.
+   */
+  visibleIn?: ReferentielVisibility[] | null;
 }

@@ -62,6 +62,12 @@ export default (sequelizeInstance) => {
         allowNull: false,
         defaultValue: true,
       },
+      visible_in: {
+        // everywhere => partout ; extractor, cockpit, activity => contextes ciblés
+        type: Sequelize.ARRAY(Sequelize.STRING(32)),
+        allowNull: false,
+        defaultValue: ['everywhere'],
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

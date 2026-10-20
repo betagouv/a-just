@@ -288,7 +288,7 @@ export default class RouteHumanResources extends Route {
 
     let listFiltered = [...list]
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, false, null, false, false)
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, null, false, null, false, false)
 
     const listFormated = categories
       .filter((c) => categoriesIds.indexOf(c.id) !== -1)

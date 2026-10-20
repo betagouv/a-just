@@ -1,6 +1,11 @@
 import { orderBy } from 'lodash'
 import { Op } from 'sequelize'
-import { referentielCAMappingIndex, referentielMappingIndex } from '../constants/referentiel'
+import {
+  filterReferentielsByVisibility,
+  normalizeReferentielVisibility,
+  referentielCAMappingIndex,
+  referentielMappingIndex,
+} from '../constants/referentiel'
 import { extractCodeFromLabelImported, jirsRules } from '../utils/referentiel'
 import { camel_to_snake } from '../utils/utils'
 import config from 'config'
@@ -13,10 +18,24 @@ import { isTj } from '../utils/ca'
 export default (sequelizeInstance, Model) => {
   /**
    * Retourne la liste du référentiel
-   * @param {*} isJirs
+   * @param {*} backupIds
+   * @param {string|null} visibleIn partout (everywhere), extracteur (extractor), cockpit (cockpit) ou données d'activité (activity)
+   * @param {boolean} isJirs
+   * @param {*} filterReferentielsId
+   * @param {boolean} displayAll
+   * @param {boolean} extractorMode
+   * @param {*} userId
    * @returns
    */
-  Model.getReferentiels = async (backupIds = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false, userId = null) => {
+  Model.getReferentiels = async (
+    backupIds = null,
+    visibleIn = null,
+    isJirs = false,
+    filterReferentielsId = null,
+    displayAll = false,
+    extractorMode = false,
+    userId = null,
+  ) => {
     if (!Array.isArray(backupIds)) {
       backupIds = [backupIds]
     }
@@ -69,6 +88,7 @@ export default (sequelizeInstance, Model) => {
         'category',
         ['only_to_hr_backup', 'onlyToHrBackup'],
         ['check_ventilation', 'checkVentilation'],
+        ['visible_in', 'visibleIn'],
       ],
       where,
       order: [['rank', 'asc']],
@@ -144,6 +164,7 @@ export default (sequelizeInstance, Model) => {
 
     if (extractorMode) isJirs = true
     list = jirsRules(list, isJirs)
+    list = filterReferentielsByVisibility(list, visibleIn)
 
     return list
   }
@@ -368,6 +389,10 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (ref) {
+      if (node === 'visibleIn') {
+        value = normalizeReferentielVisibility(value)
+      }
+
       const oldValue = ref[camel_to_snake(node)]
       ref.set({ [camel_to_snake(node)]: value })
       await ref.save()

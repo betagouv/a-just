@@ -25,7 +25,7 @@ import { generateHRIndexes } from '../utils/human-resource'
 import { loadOrWarmHR, printKeys } from '../utils/redis'
 import { getJob } from '../utils/jobStore'
 import { checkAbort, withAbortTimeout } from '../utils/abordTimeout'
-import { CET_LABEL } from '../constants/referentiel'
+import { CET_LABEL, REFERENTIEL_VISIBILITY_EXTRACTOR } from '../constants/referentiel'
 import { fixDecimal } from '../utils/number'
 
 /**
@@ -101,7 +101,7 @@ export default class RouteExtractor extends Route {
         console.time('extractor-1')
         const juridictionName = await this.models.HRBackups.findById(backupId)
         const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true, ctx.state.user.id)
+        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, null, true, undefined, false, true, ctx.state.user.id)
         console.timeEnd('extractor-1')
 
         console.time('extractor-2')
@@ -243,7 +243,15 @@ export default class RouteExtractor extends Route {
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
-    let referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, isJirs, undefined, undefined, false, ctx.state.user.id)
+    let referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
+      backupIds,
+      REFERENTIEL_VISIBILITY_EXTRACTOR,
+      isJirs,
+      undefined,
+      undefined,
+      false,
+      ctx.state.user.id,
+    )
     referentiels = orderBy(referentiels, 'rank', 'asc')
 
     const flatReferentielsList = _buildOrderedFlatList([...referentiels])
@@ -373,7 +381,14 @@ export default class RouteExtractor extends Route {
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
 
     const indexes = await generateHRIndexes(hr, true)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupIds, true, undefined, false, true)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
+      backupIds,
+      REFERENTIEL_VISIBILITY_EXTRACTOR,
+      true,
+      undefined,
+      false,
+      true,
+    )
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
     let juridictionName = backupId < -1 ? (await this.models.Groups.findById(backupId * -1)).label : (await this.models.HRBackups.findById(backupId)).label
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)

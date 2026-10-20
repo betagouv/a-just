@@ -269,8 +269,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.cleanActivities = async (HRBackupId, minPeriode, force = false, filterReferentiels = null) => {
-    let referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, false, filterReferentiels)
-    //await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
+    let referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, null, false, filterReferentiels)
 
     //console.log('MIN PERIODE', HRBackupId, minPeriode)
 
@@ -377,7 +376,7 @@ export default (sequelizeInstance, Model) => {
       else await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false, userId)
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, null, false, null, false, false, userId)
     const ref = referentiels.find((r) => (r.childrens || []).find((c) => c.id === contentieuxId))
 
     if (ref) {
@@ -393,7 +392,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
     date = new Date(date) // detach date reference
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false)
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, null, false, null, false, false)
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
 
     if (ref) {
@@ -882,8 +881,8 @@ export default (sequelizeInstance, Model) => {
     dateStart = new Date(dateStart)
     dateEnd = new Date(dateEnd)
 
-    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, false, null, false, false, userId)) || []
-    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, false, null, false, false, userId)) || [])
+    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, null, false, null, false, false, userId)) || []
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, null, false, null, false, false, userId)) || [])
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])

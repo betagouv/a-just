@@ -52,7 +52,7 @@ export class ReferentielService {
       });
   }
 
-  update(id: number, node: string, value: string) {
+  update(id: number, node: string, value: string | string[] | boolean | number[] | null) {
     return this.serverService.putWithoutError(
       'contentieux-referentiels/update',
       {

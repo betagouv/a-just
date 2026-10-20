@@ -132,7 +132,7 @@ export default (sequelizeInstance, Model) => {
       HRBackupIds = [HRBackupIds]
     }
 
-    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupIds, false, null, false, false, userId)) || []
+    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupIds, null, false, null, false, false, userId)) || []
 
     const getHistory = async (historyId = null, activityId = null, contentieuxId = null, activityDate = null) => {
       const whereActivity = {

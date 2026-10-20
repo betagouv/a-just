@@ -1,6 +1,100 @@
 import { fixDecimal } from '../utils/number'
 
 /**
+ * Visibilité d'un contentieux du référentiel.
+ * everywhere = visible dans l'extracteur, le cockpit et les données d'activité.
+ */
+export const REFERENTIEL_VISIBILITY_EVERYWHERE = 'everywhere'
+export const REFERENTIEL_VISIBILITY_EXTRACTOR = 'extractor'
+export const REFERENTIEL_VISIBILITY_COCKPIT = 'cockpit'
+export const REFERENTIEL_VISIBILITY_ACTIVITY = 'activity'
+
+export const REFERENTIEL_VISIBILITY_VALUES = [
+  REFERENTIEL_VISIBILITY_EVERYWHERE,
+  REFERENTIEL_VISIBILITY_EXTRACTOR,
+  REFERENTIEL_VISIBILITY_COCKPIT,
+  REFERENTIEL_VISIBILITY_ACTIVITY,
+]
+
+const REFERENTIEL_VISIBILITY_CONTEXTS = [
+  REFERENTIEL_VISIBILITY_EXTRACTOR,
+  REFERENTIEL_VISIBILITY_COCKPIT,
+  REFERENTIEL_VISIBILITY_ACTIVITY,
+]
+
+/**
+ * Normalise la visibilité enregistrée sur un contentieux.
+ * null ou une sélection des 3 contextes devient « partout ».
+ * @param {*} value
+ * @returns {string[]}
+ */
+export function normalizeReferentielVisibility(value) {
+  if (value == null || value === '') {
+    return [REFERENTIEL_VISIBILITY_EVERYWHERE]
+  }
+
+  const list = Array.isArray(value) ? value : [value]
+  const unknown = list.filter((item) => item != null && item !== '' && !REFERENTIEL_VISIBILITY_VALUES.includes(String(item)))
+  if (unknown.length) {
+    throw new Error(`Visibilité inconnue : ${unknown.join(', ')}`)
+  }
+
+  const cleaned = [...new Set(list.map((item) => String(item)).filter((item) => REFERENTIEL_VISIBILITY_VALUES.includes(item)))]
+  if (
+    cleaned.includes(REFERENTIEL_VISIBILITY_EVERYWHERE) ||
+    REFERENTIEL_VISIBILITY_CONTEXTS.every((context) => cleaned.includes(context))
+  ) {
+    return [REFERENTIEL_VISIBILITY_EVERYWHERE]
+  }
+
+  return cleaned
+}
+
+/**
+ * Indique si un contentieux est visible dans un contexte.
+ * Sans contexte, tous les contentieux restent visibles.
+ * « partout » est inclus dans l'extracteur, le cockpit et les données d'activité.
+ * Une valeur absente (ancienne donnée) est traitée comme « partout ».
+ * @param {*} visibleIn
+ * @param {string|null} context
+ * @returns {boolean}
+ */
+export function isReferentielVisibleIn(visibleIn, context) {
+  if (!context) return true
+  if (!REFERENTIEL_VISIBILITY_VALUES.includes(context)) {
+    throw new Error(`Visibilité inconnue : ${context}`)
+  }
+  if (visibleIn == null) return true
+
+  const zones = normalizeReferentielVisibility(visibleIn)
+  if (context === REFERENTIEL_VISIBILITY_EVERYWHERE) {
+    return zones.includes(REFERENTIEL_VISIBILITY_EVERYWHERE)
+  }
+
+  return zones.includes(REFERENTIEL_VISIBILITY_EVERYWHERE) || zones.includes(context)
+}
+
+/**
+ * Filtre un arbre de référentiel selon le contexte de visibilité.
+ * Un contentieux hors contexte est retiré avec tous ses enfants.
+ * @param {Array} list
+ * @param {string|null} context
+ * @returns {Array}
+ */
+export function filterReferentielsByVisibility(list, context) {
+  if (!context || !Array.isArray(list)) return list
+
+  return list.reduce((acc, item) => {
+    if (!isReferentielVisibleIn(item.visibleIn, context)) return acc
+
+    const hasChildrens = Array.isArray(item.childrens)
+    const childrens = hasChildrens ? filterReferentielsByVisibility(item.childrens, context) : item.childrens
+    acc.push(hasChildrens ? { ...item, childrens } : item)
+    return acc
+  }, [])
+}
+
+/**
  * Constante utilisé dans l'extracteur pour les cas particuliers de dialogue de gestion
  */
 export const CET_LABEL = 'Compte épargne temps' //'Décharge syndicale' //'CONGÉ LONGUE MALADIE'

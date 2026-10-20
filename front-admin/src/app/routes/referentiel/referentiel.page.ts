@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MainClass } from '../../libs/main-class';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
-import { QUALITY_LIST } from '../../constants/referentiels';
+import { QUALITY_LIST, REFERENTIEL_VISIBILITY_OPTIONS, ReferentielVisibility } from '../../constants/referentiels';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +36,7 @@ export class ReferentielPage extends MainClass implements OnInit {
   juridictionsService = inject(JuridictionsService);
   referentiels: ContentieuReferentielWithBackupsInterface[] = [];
   QUALITY_LIST = QUALITY_LIST;
+  REFERENTIEL_VISIBILITY_OPTIONS = REFERENTIEL_VISIBILITY_OPTIONS;
   backups: customDataInterface[] = [];
   isJirs: boolean = true;
 
@@ -147,5 +148,52 @@ export class ReferentielPage extends MainClass implements OnInit {
     } else {
       this.onLoad();
     }
+  }
+
+  isZoneChecked(item: ContentieuReferentielInterface, zone: ReferentielVisibility) {
+    const zones = item.visibleIn;
+    if (zones == null || zones.includes('everywhere')) {
+      return true;
+    }
+
+    return zones.includes(zone);
+  }
+
+  onUpdateVisibility(
+    item: ContentieuReferentielWithBackupsInterface,
+    zone: ReferentielVisibility,
+    checked: boolean,
+  ) {
+    const specifics: ReferentielVisibility[] = ['extractor', 'cockpit', 'activity'];
+    const current = item.visibleIn;
+    const isEverywhere = current == null || current.includes('everywhere');
+    let next: ReferentielVisibility[];
+
+    if (zone === 'everywhere') {
+      next = checked ? ['everywhere'] : [];
+    } else if (isEverywhere) {
+      next = checked ? ['everywhere'] : specifics.filter((entry) => entry !== zone);
+    } else {
+      const selected = new Set(current || []);
+      if (checked) {
+        selected.add(zone);
+      } else {
+        selected.delete(zone);
+      }
+      const picked = specifics.filter((entry) => selected.has(entry));
+      next = picked.length === specifics.length ? ['everywhere'] : picked;
+    }
+
+    if (
+      !confirm(
+        'Voulez-vous modifier la visibilité de ce contentieux ?',
+      )
+    ) {
+      this.onLoad();
+      return;
+    }
+
+    item.visibleIn = next;
+    this.referentielService.update(item.id, 'visibleIn', next);
   }
 }
