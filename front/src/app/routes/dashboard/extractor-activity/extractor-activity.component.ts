@@ -11,7 +11,7 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { AppService } from '../../../services/app/app.service'
 import { UserService } from '../../../services/user/user.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
-import { getShortMonthString, setTimeToMidDay } from '../../../utils/dates'
+import { getShortMonthString, setTimeToMidDay, today } from '../../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { Renderer } from 'xlsx-renderer'
 import { startLatencyScope } from '../../../utils/sentry-latency'
@@ -74,6 +74,10 @@ export class ExtractorActivityComponent extends MainClass {
    * Date de début minimum
    */
   minDate: Date | null = null
+  /**
+   *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
+   */
+  ajDateSelectTitle: string = 'Pour la période du'
 
   /**
    * Constructeur
@@ -109,6 +113,13 @@ export class ExtractorActivityComponent extends MainClass {
     if (dateType === 'start') {
       this.excelService.dateStart.next(value)
       this.dateStart = value
+      let todayDate = today(new Date())
+
+      if (this.dateStart?.getTime() === todayDate.getTime()) {
+        this.ajDateSelectTitle = "Pour la période d'"
+      } else {
+        this.ajDateSelectTitle = 'Pour la période du'
+      }
     }
     if (dateType === 'stop') {
       this.excelService.dateStop.next(value)
