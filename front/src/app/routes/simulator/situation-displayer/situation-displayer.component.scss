@@ -1,8 +1,8 @@
+@use '../../../styles/utils.scss' as utils;
+
 :host {
-
-
     .actual-situation {
-        background-color: #fef6e3;
+        background-color: utils.$colors-cyellowlight;
         position: relative;
         display: flex;
         padding: 0px 24px;
@@ -12,41 +12,41 @@
         }
 
         &.color-white {
-            background-color: white;
-            border-bottom: solid 1px #e5e5e5;
+            background-color: utils.$colors-white;
+            border-bottom: solid 1px utils.$colors-lightBorder;
 
             &::before {
-                background-color: white;
-                border-bottom: solid 1px #e5e5e5;
+                background-color: utils.$colors-white;
+                border-bottom: solid 1px utils.$colors-lightBorder;
             }
 
             &::after {
-                background-color: white;
-                border-bottom: solid 1px #e5e5e5;
+                background-color: utils.$colors-white;
+                border-bottom: solid 1px utils.$colors-lightBorder;
             }
         }
 
         &.color-blue {
-            background-color: #f4f6fe;
+            background-color: utils.$colors-blueSimulator;
 
             &::before {
-                background-color: #f4f6fe;
+                background-color: utils.$colors-blueSimulator;
             }
 
             &::after {
-                background-color: #f4f6fe;
+                background-color: utils.$colors-blueSimulator;
             }
         }
 
         &.color-pink {
-            background-color: #fee7fc7d !important;
+            background-color: utils.$colors-disabledPinkSimulator !important;
 
             &::before {
-                background-color: #fee7fc7d !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &::after {
-                background-color: #fee7fc7d !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
         }
 
@@ -73,21 +73,21 @@
             position: relative;
 
             &.orange-bg {
-                background-color: #feecc2;
+                background-color: utils.$colors-bgYellowTag;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: #dcdcfb !important;
+                    background-color: utils.$colors-selectedTooltipSimulator !important;
                 }
             }
 
             &.grey-bg-disabled {
-                background-color: #b9b8b64a;
+                background-color: utils.$colors-greySimulatorBorder;
             }
 
             &.selected {
                 mix-blend-mode: multiply;
-                background-color: #ececfe !important;
+                background-color: utils.$colors-bgReadETPDark !important;
             }
 
             &.pink-bg {
@@ -95,16 +95,16 @@
             }
 
             &.grey-bg {
-                background-color: #e9edfe;
+                background-color: utils.$colors-disabledGreySimulator;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: #dcdcfb !important;
+                    background-color: utils.$colors-selectedTooltipSimulator !important;
                 }
             }
 
             &.blue-bg {
-                background-color: #f4f6fe;
+                background-color: utils.$colors-blueSimulator;
             }
 
             .modified-label {
@@ -117,19 +117,19 @@
                 text-align: center;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
                     0 1px 2px 0 rgba(0, 0, 0, 0.06);
-                border: solid 1px #fa7a35;
-                background-color: #e4794a;
+                border: solid 1px utils.$colors-tooltipSimulatorOrange;
+                background-color: $colors-tooltipSimulatorOrange;
                 border-radius: 4px;
                 width: 74px;
                 height: 35px;
                 line-height: 31px;
                 font-size: 16px;
-                color: #fff;
+                color: utils.$colors-white;
 
                 .triangle {
                     height: 0;
                     width: 0;
-                    border-bottom: 4px solid #fa7a35;
+                    border-bottom: 4px solid utils.$colors-tooltipSimulatorOrange;
                     border-right: 4px solid transparent;
                     border-left: 4px solid transparent;
                     position: absolute;
@@ -140,7 +140,7 @@
                         content: '';
                         height: 0;
                         width: 0;
-                        border-bottom: 4px solid #e4794a;
+                        border-bottom: 4px solid utils.$colors-titleIndisponibilitiesPanel;
                         border-right: 4px solid transparent;
                         border-left: 4px solid transparent;
                         position: absolute;
@@ -155,28 +155,27 @@
                 text-align: center;
                 height: 40px;
                 font-weight: normal;
-                background-color: #eeeeee;
+                background-color: utils.$colors-cgrayDefault;
                 border: none;
                 width: 95%;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
                 position: relative;
-                //border-bottom: solid 2px #e5e5e5;
 
                 &:focus {
                     outline: none;
-                    border-bottom: solid 2px #3a3a3a !important;
+                    border-bottom: solid 2px utils.$colors-cblack !important;
                 }
             }
 
             .ajusted-button {
                 pointer-events: all;
                 cursor: pointer;
-                border: solid 2px #000091;
+                border: solid 2px utils.$colors-primary;
                 width: 95%;
                 height: 32px;
                 text-align: center;
-                color: #000091;
+                color: utils.$colors-primary;
                 font-size: 16px;
                 border-top-left-radius: 0px;
                 border-top-right-radius: 0px;
@@ -194,20 +193,20 @@
                 }
 
                 &.filled {
-                    background-color: #eeeeee;
+                    background-color: utils.$colors-cgrayDefault;
                     border: none;
                     color: black;
-                    border-bottom: solid 2px #e5e5e5 !important;
+                    border-bottom: solid 2px utils.$colors-bgTag !important;
                     border-top-left-radius: 4px;
                     border-top-right-radius: 4px;
                     position: relative;
-                    border-bottom: solid 2px #e5e5e5;
-                    background-color: #eeeeee;
+                    border-bottom: solid 2px utils.$colors-bgTag;
+                    background-color: utils.$colors-cgrayDefault;
                     height: 40px;
                     width: 95%;
 
                     :focus {
-                        border: solid 2px #3a3a3a !important;
+                        border: solid 2px utils.$colors-cblack !important;
                     }
 
                     &.disable {

@@ -24,11 +24,10 @@
   }
 
   &.new-fonction {
-    border-color: utils.$colors-borderSelect;
     display: flex;
     height: 32px;
     padding: 0;
-    border: solid 1px utils.$colors-borderSelect;
+    border: solid 1px utils.$colors-lightBorder;
     background-color: utils.$colors-white;
 
     p {
@@ -123,5 +122,4 @@
   mat-select {
     position: relative;
   }
-
 }
