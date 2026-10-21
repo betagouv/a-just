@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   display: block;
@@ -10,7 +11,7 @@
 
       mat-icon,
       p {
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
     }
   }
@@ -21,7 +22,7 @@
       min-height: 56px;
       height: fit-content;
       position: relative;
-      border-top: solid 1px #f6f6f6;
+      border-top: solid 1px utils.$colors-bgSelect;
 
       >div {
         &:first-child {
@@ -46,7 +47,7 @@
   >.main-referentiel {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    border-top: solid 1px #f6f6f6;
+    border-top: solid 1px utils.$colors-bgSelect;
 
     >div {
       display: flex;
@@ -56,7 +57,7 @@
       min-height: 63px;
 
       &:not(:first-child) {
-        border-left: 3px solid white;
+        border-left: 3px solid utils.$colors-white;
       }
 
       &:first-child {
@@ -77,15 +78,15 @@
 
         .help {
           &.warning {
-            background-color: #E4794A;
+            background-color: utils.$colors-titleIndisponibilitiesPanel;
           }
 
           width: 24px;
           min-width: 24px;
           height: 24px;
           border-radius: 24px;
-          background-color: #000091;
-          color: white;
+          background-color: utils.$colors-primary;
+          color: utils.$colors-white;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -111,13 +112,13 @@
 
       mat-icon {
         margin-left: 8px;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
 
       p {
         position: relative;
         font-size: 14px;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
 
       >.block {
@@ -135,7 +136,7 @@
 
         >span {
           flex: 1;
-          border-left: 3px solid white;
+          border-left: 3px solid utils.$colors-white;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -149,7 +150,7 @@
   }
 
   >.childrens {
-    background-color: white;
+    background-color: utils.$colors-white;
 
     >aj-referentiel-calculator {
       &:last-child {
@@ -172,7 +173,7 @@ p {
   align-items: center;
 
   p {
-    color: #CE0500 !important;
+    color: utils.$colors-redAlert !important;
     font-weight: 300 !important;
     text-align: center;
     width: 100%;
@@ -181,14 +182,14 @@ p {
 
 .anticipate {
   position: relative;
-  border: 1px solid #0063CB;
+  border: 1px solid utils.$colors-bgSelectSelected;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 12px;
   padding: 0 12px;
   border-radius: 62px;
-  color: #0063CB;
+  color: utils.$colors-bgSelectSelected;
   height: 38px;
   cursor: pointer;
   margin: 12px;
@@ -197,12 +198,20 @@ p {
     content: " ";
     position: absolute;
     inset: 0;
+    overflow: hidden;
+    border-radius: 62px;
+    transition: all animations.$duration-normal animations.$ease-default;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
   }
 
   p {
     position: relative;
     top: -1px;
     white-space: nowrap;
+    pointer-events: none;
   }
 }
 
@@ -236,7 +245,7 @@ aj-speedometer {
   justify-content: center;
 
   .popin-projection-content {
-    background-color: white;
+    background-color: utils.$colors-white;
     border-radius: 12px;
     border: 1px solid #000;
     width: 75%;
@@ -259,7 +268,7 @@ aj-speedometer {
         left: 72px;
 
         a {
-          color: #000091;
+          color: utils.$colors-primary;
           font-size: 14px;
         }
       }
@@ -271,23 +280,29 @@ aj-speedometer {
         cursor: pointer;
         height: 40px;
         border-radius: 4px;
-        border: 1px solid #DDD;
-        background-color: white;
+        border: 1px solid utils.$colors-lightBorder;
+        background-color: utils.$colors-white;
         display: grid;
         grid-template-columns: repeat(3, 96px);
+        overflow: hidden;
 
         >div {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
+          transition: all animations.$duration-normal animations.$ease-default;
+
+          &:hover {
+            background-color: utils.$colors-bgSelect;
+          }
 
           p {
-            color: #161616;
+            color: utils.$colors-cblackdark;
           }
 
           mat-icon {
-            color: #161616;
+            color: utils.$colors-cblackdark;
             font-size: 16px;
             width: 16px;
             height: 16px;
@@ -295,13 +310,12 @@ aj-speedometer {
           }
 
           &.active {
-            background-color: #000091;
-            color: white;
-            border-radius: 4px;
+            background-color: utils.$colors-primary;
+            color: utils.$colors-white;
 
             mat-icon,
             p {
-              color: white;
+              color: utils.$colors-white;
             }
           }
         }
@@ -343,7 +357,7 @@ aj-speedometer {
 
     .popin-projection-content-body {
       margin: 20px 72px 20px 72px;
-      border: 1px solid #DDD;
+      border: 1px solid utils.$colors-lightBorder;
       height: 200px;
       min-height: 200px;
       border-radius: 6px;
@@ -385,7 +399,7 @@ aj-speedometer {
       flex: 1;
 
       >div:first-child {
-        border-right: 1px solid #DDD;
+        border-right: 1px solid utils.$colors-lightBorder;
         padding-right: 50px;
       }
 
@@ -408,13 +422,13 @@ aj-speedometer {
 
         a.documentation-link {
           font-size: 14px;
-          color: white;
+          color: utils.$colors-white;
           font-weight: 700;
           text-decoration: none;
           width: 20px;
           height: 20px;
           border-radius: 20px;
-          background-color: #000091;
+          background-color: utils.$colors-primary;
           margin-top: 2px;
           line-height: 20px;
           text-align: center;
@@ -461,7 +475,7 @@ aj-speedometer {
 
           >span {
             font-size: 14px;
-            color: #000091;
+            color: utils.$colors-primary;
             border-radius: 6px;
             padding: 8px 12px;
             float: left;
@@ -503,10 +517,15 @@ aj-speedometer {
 
         a {
           text-decoration: none;
-          background-color: white;
-          border: 1px solid #000091;
+          background-color: utils.$colors-white;
+          border: 1px solid utils.$colors-primary;
           text-align: center;
           padding: 10px 24px;
+          transition: all animations.$duration-normal animations.$ease-default;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.75);
+          }
         }
       }
     }
@@ -517,7 +536,7 @@ aj-speedometer {
   margin-top: 16px;
 
   p {
-    color: #3a3a3a;
+    color: utils.$colors-cblack;
     margin: 0 72px;
     padding: 12px;
     border-radius: 6px;

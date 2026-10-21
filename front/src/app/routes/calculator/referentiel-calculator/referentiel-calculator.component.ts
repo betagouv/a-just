@@ -445,8 +445,8 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
 
     this.graphError = null
     const list: { label: string; button: string; link: any; queryParams: any }[] = []
-    const dateStart = getTime(this.calculatorService.dateStart.value)
-    const dateStop = getTime(this.calculatorService.dateStop.value)
+    // const dateStart = getTime(this.calculatorService.dateStart.value)
+    // const dateStop = getTime(this.calculatorService.dateStop.value)
     let nbMonths = monthDiff(new Date(this.calculatorService.dateStart.value || new Date()), today(this.calculatorService.dateStop.value || new Date()))
     if (nbMonths < 0) {
       nbMonths *= -1
