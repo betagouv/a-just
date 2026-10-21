@@ -9,7 +9,7 @@
   margin-bottom: 24px;
 
   &.error .stars .star-icon {
-    color: #ce0500;
+    color: utils.$colors-redAlert;
   }
 }
 
