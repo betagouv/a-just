@@ -85,10 +85,18 @@ describe("Signup Page", () => {
     cy.get('input[formControlName="checkbox"]').check();
 
     cy.get(".next-step").click();
-    cy.contains("label", "Mon tribunal de rattachement :").should("be.visible");
-    cy.get("select").first().select(1);
+    cy.contains("label", /de rattachement/).should("be.visible");
+    cy.get("#rattach-select").should("be.visible").click();
+    cy.get(".aj-autocomplete-panel .juridiction-item")
+      .not(".disabled")
+      .first()
+      .click();
     cy.contains("label", "Ma fonction :").should("be.visible");
-    cy.get("select").eq(1).select(1);
+    cy.get("#fonction-select").should("be.visible").click();
+    cy.get(".aj-autocomplete-panel .juridiction-item")
+      .not(".disabled")
+      .first()
+      .click();
     cy.get("input[type=submit]").click();
     cy.location("pathname").should("eq", "/bienvenue");
   });
