@@ -510,7 +510,7 @@ export class UserService implements OnInit {
       })
     }
 
-    if (this.canViewSimulator()) {
+    if (this.canViewSimulator() || this.canViewWhiteSimulator() || this.canViewReaffectator()) {
       menu.push({
         label: 'Simulateurs',
         path: 'simulateur',

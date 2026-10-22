@@ -1,11 +1,10 @@
 import user from "../../fixtures/user.json";
 import { accessUrlList, accessFonctionsList } from "../../support/userAcess";
-import { menuContentTools, menuContentBottom } from "../../support/menuContent";
+import { menuContentTools } from "../../support/menuContent";
 import {
-  loginApi,
-  getUserDataApi,
   updateUserAccounatApi,
   resetToDefaultPermissions,
+  ensureE2EUserReady,
 } from "../../support/api";
 
 describe("Test d'accés aux pages", () => {
@@ -14,18 +13,10 @@ describe("Test d'accés aux pages", () => {
   let ventilations = [];
 
   before(() => {
-    //Login to get the admin user token so we can retrieve user data
-    return loginApi(user.email, user.password).then((resp) => {
-      userId = resp.body.user.id;
-      token = resp.body.token;
-
-      // Get user data to retrieve ventilations list
-      return getUserDataApi(token).then((resp) => {
-        ventilations = resp.body.data.backups.map((v) => v.id);
-        // Explicitly reset permissions to ensure clean state (belt and suspenders)
-        // This protects against database state issues or incomplete seeder execution
-        return resetToDefaultPermissions(userId, ventilations, token);
-      });
+    return ensureE2EUserReady().then((ready) => {
+      userId = ready.userId;
+      token = ready.token;
+      ventilations = ready.ventilations;
     });
   });
 
@@ -35,6 +26,26 @@ describe("Test d'accés aux pages", () => {
     // Rate limiting has been disabled in test config (maxQueryLimit: 10000000)
     resetToDefaultPermissions(userId, ventilations, token);
   });
+
+  const setPermissionsAndRelogin = (accessIds) => {
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      referentielIds: null,
+      token,
+    });
+
+    cy.visit("/logout");
+    cy.visit("/connexion");
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.location("pathname", { timeout: 60000 }).should(
+      "not.include",
+      "/connexion",
+    );
+  };
 
   const checkToolsMenu = (toolToNotCheck = []) => {
     //Chek all tools are present
@@ -61,140 +72,103 @@ describe("Test d'accés aux pages", () => {
   };
 
   it("User with access to specific pages should not have access to others", () => {
-    // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
+      if (access.url === undefined) {
+        return;
+      }
+
       // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
       // Also need function access (8, 9, 10) to view data
-      const pageAccessIds = [access.id + 0.1, access.id + 0.2]; // reader + writer
-      const functionAccessIds = [8, 9, 10]; // magistrat, greffier, contractuel
+      const pageAccessIds = [access.id + 0.1, access.id + 0.2];
+      const functionAccessIds = [8, 9, 10];
       const accessIds = [...pageAccessIds, ...functionAccessIds];
 
-      if (access.url !== undefined) {
-        // Mettre à jour les droits d'accès pour l'utilisateur
-        updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        });
+      setPermissionsAndRelogin(accessIds);
 
-        cy.wait(3000); // Wait for permission update to complete
+      cy.visit(access.url);
+      cy.location("pathname").should("include", access.url);
 
-        // Visit logout page to properly clear session on server side
-        cy.visit('/logout');
-        cy.wait(1000); // Wait for logout to complete
+      cy.wrap(accessUrlList).each((otherAccess) => {
+        if (
+          otherAccess.url === undefined ||
+          otherAccess.url === access.url
+        ) {
+          return;
+        }
 
-        cy.visit('/connexion');
+        const isSimulatorCrossCheck =
+          (access.url === "/simulateur" &&
+            otherAccess.url === "/simulateur-sans-donnees") ||
+          (access.url === "/simulateur-sans-donnees" &&
+            otherAccess.url === "/simulateur");
 
-        // Manually fill login form (don't use cy.login() which uses cy.session())
-        cy.get('input[formcontrolname="email"]').type(user.email);
-        cy.get('input[formcontrolname="password"]').type(user.password);
-        cy.get('input[type="submit"]').click();
+        if (isSimulatorCrossCheck) {
+          cy.visit("/simulateur", { failOnStatusCode: false });
+          cy.location("pathname").should("include", "/simulateur");
 
-        cy.wait(2000); // Wait for login to complete
-
-        cy.visit(access.url);
-        cy.wait(1000);
-
-        // Vérifier que l'utilisateur peut accéder à la page autorisée
-        cy.location("pathname").should("contain", access.url);
-
-        // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
-        cy.wrap(accessUrlList).each((otherAccess) => {
-          if (
-            otherAccess.url !== undefined &&
-            otherAccess.url !== access.url
-          ) {
-            // Special handling for simulators - they share a landing page
-            const isSimulatorCrossCheck =
-              (access.url === '/simulateur' && otherAccess.url === '/simulateur-sans-donnees') ||
-              (access.url === '/simulateur-sans-donnees' && otherAccess.url === '/simulateur');
-
-            if (isSimulatorCrossCheck) {
-              // Both simulators share /simulateur landing page
-              // Check that unauthorized mode option is disabled/missing
-              cy.visit('/simulateur', { failOnStatusCode: false });
-              cy.wait(1000);
-
-              if (access.url === '/simulateur-sans-donnees') {
-                // User has "sans données" access, "avec données" should be disabled
-                cy.contains('p', 'avec les données')
-                  .should('have.class', 'circle-disable');
-              } else {
-                // User has "avec données" access, "sans données" should be disabled  
-                cy.contains('p', 'pour une autre')
-                  .should('have.class', 'circle-disable');
-              }
-            } else {
-              // Normal pages - should be redirected away
-              cy.visit(otherAccess.url, { failOnStatusCode: false });
-              cy.wait(1000);
-              cy.location("pathname").should("not.eq", otherAccess.url);
-            }
+          if (access.url === "/simulateur-sans-donnees") {
+            cy.contains("p.circle-disable", /avec les données d.A-JUST/);
+          } else {
+            cy.contains("p.circle-disable", "pour une autre activité");
           }
-        });
-
-        cy.wait(2000); // Wait between major iterations
-      }
+        } else {
+          cy.visit(otherAccess.url, { failOnStatusCode: false });
+          cy.location("pathname").should(
+            "not.include",
+            otherAccess.url.replace(/^\//, ""),
+          );
+        }
+      });
     });
   });
 
-  it("User with specific access should only see allowed menu items + check bottom menu is always accessible", () => {
+  it("User with specific access should only see allowed menu items + help is always accessible", () => {
     cy.wrap(accessUrlList).each((access) => {
-      if (access.label !== "Temps moyens" && access.url !== undefined) {
-        // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
-        const pageAccessIds = [access.id + 0.1, access.id + 0.2];
-        const functionAccessIds = [8, 9, 10]; // magistrat, greffier, contractuel
-        const accessIds = [...pageAccessIds, ...functionAccessIds];
-
-        cy.log(`🔄 Testing menu for ${access.label}`);
-
-        updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        });
-
-        cy.wait(3000);
-
-        // Logout and login with new permissions
-        cy.visit('/logout');
-        cy.wait(1000);
-        cy.visit('/connexion');
-        cy.get('input[formcontrolname="email"]').type(user.email);
-        cy.get('input[formcontrolname="password"]').type(user.password);
-        cy.get('input[type="submit"]').click();
-        cy.wait(2000);
-
-        // Visit home to see menu
-        cy.visit("/");
-        cy.wait(1000);
-
-        // Vérifier que le menu contient uniquement l'élément autorisé
-        cy.get("#side-menu-bar .menu-scrollable").within(() => {
-          cy.get(".menu-item").should("contain.text", access.label);
-
-          // Vérifier que les autres éléments ne sont pas visibles
-          cy.wrap(accessUrlList).each((otherAccess) => {
-            if (
-              otherAccess.label !== "Temps moyens" &&
-              otherAccess.label !== undefined &&
-              otherAccess.label !== access.label
-            ) {
-              cy.get(".menu-item").should("not.contain.text", otherAccess.label);
-            }
-          });
-        });
-
-        const toolToNotCheck = ["Référentiels de temps moyens"];
-        if (access.label !== "Ventilateur" && access.label !== "Données d'activité") {
-          toolToNotCheck.push("Les extracteurs");
-        }
-        checkToolsMenu(toolToNotCheck);
-
-        cy.wait(2000);
+      if (access.label === "Temps moyens" || access.url === undefined) {
+        return;
       }
+
+      const pageAccessIds = [access.id + 0.1, access.id + 0.2];
+      const functionAccessIds = [8, 9, 10];
+      const accessIds = [...pageAccessIds, ...functionAccessIds];
+
+      cy.log(`Testing menu for ${access.label}`);
+
+      setPermissionsAndRelogin(accessIds);
+
+      cy.visit(access.url);
+      cy.location("pathname").should("include", access.url);
+
+      cy.get("#side-menu-bar .menu-scrollable .menu-item.top a").should(
+        "contain.text",
+        access.label,
+      );
+
+      cy.wrap(accessUrlList).each((otherAccess) => {
+        if (
+          otherAccess.label === "Temps moyens" ||
+          otherAccess.label === undefined ||
+          otherAccess.label === access.label
+        ) {
+          return;
+        }
+
+        cy.get("#side-menu-bar .menu-scrollable .menu-item.top a").should(
+          "not.contain.text",
+          otherAccess.label,
+        );
+      });
+
+      cy.get(".help-section .help-button").should("exist");
+
+      const toolToNotCheck = ["Référentiels de temps moyens"];
+      if (
+        access.label !== "Ventilateur" &&
+        access.label !== "Données d'activité"
+      ) {
+        toolToNotCheck.push("Les extracteurs");
+      }
+      checkToolsMenu(toolToNotCheck);
     });
   });
 
