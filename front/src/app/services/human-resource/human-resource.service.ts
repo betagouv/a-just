@@ -89,9 +89,16 @@ export class HumanResourceService {
     return this.juridictionGroups().find((g) => g.id === backupId * -1) || null
   })
   /**
-   * La juridiction sélectionnée appartient à un groupe auquel l'utilisateur a un accès complet
+   * Droit d'édition: une juridiction précise (id positif) est toujours éditable,
+   * un arrondissement (id négatif) seulement avec un accès complet au groupe.
    */
-  canEditSelectedJuridiction = computed(() => this.juridictionGroupSelected()?.fullAccess === true && (this.backupIdS() ?? 0) > 0)
+  canEditSelectedJuridiction = computed(() => {
+    const backupId = this.backupIdS() ?? 0
+    if (backupId > 0) {
+      return true
+    }
+    return this.juridictionGroupSelected()?.fullAccess === true
+  })
   /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
