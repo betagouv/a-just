@@ -190,6 +190,10 @@ export class HumanResourceService {
       const current = this.backupIdS()
       const candidate = current ?? this.pendingBackupId
       if (candidate == null) {
+        const fallbackId = backups[0].id
+        if (current !== fallbackId) {
+          this.backupId.next(fallbackId)
+        }
         return
       }
 

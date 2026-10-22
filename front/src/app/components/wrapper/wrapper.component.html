@@ -21,7 +21,7 @@
         <div class="juridiction" [matMenuTriggerFor]="menu">
             <div class="juridiction-title">
                 @if (humanResourceService.workspaceSelected()) {
-                <h6 [title]="humanResourceService.workspaceSelected()?.label">
+                <h6 data-cy="backup-name" [title]="humanResourceService.workspaceSelected()?.label">
                     {{ humanResourceService.workspaceSelected()?.isAdminLocal ? '★ ' : '' }}{{
                     humanResourceService.workspaceSelected()?.label }}
                 </h6>

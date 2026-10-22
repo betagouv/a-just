@@ -346,6 +346,42 @@ function persistBase64WhenReady(
   return loop();
 }
 
+function backupLabelRe(label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`^(★\\s*)?${escaped}$`, "i");
+}
+
+function selectBackup(baseUrl: string, label: string) {
+  const labelRe = backupLabelRe(label);
+
+  cy.get("#side-menu-bar .juridiction", { timeout: 20000 }).should("exist");
+
+  cy.get("body").then(($body) => {
+    const current = (
+      $body.find('#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6').text() || ""
+    ).trim();
+
+    if (labelRe.test(current)) {
+      return;
+    }
+
+    cy.get("#side-menu-bar .juridiction").click({ force: true });
+    cy.contains(
+      ".cdk-overlay-pane .juridiction-item .item-label",
+      labelRe,
+      { timeout: 10000 },
+    ).click({ force: true });
+    cy.location("pathname", { timeout: 20000 }).should("include", "/panorama");
+    cy.visit(`${baseUrl}/dashboard`);
+  });
+
+  cy.get('#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6', {
+    timeout: 20000,
+  }).should(($el) => {
+    expect($el.text().trim()).to.match(labelRe);
+  });
+}
+
 function loginAndOpenDashboard(baseUrl: string) {
   cy.clearAllLocalStorage();
   cy.clearCookies();
@@ -374,17 +410,9 @@ function loginAndOpenDashboard(baseUrl: string) {
       ).click({ force: true });
     }
   });
-  cy.location("pathname", { timeout: 60000 }).should("include", "/panorama");
-  // proceed to dashboard
+  cy.location("pathname", { timeout: 60000 }).should("not.include", "/connexion");
   cy.visit(`${baseUrl}/dashboard`);
-  cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should("exist");
-  cy.contains(
-    'h6, [data-cy="backup-name"]',
-    new RegExp(`^${BACKUP_LABEL}$`, "i"),
-    { timeout: 20000 },
-  )
-    .scrollIntoView()
-    .click({ force: true });
+  selectBackup(baseUrl, BACKUP_LABEL);
 }
 
 function setDatesActivite(startISO: string, stopISO: string, prefix: string) {
@@ -688,14 +716,7 @@ describe("Non-regression des calculs de l'extracteur (données d'activités)", (
     if (!KEEP_ARTIFACTS) cy.task("wipeActiviteArtifacts");
     loginAndOpenDashboard(PR);
     cy.visit(`${PR}/dashboard`);
-    cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should("exist");
-    cy.contains(
-      'h6, [data-cy="backup-name"]',
-      new RegExp(`^${BACKUP_LABEL}$`, "i"),
-      { timeout: 20000 },
-    )
-      .scrollIntoView()
-      .click({ force: true });
+    selectBackup(PR, BACKUP_LABEL);
     setDatesActivite(START, STOP, "pr");
     exportAndPersistActivite(PR, START, STOP, "pr");
   });
@@ -708,14 +729,7 @@ describe("Non-regression des calculs de l'extracteur (données d'activités)", (
       if (!SANDBOX) throw new Error("SANDBOX_FRONT_URL must be provided");
       loginAndOpenDashboard(SANDBOX);
       cy.visit(`${SANDBOX}/dashboard`);
-      cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should("exist");
-      cy.contains(
-        'h6, [data-cy="backup-name"]',
-        new RegExp(`^${BACKUP_LABEL}$`, "i"),
-        { timeout: 20000 },
-      )
-        .scrollIntoView()
-        .click({ force: true });
+      selectBackup(SANDBOX, BACKUP_LABEL);
       setDatesActivite(START, STOP, "sandbox");
       exportAndPersistActivite(SANDBOX, START, STOP, "sandbox");
     });
