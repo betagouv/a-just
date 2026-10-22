@@ -238,7 +238,7 @@ describe("Cockpit", () => {
     cy.get(".footer").should("contain.text", "Personnaliser").click();
 
     cy.get("aj-popup").within(() => {
-      cy.contains("button", "Créer un référentiel").click();
+      cy.contains("button", "Créer mon premier référentiel").click();
     });
 
     cy.location("pathname").should("eq", "/temps-moyens");
