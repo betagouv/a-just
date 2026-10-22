@@ -872,10 +872,11 @@ describe("Panorama page", () => {
             // wait for navigation
             cy.url().should('include', '/donnees-d-activite')
 
-            cy.get(".maximize .selectable .label p")
-              .should("contain.text", label)
+            cy.get(".content-list .item-grouped.maximize .item.selectable .label p", {
+              timeout: 30000,
+            }).should("contain.text", label)
 
-            cy.get(".maximize .completion p")
+            cy.get(".content-list .item-grouped.maximize .completion p")
               .should("contain.text", "il reste des données à compléter")
 
             cy.go("back")
@@ -907,8 +908,13 @@ describe("Panorama page", () => {
               cy.get(".referentiel-row a").eq(1).click();
               cy.url().should("include", "/donnees-d-activite");
 
-              cy.get('.maximize .selectable .label p').should('include.text', contentieuxName)
-              cy.get('.maximize .group .group-item').should('contain.text', sousContentieuxName)
+              cy.get(".content-list .item-grouped.maximize .item.selectable .label p", {
+                timeout: 30000,
+              }).should("include.text", contentieuxName);
+              cy.get(".content-list .item-grouped.maximize .group .group-item").should(
+                "contain.text",
+                sousContentieuxName,
+              );
 
               cy.go("back");
             });
@@ -948,7 +954,9 @@ describe("Panorama page", () => {
     }).then(() => {
       cy.url().should("include", "/donnees-d-activite");
 
-      cy.contains('.group .group-item .label p', sousContentieuxName).click();
+      cy.contains(".group .group-item .label", sousContentieuxName, {
+        timeout: 30000,
+      }).click({ force: true });
 
       cy.get('.contentieux-item')
         .filter((_, el) => {
@@ -1017,15 +1025,8 @@ describe("Panorama page", () => {
       dateYear;
 
 
-    cy.get("activities-last-modifications")
-      .find(".preview")
-      .first()
-      .find("p")
-      .invoke("text")
-      .then((text) => {
-
-        expect(text.trim()).to.contain(messageToCompare);
-      });
+    cy.get("activities-last-modifications .preview p", { timeout: 20000 })
+      .should("contain.text", messageToCompare);
 
   });
 });

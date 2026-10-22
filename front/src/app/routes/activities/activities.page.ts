@@ -400,12 +400,14 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           return
         }
 
+        const { cont } = this.route.snapshot.queryParams
         this.referentiel = referentiels
           .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1 && this.referentielService.idsSoutien.indexOf(r.id) === -1)
           .map((ref) => ({
             ...ref,
             label: referentielMappingName(ref.label),
             activityUpdated: null,
+            showActivityGroup: !!(cont && (+cont === ref.id || (ref.childrens || []).find((c) => c.id === +cont))),
           }))
       }),
     )
@@ -658,10 +660,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
             })
 
             const oldReferentielFinded = oldReferentielSetted.find((i) => i.id === newRef.id)
-            let showActivityGroup = oldReferentielFinded ? oldReferentielFinded.showActivityGroup : false
+            let showActivityGroup = oldReferentielFinded ? !!oldReferentielFinded.showActivityGroup : false
 
             const { cont, selectedEmptyValue } = this.route.snapshot.queryParams
-            if (oldReferentielSetted.length === 0 && cont && (+cont === ref.id || (newRef.childrens || []).find((c) => c.id === +cont))) {
+            const matchesCont = !!(cont && (+cont === ref.id || (newRef.childrens || []).find((c) => c.id === +cont)))
+            if (matchesCont && (!oldReferentielFinded || oldReferentielSetted.length === 0 || oldReferentielFinded.showActivityGroup)) {
               showActivityGroup = true
 
               if (selectedEmptyValue === 'true') {
