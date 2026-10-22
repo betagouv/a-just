@@ -5,7 +5,24 @@ function openActivitiesPage() {
     cy.visit("/donnees-d-activite");
     cy.url().should("include", "/donnees-d-activite");
     cy.get("#side-menu-bar .juridiction", { timeout: 20000 }).should("exist");
-    cy.get(".content-list .item-grouped", { timeout: 30000 }).should("have.length.greaterThan", 0);
+
+    cy.get("body").then(($body) => {
+        if ($body.find(".content-list .item-grouped").length) {
+            return;
+        }
+
+        cy.get("#side-menu-bar .juridiction").click({ force: true });
+        cy.contains(
+            ".cdk-overlay-pane .juridiction-item .item-label",
+            /^(★\s*)?TJ TEST$/i, { timeout: 10000 },
+        ).click({ force: true });
+        cy.visit("/donnees-d-activite");
+    });
+
+    cy.get(".content-list .item-grouped", { timeout: 30000 }).should(
+        "have.length.greaterThan",
+        0,
+    );
 }
 
 describe("Données d'activité", () => {

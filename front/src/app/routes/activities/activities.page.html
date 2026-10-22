@@ -24,10 +24,10 @@
       <!--</ng-template>-->
     </div>
     <div class="content-list">
-      @if (!canEditActivities && !isLoadedFirst) {
+      @if (!isLoadedFirst && !referentiel.length) {
       <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
       }
-      @if (canEditActivities) {
+      @if (referentiel.length) {
       @for (ref of referentiel; track ref.id) {
       <div class="item-grouped" [class.maximize]="ref.showActivityGroup">
         <div class="item"

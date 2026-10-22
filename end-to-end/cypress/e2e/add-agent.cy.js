@@ -208,7 +208,6 @@ describe("Ajout d'un agent", () => {
 
   it("Check 'return' buton works", () => {
     cy.get(".first-row").within(() => {
-      //cy.get('#backButton')
       cy.get("aj-back-button").click();
     });
   });

@@ -363,7 +363,12 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
+          this.activitiesService.hrBackupId = backupId
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
+            if (!lastMonth) {
+              return
+            }
+
             lastMonth = new Date(lastMonth)
             this.dateSelector.value = lastMonth
 
@@ -386,6 +391,22 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           this.activityMonth = a
           this.onLoadMonthActivities()
         }
+      }),
+    )
+
+    this.watch(
+      this.humanResourceService.contentieuxReferentielOnlyFiltered.subscribe((referentiels) => {
+        if (!referentiels.length || this.referentiel.length) {
+          return
+        }
+
+        this.referentiel = referentiels
+          .filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1 && this.referentielService.idsSoutien.indexOf(r.id) === -1)
+          .map((ref) => ({
+            ...ref,
+            label: referentielMappingName(ref.label),
+            activityUpdated: null,
+          }))
       }),
     )
 
