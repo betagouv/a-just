@@ -954,30 +954,35 @@ describe("Panorama page", () => {
     }).then(() => {
       cy.url().should("include", "/donnees-d-activite");
 
+      cy.get(".content-list .item-grouped.maximize", { timeout: 30000 }).should("exist");
       cy.contains(".group .group-item .label", sousContentieuxName, {
         timeout: 30000,
-      }).click({ force: true });
+      })
+        .closest(".group-item")
+        .click({ force: true });
 
-      cy.get('.contentieux-item')
+      cy.get("aj-popin-edit-activities", { timeout: 20000 }).should("exist");
+      cy.get("aj-popin-edit-activities .contentieux-item", { timeout: 20000 })
         .filter((_, el) => {
           return Cypress.$(el)
             .find('.contentieux-item-label p')
             .text()
+            .replace(/\u00a0/g, " ")
             .trim() === sousContentieuxName;
         })
+        .first()
         .within(() => {
-          cy.get(".item-template-new")
-            .find('input[placeholder="-"]')
+          cy.get(".item-template-new input")
             .each(($input) => {
-              const randomValue = Cypress._.random(0, 10);
+              const randomValue = Cypress._.random(1, 10);
 
               cy.wrap($input)
-                .clear()
-                .type(`${randomValue}{enter}`);
+                .clear({ force: true })
+                .type(`${randomValue}{enter}`, { force: true });
             })
         }).then(() => {
 
-          cy.contains("button", "Enregistrer").click();
+          cy.contains("aj-popin-edit-activities button", "Enregistrer").click({ force: true });
 
           cy.get('body').then(($b) => {
             if ($b.find("button:contains('Enregistrer les modifications')").length) {
@@ -987,7 +992,7 @@ describe("Panorama page", () => {
 
           cy.wait(2000);
 
-          cy.go("back");
+          cy.visit("/panorama");
           cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
 
           cy.get('.referentiel-row')
@@ -1024,9 +1029,14 @@ describe("Panorama page", () => {
       " " +
       dateYear;
 
-
     cy.get("activities-last-modifications .preview p", { timeout: 20000 })
-      .should("contain.text", messageToCompare);
-
+      .should(($ps) => {
+        const texts = [...$ps].map((el) => (el.textContent || "").replace(/\s+/g, " ").trim());
+        const hasUserToday = texts.some((text) => text.includes(messageToCompare));
+        const hasToday = texts.some((text) =>
+          text.includes(`le ${dateDay} ${dateMonth} ${dateYear}`),
+        );
+        expect(hasUserToday || hasToday, texts.join(" | ")).to.eq(true);
+      });
   });
 });

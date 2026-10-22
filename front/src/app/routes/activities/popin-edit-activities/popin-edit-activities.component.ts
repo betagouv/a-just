@@ -785,7 +785,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         this.appService.appLoading.next(false)
         this.activityMonth = new Date(date)
         this.checkIfNextMonthHasValue()
-        this.hasValuesToShow = list.list.length !== 0
+        this.hasValuesToShow = list.list.length !== 0 || !!(this.referentiel?.childrens && this.referentiel.childrens.length)
 
         this.cleanAllInputs()
 

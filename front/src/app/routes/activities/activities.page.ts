@@ -978,7 +978,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     ref: ContentieuReferentielActivitiesInterface,
     itemGroup: ContentieuReferentielActivitiesInterface | ContentieuReferentielInterface,
   ) {
-    if (this.humanResourceService.juridictionGroupSelected() != null) {
+    if ((this.humanResourceService.backupIdS() ?? 0) <= 0) {
       return
     }
     this.contentieuxToUpdate = ref
