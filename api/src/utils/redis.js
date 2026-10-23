@@ -254,7 +254,8 @@ const activityBackupId = (activity) => activity?.backupId ?? activity?.backup?.i
 
 /**
  * Agents rattachés à une autre juridiction, mais ventilés sur les backups demandés.
- * Seules les activités de ces backups sont conservées.
+ * Dès qu'un agent est retenu, toute sa ventilation est renvoyée, y compris les
+ * activités dont le backup n'est pas dans les filtres.
  * @param {number[]} backupIds
  * @param {*} models
  * @param {*} userId
@@ -301,12 +302,7 @@ export const loadHrWithActivityOnBackups = async (backupIds, models, userId, dat
         continue
       }
 
-      const clone = cloneDeep(person)
-      clone.situations = (clone.situations || []).map((situation) => ({
-        ...situation,
-        activities: (situation.activities || []).filter((activity) => selectedBackupIds.has(Number(activityBackupId(activity)))),
-      }))
-      extra.push(clone)
+      extra.push(cloneDeep(person))
     }
   }
 
