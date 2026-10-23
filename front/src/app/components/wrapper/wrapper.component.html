@@ -33,6 +33,7 @@
             <mat-menu #menu="matMenu" class="juridiction-menu juridiction-menu-root" [overlapTrigger]="true">
                 @if(humanResourceService.juridictionGroups().length > 1) {
                 @for (group of humanResourceService.juridictionGroups(); track group.id) {
+                @if(group.backups && group.backups.length > 1) {
                 <button mat-menu-item class="juridiction-item"
                     [class.current]="-1 * (group.id ?? 0) === hrBackupId || ((group.backups || []).some(bu => bu.id === hrBackupId))"
                     [matMenuTriggerFor]="groupMenu" #groupTrigger="matMenuTrigger" [title]="arrondissementLabel(group)">
@@ -55,6 +56,14 @@
                     </button>
                     }
                 </mat-menu>
+                }
+                @else if(group.backups && group.backups.length === 1) {
+                <button mat-menu-item class="juridiction-item" [class.current]="group.backups[0].id === hrBackupId"
+                    (click)="onChangeHRBackup(group.backups[0].id)" [title]="group.backups[0].label">
+                    <span class="item-label">{{ group.backups[0].isAdminLocal ? '★ ' : '' }}{{ group.backups[0].label
+                        }}</span>
+                </button>
+                }
                 }
                 @for (bu of humanResourceService.backupsWithoutGroup(); track bu.id) {
                 <button mat-menu-item class="juridiction-item" [class.current]="bu.id === hrBackupId"
