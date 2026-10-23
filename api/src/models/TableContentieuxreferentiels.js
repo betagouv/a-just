@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 import {
   filterReferentielsByVisibility,
   normalizeReferentielVisibility,
+  REFERENTIEL_VISIBILITY_EXTRACTOR,
   referentielCAMappingIndex,
   referentielMappingIndex,
 } from '../constants/referentiel'
@@ -213,12 +214,14 @@ export default (sequelizeInstance, Model) => {
               logging: false,
             })
             if (!findInDb) {
+              const visibleIn = extract.extractorOnly ? [REFERENTIEL_VISIBILITY_EXTRACTOR] : undefined
               const newToDb = await Model.create(
                 {
                   label: extract.label,
                   code_import: extract.code,
                   parent_id: parentId,
                   category: extract.code.startsWith(isTj() ? '12.' : '14.') && extract.code.length > 3 ? ref['niveau_' + (i + 1)] : null,
+                  ...(visibleIn ? { visible_in: visibleIn } : {}),
                 },
                 {
                   logging: false,
@@ -230,6 +233,7 @@ export default (sequelizeInstance, Model) => {
                 type: 'CREATE',
                 id: newToDb.dataValues.id,
                 label: extract.label,
+                ...(visibleIn ? { visibleIn } : {}),
               })
             } else {
               if (extract.code.startsWith(isTj() ? '12.' : '14.') && extract.code.length > 3 && findInDb.dataValues.category !== ref['niveau_' + (i + 1)]) {
@@ -253,6 +257,24 @@ export default (sequelizeInstance, Model) => {
 
                 // update only one time
                 await findInDb.update({ label: extract.label })
+              }
+
+              if (extract.extractorOnly) {
+                const currentVisibility = findInDb.dataValues.visible_in
+                const alreadyExtractorOnly =
+                  Array.isArray(currentVisibility) &&
+                  currentVisibility.length === 1 &&
+                  currentVisibility[0] === REFERENTIEL_VISIBILITY_EXTRACTOR
+                if (!alreadyExtractorOnly) {
+                  const visibleIn = [REFERENTIEL_VISIBILITY_EXTRACTOR]
+                  await findInDb.update({ visible_in: visibleIn })
+                  deltaToUpdate.push({
+                    type: 'UPDATE',
+                    oldVisibleIn: currentVisibility ?? null,
+                    id: findInDb.dataValues.id,
+                    visibleIn,
+                  })
+                }
               }
               parentId = findInDb.dataValues.id
             }
@@ -282,7 +304,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const humanList = []
-    const idNacFinded = deltaToUpdate.map((d) => d.id)
+    const idNacFinded = deltaToUpdate.filter((d) => d.type !== 'UPDATE' || d.visibleIn === undefined).map((d) => d.id)
     const humanFromDB = await Model.models.HumanResources.findAll({
       raw: true,
     })
