@@ -932,6 +932,7 @@ describe("Panorama page", () => {
 
     let sousContentieuxName = "";
     let savedMonth = null;
+    let savedCont = null;
 
     cy.get(".referentiel-row").first().within(() => {
 
@@ -944,10 +945,13 @@ describe("Panorama page", () => {
         .eq(1)
         .invoke("attr", "href")
         .then((href) => {
-          const m = href && href.match(/month=([^&]+)/);
-          savedMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
+          const monthMatch = href && href.match(/[?&]month=([^&]+)/);
+          const contMatch = href && href.match(/[?&]cont=([^&]+)/);
+          savedMonth = monthMatch && monthMatch[1] ? decodeURIComponent(monthMatch[1]) : null;
+          savedCont = contMatch && contMatch[1] ? decodeURIComponent(contMatch[1]) : null;
 
           cy.log("Saved month ", savedMonth);
+          cy.log("Saved cont ", savedCont);
 
           cy.get("a").eq(1).click();
         });
@@ -983,27 +987,31 @@ describe("Panorama page", () => {
         }).then(() => {
 
           cy.contains("aj-popin-edit-activities button", "Enregistrer").click({ force: true });
+          cy.contains("button", "Enregistrer les modifications", { timeout: 15000 }).click({ force: true });
+          cy.get("aj-popin-edit-activities", { timeout: 20000 }).should("not.exist");
 
-          cy.get('body').then(($b) => {
-            if ($b.find("button:contains('Enregistrer les modifications')").length) {
-              cy.contains('button', 'Enregistrer les modifications').click({ force: true });
-            }
-          });
-
-          cy.wait(2000);
-
+          cy.intercept("POST", "**/activities/get-not-complete-activities").as("notCompleteActivities");
           cy.visit("/panorama");
+          cy.wait("@notCompleteActivities");
           cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
+          cy.wait("@notCompleteActivities");
 
-          cy.get('.referentiel-row')
-            .first()
-            .within(() => {
-              cy.get('a').eq(1).invoke('attr', 'href').then((href) => {
-                const m = href && href.match(/month=([^&]+)/);
-                const newMonth = m && m[1] ? decodeURIComponent(m[1]) : null;
-                expect(newMonth).to.not.equal(savedMonth);
-              });
+          cy.get("body").then(($body) => {
+            const stillListedForSavedMonth = [...$body.find(".referentiel-row a")].some((el) => {
+              const href = el.getAttribute("href") || "";
+              const monthMatch = href.match(/[?&]month=([^&]+)/);
+              const contMatch = href.match(/[?&]cont=([^&]+)/);
+              const month = monthMatch && monthMatch[1] ? decodeURIComponent(monthMatch[1]) : null;
+              const cont = contMatch && contMatch[1] ? decodeURIComponent(contMatch[1]) : null;
+
+              return String(cont) === String(savedCont) && month === savedMonth;
             });
+
+            expect(
+              stillListedForSavedMonth,
+              `sous-contentieux ${sousContentieuxName} (cont=${savedCont}) should no longer be listed as incomplete for ${savedMonth}`,
+            ).to.eq(false);
+          });
         });
     });
   });
