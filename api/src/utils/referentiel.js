@@ -119,18 +119,26 @@ export function getIdsIndispo(list) {
   return idsIndispo
 }
 
+/** Préfixe de label qui limite la visibilité du contentieux à l'extracteur. */
+const EXTRACTOR_ONLY_LABEL_PREFIX = '100.'
+
 /**
- * Extraction des codes contenus dans un label
+ * Extraction des codes contenus dans un label.
+ * Un préfixe « 100. » placé avant le code d'import n'est pas conservé dans le code :
+ * il indique une visibilité limitée à l'extracteur.
  * @param {*} label
  * @returns
  */
 export function extractCodeFromLabelImported(label) {
+  const extractorOnly = typeof label === 'string' && label.startsWith(EXTRACTOR_ONLY_LABEL_PREFIX)
+  const value = extractorOnly ? label.slice(EXTRACTOR_ONLY_LABEL_PREFIX.length).trimStart() : label
   const regex = new RegExp('([0-9.]*)(.*)')
-  const regexExec = regex.exec(label)
+  const regexExec = regex.exec(value)
   if (regexExec) {
     return {
       code: regexExec[1],
       label: (regexExec[2] + '').trim(),
+      extractorOnly,
     }
   }
 
