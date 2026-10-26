@@ -225,10 +225,7 @@ describe("Cockpit", () => {
   });
 
   it("Comparateur | Check that I can create a custom comparison referentiel", () => {
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - 5);
-    const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() - 1);
+    const referentielName = `Comparateur ${Date.now()}`;
 
     cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
@@ -238,13 +235,13 @@ describe("Cockpit", () => {
     cy.get(".footer").should("contain.text", "Personnaliser").click();
 
     cy.get("aj-popup").within(() => {
-      cy.contains("button", "Créer mon premier référentiel").click();
+      cy.contains("button", /Créer (mon premier|un) référentiel/).click();
     });
 
     cy.location("pathname").should("eq", "/temps-moyens");
 
     cy.get("aj-popup").within(() => {
-      cy.get("textarea").type("Test comparateur referentiel");
+      cy.get("textarea").type(referentielName);
 
       cy.get(".container");
       cy.get(".left").should("contain.text", "Siège");
@@ -274,9 +271,19 @@ describe("Cockpit", () => {
       cy.get("body").click(0, 0);
     });
 
+    cy.intercept("POST", "**/contentieux-options/save-backup").as("saveComparisonReferentiel");
     cy.get("aj-options-backup-panel").contains("button", "Enregistrer").click();
 
-    cy.get("aj-popup").within(() => {
+    // The confirmation popup opens before the save completes. Wait until the
+    // unsaved-changes guard allows navigation before clicking Poursuivre.
+    cy.wait("@saveComparisonReferentiel", { timeout: 60000 })
+      .its("response.statusCode")
+      .should("eq", 200);
+    cy.get("aj-options-backup-panel")
+      .contains("button", "Enregistrer")
+      .should("be.disabled");
+
+    cy.get("aj-popup.comparaison").should("be.visible").within(() => {
       cy.get(".content").should(
         "contain.text",
         "Votre référentiel est bien enregistré !"
@@ -290,23 +297,21 @@ describe("Cockpit", () => {
 
     cy.get("aj-popup").within(() => {
       cy.get(".ref-list")
-        .contains("label", "Test comparateur referentiel")
+        .contains("label", referentielName)
         .click();
       cy.get(".actions .save").click();
     });
 
-    cy.wait(2000);
-
-    cy.get(".filters-item").contains("label", "Test comparateur referentiel");
+    cy.get(".filters-item").contains("label", referentielName).should("be.visible");
 
     cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
     });
 
-    cy.get(".drop-down").should("be.visible").contains("Test comparateur");
-    // .parent('.item')
-    // .within(() => {
-    //   cy.get('.radio').should('have.class', 'filled')
-    // })
+    cy.get(".drop-down")
+      .should("be.visible")
+      .contains(".item", referentielName)
+      .find(".radio")
+      .should("have.class", "filled");
   });
 });
