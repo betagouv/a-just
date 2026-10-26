@@ -986,17 +986,27 @@ describe("Panorama page", () => {
             })
         }).then(() => {
 
-          cy.contains("aj-popin-edit-activities button", "Enregistrer").click({ force: true });
-          cy.contains("button", "Enregistrer les modifications", { timeout: 15000 }).click({ force: true });
+          cy.intercept("POST", "**/activities/update-by").as("saveActivities");
+          // Match the save-and-close button, not "Enregistrer puis mois précédent/suivant".
+          cy.contains("aj-popin-edit-activities .bottom-popin button", /^\s*Enregistrer\s*$/)
+            .should("be.enabled")
+            .click();
+          cy.contains("aj-alert button", /^\s*Enregistrer les modifications\s*$/, { timeout: 15000 })
+            .click();
+          cy.wait("@saveActivities", { timeout: 60000 }).then(({ request, response }) => {
+            expect(response.statusCode).to.eq(200);
+            expect(request.body.contentieuxId).to.eq(Number(savedCont));
+          });
+          // The editor emits onClose after all activity updates have finished.
           cy.get("aj-popin-edit-activities", { timeout: 20000 }).should("not.exist");
 
           cy.intercept("POST", "**/activities/get-not-complete-activities").as("notCompleteActivities");
           cy.visit("/panorama");
-          cy.wait("@notCompleteActivities");
+          cy.wait("@notCompleteActivities").its("response.statusCode").should("eq", 200);
           cy.contains(".tags span", "Les 12 derniers mois disponibles").click();
-          cy.wait("@notCompleteActivities");
+          cy.wait("@notCompleteActivities").its("response.statusCode").should("eq", 200);
 
-          cy.get("body").then(($body) => {
+          cy.get("body").should(($body) => {
             const stillListedForSavedMonth = [...$body.find(".referentiel-row a")].some((el) => {
               const href = el.getAttribute("href") || "";
               const monthMatch = href.match(/[?&]month=([^&]+)/);
