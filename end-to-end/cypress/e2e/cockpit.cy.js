@@ -283,11 +283,9 @@ describe("Cockpit", () => {
       .contains("button", "Enregistrer")
       .should("be.disabled");
 
-    cy.get("aj-popup.comparaison").should("be.visible").within(() => {
-      cy.get(".content").should(
-        "contain.text",
-        "Votre référentiel est bien enregistré !"
-      );
+    // The fixed-position dialog is visible even when its Angular host has no height.
+    cy.get("aj-popup.comparaison .popup").should("be.visible").within(() => {
+      cy.contains("p", "Votre référentiel est bien enregistré !").should("be.visible");
       cy.contains("button", "Poursuivre").click();
     });
 
