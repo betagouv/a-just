@@ -226,6 +226,7 @@ describe("Cockpit", () => {
 
   it("Comparateur | Check that I can create a custom comparison referentiel", () => {
     const referentielName = `Comparateur ${Date.now()}`;
+    let referentielId;
 
     cy.get(".header .actions").within(() => {
       cy.get("button").first().click();
@@ -272,16 +273,28 @@ describe("Cockpit", () => {
     });
 
     cy.intercept("POST", "**/contentieux-options/save-backup").as("saveComparisonReferentiel");
+    cy.intercept("POST", "**/contentieux-options/get-all").as("refreshComparisonReferentiels");
     cy.get("aj-options-backup-panel").contains("button", "Enregistrer").click();
 
     // The confirmation popup opens before the save completes. Wait until the
     // unsaved-changes guard allows navigation before clicking Poursuivre.
-    cy.wait("@saveComparisonReferentiel", { timeout: 60000 })
-      .its("response.statusCode")
-      .should("eq", 200);
+    cy.wait("@saveComparisonReferentiel", { timeout: 60000 }).then(({ response }) => {
+      expect(response.statusCode).to.eq(200);
+      referentielId = response.body.data;
+      expect(referentielId).to.be.a("number").and.be.greaterThan(0);
+    });
+    // Refresh the saved references before the cockpit builds its selection list.
+    cy.wait("@refreshComparisonReferentiels", { timeout: 60000 }).then(({ response }) => {
+      expect(response.statusCode).to.eq(200);
+      const savedReferentiel = response.body.data.backups.find((backup) => backup.id === referentielId);
+      expect(savedReferentiel, "The saved reference must be available for comparison")
+        .to.include({ id: referentielId, label: referentielName });
+    });
     cy.get("aj-options-backup-panel")
       .contains("button", "Enregistrer")
       .should("be.disabled");
+
+    cy.intercept("POST", "**/calculator/filter-list").as("loadCockpitForComparison");
 
     // The fixed-position dialog is visible even when its Angular host has no height.
     cy.get("aj-popup.comparaison .popup").should("be.visible").within(() => {
@@ -290,16 +303,36 @@ describe("Cockpit", () => {
     });
 
     cy.location("pathname", { timeout: 60000 }).should("include", "/cockpit");
+    // The popup can open before the cockpit starts loading. Comparing while
+    // isLoading is true is ignored, so wait for the actual request and UI update.
+    cy.wait("@loadCockpitForComparison", { timeout: 60000 })
+      .its("response.statusCode")
+      .should("eq", 200);
+    cy.get("aj-wrapper .progress-bar", { timeout: 20000 }).should("not.exist");
     cy.get("aj-big-loader", { timeout: 20000 }).should("not.exist");
 
-
-    cy.get("aj-popup").within(() => {
-      cy.get(".ref-list")
-        .contains("label", referentielName)
-        .click();
-      cy.get(".actions .save").click();
+    cy.intercept("POST", "**/hr-backup-settings/add-or-update").as("saveCockpitComparison");
+    cy.then(() => {
+      cy.intercept("GET", `**/contentieux-options/get-backup-details/${referentielId}`)
+        .as("loadComparisonReferentiel");
     });
 
+    cy.get("aj-popup.width-575-custom").within(() => {
+      cy.contains(".ref-list .line-item", referentielName).click();
+      cy.contains(".ref-list .line-item", referentielName).should("have.class", "selected");
+      cy.get(".second-section").should("have.class", "selected");
+      cy.contains(".actions .save", "Comparer").click();
+    });
+
+    cy.wait("@saveCockpitComparison", { timeout: 60000 }).then(({ request, response }) => {
+      expect(response.statusCode).to.eq(200);
+      expect(request.body.label).to.eq(referentielName);
+      expect(request.body.datas.referentielId).to.eq(referentielId);
+    });
+    cy.wait("@loadComparisonReferentiel", { timeout: 60000 })
+      .its("response.statusCode")
+      .should("eq", 200);
+    cy.get("aj-popup.width-575-custom").should("not.exist");
     cy.get(".filters-item").contains("label", referentielName).should("be.visible");
 
     cy.get(".header .actions").within(() => {
