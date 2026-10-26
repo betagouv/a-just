@@ -8,7 +8,7 @@ module.exports = function (datas) {
   let current_hr = null
 
   const normalizeActivities = (activities) => activities
-    .map(({ id, updated_at, ...activity }) => activity)
+    .map(({ percent, contentieux }) => ({ percent, contentieux }))
     .sort((left, right) => left.contentieux.id - right.contentieux.id)
 
   describe('Change User data test', () => {
@@ -161,6 +161,8 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
+      assert.strictEqual(response.status, 200, JSON.stringify(response.data))
+
       const tmp_activities = normalizeActivities(response.data.data.situations[0].activities)
       const tmp_category = response.data.data.situations[0].category
       const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
@@ -171,12 +173,11 @@ module.exports = function (datas) {
       hrSituationId.push(response.data.data.situations[0].id)
       current_hr = response.data.data
 
-      assert.strictEqual(response.status, 200)
-      assert.deepEqual(expectedActivities, tmp_activities)
-      assert.deepEqual(category, tmp_category)
-      assert.deepEqual(dateStart, tmp_dateStart)
-      assert.strictEqual(etp, tmp_etp)
-      assert.deepEqual(fonction, tmp_fonction)
+      assert.deepEqual(tmp_activities, expectedActivities)
+      assert.deepEqual(tmp_category, category)
+      assert.deepEqual(tmp_dateStart, dateStart)
+      assert.strictEqual(tmp_etp, etp)
+      assert.deepEqual(tmp_fonction, fonction)
     })
 
     /**
@@ -228,9 +229,13 @@ module.exports = function (datas) {
         backupId: hr.backupId,
       })
 
+      assert.strictEqual(response.status, 200, JSON.stringify(response.data))
+      assert.strictEqual(response.data.data.situations.length, 2)
+
       const newSituation = response.data.data.situations.find((situation) => (
         normalizeDate(new Date(situation.dateStart)).getTime() === dateStart.getTime()
       ))
+      assert.isDefined(newSituation, 'The response must include the newly added situation')
 
       const tmp_activities = normalizeActivities(newSituation.activities)
       const tmp_category = newSituation.category
@@ -241,14 +246,11 @@ module.exports = function (datas) {
 
       hrSituationId.push(newSituation.id)
       current_hr = response.data.data
-      assert.strictEqual(response.status, 200)
-      assert.strictEqual(response.data.data.situations.length, 2)
-      assert.isDefined(newSituation)
-      assert.sameDeepMembers(expectedActivities, tmp_activities)
-      assert.deepEqual(category, tmp_category)
-      assert.deepEqual(dateStart, tmp_dateStart)
-      assert.strictEqual(etp, tmp_etp)
-      assert.deepEqual(fonction, tmp_fonction)
+      assert.sameDeepMembers(tmp_activities, expectedActivities)
+      assert.deepEqual(tmp_category, category)
+      assert.deepEqual(tmp_dateStart, dateStart)
+      assert.strictEqual(tmp_etp, etp)
+      assert.deepEqual(tmp_fonction, fonction)
     })
 
     /**

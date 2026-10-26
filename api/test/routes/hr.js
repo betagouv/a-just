@@ -87,7 +87,7 @@ export const onFilterListHRApi = async ({ userToken, backupId, contentieuxIds, c
     .post(
       'human-resources/filter-list',
       {
-        backupId,
+        workspaceId: backupId,
         categoriesIds,
         contentieuxIds,
         date,

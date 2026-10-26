@@ -20,7 +20,9 @@ module.exports = function (datas) {
         date: new Date(),
         categoriesIds: [MAGISTART_ID, GREFFIER_ID, EAM_ID],
       })
+      assert.strictEqual(response.status, 200, JSON.stringify(response.data))
       const list = response.data.data.list
+      assert.isArray(list)
 
       for (let i = 0; i < list.length; i++) {
         list[i].referentiel.map((elem) => {
@@ -33,7 +35,6 @@ module.exports = function (datas) {
         if (res.length > 1)
           assert.fail()
       })
-      assert.strictEqual(response.status, 200)
     })
   })
 }
