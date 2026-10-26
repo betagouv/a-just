@@ -119,7 +119,7 @@ export default (sequelizeInstance, Model) => {
       }))
     }
 
-    return null
+    return []
   }
 
   /**
