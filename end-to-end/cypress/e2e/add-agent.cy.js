@@ -264,12 +264,14 @@ describe("Ajout d'un agent", () => {
 
     cy.wait("@saveAgent", { timeout: 60000 }).then(({ request, response }) => {
       expect(response.statusCode).to.eq(200);
-      expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
+      expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
       expect(request.body.hr.situations).to.be.an("array").and.not.be.empty;
     });
     cy.wait("@reloadAgent", { timeout: 60000 })
-      .its("response.statusCode")
-      .should("eq", 200);
+      .then(({ response }) => {
+        expect(response.statusCode).to.eq(200);
+        expectSavedDate(response.body.data.dateStart, arrivalDate, "reloaded arrival date");
+      });
     cy.get(".sticky-action-footer").should("not.exist");
     cy.get("aj-popup .popup").should("not.exist");
   });

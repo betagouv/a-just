@@ -587,13 +587,14 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.updateHR = async (hr, backupId) => {
+    // Sequelize ignore les champs undefined ; null permet toujours de vider un champ explicitement.
     const options = {
-      first_name: hr.firstName || null,
-      last_name: hr.lastName || null,
-      matricule: hr.matricule || null,
+      first_name: hr.firstName === undefined ? undefined : hr.firstName || null,
+      last_name: hr.lastName === undefined ? undefined : hr.lastName || null,
+      matricule: hr.matricule === undefined ? undefined : hr.matricule || null,
       registrationId: hr.registration_number || null,
-      date_entree: hr.dateStart || null,
-      date_sortie: hr.dateEnd || null,
+      date_entree: hr.dateStart === undefined ? undefined : hr.dateStart || null,
+      date_sortie: hr.dateEnd === undefined ? undefined : hr.dateEnd || null,
       backup_id: backupId,
       updated_at: new Date(),
     }
@@ -608,9 +609,13 @@ export default (sequelizeInstance, Model) => {
     }
 
     console.log('fx updateHR', hr.situations)
-    await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+    if (hr.situations !== undefined) {
+      await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
+    }
     await Model.models.HRBackups.updateById(backupId, { updated_at: new Date() })
-    await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
+    if (hr.indisponibilities !== undefined) {
+      await Model.models.HRIndisponibilities.syncIndisponibilites(hr.indisponibilities || [], hr.id)
+    }
 
     const newHr = await Model.getHr(hr.id)
     return newHr

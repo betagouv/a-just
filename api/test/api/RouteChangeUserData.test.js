@@ -74,6 +74,26 @@ module.exports = function (datas) {
       assert.strictEqual(firstName, tmp_firstName)
       assert.strictEqual(lastName, tmp_lastName)
       assert.strictEqual(matricule, tmp_matricule)
+      assert.strictEqual(current_hr.dateStart, hr.dateStart.toISOString())
+    })
+
+    it('Save arrival date without resubmitting identity fields', async () => {
+      const previousHr = current_hr
+      const dateStart = new Date(previousHr.dateStart)
+      dateStart.setDate(dateStart.getDate() - 1)
+
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: { id: hrId, dateStart },
+        backupId: previousHr.backupId,
+      })
+
+      assert.strictEqual(response.status, 200)
+      current_hr = response.data.data
+      assert.strictEqual(current_hr.dateStart, dateStart.toISOString())
+      assert.strictEqual(current_hr.firstName, previousHr.firstName)
+      assert.strictEqual(current_hr.lastName, previousHr.lastName)
+      assert.strictEqual(current_hr.matricule, previousHr.matricule)
     })
 
     /**
@@ -303,6 +323,24 @@ module.exports = function (datas) {
       assert.strictEqual(percent, tmp_percent);
     })
 
+    it('Keep arrival date, situations and unavailabilities when autosaving matricule', async () => {
+      const previousHr = current_hr
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: { id: hrId, matricule: '654321' },
+        backupId: previousHr.backupId,
+      })
+
+      assert.strictEqual(response.status, 200)
+      current_hr = response.data.data
+      assert.strictEqual(current_hr.matricule, '654321')
+      assert.strictEqual(current_hr.dateStart, previousHr.dateStart)
+      assert.strictEqual(current_hr.firstName, previousHr.firstName)
+      assert.strictEqual(current_hr.lastName, previousHr.lastName)
+      assert.deepEqual(current_hr.situations, previousHr.situations)
+      assert.deepEqual(current_hr.indisponibilities, previousHr.indisponibilities)
+    })
+
     /**
      * Correction d'une situation pour l'agent - Changement de la fonction de l'agent
      */
@@ -414,24 +452,44 @@ module.exports = function (datas) {
      * Ajout d'une date de départ à l'agent
      */
     it('Add an End Date to newly created agent', async () => {
+      const previousHr = current_hr
       let dateEnd = new Date(current_hr.dateStart)
       dateEnd.setDate(dateEnd.getDate() + 20)
 
       const hr = {
-        ...current_hr,
+        id: hrId,
         dateEnd,
       }
 
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: hr.backupId,
+        backupId: previousHr.backupId,
       })
       const responseDateEnd = new Date(response.data.data.dateEnd)
 
       current_hr = response.data.data
       assert.strictEqual(response.status, 200)
       assert.deepEqual(responseDateEnd, dateEnd)
+      assert.strictEqual(current_hr.dateStart, previousHr.dateStart)
+      assert.deepEqual(current_hr.situations, previousHr.situations)
+      assert.deepEqual(current_hr.indisponibilities, previousHr.indisponibilities)
+    })
+
+    it('Clear departure date explicitly without clearing arrival date', async () => {
+      const previousHr = current_hr
+      const response = await onUpdateHrApi({
+        userToken: datas.adminToken,
+        hr: { id: hrId, dateEnd: null },
+        backupId: previousHr.backupId,
+      })
+
+      assert.strictEqual(response.status, 200)
+      current_hr = response.data.data
+      assert.isNull(current_hr.dateEnd)
+      assert.strictEqual(current_hr.dateStart, previousHr.dateStart)
+      assert.deepEqual(current_hr.situations, previousHr.situations)
+      assert.deepEqual(current_hr.indisponibilities, previousHr.indisponibilities)
     })
 
     /**

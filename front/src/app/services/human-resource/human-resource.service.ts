@@ -527,11 +527,12 @@ export class HumanResourceService {
    * @returns
    */
   async updatePersonById(orignalObject: HumanResourceInterface, params: Object): Promise<HumanResourceInterface | null> {
-    orignalObject = {
-      ...orignalObject,
+    // Un autosave ne doit pas renvoyer les champs non modifiés d'une ancienne copie de la fiche.
+    const hr = {
+      ...(orignalObject.id && orignalObject.id > 0 ? { id: orignalObject.id } : orignalObject),
       ...params,
     }
-    return await this.updateRemoteHR(orignalObject)
+    return await this.updateRemoteHR(hr)
   }
 
   /**
