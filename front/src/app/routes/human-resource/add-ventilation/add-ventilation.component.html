@@ -254,7 +254,7 @@
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
           [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit" [showSubBackups]="false"
           [filterBackupId]="backupIdSelected()" (activitiesChange)="onActivitiesChange($event)"
-          [forceErrorOnEditElement]="backupIdSelected() === null ? 'Vous ne pouvez pas modifier la ventilation si vous avez sélectionné un arrondissement' : null"></panel-activities>
+          [forceErrorOnEditElement]="humanResourceService.juridictionGroupSelected() && backupIdSelected() === null ? 'Vous ne pouvez pas modifier la ventilation si vous avez sélectionné un arrondissement' : null"></panel-activities>
       </div>
       <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"

@@ -158,7 +158,6 @@ describe("Ajout d'un agent", () => {
   //   cy.verifyDownload('Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx', { timeout: 40000 })
   // })
 
-  // NEW
   it("Add activities", () => {
     cy.window().then((win) => {
       cy.stub(win, "prompt")
@@ -169,13 +168,18 @@ describe("Ajout d'un agent", () => {
         .as("activityPercentage");
     });
 
-    // Allocation edits require a jurisdiction, not the Arrondissement overview.
-    cy.get(
-      'add-ventilation .arrondissement-header[data-backup-id]:not([data-backup-id=""])'
-    )
-      .first()
-      .click()
-      .should("have.class", "selected");
+    // Only grouped jurisdictions have an Arrondissement overview to leave.
+    cy.get("add-ventilation .activities-panel").should("exist");
+    cy.get("add-ventilation").then(($form) => {
+      if ($form.find(".arrondissement-header-container").length) {
+        cy.get(
+          'add-ventilation .arrondissement-header[data-backup-id]:not([data-backup-id=""])'
+        )
+          .first()
+          .click()
+          .should("have.class", "selected");
+      }
+    });
 
     for (let i = 0; i < 4; i++) {
       cy.get("add-ventilation .activities-panel > .sub-item")
@@ -194,37 +198,6 @@ describe("Ajout d'un agent", () => {
       .invoke("text")
       .should("match", /:\s*100\s*%/);
   });
-
-  // OLD
-  // it("Add activities", () => {
-  //   cy.window().then((win) => {
-  //     cy.stub(win, "prompt").callsFake((message) => {
-  //       expect(message).to.equal("Nouveau pourcentage ?");
-  //       return "25";
-  //     });
-  //   });
-
-  //   const integers = [];
-  //   let randInt = Math.floor(Math.random() * 11);
-  //   cy.get("panel-activities");
-
-  //   for (let i = 0; i < 4; i++) {
-  //     while (integers.includes(randInt))
-  //       randInt = Math.floor(Math.random() * 11);
-  //     integers.push(randInt);
-
-  //     let pos = integers[integers.length - 1];
-
-  //     cy.get(".activities-panel").within(() => {
-  //       cy.get(".sub-item").eq(pos).click();
-  //     });
-  //     cy.get(".sub-panel-activites")
-  //       .get(".group-sub-item")
-  //       .within(() => {
-  //         cy.get(".sub-item").eq(0).click();
-  //       });
-  //   }
-  // });
 
   it("Check if we can add a start date to the situation", () => {
     cy.get(".bottom-container")
@@ -278,7 +251,6 @@ describe("Ajout d'un agent", () => {
     cy.get("aj-big-loader").should("not.exist");
   });
 
-  // NEW
   it("Register new agent and his activities", () => {
     cy.intercept("POST", "**/human-resources/update-hr").as("saveAgent");
     cy.intercept("GET", "**/human-resources/read-hr/*").as("reloadAgent");
@@ -301,13 +273,6 @@ describe("Ajout d'un agent", () => {
     cy.get(".sticky-action-footer").should("not.exist");
     cy.get("aj-popup .popup").should("not.exist");
   });
-
-  // OLD
-  // it("Register new agent and his activities", () => {
-  //   cy.get(".sticky-action-footer").within(() => {
-  //     cy.get("button").eq(1).click();
-  //   });
-  // });
 
   it("Check 'return' button works", () => {
     cy.contains(".first-row aj-back-button a", /^\s*Retour\s*$/).click();
