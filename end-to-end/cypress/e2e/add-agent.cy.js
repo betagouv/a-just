@@ -9,8 +9,23 @@ const toInputDate = (d) =>
     "0"
   )}${d.getFullYear()}`;
 
+const toMaskedDate = (date) =>
+  toInputDate(date).replace(/^(\d{2})(\d{2})(\d{4})$/, "$1/$2/$3");
+
+const expectSavedDate = (value, expectedDate, label) => {
+  expect(value, label).to.be.a("string").and.not.be.empty;
+  expect(toInputDate(new Date(value)), label).to.eq(toInputDate(expectedDate));
+};
+
 describe("Ajout d'un agent", () => {
+  let arrivalDate;
+  let leavingDate;
+
   before(() => {
+    leavingDate = new Date();
+    arrivalDate = new Date(leavingDate);
+    arrivalDate.setMonth(arrivalDate.getMonth() - 3);
+
     cy.login();
     cy.visit("/ventilations");
   });
@@ -46,28 +61,46 @@ describe("Ajout d'un agent", () => {
   });
 
   it("Select incoming date", () => {
-    const now = new Date();
-    const date = new Date(now.setMonth(now.getMonth() - 3));
+    cy.intercept("POST", "**/human-resources/update-hr").as("saveArrivalDate");
 
-    cy.get(".dates")
+    cy.get("cover-profil-details .dates")
       .find("aj-date-select")
       .first()
       .find("input.manual-input")
       .clear()
-      .type(toInputDate(date))
+      .type(toInputDate(arrivalDate))
+      .should("have.value", toMaskedDate(arrivalDate))
       .blur();
+
+    cy.wait("@saveArrivalDate", { timeout: 60000 }).then(({ request, response }) => {
+      expect(response.statusCode).to.eq(200);
+      expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
+      expectSavedDate(response.body.data.dateStart, arrivalDate, "saved arrival date");
+    });
+    cy.get("cover-profil-details .dates aj-date-select")
+      .first()
+      .find("input.manual-input")
+      .should("not.have.value", "");
   });
 
   it("Select leaving date", () => {
-    const date = new Date();
+    cy.intercept("POST", "**/human-resources/update-hr").as("saveLeavingDate");
 
-    cy.get(".dates")
+    cy.get("cover-profil-details .dates")
       .find("aj-date-select")
       .eq(1)
       .find("input.manual-input")
       .clear()
-      .type(toInputDate(date))
+      .type(toInputDate(leavingDate))
+      .should("have.value", toMaskedDate(leavingDate))
       .blur();
+
+    cy.wait("@saveLeavingDate", { timeout: 60000 }).then(({ request, response }) => {
+      expect(response.statusCode).to.eq(200);
+      expectSavedDate(request.body.hr.dateEnd, leavingDate, "submitted leaving date");
+      expectSavedDate(response.body.data.dateEnd, leavingDate, "saved leaving date");
+      expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
+    });
   });
 
   it("Select Catégorie", () => {
@@ -127,51 +160,57 @@ describe("Ajout d'un agent", () => {
 
   it("Add activities", () => {
     cy.window().then((win) => {
-      cy.stub(win, "prompt").callsFake((message) => {
-        expect(message).to.equal("Nouveau pourcentage ?");
-        return "25";
-      });
+      cy.stub(win, "prompt")
+        .callsFake((message) => {
+          expect(message).to.equal("Nouveau pourcentage ?");
+          return "25";
+        })
+        .as("activityPercentage");
     });
 
-    const integers = [];
-    let randInt = Math.floor(Math.random() * 11);
-    cy.get("panel-activities");
+    // Allocation edits require a jurisdiction, not the Arrondissement overview.
+    cy.get(
+      'add-ventilation .arrondissement-header[data-backup-id]:not([data-backup-id=""])'
+    )
+      .first()
+      .click()
+      .should("have.class", "selected");
 
     for (let i = 0; i < 4; i++) {
-      while (integers.includes(randInt))
-        randInt = Math.floor(Math.random() * 11);
-      integers.push(randInt);
-
-      let pos = integers[integers.length - 1];
-
-      cy.get(".activities-panel").within(() => {
-        cy.get(".sub-item").eq(pos).click();
-      });
-      cy.get(".sub-panel-activites")
-        .get(".group-sub-item")
-        .within(() => {
-          cy.get(".sub-item").eq(0).click();
-        });
+      cy.get("add-ventilation .activities-panel > .sub-item")
+        .eq(i)
+        .find("progression-bar .background-bar")
+        .click();
+      cy.get(
+        "add-ventilation .sub-panel-activites .group-sub-item progression-bar .background-bar"
+      )
+        .first()
+        .click();
     }
+
+    cy.get("@activityPercentage").should("have.callCount", 4);
+    cy.get("add-ventilation panel-activities > .progress-bar")
+      .invoke("text")
+      .should("match", /:\s*100\s*%/);
   });
 
   it("Check if we can add a start date to the situation", () => {
-    const now = new Date();
-    const date = new Date(now.setMonth(now.getMonth() - 3));
-
     cy.get(".bottom-container")
       .find(".date-start .date-start-content aj-date-select")
       .find("input.manual-input")
       .clear()
-      .type(toInputDate(date))
+      .type(toInputDate(arrivalDate))
+      .should("have.value", toMaskedDate(arrivalDate))
       .blur();
   });
 
   it("Checking that we can add unavailabilities", () => {
-    const startDate = new Date();
-    const endDate = new Date();
+    const startDate = new Date(leavingDate);
+    const endDate = new Date(leavingDate);
 
     startDate.setMonth(startDate.getMonth() - 1);
+
+    cy.intercept("POST", "**/human-resources/update-hr").as("saveUnavailability");
 
     cy.get(".bottom-container")
       .find(".indisponibilities .indispo-header button")
@@ -198,17 +237,40 @@ describe("Ajout d'un agent", () => {
 
       cy.get(".actions button").contains("Enregistrer").click();
     });
+
+    cy.wait("@saveUnavailability", { timeout: 60000 }).then(({ response }) => {
+      expect(response.statusCode).to.eq(200);
+      expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
+    });
+    cy.get("aj-popup .popup").should("not.exist");
+    cy.get("aj-big-loader").should("not.exist");
   });
 
   it("Register new agent and his activities", () => {
-    cy.get(".sticky-action-footer").within(() => {
-      cy.get("button").eq(1).click();
+    cy.intercept("POST", "**/human-resources/update-hr").as("saveAgent");
+    cy.intercept("GET", "**/human-resources/read-hr/*").as("reloadAgent");
+
+    cy.get("cover-profil-details .dates aj-date-select")
+      .first()
+      .find("input.manual-input")
+      .should("not.have.value", "");
+
+    cy.contains(".sticky-action-footer button", /^\s*Enregistrer\s*$/).click();
+
+    cy.wait("@saveAgent", { timeout: 60000 }).then(({ request, response }) => {
+      expect(response.statusCode).to.eq(200);
+      expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
+      expect(request.body.hr.situations).to.be.an("array").and.not.be.empty;
     });
+    cy.wait("@reloadAgent", { timeout: 60000 })
+      .its("response.statusCode")
+      .should("eq", 200);
+    cy.get(".sticky-action-footer").should("not.exist");
+    cy.get("aj-popup .popup").should("not.exist");
   });
 
-  it("Check 'return' buton works", () => {
-    cy.get(".first-row").within(() => {
-      cy.get("aj-back-button").click();
-    });
+  it("Check 'return' button works", () => {
+    cy.contains(".first-row aj-back-button a", /^\s*Retour\s*$/).click();
+    cy.location("pathname").should("eq", "/ventilations");
   });
 });
