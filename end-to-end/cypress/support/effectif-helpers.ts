@@ -4,8 +4,41 @@ import user from "../../fixtures/user.json";
 
 /**
  * Shared helper functions for effectif extractor tests
- * Used by: effectif-suite.cy.ts, extracteur-collecte-2026.cy.ts
+ * Used by the effectif comparison suite and the 2026 extractor specs.
  */
+
+export function openEffectifDashboard(baseUrl: string, backupLabel: string) {
+  const selectedBackup =
+    '#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6';
+  const escapedLabel = backupLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // The admin star is decoration, not part of the jurisdiction name.
+  const labelPattern = new RegExp(`^\\s*(?:★\\s*)?${escapedLabel}\\s*$`, 'i');
+
+  cy.visit(`${baseUrl}/dashboard`);
+  cy.get(selectedBackup, { timeout: 20000 })
+    .should('be.visible')
+    .then(($label) => {
+      if (labelPattern.test($label.text())) return;
+
+      cy.get('#side-menu-bar .juridiction').click();
+      cy.contains(
+        '.cdk-overlay-pane .juridiction-item .item-label',
+        labelPattern,
+        { timeout: 20000 },
+      )
+        .should('be.visible')
+        .click();
+      cy.location('pathname', { timeout: 20000 }).should('eq', '/panorama');
+      cy.visit(`${baseUrl}/dashboard`);
+    });
+
+  cy.get(selectedBackup, { timeout: 20000 }).should(($label) => {
+    expect($label.text()).to.match(labelPattern);
+  });
+  cy.get('aj-extractor-ventilation .exportateur-container', {
+    timeout: 20000,
+  }).should('be.visible');
+}
 
 export function loginAndOpenDashboard(baseUrl: string, backupLabel: string) {
   cy.clearAllLocalStorage();
@@ -31,11 +64,7 @@ export function loginAndOpenDashboard(baseUrl: string, backupLabel: string) {
     }
   });
   // After login, visit dashboard to select backup (user may be on /bienvenue or /panorama)
-  cy.visit(`${baseUrl}/dashboard`);
-  cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
-  cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${backupLabel}$`, 'i'), { timeout: 20000 })
-    .scrollIntoView()
-    .click({ force: true });
+  openEffectifDashboard(baseUrl, backupLabel);
 }
 
 export function setDatesEffectif(startISO: string, stopISO: string) {

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { setDatesEffectif, pickCategoryEffectif } from "../support/effectif-helpers";
+import { openEffectifDashboard, setDatesEffectif, pickCategoryEffectif } from "../support/effectif-helpers";
 import { authLoginApi } from "../../support/api";
 
 // Suite: Extracteur Pre-Collecte 2026 - Baseline from frozen sandbox reference
@@ -25,12 +25,6 @@ const SANDBOX_FRONT_URL = 'http://175.0.0.31:4200';
 const SANDBOX_API_URL = 'http://175.0.0.21:8081/api';
 const USER_EMAIL = 'utilisateurtest@a-just.fr';
 const USER_PASSWORD = '@bUgGD25gX1b';
-
-function categoryPattern(lbl: string): RegExp {
-  if (/^Tous$/i.test(lbl)) return /^(Tous|Toutes|Toutes\s*(cat[eé]gories?)?)$/i;
-  const esc = lbl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`^${esc}$`, 'i');
-}
 
 function snapshot(prefix: string, step: string) {
   // no-op: disable HTML snapshot files
@@ -113,17 +107,10 @@ describe('Extracteur Pre-Collecte 2026 - Baseline from Sandbox Reference', () =>
   it('Generate sandbox baseline extractor output via UI', () => {
     cy.log('[NAVIGATION] Visiting sandbox dashboard...');
     
-    // User is already logged in from before() hook, navigate to dashboard
-    cy.visit(`${SANDBOX_FRONT_URL}/dashboard`);
+    // User is already logged in from before() hook, navigate to the selected jurisdiction's extractor.
+    openEffectifDashboard(SANDBOX_FRONT_URL, BACKUP_LABEL);
     
-    // Click on backup name to navigate to Extracteur (same as extracteur-collecte-2026)
-    cy.log(`[NAVIGATION] Clicking on backup: ${BACKUP_LABEL}`);
-    cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
-    cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
-      .scrollIntoView()
-      .click({ force: true });
-    
-    snapshot('pre-collecte-2026-sandbox', 'backup-clicked');
+    snapshot('pre-collecte-2026-sandbox', 'backup-selected');
     
     // Set dates
     cy.log(`[DATES] Setting dates: ${START} to ${STOP}`);
@@ -131,7 +118,7 @@ describe('Extracteur Pre-Collecte 2026 - Baseline from Sandbox Reference', () =>
     
     // Pick category
     cy.log(`[CATEGORY] Selecting category: ${CATEGORY}`);
-    pickCategoryEffectif(CATEGORY, categoryPattern(CATEGORY));
+    pickCategoryEffectif(CATEGORY);
     
     // Setup download hooks
     cy.window().then((win) => {

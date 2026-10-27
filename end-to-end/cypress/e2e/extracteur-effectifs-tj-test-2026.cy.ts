@@ -1,4 +1,5 @@
 import {
+  openEffectifDashboard,
   setDatesEffectif,
   pickCategoryEffectif,
 } from "../support/effectif-helpers";
@@ -278,17 +279,8 @@ describe("Extraction effectifs TJ TEST 2026", () => {
     const baseUrl = Cypress.config("baseUrl") || "http://localhost:4200";
 
     cy.task("wipeDownloads");
-    cy.visit(`${baseUrl}/dashboard`);
+    openEffectifDashboard(baseUrl, BACKUP_LABEL);
     installDownloadHooks();
-
-    cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should("exist");
-    cy.contains(
-      'h6, [data-cy="backup-name"]',
-      new RegExp(`^${BACKUP_LABEL}$`, "i"),
-      { timeout: 20000 },
-    )
-      .scrollIntoView()
-      .click({ force: true });
 
     setDatesEffectif(START, STOP);
     pickCategoryEffectif(CATEGORY);

@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import user from "../../fixtures/user.json";
+import { openEffectifDashboard } from "../support/effectif-helpers";
 
 // Suite: Effectif exports for PR and SANDBOX across categories, then compare.
 // Env needed:
@@ -365,39 +366,6 @@ function persistBase64WhenReady(
   return loop();
 }
 
-function openEffectifDashboard(baseUrl: string) {
-  const selectedBackup =
-    '#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6';
-  const escapedLabel = BACKUP_LABEL.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  // The admin star is decoration, not part of the jurisdiction name.
-  const labelPattern = new RegExp(`^\\s*(?:★\\s*)?${escapedLabel}\\s*$`, "i");
-
-  cy.visit(`${baseUrl}/dashboard`);
-  cy.get(selectedBackup, { timeout: 20000 })
-    .should("be.visible")
-    .then(($label) => {
-      if (labelPattern.test($label.text())) return;
-
-      cy.get("#side-menu-bar .juridiction").click();
-      cy.contains(
-        ".cdk-overlay-pane .juridiction-item .item-label",
-        labelPattern,
-        { timeout: 20000 },
-      )
-        .should("be.visible")
-        .click();
-      cy.location("pathname", { timeout: 20000 }).should("eq", "/panorama");
-      cy.visit(`${baseUrl}/dashboard`);
-    });
-
-  cy.get(selectedBackup, { timeout: 20000 }).should(($label) => {
-    expect($label.text()).to.match(labelPattern);
-  });
-  cy.get("aj-extractor-ventilation .exportateur-container", {
-    timeout: 20000,
-  }).should("be.visible");
-}
-
 function loginAndOpenDashboard(baseUrl: string) {
   cy.clearAllLocalStorage();
   cy.clearCookies();
@@ -427,7 +395,7 @@ function loginAndOpenDashboard(baseUrl: string) {
     }
   });
   cy.location("pathname", { timeout: 60000 }).should("include", "/panorama");
-  openEffectifDashboard(baseUrl);
+  openEffectifDashboard(baseUrl, BACKUP_LABEL);
 }
 
 function setDatesEffectif(
@@ -906,7 +874,7 @@ describe("Non-regression des calculs de l'extracteur (données d'effectifs)", ()
       const labelSlug = slugifyLabel(cat);
       const prefix = "pr";
       // Refresh/reset page between categories to avoid sticky selection state
-      openEffectifDashboard(PR);
+      openEffectifDashboard(PR, BACKUP_LABEL);
       setDatesEffectif(START, STOP, prefix, labelSlug);
       pickCategoryEffectif(cat, prefix, labelSlug);
       exportAndPersist(PR, START, STOP, cat, prefix, labelSlug);
@@ -920,7 +888,7 @@ describe("Non-regression des calculs de l'extracteur (données d'effectifs)", ()
       const labelSlug = slugifyLabel(cat);
       const prefix = "sandbox";
       // Refresh/reset page between categories to avoid sticky selection state
-      openEffectifDashboard(SANDBOX);
+      openEffectifDashboard(SANDBOX, BACKUP_LABEL);
       setDatesEffectif(START, STOP, prefix, labelSlug);
       pickCategoryEffectif(cat, prefix, labelSlug);
       exportAndPersist(SANDBOX, START, STOP, cat, prefix, labelSlug);

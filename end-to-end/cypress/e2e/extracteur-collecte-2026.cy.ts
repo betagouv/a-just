@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
 import {
+  openEffectifDashboard,
   setDatesEffectif,
   pickCategoryEffectif,
 } from "../support/effectif-helpers";
@@ -486,7 +487,7 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
 
     // User is already logged in from before() hook, just select the backup
     cy.log("[EXTRACTOR] Visiting /dashboard...");
-    cy.visit(`${baseUrl}/dashboard`);
+    openEffectifDashboard(baseUrl, BACKUP_LABEL);
 
     // Check if we were redirected away from dashboard
     cy.location("pathname").then((pathname) => {
@@ -520,14 +521,6 @@ describe("Extracteur Collecte 2026 - Test de non-régression", () => {
       cy.log(`[EXTRACTOR] Backup selector present: ${hasBackupSelector}`);
     });
 
-    cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should("exist");
-    cy.contains(
-      'h6, [data-cy="backup-name"]',
-      new RegExp(`^${BACKUP_LABEL}$`, "i"),
-      { timeout: 20000 },
-    )
-      .scrollIntoView()
-      .click({ force: true });
     setDatesEffectif(START, STOP);
     pickCategoryEffectif(CATEGORY);
     exportAndPersist(baseUrl, START, STOP);
