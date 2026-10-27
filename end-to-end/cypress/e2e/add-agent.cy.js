@@ -159,72 +159,72 @@ describe("Ajout d'un agent", () => {
   // })
 
   // NEW
-  // it("Add activities", () => {
-  //   cy.window().then((win) => {
-  //     cy.stub(win, "prompt")
-  //       .callsFake((message) => {
-  //         expect(message).to.equal("Nouveau pourcentage ?");
-  //         return "25";
-  //       })
-  //       .as("activityPercentage");
-  //   });
-
-  //   // Allocation edits require a jurisdiction, not the Arrondissement overview.
-  //   cy.get(
-  //     'add-ventilation .arrondissement-header[data-backup-id]:not([data-backup-id=""])'
-  //   )
-  //     .first()
-  //     .click()
-  //     .should("have.class", "selected");
-
-  //   for (let i = 0; i < 4; i++) {
-  //     cy.get("add-ventilation .activities-panel > .sub-item")
-  //       .eq(i)
-  //       .find("progression-bar .background-bar")
-  //       .click();
-  //     cy.get(
-  //       "add-ventilation .sub-panel-activites .group-sub-item progression-bar .background-bar"
-  //     )
-  //       .first()
-  //       .click();
-  //   }
-
-  //   cy.get("@activityPercentage").should("have.callCount", 4);
-  //   cy.get("add-ventilation panel-activities > .progress-bar")
-  //     .invoke("text")
-  //     .should("match", /:\s*100\s*%/);
-  // });
-
-  // OLD
   it("Add activities", () => {
     cy.window().then((win) => {
-      cy.stub(win, "prompt").callsFake((message) => {
-        expect(message).to.equal("Nouveau pourcentage ?");
-        return "25";
-      });
+      cy.stub(win, "prompt")
+        .callsFake((message) => {
+          expect(message).to.equal("Nouveau pourcentage ?");
+          return "25";
+        })
+        .as("activityPercentage");
     });
 
-    const integers = [];
-    let randInt = Math.floor(Math.random() * 11);
-    cy.get("panel-activities");
+    // Allocation edits require a jurisdiction, not the Arrondissement overview.
+    cy.get(
+      'add-ventilation .arrondissement-header[data-backup-id]:not([data-backup-id=""])'
+    )
+      .first()
+      .click()
+      .should("have.class", "selected");
 
     for (let i = 0; i < 4; i++) {
-      while (integers.includes(randInt))
-        randInt = Math.floor(Math.random() * 11);
-      integers.push(randInt);
-
-      let pos = integers[integers.length - 1];
-
-      cy.get(".activities-panel").within(() => {
-        cy.get(".sub-item").eq(pos).click();
-      });
-      cy.get(".sub-panel-activites")
-        .get(".group-sub-item")
-        .within(() => {
-          cy.get(".sub-item").eq(0).click();
-        });
+      cy.get("add-ventilation .activities-panel > .sub-item")
+        .eq(i)
+        .find("progression-bar .background-bar")
+        .click();
+      cy.get(
+        "add-ventilation .sub-panel-activites .group-sub-item progression-bar .background-bar"
+      )
+        .first()
+        .click();
     }
+
+    cy.get("@activityPercentage").should("have.callCount", 4);
+    cy.get("add-ventilation panel-activities > .progress-bar")
+      .invoke("text")
+      .should("match", /:\s*100\s*%/);
   });
+
+  // OLD
+  // it("Add activities", () => {
+  //   cy.window().then((win) => {
+  //     cy.stub(win, "prompt").callsFake((message) => {
+  //       expect(message).to.equal("Nouveau pourcentage ?");
+  //       return "25";
+  //     });
+  //   });
+
+  //   const integers = [];
+  //   let randInt = Math.floor(Math.random() * 11);
+  //   cy.get("panel-activities");
+
+  //   for (let i = 0; i < 4; i++) {
+  //     while (integers.includes(randInt))
+  //       randInt = Math.floor(Math.random() * 11);
+  //     integers.push(randInt);
+
+  //     let pos = integers[integers.length - 1];
+
+  //     cy.get(".activities-panel").within(() => {
+  //       cy.get(".sub-item").eq(pos).click();
+  //     });
+  //     cy.get(".sub-panel-activites")
+  //       .get(".group-sub-item")
+  //       .within(() => {
+  //         cy.get(".sub-item").eq(0).click();
+  //       });
+  //   }
+  // });
 
   it("Check if we can add a start date to the situation", () => {
     cy.get(".bottom-container")
@@ -279,35 +279,35 @@ describe("Ajout d'un agent", () => {
   });
 
   // NEW
-  // it("Register new agent and his activities", () => {
-  //   cy.intercept("POST", "**/human-resources/update-hr").as("saveAgent");
-  //   cy.intercept("GET", "**/human-resources/read-hr/*").as("reloadAgent");
+  it("Register new agent and his activities", () => {
+    cy.intercept("POST", "**/human-resources/update-hr").as("saveAgent");
+    cy.intercept("GET", "**/human-resources/read-hr/*").as("reloadAgent");
 
-  //   cy.get("cover-profil-details .dates aj-date-select")
-  //     .first()
-  //     .find("input.manual-input")
-  //     .should("not.have.value", "");
+    cy.get("cover-profil-details .dates aj-date-select")
+      .first()
+      .find("input.manual-input")
+      .should("not.have.value", "");
 
-  //   cy.contains(".sticky-action-footer button", /^\s*Enregistrer\s*$/).click();
+    cy.contains(".sticky-action-footer button", /^\s*Enregistrer\s*$/).click();
 
-  //   cy.wait("@saveAgent", { timeout: 60000 }).then(({ request, response }) => {
-  //     expect(response.statusCode).to.eq(200);
-  //     expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
-  //     expect(request.body.hr.situations).to.be.an("array").and.not.be.empty;
-  //   });
-  //   cy.wait("@reloadAgent", { timeout: 60000 })
-  //     .its("response.statusCode")
-  //     .should("eq", 200);
-  //   cy.get(".sticky-action-footer").should("not.exist");
-  //   cy.get("aj-popup .popup").should("not.exist");
-  // });
+    cy.wait("@saveAgent", { timeout: 60000 }).then(({ request, response }) => {
+      expect(response.statusCode).to.eq(200);
+      expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
+      expect(request.body.hr.situations).to.be.an("array").and.not.be.empty;
+    });
+    cy.wait("@reloadAgent", { timeout: 60000 })
+      .its("response.statusCode")
+      .should("eq", 200);
+    cy.get(".sticky-action-footer").should("not.exist");
+    cy.get("aj-popup .popup").should("not.exist");
+  });
 
   // OLD
-  it("Register new agent and his activities", () => {
-    cy.get(".sticky-action-footer").within(() => {
-      cy.get("button").eq(1).click();
-    });
-  });
+  // it("Register new agent and his activities", () => {
+  //   cy.get(".sticky-action-footer").within(() => {
+  //     cy.get("button").eq(1).click();
+  //   });
+  // });
 
   it("Check 'return' button works", () => {
     cy.contains(".first-row aj-back-button a", /^\s*Retour\s*$/).click();
