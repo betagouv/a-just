@@ -46,6 +46,7 @@ import { SimulatorService } from '../../../services/simulator/simulator.service'
 import { COCKPIT_ERROR_NO_ENTRIES_OR_EXITS } from '../../../constants/cokpit'
 import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe'
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
+import { DocumentScrollLockService } from '../../../services/document-scroll-lock/document-scroll-lock.service'
 
 /**
  * Composant d'une ligne du calculateur
@@ -81,6 +82,7 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Service de l'application
    */
   appService = inject(AppService)
+  documentScrollLock = inject(DocumentScrollLockService)
   /**
    * Service de user
    */
@@ -221,11 +223,26 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   /**
    * Affiche ou non le popin d'erreur
    */
-  showAlertPopin: boolean = false
+  private _showAlertPopin = false
+  get showAlertPopin(): boolean {
+    return this._showAlertPopin
+  }
+  set showAlertPopin(visible: boolean) {
+    this._showAlertPopin = visible
+    this.syncPopinScrollLock()
+  }
   /**
    * Affiche ou non le popin de projection
    */
-  showProjectionPopin: boolean = false
+  private _showProjectionPopin = false
+  get showProjectionPopin(): boolean {
+    return this._showProjectionPopin
+  }
+  set showProjectionPopin(visible: boolean) {
+    this._showProjectionPopin = visible
+    this.syncPopinScrollLock()
+  }
+  private popinScrollLockAcquired = false
   /**
    * Fonction pour trouver le centre d'aide url
    */
@@ -275,7 +292,29 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    * Suppresion des observables lors de la suppression du composant
    */
   ngOnDestroy() {
+    this.releasePopinScrollLock()
     this.watcherDestroy()
+  }
+
+  private syncPopinScrollLock(): void {
+    const shouldLock = this._showAlertPopin || this._showProjectionPopin
+    if (shouldLock === this.popinScrollLockAcquired) {
+      return
+    }
+
+    this.popinScrollLockAcquired = shouldLock
+    if (shouldLock) {
+      this.documentScrollLock.acquire()
+    } else {
+      this.documentScrollLock.release()
+    }
+  }
+
+  private releasePopinScrollLock(): void {
+    if (this.popinScrollLockAcquired) {
+      this.popinScrollLockAcquired = false
+      this.documentScrollLock.release()
+    }
   }
 
   /**

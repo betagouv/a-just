@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT } from '@angular/common'
+import { CommonModule } from '@angular/common'
 import {
   Component,
   Input,
@@ -8,8 +8,8 @@ import {
   TemplateRef,
   OnInit,
   OnDestroy,
-  Inject,
 } from '@angular/core'
+import { DocumentScrollLockService } from '../../services/document-scroll-lock/document-scroll-lock.service'
 
 /**
  * Interface des boutons d'actions de la popup
@@ -56,12 +56,9 @@ export interface ActionsInterface {
   },
 })
 export class PopupComponent implements OnInit, OnDestroy {
-  private static activeScrollLocks = 0
-  private static originalHtmlOverflow = ''
-  private static originalBodyOverflow = ''
   private scrollLockAcquired = false
 
-  constructor(@Inject(DOCUMENT) private document: Document) {}
+  constructor(private documentScrollLock: DocumentScrollLockService) {}
 
   /**
    * Class css qui donne une rendu mobile au besoin
@@ -141,24 +138,11 @@ export class PopupComponent implements OnInit, OnDestroy {
 
     this.scrollLockAcquired = visible
     if (visible) {
-      if (PopupComponent.activeScrollLocks === 0) {
-        PopupComponent.originalHtmlOverflow =
-          this.document.documentElement.style.overflow
-        PopupComponent.originalBodyOverflow =
-          this.document.body.style.overflow
-        this.document.documentElement.style.overflow = 'hidden'
-        this.document.body.style.overflow = 'hidden'
-      }
-      PopupComponent.activeScrollLocks += 1
+      this.documentScrollLock.acquire()
       return
     }
 
-    PopupComponent.activeScrollLocks -= 1
-    if (PopupComponent.activeScrollLocks === 0) {
-      this.document.documentElement.style.overflow =
-        PopupComponent.originalHtmlOverflow
-      this.document.body.style.overflow = PopupComponent.originalBodyOverflow
-    }
+    this.documentScrollLock.release()
   }
 
   /**
