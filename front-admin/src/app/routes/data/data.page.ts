@@ -49,22 +49,22 @@ const compareHeaders = [
   'A-JUSTÈ - Entrées',
   'Pharos - Entrées',
   'TJ - Entrées',
-  'Ecart A-JUST / Pharos - Entrées',
-  'Ecart A-JUST / TJ - Entrées',
+  'Écart A-JUST / Pharos - Entrées',
+  'Écart A-JUST / TJ - Entrées',
 
   'A-JUST - Sorties',
   'A-JUSTÉ - Sorties',
   'Pharos - Sorties',
   'TJ - Sorties',
-  'Ecart A-JUST / Pharos - Sorties',
-  'Ecart A-JUST / TJ - Sorties',
+  'Écart A-JUST / Pharos - Sorties',
+  'Écart A-JUST / TJ - Sorties',
 
   'A-JUST - Stocks',
   'A-JUSTÉ - Stocks',
   'Pharos - Stocks',
   'TJ - Stocks',
-  'Ecart A-JUST / Pharos - Stocks',
-  'Ecart A-JUST / TJ - Stocks',
+  'Écart A-JUST / Pharos - Stocks',
+  'Écart A-JUST / TJ - Stocks',
 ];
 
 /**
@@ -94,20 +94,20 @@ const compareHeadersSum = [
   'Total A-JUST - Entrées',
   'Total Pharos - Entrées',
   'Total TJ - Entrées',
-  'Ecart A-JUST / Pharos - Entrées',
-  'Ecart A-JUST / TJ - Entrées',
+  'Écart A-JUST / Pharos - Entrées',
+  'Écart A-JUST / TJ - Entrées',
 
   'Total A-JUST - Sorties',
   'Total Pharos - Sorties',
   'Total TJ - Sorties',
-  'Ecart A-JUST / Pharos - Sorties',
-  'Ecart A-JUST / TJ - Sorties',
+  'Écart A-JUST / Pharos - Sorties',
+  'Écart A-JUST / TJ - Sorties',
 
   'Total A-JUST - Stocks',
   'Total Pharos - Stocks',
   'Total TJ - Stocks',
-  'Ecart A-JUST / Pharos - Stocks',
-  'Ecart A-JUST / TJ - Stocks',
+  'Écart A-JUST / Pharos - Stocks',
+  'Écart A-JUST / TJ - Stocks',
 ];
 
 @Component({
@@ -376,9 +376,9 @@ export class DataPage {
     if (!form.juridiction.value) {
       return alert('Veuillez selectionner une juridiction');
     } else if (!form.dateStart.value) {
-      return alert('Veuiller indiquer une date de début');
+      return alert('Veuillez indiquer une date de début');
     } else if (!form.dateStop.value) {
-      return alert('Veuiller indiquer une date de fin');
+      return alert('Veuillez indiquer une date de fin');
     }
 
     this.extractBackupId = Number(form.juridiction.value);
@@ -600,7 +600,7 @@ export class DataPage {
     this.sendAll = true;
 
     if (!file) {
-      alert('Vous devez importer une fichier !');
+      alert('Vous devez importer un fichier !');
       return;
     }
 
@@ -642,7 +642,7 @@ export class DataPage {
     const file = form.file.files[0];
 
     if (!file) {
-      alert('Vous devez saisir une fichier !');
+      alert('Vous devez saisir un fichier !');
       return;
     }
 
