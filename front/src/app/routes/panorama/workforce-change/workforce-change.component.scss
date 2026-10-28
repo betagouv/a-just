@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   display: block;
@@ -28,25 +29,34 @@
     font-size: 16px;
 
     button {
-      margin: 0 8px;
+      // margin: 0 8px;
       width: 200px;
       background-color: transparent;
       border-radius: 0;
       font-weight: bold;
+      transition: background-color animations.$duration-normal animations.$ease-default;
+
+      &:hover {
+        background-color: utils.$colors-bgSelect;
+      }
     }
 
     .selected {
-      border-top: solid 2px #000091;
-      border-left: solid 1px #ddd;
-      border-right: solid 1px #ddd;
-      color: #000091;
+      border-top: solid 2px utils.$colors-primary;
+      border-left: solid 1px utils.$colors-lightBorder;
+      border-right: solid 1px utils.$colors-lightBorder;
+      color: utils.$colors-primary;
+
+      &:hover {
+        background-color: utils.$colors-white;
+      }
     }
 
     .nb-sheets {
       padding: 2px 8px;
       border-radius: 12px;
-      background-color: #f5f5fe;
-      color: #0063cb;
+      background-color: utils.$colors-bgProgressBar;
+      color: utils.$colors-bgSelectSelected;
       font-size: 12px;
       margin-left: 3px;
     }
@@ -70,7 +80,7 @@
 
     .filters {
       display: flex;
-      background-color: #f6f6f6;
+      background-color: utils.$colors-bgSelect;
       padding: 12px 24px;
 
       button {
@@ -81,7 +91,7 @@
         background-color: transparent;
         height: 31.5px;
         font-size: 12px;
-        color: #929292;
+        color: utils.$colors-grayRow;
         border-radius: 0;
 
         mat-icon {
@@ -117,9 +127,9 @@
     .agent {
       display: flex;
       align-items: center;
-      background-color: #fff;
+      background-color: utils.$colors-white;
       padding: 12px 24px;
-      border: 1px solid #dddddd;
+      border: 1px solid utils.$colors-lightBorder;
 
       .identity-section {
         display: flex;
@@ -137,7 +147,7 @@
 
         .status-icon i {
           font-size: 16px;
-          color: #fff;
+          color: utils.$colors-white;
         }
 
         .main-infos {
@@ -164,7 +174,7 @@
 
           .etp-label {
             color: #666666;
-            background-color: #f6f6f6;
+            background-color: utils.$colors-bgSelect;
             border-radius: 12px;
             padding: 2px 8px;
           }
@@ -185,18 +195,18 @@
 
           .total {
             font-weight: bold;
-            background-color: #f6f6f6;
+            background-color: utils.$colors-bgSelect;
             border-radius: 4px;
             text-align: center;
             margin: auto 0;
-            color: #929292;
+            color: utils.$colors-grayRow;
             padding: 3px 4px;
             width: 60px;
             font-size: 14px;
           }
 
           .light-arrow {
-            color: #0063cb;
+            color: utils.$colors-bgSelectSelected;
             align-self: center;
             width: 16px;
           }
@@ -213,7 +223,7 @@
             flex-direction: column;
             font-size: 14px;
             font-weight: bold;
-            color: #929292;
+            color: utils.$colors-grayRow;
             margin-right: 8px;
             min-width: 18%;
 
@@ -237,13 +247,13 @@
         align-items: center;
         margin: auto 0;
         margin-left: 8px;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
         font-size: 12px;
         font-weight: bold;
         width: 18%;
 
         .date {
-          background-color: #f6f6f6;
+          background-color: utils.$colors-bgSelect;
           padding: 3px 4px 2.6px 7px;
           border-radius: 4px;
           width: 125px;
@@ -252,7 +262,7 @@
         }
 
         .coming {
-          color: #0063cb !important;
+          color: utils.$colors-bgSelectSelected !important;
         }
 
         .date:nth-child(2n) {
@@ -271,7 +281,7 @@
 
 
         .dark-arrow {
-          color: #000091;
+          color: utils.$colors-primary;
         }
       }
     }

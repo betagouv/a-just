@@ -1,7 +1,8 @@
 @use '../../styles/utils.scss' as utils;
+@use '../../styles/animations.scss' as animations;
 
 .panorama-container {
-  background-color: white;
+  background-color: utils.$colors-white;
   border-left: solid 1px utils.$colors-lightBorder;
 
   .header-panorama {
@@ -14,7 +15,7 @@
 
     &::before {
       content: ' ';
-      background-color: white;
+      background-color: utils.$colors-white;
       left: -1px;
       top: 0;
       bottom: 0;
@@ -27,12 +28,22 @@
       padding: 9px 16px;
       font-size: 16px;
       font-weight: bold;
+      transition: background-color animations.$duration-normal animations.$ease-default;
+
+
+      &:hover {
+        background-color: utils.$colors-bgSelect;
+      }
 
       &.selected {
         border-left: solid 1px utils.$colors-lightBorder;
         border-right: solid 1px utils.$colors-lightBorder;
         border-top: solid 2px utils.$colors-primary;
         padding: 7px 16px 9px 16px;
+
+        &:hover {
+          background-color: utils.$colors-white;
+        }
       }
     }
   }
