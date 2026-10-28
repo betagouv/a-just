@@ -34,7 +34,7 @@
             border-radius: 4px;
 
             &:last-child {
-                background-color: #FEF4F2;
+                background-color: utils.$colors-bgIndisponibilitiesPanel;
 
                 p {
                     &:last-child {

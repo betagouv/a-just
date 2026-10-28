@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   Component,
   OnInit,
@@ -7,6 +7,7 @@ import {
   Output,
   EventEmitter,
   HostBinding,
+  Inject,
 } from '@angular/core';
 
 interface ActionsInterface {
@@ -25,10 +26,18 @@ interface ActionsInterface {
   styleUrls: ['./popup.component.scss'],
 })
 export class PopupComponent implements OnInit, OnDestroy {
+  private static activeScrollLocks = 0;
+  private static originalHtmlOverflow = '';
+  private static originalBodyOverflow = '';
+  private scrollLockAcquired = false;
+
+  constructor(@Inject(DOCUMENT) private document: Document) {}
+
   @HostBinding('class.is-mobile') isMobile = false;
   @Input()
-  set visible(d) {
+  set visible(d: boolean) {
     this._visible = d;
+    this.syncScrollLock(d);
   }
   get visible() {
     return this._visible;
@@ -42,9 +51,8 @@ export class PopupComponent implements OnInit, OnDestroy {
   _visible = true;
   selectedOptions = 0;
 
-  constructor() {}
-
   ngOnInit() {
+    this.syncScrollLock(this.visible);
     const element = document.getElementById(
       'hubspot-messages-iframe-container'
     );
@@ -54,11 +62,38 @@ export class PopupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.syncScrollLock(false);
     const element = document.getElementById(
       'hubspot-messages-iframe-container'
     );
     if (element) {
       element.style.visibility = 'visible';
+    }
+  }
+
+  private syncScrollLock(visible: boolean): void {
+    if (visible === this.scrollLockAcquired) {
+      return;
+    }
+
+    this.scrollLockAcquired = visible;
+    if (visible) {
+      if (PopupComponent.activeScrollLocks === 0) {
+        PopupComponent.originalHtmlOverflow =
+          this.document.documentElement.style.overflow;
+        PopupComponent.originalBodyOverflow = this.document.body.style.overflow;
+        this.document.documentElement.style.overflow = 'hidden';
+        this.document.body.style.overflow = 'hidden';
+      }
+      PopupComponent.activeScrollLocks += 1;
+      return;
+    }
+
+    PopupComponent.activeScrollLocks -= 1;
+    if (PopupComponent.activeScrollLocks === 0) {
+      this.document.documentElement.style.overflow =
+        PopupComponent.originalHtmlOverflow;
+      this.document.body.style.overflow = PopupComponent.originalBodyOverflow;
     }
   }
 

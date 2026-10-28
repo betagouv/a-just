@@ -1,5 +1,15 @@
-import { CommonModule } from '@angular/common'
-import { Component, Input, Output, EventEmitter, HostBinding, TemplateRef } from '@angular/core'
+import { CommonModule, DOCUMENT } from '@angular/common'
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostBinding,
+  TemplateRef,
+  OnInit,
+  OnDestroy,
+  Inject,
+} from '@angular/core'
 
 /**
  * Interface des boutons d'actions de la popup
@@ -45,7 +55,14 @@ export interface ActionsInterface {
     '(document:keydown.escape)': 'handleEscape()',
   },
 })
-export class PopupComponent {
+export class PopupComponent implements OnInit, OnDestroy {
+  private static activeScrollLocks = 0
+  private static originalHtmlOverflow = ''
+  private static originalBodyOverflow = ''
+  private scrollLockAcquired = false
+
+  constructor(@Inject(DOCUMENT) private document: Document) {}
+
   /**
    * Class css qui donne une rendu mobile au besoin
    */
@@ -54,8 +71,9 @@ export class PopupComponent {
    * setter du changement de visibilité du contenu
    */
   @Input()
-  set visible(d) {
+  set visible(d: boolean) {
     this._visible = d
+    this.syncScrollLock(d)
   }
   /**
    * getter du changement de visibilité du contenu
@@ -108,10 +126,40 @@ export class PopupComponent {
    */
   selectedOptions = 0
 
-  /**
-   * Constructeur
-   */
-  constructor() {}
+  ngOnInit(): void {
+    this.syncScrollLock(this.visible)
+  }
+
+  ngOnDestroy(): void {
+    this.syncScrollLock(false)
+  }
+
+  private syncScrollLock(visible: boolean): void {
+    if (visible === this.scrollLockAcquired) {
+      return
+    }
+
+    this.scrollLockAcquired = visible
+    if (visible) {
+      if (PopupComponent.activeScrollLocks === 0) {
+        PopupComponent.originalHtmlOverflow =
+          this.document.documentElement.style.overflow
+        PopupComponent.originalBodyOverflow =
+          this.document.body.style.overflow
+        this.document.documentElement.style.overflow = 'hidden'
+        this.document.body.style.overflow = 'hidden'
+      }
+      PopupComponent.activeScrollLocks += 1
+      return
+    }
+
+    PopupComponent.activeScrollLocks -= 1
+    if (PopupComponent.activeScrollLocks === 0) {
+      this.document.documentElement.style.overflow =
+        PopupComponent.originalHtmlOverflow
+      this.document.body.style.overflow = PopupComponent.originalBodyOverflow
+    }
+  }
 
   /**
    * Saisie d'une action
