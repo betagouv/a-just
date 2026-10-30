@@ -4,7 +4,7 @@
 > Do not edit this diagram manually.
 
 - Models: 33
-- Foreign-key relationships: 39
+- Foreign-key relationships: 41
 - Many-to-many relationships: 0
 
 ## Relationship legend
@@ -92,6 +92,7 @@ erDiagram
     INTEGER only_to_hr_backup
     VARCHAR_255 category
     BOOLEAN check_ventilation "NOT NULL"
+    VARCHAR_32 visible_in "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -130,6 +131,7 @@ erDiagram
     INTEGER hr_situation_id FK "NOT NULL"
     INTEGER nac_id "NOT NULL"
     FLOAT percent "NOT NULL"
+    INTEGER backup_id
     TIMESTAMP_WITH_TIME_ZONE created_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE updated_at "NOT NULL"
     TIMESTAMP_WITH_TIME_ZONE deleted_at
@@ -224,7 +226,7 @@ erDiagram
   }
 
   HRSituations {
-    INTEGER id PK,UK "AUTO INCREMENT"
+    INTEGER id PK,FK,UK "AUTO INCREMENT"
     INTEGER human_id FK "NOT NULL"
     FLOAT etp "NOT NULL"
     INTEGER category_id
@@ -430,6 +432,8 @@ erDiagram
   ContentieuxOptions ||--o| ContentieuxReferentiels : "ContentieuxReferentiel (id)"
   ContentieuxOptions ||--o| OptionsBackups : "OptionsBackup (id)"
   HRActivities ||--o| ContentieuxReferentiels : "ContentieuxReferentiel (id)"
+  HRActivities ||--o| HRBackups : "HRBackup (id)"
+  HRActivities ||--o| HRSituations : "HRSituation (id)"
   HRBackups |o--o{ HumanResources : "HumanResources (backup_id)"
   HRBackups |o--o| TJ : "TJ (backup_id)"
   HRBackups ||--o| Groups : "Group (id)"
