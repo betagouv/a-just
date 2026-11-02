@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, effect, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import * as _ from 'lodash'
 import { orderBy } from 'lodash'
@@ -506,6 +506,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   constructor() {
     super()
 
+    effect(() => {
+      if (this.humanResourceService.backupIdS() !== null) {
+        this.onCheckLastMonth(true)
+      }
+    })
+
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId !== null) {
@@ -555,9 +561,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.watch(
       this.calculatorService.dateStart.subscribe((date) => {
         this.dateStart = date
-        if (date === null) {
-          this.onCheckLastMonth()
-        } else {
+        if (date !== null) {
           this.onLoad()
         }
       }),
@@ -667,7 +671,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Demande au serveur quelle est la dernière date des datas
    */
   async onCheckLastMonth(force = false) {
-    if (((!force && this.calculatorService.dateStart.getValue() === null) || force) && !this.checkLastMonthLoading) {
+    if (force || (!force && this.calculatorService.dateStart.getValue() === null && !this.checkLastMonthLoading)) {
       this.checkLastMonthLoading = true
       return this.activitiesService.getLastMonthActivities().then((date) => {
         date = new Date(date || null)

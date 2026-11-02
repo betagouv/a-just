@@ -76,7 +76,7 @@ export class CalculatorService extends MainClass {
    * @param selectedFonctionsIds
    * @returns
    */
-  filterList(
+  async filterList(
     categorySelected: string,
     selectedFonctionsIds: number[] | null,
     dateStart: Date | null = this.dateStart.getValue(),
