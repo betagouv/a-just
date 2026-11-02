@@ -9,7 +9,7 @@ import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { orderBy } from 'lodash'
 import { generateHRIndexes, loadFonctionsForCategory, loadFonctionsForMultiCategoryFiltered, loadReferentiels } from '../utils/human-resource'
 import { cleanCalculationItemForUser } from '../utils/hrAccess'
-import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
+import { getFullKey, getRedisClient, loadCalculatorHr, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
 import { invalidateBackup } from '../utils/hrExtractorCache'
 
 export default (sequelizeInstance, Model) => {
@@ -70,6 +70,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getCurrentHrNew = async (backupId, logging = true) => {
     const backup = await Model.models.HRBackups.findById(backupId)
+    const homeBackupLabel = typeof backup === 'string' ? backup : backup?.label || null
 
     // 1. REQUÊTE PRINCIPALE
     const hrList = await Model.findAll({
@@ -179,7 +180,7 @@ export default (sequelizeInstance, Model) => {
                     label: act.HRBackup.dataValues.label,
                   } : activityBackupId ? {
                     id: activityBackupId,
-                    label: typeof backup === 'string' ? backup : null,
+                    label: Number(activityBackupId) === Number(hr.backup_id) ? homeBackupLabel : null,
                   } : null,
                 }
               }),
@@ -823,7 +824,7 @@ export default (sequelizeInstance, Model) => {
     let list = emptyCalulatorValues(referentiels)
 
     console.time('Mise en cache')
-    const hr = await loadOrWarmHR(backupIds, Model.models, user.id)
+    const hr = await loadCalculatorHr(backupIds, Model.models, user.id)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

@@ -252,6 +252,73 @@ export const loadOrWarmHR = async (backupIds, models, userId) => {
 
 const activityBackupId = (activity) => activity?.backupId ?? activity?.backup?.id ?? null
 
+const groupMissingVentilatedAgents = (ventilated, backupIds, alreadyLoaded) => {
+  const selectedBackupIds = new Set((backupIds || []).map((id) => Number(id)))
+  const alreadyLoadedIds = new Set((alreadyLoaded || []).map((person) => Number(person.id)))
+  const missingByHomeBackup = new Map()
+
+  for (const person of ventilated || []) {
+    const id = Number(person?.id)
+    const homeBackupId = Number(person?.backupId)
+    if (!id || alreadyLoadedIds.has(id) || selectedBackupIds.has(homeBackupId)) {
+      continue
+    }
+
+    if (!missingByHomeBackup.has(homeBackupId)) {
+      missingByHomeBackup.set(homeBackupId, new Set())
+    }
+    missingByHomeBackup.get(homeBackupId).add(id)
+  }
+
+  return { selectedBackupIds, missingByHomeBackup }
+}
+
+/**
+ * Ne conserve que les activités ventilées sur les backups demandés.
+ * Les situations sont conservées pour ne pas prolonger une ventilation au-delà de sa période.
+ * Les pourcentages d'un même contentieux sur plusieurs backups sélectionnés sont additionnés.
+ * @param {*} person
+ * @param {number[]|Set<number>} backupIds
+ * @returns
+ */
+export const keepActivitiesOnBackups = (person, backupIds) => {
+  const selectedBackupIds = backupIds instanceof Set ? backupIds : new Set((backupIds || []).map((id) => Number(id)))
+  const needsRewrite = (person?.situations || []).some((situation) => {
+    const seen = new Set()
+    for (const activity of situation.activities || []) {
+      if (!selectedBackupIds.has(Number(activityBackupId(activity)))) {
+        return true
+      }
+      const contentieuxId = activity?.contentieux?.id
+      if (contentieuxId == null) continue
+      if (seen.has(contentieuxId)) return true
+      seen.add(contentieuxId)
+    }
+    return false
+  })
+  if (!needsRewrite) {
+    return person
+  }
+
+  const copy = cloneDeep(person)
+  copy.situations = (copy.situations || []).map((situation) => {
+    const merged = new Map()
+    for (const activity of situation.activities || []) {
+      if (!selectedBackupIds.has(Number(activityBackupId(activity)))) continue
+      const contentieuxId = activity?.contentieux?.id
+      if (contentieuxId == null) continue
+      const current = merged.get(contentieuxId)
+      if (!current) {
+        merged.set(contentieuxId, { ...activity, percent: Number(activity.percent) || 0 })
+      } else {
+        current.percent += Number(activity.percent) || 0
+      }
+    }
+    return { ...situation, activities: [...merged.values()] }
+  })
+  return copy
+}
+
 /**
  * Agents rattachés à une autre juridiction, mais ventilés sur les backups demandés.
  * Dès qu'un agent est retenu, toute sa ventilation est renvoyée, y compris les
@@ -268,23 +335,8 @@ export const loadHrWithActivityOnBackups = async (backupIds, models, userId, dat
     return []
   }
 
-  const selectedBackupIds = new Set(backupIds.map((id) => Number(id)))
-  const alreadyLoadedIds = new Set(alreadyLoaded.map((person) => Number(person.id)))
   const ventilated = await models.HRActivities.listHumanResourcesByActivityBackupIds(backupIds)
-  const missingByHomeBackup = new Map()
-
-  for (const person of ventilated) {
-    const id = Number(person?.id)
-    const homeBackupId = Number(person?.backupId)
-    if (!id || alreadyLoadedIds.has(id) || selectedBackupIds.has(homeBackupId)) {
-      continue
-    }
-
-    if (!missingByHomeBackup.has(homeBackupId)) {
-      missingByHomeBackup.set(homeBackupId, new Set())
-    }
-    missingByHomeBackup.get(homeBackupId).add(id)
-  }
+  const { selectedBackupIds, missingByHomeBackup } = groupMissingVentilatedAgents(ventilated, backupIds, alreadyLoaded)
 
   const extra = []
   for (const [homeBackupId, ids] of missingByHomeBackup) {
@@ -307,6 +359,54 @@ export const loadHrWithActivityOnBackups = async (backupIds, models, userId, dat
   }
 
   return extra
+}
+
+/**
+ * Agents rattachés ailleurs, avec uniquement les activités ventilées sur les backups demandés.
+ * Toutes les situations sont conservées : une ventilation passée reste limitée à sa période.
+ * @param {number[]} backupIds
+ * @param {*} models
+ * @param {*} userId
+ * @param {Array<{ id: number }>} alreadyLoaded
+ * @returns
+ */
+export const loadHrVentilatedOnBackups = async (backupIds, models, userId, alreadyLoaded = []) => {
+  if (!Array.isArray(backupIds) || backupIds.length === 0) {
+    return []
+  }
+
+  const ventilated = await models.HRActivities.listHumanResourcesByActivityBackupIds(backupIds)
+  const { selectedBackupIds, missingByHomeBackup } = groupMissingVentilatedAgents(ventilated, backupIds, alreadyLoaded)
+
+  const extra = []
+  for (const [homeBackupId, ids] of missingByHomeBackup) {
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    for (const person of homeHr) {
+      if (!ids.has(Number(person.id))) continue
+
+      const filtered = keepActivitiesOnBackups(person, selectedBackupIds)
+      const hasActivity = (filtered.situations || []).some((situation) => (situation.activities || []).some((activity) => activity.percent))
+      if (!hasActivity) continue
+      extra.push(filtered)
+    }
+  }
+
+  return extra
+}
+
+/**
+ * Agents du calculateur : ceux des backups demandés, plus ceux ventilés dessus.
+ * Seules les activités dont le backup est dans la sélection entrent dans l'ETPT.
+ * @param {number[]} backupIds
+ * @param {*} models
+ * @param {*} userId
+ * @returns
+ */
+export const loadCalculatorHr = async (backupIds, models, userId) => {
+  const hr = await loadOrWarmHR(backupIds, models, userId)
+  const onSelectedBackups = hr.map((person) => keepActivitiesOnBackups(person, backupIds))
+  const ventilated = await loadHrVentilatedOnBackups(backupIds, models, userId, hr)
+  return onSelectedBackups.concat(ventilated)
 }
 
 /**

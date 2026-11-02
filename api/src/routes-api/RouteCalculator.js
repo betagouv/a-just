@@ -1,7 +1,7 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { month, today } from '../utils/date'
-import { loadOrWarmHR } from '../utils/redis'
+import { loadCalculatorHr } from '../utils/redis'
 import { fixDecimal } from '../utils/number'
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getEtpByCategory } from '../utils/simulator'
@@ -102,7 +102,7 @@ export default class RouteCalculator extends Route {
       }
     }
 
-    hrList = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    hrList = await loadCalculatorHr(backupIds, this.models, ctx.state.user.id)
     indexes = await generateHRIndexes(hrList)
 
     const categoriesCache = await this.models.HRCategories.getAll()
