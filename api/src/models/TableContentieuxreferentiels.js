@@ -7,7 +7,7 @@ import {
   referentielCAMappingIndex,
   referentielMappingIndex,
 } from '../constants/referentiel'
-import { extractCodeFromLabelImported, jirsRules } from '../utils/referentiel'
+import { EXTRACTOR_ONLY_LABEL_PREFIX, extractCodeFromLabelImported, jirsRules } from '../utils/referentiel'
 import { camel_to_snake } from '../utils/utils'
 import config from 'config'
 import { isTj } from '../utils/ca'
@@ -299,6 +299,10 @@ export default (sequelizeInstance, Model) => {
         // Sans code, la cellule reste un simple groupe parent : on ne crée ni ne met à jour.
         if (!extract || !extract.code) continue
 
+        // Le préfixe reste dans l'identifiant, sans changer les règles de catégorie.
+        const categoryCode = extract.extractorOnly ? extract.code.slice(EXTRACTOR_ONLY_LABEL_PREFIX.length) : extract.code
+        const hasCategory = categoryCode.startsWith(categoryPrefix) && categoryCode.length > 3
+
         knownCodes.add(extract.code)
         let current = byCode.get(extract.code)
 
@@ -309,7 +313,7 @@ export default (sequelizeInstance, Model) => {
               label: extract.label,
               code_import: extract.code,
               parent_id: parentId,
-              category: extract.code.startsWith(categoryPrefix) && extract.code.length > 3 ? ref[`niveau_${level + 1}`] : null,
+              category: hasCategory ? ref[`niveau_${level + 1}`] : null,
               ...(visibleIn ? { visible_in: visibleIn } : {}),
             },
             { logging: false },
@@ -337,7 +341,7 @@ export default (sequelizeInstance, Model) => {
         }
 
         // Le parent d'un code déjà connu n'est pas réécrit : l'ancien import ne le faisait pas non plus.
-        if (extract.code.startsWith(categoryPrefix) && extract.code.length > 3) {
+        if (hasCategory) {
           const nextLevel = ref[`niveau_${level + 1}`]
           // Niveau absent → undefined. L'ancien update le passait tel quel et Sequelize l'ignorait.
           if (nextLevel !== undefined && current.category !== nextLevel) {

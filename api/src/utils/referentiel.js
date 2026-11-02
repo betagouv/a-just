@@ -120,12 +120,12 @@ export function getIdsIndispo(list) {
 }
 
 /** Préfixe de label qui limite la visibilité du contentieux à l'extracteur. */
-const EXTRACTOR_ONLY_LABEL_PREFIX = '100.'
+export const EXTRACTOR_ONLY_LABEL_PREFIX = '100.'
 
 /**
  * Extraction des codes contenus dans un label.
- * Un préfixe « 100. » placé avant le code d'import n'est pas conservé dans le code :
- * il indique une visibilité limitée à l'extracteur.
+ * Le préfixe « 100. » indique une visibilité limitée à l'extracteur et reste dans le code
+ * d'import pour distinguer ce contentieux du code classique sans préfixe.
  * @param {*} label
  * @returns
  */
@@ -135,8 +135,9 @@ export function extractCodeFromLabelImported(label) {
   const regex = new RegExp('([0-9.]*)(.*)')
   const regexExec = regex.exec(value)
   if (regexExec) {
+    const code = regexExec[1]
     return {
-      code: regexExec[1],
+      code: extractorOnly && code ? EXTRACTOR_ONLY_LABEL_PREFIX + code : code,
       label: (regexExec[2] + '').trim(),
       extractorOnly,
     }
