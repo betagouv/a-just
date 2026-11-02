@@ -722,7 +722,7 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
    * @param date
    */
   changeMonth(date: Date) {
-    this.activitiesService.activityMonth.next(date)
+    this.activitiesService.activityMonth.set(date)
   }
 
   ngAfterViewInit() {

@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { Component, effect, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component'
 import { MainClass } from '../../libs/main-class'
@@ -360,6 +360,20 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
   constructor() {
     super()
 
+    effect(() => {
+      if (this.activitiesService.activityMonth() !== null) {
+        this.appService.appLoading.next(true)
+        this.activityMonth = new Date(this.activitiesService.activityMonth()!)
+        this.onLoadMonthActivities()
+      }
+    })
+
+    effect(() => {
+      if (this.humanResourceService.backupIdS() !== null) {
+        this.onLoadMaxDate()
+      }
+    })
+
     this.watch(
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
@@ -378,18 +392,8 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
             }
 
             this.dateSelector.value = new Date(lastMonth)
-            this.activitiesService.activityMonth.next(new Date(lastMonth))
+            this.activitiesService.activityMonth.set(new Date(lastMonth))
           })
-        }
-      }),
-    )
-
-    this.watch(
-      this.activitiesService.activityMonth.subscribe((a) => {
-        if (a !== null) {
-          this.appService.appLoading.next(true)
-          this.activityMonth = a
-          this.onLoadMonthActivities()
         }
       }),
     )
@@ -419,8 +423,6 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     if (!this.userService.canViewActivities()) {
       this.userService.redirectToHome()
     }
-
-    this.onLoadMaxDate()
   }
 
   async onLoadMaxDate() {

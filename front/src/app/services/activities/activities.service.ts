@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, signal } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { ServerService } from '../http-server/server.service'
 import { ActivityInterface } from '../../interfaces/activity'
@@ -20,7 +20,7 @@ export class ActivitiesService {
   /**
    * Mois en cour
    */
-  activityMonth: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(null)
+  activityMonth = signal<Date | null>(null)
   /**
    * Id de la juridiction
    */
