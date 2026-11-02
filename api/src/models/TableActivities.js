@@ -4,6 +4,7 @@ import { calculMainValuesFromChilds, compareGapBetweenData, preformatActivitiesA
 import { month, today } from '../utils/date'
 import { maxBy } from 'lodash'
 import { VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_VERIFY } from '../constants/activities'
+import { REFERENTIEL_VISIBILITY_ACTIVITY } from '../constants/referentiel'
 
 /**
  * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
@@ -881,8 +882,11 @@ export default (sequelizeInstance, Model) => {
     dateStart = new Date(dateStart)
     dateEnd = new Date(dateEnd)
 
-    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, null, false, null, false, false, userId)) || []
-    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, null, false, null, false, false, userId)) || [])
+    let allContentieux =
+      (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, REFERENTIEL_VISIBILITY_ACTIVITY, false, null, false, false, userId)) || []
+    let list = (
+      (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupIds, REFERENTIEL_VISIBILITY_ACTIVITY, false, null, false, false, userId)) || []
+    )
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])
