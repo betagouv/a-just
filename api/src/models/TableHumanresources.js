@@ -1,6 +1,6 @@
 import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
-import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { ETP_NEED_TO_BE_UPDATED, REFERENTIEL_VISIBILITY_COCKPIT } from '../constants/referentiel'
 import { getNbMonth, getTime, today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
@@ -815,7 +815,7 @@ export default (sequelizeInstance, Model) => {
     const categories = await Model.models.HRCategories.getAll()
     const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
     selectedFonctionsIds = await loadFonctionsForMultiCategoryFiltered(categorySelected, selectedFonctionsIds, Model.models)
-    const referentiels = await loadReferentiels(backupIds, contentieuxIds, Model.models, user.id)
+    const referentiels = await loadReferentiels(backupIds, contentieuxIds, Model.models, user.id, REFERENTIEL_VISIBILITY_COCKPIT)
     const activities = await Model.models.Activities.getAll(backupIds)
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
     const nbMonth = getNbMonth(dateStart, dateStop)

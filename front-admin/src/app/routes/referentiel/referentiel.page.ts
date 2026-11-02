@@ -1,7 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MainClass } from '../../libs/main-class';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
-import { QUALITY_LIST, REFERENTIEL_VISIBILITY_OPTIONS, ReferentielVisibility } from '../../constants/referentiels';
+import {
+  QUALITY_LIST,
+  REFERENTIEL_VISIBILITY_OPTIONS,
+  ReferentielVisibility,
+} from '../../constants/referentiels';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { FormsModule } from '@angular/forms';
@@ -95,7 +99,7 @@ export class ReferentielPage extends MainClass implements OnInit {
   ) {
     if (
       confirm(
-        'Voulez-vous vraiment modifier le referentiel ? Cela va prendre plusieurs minutes et monopoliser un docker. Seul la sandbox sera blocké car elle a un seul docker mais les autres seront toujours accessibles.',
+        'Voulez-vous vraiment modifier le referentiel ? Cela va prendre plusieurs minutes et monopoliser un docker. Seul la sandbox sera blockée car elle a un seul docker mais les autres seront toujours accessibles.',
       )
     ) {
       if (node === 'onlyToHrBackup' && Array.isArray(value)) {
@@ -150,7 +154,10 @@ export class ReferentielPage extends MainClass implements OnInit {
     }
   }
 
-  isZoneChecked(item: ContentieuReferentielInterface, zone: ReferentielVisibility) {
+  isZoneChecked(
+    item: ContentieuReferentielInterface,
+    zone: ReferentielVisibility,
+  ) {
     const zones = item.visibleIn;
     if (zones == null || zones.includes('everywhere')) {
       return true;
@@ -164,7 +171,11 @@ export class ReferentielPage extends MainClass implements OnInit {
     zone: ReferentielVisibility,
     checked: boolean,
   ) {
-    const specifics: ReferentielVisibility[] = ['extractor', 'cockpit', 'activity'];
+    const specifics: ReferentielVisibility[] = [
+      'extractor',
+      'cockpit',
+      'activity',
+    ];
     const current = item.visibleIn;
     const isEverywhere = current == null || current.includes('everywhere');
     let next: ReferentielVisibility[];
@@ -172,7 +183,9 @@ export class ReferentielPage extends MainClass implements OnInit {
     if (zone === 'everywhere') {
       next = checked ? ['everywhere'] : [];
     } else if (isEverywhere) {
-      next = checked ? ['everywhere'] : specifics.filter((entry) => entry !== zone);
+      next = checked
+        ? ['everywhere']
+        : specifics.filter((entry) => entry !== zone);
     } else {
       const selected = new Set(current || []);
       if (checked) {
@@ -184,11 +197,7 @@ export class ReferentielPage extends MainClass implements OnInit {
       next = picked.length === specifics.length ? ['everywhere'] : picked;
     }
 
-    if (
-      !confirm(
-        'Voulez-vous modifier la visibilité de ce contentieux ?',
-      )
-    ) {
+    if (!confirm('Voulez-vous modifier la visibilité de ce contentieux ?')) {
       this.onLoad();
       return;
     }

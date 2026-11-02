@@ -947,10 +947,12 @@ export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fc
  * @param {*} backupId
  * @param {*} contentieuxIds
  * @param {*} models
+ * @param {*} userId
+ * @param {string|null} visibleIn Contexte de visibilité, ou null pour tous les contextes.
  * @returns
  */
-export const loadReferentiels = async (backupIds, contentieuxIds, models, userId) => {
-  const all = await models.ContentieuxReferentiels.getReferentiels(backupIds, null, false, null, false, false, userId)
+export const loadReferentiels = async (backupIds, contentieuxIds, models, userId, visibleIn = null) => {
+  const all = await models.ContentieuxReferentiels.getReferentiels(backupIds, visibleIn, false, null, false, false, userId)
   return all.filter((c) => contentieuxIds.includes(c.id))
 }
 
