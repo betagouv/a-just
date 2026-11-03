@@ -3,6 +3,7 @@
  */
 import { Op } from 'sequelize'
 import { countBy, orderBy } from 'lodash'
+import { EXCLUDED_TJ_TYPES } from '../constants/juridiction-type'
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -33,7 +34,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    const backupsWithoutTpi = backups.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
+    const backupsWithoutTpi = backups.filter((backup) => !EXCLUDED_TJ_TYPES.includes(backup['TJ.type']))
 
     return groups.map((group) => ({
       id: group.id,
@@ -62,7 +63,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    return hrbackupAlone.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
+    return hrbackupAlone.filter((backup) => !EXCLUDED_TJ_TYPES.includes(backup['TJ.type']))
   }
 
   /**
@@ -116,7 +117,7 @@ export default (sequelizeInstance, Model) => {
       })
       : []
 
-    allGroupBackups = allGroupBackups.filter((backup) => backup['TJ.type'] !== 'TPI' && backup['TJ.type'] !== 'CPH')
+    allGroupBackups = allGroupBackups.filter((backup) => !EXCLUDED_TJ_TYPES.includes(backup['TJ.type']))
     const enabledBackupsByGroup = countBy(
       allGroupBackups.filter((backup) => backup['TJ.id'] == null || backup['TJ.enabled']),
       'group_id',
@@ -191,23 +192,10 @@ export default (sequelizeInstance, Model) => {
       return null
     }
 
-    // on récupère les juridictions du groupe
-    const backups = await Model.models.HRBackups.findAll({
-      attributes: ['id', 'label', 'group_id', 'group_id_rank'],
-      where: {
-        group_id: backup.group_id,
-      },
-      order: [
-        ['group_id_rank', 'ASC'],
-        ['label', 'ASC'],
-      ],
-      raw: true,
-    })
-
     return {
       id: group.id,
       label: group.label,
-      backups: backups.map((backup) => ({ id: backup.id, label: backup.label })),
+      backups: await Model.models.HRBackups.getBackupsInSameGroup(backupId),
     }
   }
 

@@ -1,4 +1,5 @@
 import { Op, literal } from 'sequelize'
+import { EXCLUDED_TJ_TYPES } from '../constants/juridiction-type'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
@@ -6,7 +7,7 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id', 'ressort'],
       order: [['label', 'asc']],
       where: {
-        type: { [Op.notIn]: ['CPH', 'TPI'] },
+        type: { [Op.notIn]: EXCLUDED_TJ_TYPES },
       },
       raw: true,
     })

@@ -1,4 +1,7 @@
 export const juridictionType = [{ id: 0, label: "TJ" }, { id: 1, label: "CA" }]
+
+/** Types de juridiction exclus des listes (conseils de prud'hommes et tribunaux de première instance). */
+export const EXCLUDED_TJ_TYPES = ['CPH', 'TPI']
 export const juridictionLabelExceptions = [
     {
       "import": "GTJ PARIS",

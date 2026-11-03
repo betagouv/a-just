@@ -503,7 +503,11 @@ export default (sequelizeInstance, Model) => {
     return false
   }
 
-  Model.getUsersJuridictions = async (juridicitonId, ownerId) => {
+  Model.getUsersJuridictions = async (backupIds, ownerId) => {
+    if (!Array.isArray(backupIds)) {
+      backupIds = [backupIds]
+    }
+
     const where = {
     }
     if (ownerId) {
@@ -525,7 +529,7 @@ export default (sequelizeInstance, Model) => {
         required: true,
         model: Model.models.UserVentilations,
         where: {
-          hr_backup_id: juridicitonId,
+          hr_backup_id: { [Op.in]: backupIds },
         },
       }, {
         model: Model.models.UsersAccess,

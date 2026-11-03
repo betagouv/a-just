@@ -452,8 +452,9 @@ export default class RouteUsers extends Route {
 
     const hasAccess = await this.model.hasAdminAccessToJuridiction(ctx.state.user.id, juridictionId)
     if (hasAccess) {
+      const backupIds = (await this.models.HRBackups.getBackupsInSameGroup(juridictionId)).map((backup) => backup.id)
       const group = await this.model.models.Groups.getGroupsByBackupId(juridictionId, ctx.state.user.id);
-      const users = await this.model.getUsersJuridictions(juridictionId, ctx.state.user.id)
+      const users = await this.model.getUsersJuridictions(backupIds, ctx.state.user.id)
       this.sendOk(ctx, {
         users,
         group,

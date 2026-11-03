@@ -1,5 +1,6 @@
 import { Op } from 'sequelize'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
+import { EXCLUDED_TJ_TYPES } from '../constants/juridiction-type'
 import { groupBy, orderBy } from 'lodash'
 import { isTj } from '../utils/ca'
 
@@ -36,7 +37,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    const backupsWithoutTpi = userVentilations.filter((item) => item['HRBackup.TJ.type'] !== 'TPI' && item['HRBackup.TJ.type'] !== 'CPH')
+    const backupsWithoutTpi = userVentilations.filter((item) => !EXCLUDED_TJ_TYPES.includes(item['HRBackup.TJ.type']))
 
     const listAll = await Model.findAll({
       attributes: ['id', 'label', ['updated_at', 'date'], 'jirs', 'stat_exclusion', 'group_id_rank'],
@@ -436,6 +437,50 @@ export default (sequelizeInstance, Model) => {
     }
 
     return []
+  }
+
+  /**
+   * Juridictions du même groupe que la juridiction sélectionnée.
+   * Sans groupe, retourne uniquement la juridiction sélectionnée.
+   * Les CPH et TPI sont exclus, comme dans les listes de groupes.
+   * @param {*} backupId
+   * @returns {Promise<{id: number, label: string}[]>}
+   */
+  Model.getBackupsInSameGroup = async (backupId) => {
+    const backup = await Model.findOne({
+      attributes: ['id', 'label', 'group_id'],
+      where: { id: backupId },
+      raw: true,
+    })
+
+    if (!backup) {
+      return []
+    }
+
+    if (!backup.group_id) {
+      return [{ id: backup.id, label: backup.label }]
+    }
+
+    const backups = await Model.findAll({
+      attributes: ['id', 'label'],
+      include: [{
+        attributes: ['type'],
+        model: Model.models.TJ,
+        required: false,
+      }],
+      where: {
+        group_id: backup.group_id,
+      },
+      order: [
+        ['group_id_rank', 'ASC'],
+        ['label', 'ASC'],
+      ],
+      raw: true,
+    })
+
+    return backups
+      .filter((item) => !EXCLUDED_TJ_TYPES.includes(item['TJ.type']))
+      .map((item) => ({ id: item.id, label: item.label }))
   }
 
   /**
