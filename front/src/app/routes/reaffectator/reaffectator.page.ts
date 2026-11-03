@@ -28,7 +28,7 @@ import { fixDecimal } from '../../utils/numbers'
 import { DATE_REAFECTATOR, REAFFECTOR_UPDATE_AGENT } from '../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
-import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe'
+import { TextEditorComponent } from '../../components/text-editor/text-editor.component'
 import { AppService } from '../../services/app/app.service'
 import { HumanResourceIsInInterface } from '../workforce/workforce.page'
 import { sortDates, today } from '../../utils/dates'
@@ -205,7 +205,7 @@ interface ContentieuReferentielCalculateInterface
     PanelActivitiesComponent,
     MatIconModule,
     FormsModule,
-    SanitizeHtmlPipe,
+    TextEditorComponent,
   ],
   templateUrl: './reaffectator.page.html',
   styleUrls: ['./reaffectator.page.scss'],

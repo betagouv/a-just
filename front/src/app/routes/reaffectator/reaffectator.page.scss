@@ -65,7 +65,7 @@
 
         &.selected {
           background-color: utils.$colors-darkModeTitle;
-          color: white;
+          color: utils.$colors-white;
         }
       }
     }
@@ -153,7 +153,7 @@
       >.etp {
         height: 23px;
         border-radius: 4px;
-        background-color: #272747;
+        background-color: utils.$colors-darkModeBgMenu;
         margin: 0 4px;
 
         p {
@@ -166,7 +166,7 @@
           background-color: utils.$colors-cbluemiddle;
 
           p {
-            color: #8585f6;
+            color: utils.$colors-popupDarkBgButton;
           }
         }
       }
@@ -372,7 +372,7 @@
           justify-content: center;
 
           p {
-            color: white;
+            color: utils.$colors-white;
             font-size: 14px;
           }
 
@@ -516,16 +516,15 @@
           .tooltiptext {
             visibility: hidden;
             background-color: utils.$colors-borderProgressBar;
-            color: utils.$colors-activityBgColor;
-            text-align: center;
+            color: utils.$colors-white;
             padding: 8px;
             font-size: 14px;
             border-radius: 6px;
             position: absolute;
-            z-index: 1;
+            z-index: 100;
             top: -5px;
             left: 105%;
-            max-width: 300px;
+            width: 300px;
           }
         }
       }
@@ -566,7 +565,7 @@
         margin-top: 10px;
         font-size: 12px;
         line-height: 20px;
-        color: white;
+        color: utils.$colors-white;
       }
     }
 
@@ -616,7 +615,7 @@
 .tag-etp {
   border-radius: 10px;
   font-size: 12px;
-  color: white;
+  color: utils.$colors-white;
   background-color: utils.$colors-greenReafectator;
   padding: 4px 8px;
   display: inline-block;
@@ -643,7 +642,7 @@ progression-bar {
 .check-item {
   width: 16px;
   height: 16px;
-  border: 1px solid #8585f6;
+  border: 1px solid utils.$colors-popupDarkBgButton;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
@@ -651,7 +650,7 @@ progression-bar {
   &.selected::before {
     position: absolute;
     content: '✓';
-    color: white;
+    color: utils.$colors-white;
     text-align: center;
     left: 0;
     right: 0;
