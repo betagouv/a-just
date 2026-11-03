@@ -6,12 +6,10 @@ import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { getObjectSizeInMB, loadOrWarmHR } from '../utils/redis'
+import { loadCalculatorHr } from '../utils/redis'
 import { filterAgentsByDateCategoryFunction, findAllSituations, findSituation, generateHRIndexes } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import zlib from 'zlib'
-import { promisify } from 'util'
 
 /**
  * Route de la page réaffectateur
@@ -79,7 +77,7 @@ export default class RouteReaffectator extends Route {
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupIds)
 
-    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    let hr = await loadCalculatorHr(backupIds, this.models, ctx.state.user.id)
     const preload = await generateHRIndexes(hr)
     let hrfiltered = filterByFonctionWithIndex(copyArray(hr), fonctionsIds, preload.functionIndex, preload.periodsDatabase)
     hrfiltered = filterByContentieuxWithIndex(hrfiltered, contentieuxIds, preload.contentieuxIndex)

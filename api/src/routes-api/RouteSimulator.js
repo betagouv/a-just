@@ -8,7 +8,7 @@ import {
   EXECUTE_SIMULATOR_PARAM,
   EXECUTE_WHITE_SIMULATOR,
 } from '../constants/log-codes'
-import { loadOrWarmHR } from '../utils/redis'
+import { loadCalculatorHr } from '../utils/redis'
 import { generateHRIndexes } from '../utils/human-resource'
 
 /**
@@ -58,7 +58,7 @@ export default class RouteSimulator extends Route {
     }
 
     console.time('simulator-1')
-    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    let hr = await loadCalculatorHr(backupIds, this.models, ctx.state.user.id)
     console.timeEnd('simulator-1')
 
     console.time('🧩 Pré-formatage / Indexation')
@@ -128,7 +128,7 @@ export default class RouteSimulator extends Route {
       ctx.throw(403, "Vous n'avez pas accès")
     }
 
-    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    let hr = await loadCalculatorHr(backupIds, this.models, ctx.state.user.id)
     const indexes = await generateHRIndexes(hr)
 
     const categories = await this.models.HRCategories.getAll()
