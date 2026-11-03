@@ -232,9 +232,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   allPersons: HumanResourceIsInInterface[] = []
   /**
-   * Boulean lors de l'impression
+   * Actif pendant la capture PDF, pas pendant le dialogue d'export.
    */
-  duringPrint: boolean = false
+  get duringPrint(): boolean {
+    return this.wrapper?.duringPrint ?? false
+  }
   /**
    * Liste des fiches
    */
@@ -890,7 +892,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Export en PDF de la page
    */
   onExport() {
-    this.duringPrint = true
     const date = new Date()
 
     this.wrapper
@@ -905,7 +906,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ).padStart(2, '0')} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
       )
       .then(() => {
-        this.duringPrint = false
         if (this.forceDeactivate) this.router.navigate([this.nextState])
       })
   }

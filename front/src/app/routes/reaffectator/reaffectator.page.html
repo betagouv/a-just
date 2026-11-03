@@ -198,12 +198,10 @@
                     }
                   "></ng-container>
         }
-        @if ((duringPrint && hr.isModify) || !duringPrint) {
         <ng-container *ngTemplateOutlet="
                     rowPerson;
                     context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }
                   "></ng-container>
-        }
         }
         }
       </div>
@@ -277,7 +275,7 @@
     </div>
     <div class="activities">
       <div class="flex-1"></div>
-      @defer (on viewport; prefetch on idle;) {
+      @defer (on viewport; when duringPrint; prefetch on idle;) {
       <panel-activities [activities]="hr.currentActivities" [id]="hr.id" [header]="false" [selected]="true"
         class="dark-mode" (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)"
         [updateRefentielOnLoad]="false" [canSelectedTopReferentiel]="true"
