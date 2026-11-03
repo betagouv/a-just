@@ -26,7 +26,7 @@ import { KPIService } from '../../services/kpi/kpi.service'
 import { referentielMappingName } from '../../utils/referentiel'
 import { autoFocus } from '../../utils/dom-js'
 import { downloadFile } from '../../utils/system'
-import { activityPercentColor } from '../../utils/activity'
+import { activityPercentColor, sumCountedActivityValues } from '../../utils/activity'
 import { VALUE_QUALITY_TO_VERIFY } from '../../constants/referentiel'
 import { ACTIVITIES_SHOW_LEVEL_4 } from '../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
@@ -465,25 +465,13 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
       return ref
     })
 
-    const preformatArray = (list: any[], index: string[]) => {
-      let total: number | null = null
-      list.map((item) => {
-        for (let i = 0; i < index.length; i++) {
-          if (item[index[i]] !== null) {
-            total = (total || 0) + item[index[i]]
-            break
-          }
-        }
-      })
-
-      return total !== null && total < 0 ? 0 : total
-    }
-    const inValue = preformatArray(referentiel.childrens, ['in', 'originalIn'])
-    const outValue = preformatArray(referentiel.childrens, ['out', 'originalOut'])
-    const stockValue = preformatArray(referentiel.childrens, ['stock', 'originalStock'])
-    referentiel.in = inValue === referentiel.originalIn && referentiel.childrens.every((c) => c.in === null) ? null : inValue
-    referentiel.out = outValue === referentiel.originalOut && referentiel.childrens.every((c) => c.out === null) ? null : outValue
-    referentiel.stock = outValue === referentiel.originalStock && referentiel.childrens.every((c) => c.stock === null) ? null : stockValue
+    const countedChildren = referentiel.childrens.filter((child) => child.compter === true)
+    const inValue = sumCountedActivityValues(countedChildren, ['in', 'originalIn'])
+    const outValue = sumCountedActivityValues(countedChildren, ['out', 'originalOut'])
+    const stockValue = sumCountedActivityValues(countedChildren, ['stock', 'originalStock'])
+    referentiel.in = inValue === referentiel.originalIn && countedChildren.every((c) => c.in === null) ? null : inValue
+    referentiel.out = outValue === referentiel.originalOut && countedChildren.every((c) => c.out === null) ? null : outValue
+    referentiel.stock = stockValue === referentiel.originalStock && countedChildren.every((c) => c.stock === null) ? null : stockValue
 
     // save datas
     if (this.timeoutUpdateAcitity[subRef.id]) {
@@ -633,6 +621,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
             }
 
             newRef.childrens.map((child) => {
+              if (child.compter !== true) return
               if (child.activityUpdated && newRef.activityUpdated) {
                 if (child.activityUpdated.entrees) {
                   if (newRef.activityUpdated.entrees)
@@ -733,6 +722,10 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
             }
             elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0
             for (const child of elem.childrens) {
+              if (child.compter !== true) {
+                child.possibleGainCompletion = 0
+                continue
+              }
               let nbToComplete = 0
               if (child.valueQualityIn === 'to_complete' && child.originalIn === null && child.in === null) nbToComplete += 1
               if (child.valueQualityOut === 'to_complete' && child.originalOut === null && child.out === null) nbToComplete += 1

@@ -96,7 +96,7 @@ export default class RouteContentieuxReferentiels extends Route {
   })
   async update(ctx) {
     const { id, node, value } = this.body(ctx)
-    let nextValue = value || null
+    let nextValue = value === '' ? null : value ?? null
 
     if (node === 'visibleIn') {
       try {

@@ -11,6 +11,8 @@ export interface ContentieuReferentielInterface {
   id: number;
   label: string;
   childrens?: ContentieuReferentielInterface[];
+  /** Inclure le sous-contentieux dans les totaux et la complétion des données d'activité. */
+  compter?: boolean | null;
   totalAffected?: number;
   percent?: number;
   selected?: boolean;

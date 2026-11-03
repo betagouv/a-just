@@ -325,7 +325,10 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     this.total.in.value = this.referentiel?.in
     this.total.out.value = this.referentiel?.out
     this.total.stock.value = this.referentiel?.stock
-    const updates = Object.values(this.updates)
+    this.total.in.updated = false
+    this.total.out.updated = false
+    this.total.stock.updated = false
+    const updates = Object.values(this.updates).filter((elem: any) => elem.contentieux.compter === true)
     if (updates.length) {
       this.total.in.value = this.total.in.value ?? this.referentiel?.in ?? this.referentiel?.originalIn
       this.total.out.value = this.total.out.value ?? this.referentiel?.out ?? this.referentiel?.originalOut
@@ -1043,6 +1046,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   CheckIfChildrenAreUpdated(cont: ContentieuReferentielInterface, node: string) {
     if (cont.childrens) {
       return cont.childrens.some((elem) => {
+        if (elem.compter !== true) return false
         switch (node) {
           case 'entrees':
             if (this.isValueUpdated({ cont: elem, node: 'entrees' })) return true

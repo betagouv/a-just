@@ -1,9 +1,14 @@
 /**
  * Formalise les activités d'un contentieux en fonction de ses sous contentieux
  * @param {*} childs
+ * @param {Array} referentiels sous-contentieux et leur option « Compter »
  * @returns
  */
-export const calculMainValuesFromChilds = (childs) => {
+export const calculMainValuesFromChilds = (childs, referentiels) => {
+  // Les anciennes cases décochées ont été enregistrées à null, au lieu de false.
+  const countedIds = new Set(referentiels.filter((ref) => ref.compter === true).map((ref) => ref.id))
+  childs = childs.filter((child) => countedIds.has(child.contentieux_id))
+
   const returnObject = {
     entrees: preformatActivitiesArray(childs, ['entrees', 'original_entrees']),
     original_entrees: preformatActivitiesArray(childs, ['original_entrees']),

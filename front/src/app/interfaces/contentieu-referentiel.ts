@@ -36,9 +36,9 @@ export interface ContentieuReferentielInterface {
    */
   checkVentilation?: boolean;
   /**
-   * Element à compter ou non dans le calcul de complétion des données
+   * Sous-contentieux à inclure dans les totaux et la complétion des données d'activité
    */
-  compter?: boolean;
+  compter?: boolean | null;
   /**
    * Element permettant de spécifier un niveau de détail pour les indisponibilités
    */

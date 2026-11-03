@@ -4,7 +4,7 @@
   </div>
   <div class="item not-margin">
     <p></p>
-    <div class="input">Compter</div>
+    <div class="input" title="Inclure ce sous-contentieux dans les totaux et le taux de complétion des données d’activité">Compter</div>
     <div class="select">Qualité des Entrées</div>
     <div class="select">Qualité des Sorties</div>
     <div class="select">Qualité du Stock</div>
@@ -28,7 +28,7 @@
   <div class="item">
     <p>({{items.code_import}}) {{items.label}}</p>
     <input type="checkbox" id="compter" name="compter" [(ngModel)]="items.compter"
-      (ngModelChange)="onUpdateElement(items, 'compter', $event.target?.checked ? $event.target?.checked : items.compter)" />
+      (ngModelChange)="onUpdateElement(items, 'compter', $event)" />
     <select #selectIn (change)="onUpdateElement(items, 'valueQualityIn', selectIn.value)">
       <option value="" selected>-</option>
       @for (i of QUALITY_LIST; track i.key) {

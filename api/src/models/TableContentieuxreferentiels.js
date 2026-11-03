@@ -590,6 +590,10 @@ export default (sequelizeInstance, Model) => {
       ref.set({ [camel_to_snake(node)]: value })
       await ref.save()
 
+      if (node === 'compter' && !!oldValue !== !!value && ref.dataValues.parent_id) {
+        await Model.models.Activities.recalculateTotalsByContentieux(ref.dataValues.parent_id)
+      }
+
       if (node === 'onlyToHrBackup') {
         const hasChild = await Model.findOne({
           where: {

@@ -522,20 +522,16 @@ export default (sequelizeInstance, Model) => {
           },
         })
 
-        let contentieuxRefChildren = []
-        for (let elem of findAllChild) {
-          let ref = await Model.models.ContentieuxReferentiels.getOneReferentiel(elem.contentieux_id)
-          contentieuxRefChildren.push(ref.dataValues)
-        }
+        const totals = calculMainValuesFromChilds(findAllChild, childrens)
 
         if (findMain) {
-          await findMain.update(calculMainValuesFromChilds(findAllChild))
+          await findMain.update(totals)
         } else {
           await Model.create({
             periode: date,
             hr_backup_id: hrBackupId,
             contentieux_id: ref.id,
-            ...calculMainValuesFromChilds(findAllChild),
+            ...totals,
           })
         }
 
@@ -1272,6 +1268,46 @@ export default (sequelizeInstance, Model) => {
     }
     console.timeEnd('step2')
     return { to_warn }
+  }
+
+  /**
+   * Réapplique « Compter » aux totaux existants, sans modifier les sous-contentieux
+   * ni recalculer leurs stocks. La visibilité ne détermine pas la participation au total.
+   * @param {number} contentieuxId contentieux parent
+   */
+  Model.recalculateTotalsByContentieux = async (contentieuxId) => {
+    const parents = await Model.findAll({
+      where: { contentieux_id: contentieuxId },
+      raw: true,
+    })
+
+    for (const backupId of new Set(parents.map((parent) => parent.hr_backup_id))) {
+      const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(backupId)
+      const ref = referentiels.find((item) => item.id === contentieuxId)
+      if (!ref) continue
+
+      const childrens = ref.childrens || []
+      const countedIds = childrens.filter((child) => child.compter === true).map((child) => child.id)
+      const activities = countedIds.length
+        ? await Model.findAll({
+          where: { hr_backup_id: backupId, contentieux_id: countedIds },
+          raw: true,
+        })
+        : []
+      const byMonth = new Map()
+      for (const activity of activities) {
+        const key = month(activity.periode).getTime()
+        if (!byMonth.has(key)) byMonth.set(key, [])
+        byMonth.get(key).push(activity)
+      }
+
+      for (const parent of parents.filter((item) => item.hr_backup_id === backupId)) {
+        const totals = calculMainValuesFromChilds(byMonth.get(month(parent.periode).getTime()) || [], childrens)
+        if (Object.keys(totals).some((key) => parent[key] !== totals[key])) {
+          await Model.updateById(parent.id, totals)
+        }
+      }
+    }
   }
 
   Model.syncAllActivitiesByContentieux = async (contentieuxId, juridictionsIds) => {
