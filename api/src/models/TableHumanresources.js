@@ -19,7 +19,12 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.forceRecalculateAllHrCache = async () => {
+  /**
+   * Recalcule le cache RH.
+   * Sans liste, toutes les juridictions. Avec une liste, seulement celles-là.
+   * @param {number[]|null} backupIds
+   */
+  Model.forceRecalculateAllHrCache = async (backupIds = null) => {
     await waitForRedis()
     const redis = getRedisClient()
 
@@ -31,7 +36,11 @@ export default (sequelizeInstance, Model) => {
     //console.log(`🚀 Recalcul forcé du cache HR pour toutes les juridictions @ ${new Date().toISOString()}`)
     console.time('forceRecalculateAllHrCache')
 
-    const jurisdictions = await Model.getAllJuridictionsWithSizes()
+    let jurisdictions = await Model.getAllJuridictionsWithSizes()
+    if (Array.isArray(backupIds)) {
+      const wanted = new Set(backupIds.map((backupId) => Number(backupId)))
+      jurisdictions = jurisdictions.filter((jur) => wanted.has(jur.id))
+    }
     const maxAtOnce = 5
 
     const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))

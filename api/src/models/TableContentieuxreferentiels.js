@@ -102,8 +102,23 @@ export default (sequelizeInstance, Model) => {
     extractorMode = false,
     userId = null,
   ) => {
-    if (!Array.isArray(backupIds)) {
+    if (backupIds == null) {
+      backupIds = []
+    } else if (!Array.isArray(backupIds)) {
       backupIds = [backupIds]
+    }
+    backupIds = backupIds.filter((id) => id != null).map((id) => Number(id))
+
+    const groupIds = backupIds.filter((id) => id < 0)
+    if (groupIds.length > 0) {
+      const members = await Model.models.HRBackups.findAll({
+        attributes: ['id'],
+        where: {
+          group_id: { [Op.in]: groupIds.map((id) => id * -1) },
+        },
+        raw: true,
+      })
+      backupIds = [...new Set([...backupIds.filter((id) => id > 0), ...members.map((member) => member.id)])]
     }
 
     let refIds = null
@@ -113,7 +128,7 @@ export default (sequelizeInstance, Model) => {
       refIds = userPreview.referentielIds
     }
 
-    if (backupIds) {
+    if (backupIds.length > 0) {
       const juridictions = await Model.models.HRBackups.findAll({
         where: {
           id: { [Op.in]: backupIds },
@@ -128,13 +143,14 @@ export default (sequelizeInstance, Model) => {
     }
 
     const where = {}
+    // null = visible partout. Sinon le contentieux est gardé dès qu'il est limité à l'un des backups demandés.
     if (displayAll == false && backupIds.length > 0) {
       where[Op.or] = [
         {
           only_to_hr_backup: null,
         },
         {
-          only_to_hr_backup: { [Op.contains]: backupIds },
+          only_to_hr_backup: { [Op.overlap]: backupIds },
         },
       ]
     }
@@ -574,57 +590,67 @@ export default (sequelizeInstance, Model) => {
     await writeReferentielRanks(sequelizeInstance, assignments)
   }
 
+  /**
+   * Juridictions dont la visibilité change.
+   * `null` veut dire « toutes » : la liste complète est `allIds`.
+   * @returns {Array|null} les identifiants touchés, [] si l'ensemble est le même, null si la forme est inconnue
+   */
+  const changedOnlyToHrBackupIds = (oldValue, value, allIds) => {
+    const without = (source, excluded) => {
+      const skip = new Set(excluded)
+      return source.filter((id) => !skip.has(id))
+    }
+
+    if (Array.isArray(oldValue) && Array.isArray(value)) {
+      return [...without(oldValue, value), ...without(value, oldValue)]
+    }
+    if (oldValue === null && Array.isArray(value)) return without(allIds, value)
+    if (Array.isArray(oldValue) && value === null) return without(allIds, oldValue)
+    if (oldValue === null && value === null) return []
+    return null
+  }
+
   Model.updateRef = async (id, node, value) => {
     const ref = await Model.findOne({
       where: {
         id,
       },
     })
+    if (!ref) return
 
-    if (ref) {
-      if (node === 'visibleIn') {
-        value = normalizeReferentielVisibility(value)
-      }
-
-      const oldValue = ref[camel_to_snake(node)]
-      ref.set({ [camel_to_snake(node)]: value })
-      await ref.save()
-
-      if (node === 'compter' && !!oldValue !== !!value && ref.dataValues.parent_id) {
-        await Model.models.Activities.recalculateTotalsByContentieux(ref.dataValues.parent_id)
-      }
-
-      if (node === 'onlyToHrBackup') {
-        const hasChild = await Model.findOne({
-          where: {
-            parent_id: ref.dataValues.id,
-          },
-          raw: true,
-        })
-        if (!hasChild) {
-          let hrBackupUpdated = []
-          let allJuridictions = (await Model.models.HRBackups.getAll()).map((h) => h.id)
-          if (Array.isArray(oldValue) && Array.isArray(value)) {
-            hrBackupUpdated = [...oldValue.filter((e) => !value.includes(e)), ...value.filter((e) => !oldValue.includes(e))]
-          } else if (oldValue === null && Array.isArray(value)) {
-            hrBackupUpdated = allJuridictions.filter((e) => !value.includes(e))
-          } else if (Array.isArray(oldValue) && value === null) {
-            hrBackupUpdated = allJuridictions.filter((e) => !oldValue.includes(e))
-          }
-          //console.log('old value', oldValue)
-          //console.log('new value', value)
-          //console.log('delta juridictions', hrBackupUpdated)
-          // synchronise by main contentieux
-
-          // test 16s pour les ventilations
-          await Model.models.HRActivities.syncAllVentilationByContentieux(ref.dataValues.parent_id)
-          // test toutes les juridictions à 1,8min
-          await Model.models.Activities.syncAllActivitiesByContentieux(ref.dataValues.parent_id, hrBackupUpdated)
-          // reload all agents environ 40s / juridictions (180 environ)
-          await Model.models.HumanResources.forceRecalculateAllHrCache()
-        }
-      }
+    if (node === 'visibleIn') {
+      value = normalizeReferentielVisibility(value)
     }
+
+    const column = camel_to_snake(node)
+    const oldValue = ref[column]
+    ref.set({ [column]: value })
+    await ref.save()
+
+    // La synchro ne part que d'une feuille : un parent est recalculé via ses enfants.
+    if (node !== 'onlyToHrBackup') return
+
+    const childCount = await Model.count({
+      where: {
+        parent_id: ref.dataValues.id,
+      },
+    })
+    if (childCount) return
+
+    const needsAllIds = (oldValue === null && Array.isArray(value)) || (Array.isArray(oldValue) && value === null)
+    const allIds = needsAllIds ? (await Model.models.HRBackups.getAll()).map((backup) => backup.id) : []
+    const changedIds = changedOnlyToHrBackupIds(oldValue, value, allIds)
+
+    // Rien à propager : même ensemble de juridictions, ou les deux côtés sont « toutes ».
+    if (Array.isArray(changedIds) && changedIds.length === 0) return
+
+    const parentId = ref.dataValues.parent_id
+    // null = forme inattendue : on garde l'ancien comportement (activités sur aucune juridiction, cache complet).
+    const backupIds = changedIds || []
+
+    await Model.models.HRActivities.syncAllVentilationByContentieux(parentId)
+    await Model.models.Activities.syncAllActivitiesByContentieux(parentId, backupIds)
+    //await Model.models.HumanResources.forceRecalculateAllHrCache(changedIds)
   }
 
   Model.getOneReferentiel = async (id) => {

@@ -100,6 +100,13 @@ export class HumanResourceService {
     return this.juridictionGroupSelected()?.fullAccess === true
   })
   /**
+   * Vérifie si la juridiction est une juridiction et non un arrondissement
+   */
+  isBackup = computed(() => {
+    const backupId = this.backupIdS() ?? 0
+    return backupId > 0
+  })
+  /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
   backupsWithoutGroup = signal<BackupInterface[]>([])

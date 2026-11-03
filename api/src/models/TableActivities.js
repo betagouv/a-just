@@ -292,8 +292,14 @@ export default (sequelizeInstance, Model) => {
 
     //console.log('START', referentiels, HRBackupId, minPeriode)
 
+    // Même référentiel que updateTotalAndFuturValue : sans le filtre éventuel de cleanActivities.
+    const fullReferentiels = filterReferentiels
+      ? await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, null, false, null, false, false)
+      : referentiels
+    const referentielById = new Map(fullReferentiels.map((item) => [item.id, item]))
+
     for (let i = 0; i < referentiels.length; i++) {
-      await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId)
+      await Model.updateTotalAndFuturValue(referentiels[i].id, minPeriode, HRBackupId, referentielById.get(referentiels[i].id))
     }
   }
 
@@ -385,174 +391,292 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
+  const PARENT_ACTIVITY_FIELDS = ['entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock']
+
+  const timeOf = (periode) => new Date(periode).getTime()
+
   /**
-   * Calcul les nouveaux entrées, sorties niveau 3 et les stocks de niveau 3 et 4
+   * Dernière ligne antérieure qui porte un stock ou un stock logiciel.
+   * Même choix que checkAndUpdatePreviousStock.
+   */
+  const previousStockValueFrom = (row) => {
+    if (!row) return null
+    if (row.stock !== null) return { stock: row.stock, type: 'calculate' }
+    if (row.original_stock !== null) return { stock: row.original_stock, type: 'setted' }
+    return null
+  }
+
+  const latestEligibleBefore = (rows, monthStart, seed) => {
+    let best = null
+    let bestTime = -Infinity
+    for (let i = 0; i < rows.length; i++) {
+      const time = timeOf(rows[i].periode)
+      if (time < monthStart && (rows[i].stock !== null || rows[i].original_stock !== null) && time >= bestTime) {
+        best = rows[i]
+        bestTime = time
+      }
+    }
+    return best || seed || null
+  }
+
+  /**
+   * Stock d'un contentieux enfant pour un mois.
+   * Si il y a un stock sur le mois précédent:
+   * donnée calculée -> stock N = stock N-1 ajusté + entrées N ajustées - sorties N ajustées
+   * sinon -> stock N = stock N logiciel + (entrées N ajustées - entrées N logiciel) - (sorties N ajustées - sorties N logiciel)
+   */
+  const computeChildStock = (activity, previousStockValue, valueQualityStock) => {
+    let currentStock = activity.stock
+
+    if (previousStockValue !== null) {
+      if (activity.entrees !== null || activity.sorties !== null || previousStockValue.type === 'calculate') {
+        const entrees = preformatActivitiesArray([activity], ['entrees', 'original_entrees'])
+        const sorties = preformatActivitiesArray([activity], ['sorties', 'original_sorties'])
+
+        if (previousStockValue.type === 'calculate') {
+          const stock = previousStockValue.stock ?? 0
+          currentStock = (stock ?? 0) + (entrees ?? 0) - (sorties ?? 0)
+        } else {
+          const stock = preformatActivitiesArray([activity], ['original_stock'])
+          currentStock = (stock ?? 0) + (entrees - (activity.original_entrees ?? 0)) - (sorties - (activity.original_sorties ?? 0))
+        }
+      } else {
+        currentStock = activity.original_stock
+      }
+    } else if (activity.original_stock !== null) {
+      currentStock = activity.original_stock
+
+      if (activity.entrees !== null) {
+        currentStock += activity.entrees || 0
+      } else if (activity.original_entrees !== null && activity.sorties !== null) {
+        currentStock += activity.original_entrees || 0
+      }
+
+      if (activity.sorties !== null) {
+        currentStock -= activity.sorties || 0
+      } else if (activity.original_sorties !== null && activity.entrees !== null) {
+        currentStock -= activity.original_sorties || 0
+      }
+    }
+
+    if (currentStock === activity.original_stock) {
+      const hasMovements = activity.entrees !== null || activity.sorties !== null
+      if (valueQualityStock === VALUE_QUALITY_TO_VERIFY && hasMovements) {
+        // Stock à vérifier avec des mouvements : on garde le stock calculé.
+      } else if (!previousStockValue || previousStockValue.type !== 'calculate') {
+        currentStock = null
+      }
+    }
+
+    if (currentStock !== null && currentStock < 0) currentStock = 0
+
+    return currentStock
+  }
+
+  const applyActivityUpdates = async (rows, columns, transaction) => {
+    const chunkSize = 400
+    for (let offset = 0; offset < rows.length; offset += chunkSize) {
+      const chunk = rows.slice(offset, offset + chunkSize)
+      const replacements = {}
+      const values = chunk.map((row, index) => {
+        const casts = columns.map((column) => {
+          const key = `${column}_${index}`
+          replacements[key] = row[column]
+          return `CAST(:${key} AS INTEGER)`
+        })
+        return `(${casts.join(', ')})`
+      })
+      const setClause = columns
+        .filter((column) => column !== 'id')
+        .map((column) => `${column} = data.${column}`)
+        .join(', ')
+
+      await Model.sequelize.query(
+        `
+          UPDATE "Activities" AS activity
+          SET ${setClause}, updated_at = NOW()
+          FROM (VALUES ${values.join(', ')}) AS data(${columns.join(', ')})
+          WHERE activity.id = data.id AND activity.deleted_at IS NULL
+        `,
+        { replacements, transaction },
+      )
+    }
+  }
+
+  /**
+   * Calcul les nouveaux entrées, sorties niveau 3 et les stocks de niveau 3 et 4.
+   * La plage de mois est lue une fois, le stock est calculé en mémoire, puis écrit en lot.
    * @param {*} mainContentieuxId
    * @param {*} date
    * @param {*} hrBackupId
+   * @param {*} referentiel référentiel déjà chargé avec ses enfants. Sinon il est relu.
    */
-  Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
+  Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId, referentiel = null) => {
     date = new Date(date) // detach date reference
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, null, false, null, false, false)
-    const ref = referentiels.find((r) => r.id === mainContentieuxId)
+    let ref = referentiel && referentiel.id === mainContentieuxId ? referentiel : null
+    if (!ref) {
+      const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, null, false, null, false, false)
+      ref = referentiels.find((item) => item.id === mainContentieuxId)
+    }
+    if (!ref) return
 
-    if (ref) {
-      let continueToDo = false
+    const childrens = ref.childrens || []
+    const childIds = childrens.map((child) => child.id)
+    const qualityById = new Map(childrens.map((child) => [child.id, child.valueQualityStock ?? child.value_quality_stock ?? null]))
+    const contentieuxIds = [ref.id, ...childIds.filter((id) => id !== ref.id)]
+
+    await Model.sequelize.transaction(async (transaction) => {
+      const lastActivity = await Model.findOne({
+        attributes: ['periode'],
+        where: { hr_backup_id: hrBackupId },
+        order: [['periode', 'DESC']],
+        raw: true,
+        transaction,
+      })
+      const lastPeriode = lastActivity ? new Date(lastActivity.periode) : null
+
+      // Même avancement que l'ancienne boucle : +1 mois, y compris le saut du 31 janvier vers mars.
+      const cursor = new Date(date)
+      const months = []
       do {
-        const childrens = ref.childrens || []
+        months.push(new Date(cursor.getTime()))
+        if (!lastPeriode || lastPeriode <= endOfMonth(cursor)) break
+        cursor.setMonth(cursor.getMonth() + 1)
+      } while (true)
 
-        for (let cIndex = 0; cIndex < childrens.length; cIndex++) {
-          // IF not exist, create it
-          if (
-            !(await Model.findOne({
-              where: {
-                periode: {
-                  [Op.between]: [startOfMonth(date), endOfMonth(date)],
-                },
-                hr_backup_id: hrBackupId,
-                contentieux_id: childrens[cIndex].id,
-              },
-            }))
-          ) {
-            await Model.create({
-              periode: date,
+      const loaded = await Model.findAll({
+        attributes: ['id', 'periode', 'contentieux_id', ...PARENT_ACTIVITY_FIELDS],
+        where: {
+          periode: {
+            [Op.between]: [startOfMonth(months[0]), endOfMonth(months[months.length - 1])],
+          },
+          hr_backup_id: hrBackupId,
+          contentieux_id: contentieuxIds,
+        },
+        raw: true,
+        transaction,
+      })
+
+      const rowsByContentieux = new Map()
+      for (let i = 0; i < loaded.length; i++) {
+        const row = loaded[i]
+        const bucket = rowsByContentieux.get(row.contentieux_id)
+        if (bucket) bucket.push(row)
+        else rowsByContentieux.set(row.contentieux_id, [row])
+      }
+
+      let previousByContentieux = new Map()
+      if (childIds.length) {
+        const previousRows = await Model.sequelize.query(
+          `
+            SELECT DISTINCT ON (contentieux_id) contentieux_id, periode, stock, original_stock
+            FROM "Activities"
+            WHERE hr_backup_id = :hrBackupId
+              AND contentieux_id IN (:childIds)
+              AND periode < :monthStart
+              AND deleted_at IS NULL
+              AND (stock IS NOT NULL OR original_stock IS NOT NULL)
+            ORDER BY contentieux_id, periode DESC
+          `,
+          {
+            replacements: {
+              hrBackupId,
+              childIds,
+              monthStart: startOfMonth(months[0]),
+            },
+            type: Model.sequelize.QueryTypes.SELECT,
+            transaction,
+          },
+        )
+        previousByContentieux = new Map(previousRows.map((row) => [Number(row.contentieux_id), row]))
+      }
+
+      const toCreate = []
+      const stockUpdates = []
+      const parentUpdates = []
+
+      for (let monthIndex = 0; monthIndex < months.length; monthIndex++) {
+        const monthDate = months[monthIndex]
+        const monthStart = startOfMonth(monthDate).getTime()
+        const monthEnd = endOfMonth(monthDate).getTime()
+        const monthChildren = []
+
+        for (let childIndex = 0; childIndex < childrens.length; childIndex++) {
+          const child = childrens[childIndex]
+          const rows = rowsByContentieux.get(child.id) || []
+          if (!rowsByContentieux.has(child.id)) rowsByContentieux.set(child.id, rows)
+
+          let monthRows = []
+          for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+            const time = timeOf(rows[rowIndex].periode)
+            if (time >= monthStart && time <= monthEnd) monthRows.push(rows[rowIndex])
+          }
+
+          if (!monthRows.length) {
+            const created = {
+              periode: new Date(monthDate.getTime()),
               hr_backup_id: hrBackupId,
-              contentieux_id: childrens[cIndex].id,
-            })
+              contentieux_id: child.id,
+              entrees: null,
+              sorties: null,
+              stock: null,
+              original_entrees: null,
+              original_sorties: null,
+              original_stock: null,
+            }
+            rows.push(created)
+            monthRows = [created]
+          }
+
+          const previousStockValue = previousStockValueFrom(
+            latestEligibleBefore(rows, monthStart, previousByContentieux.get(Number(child.id))),
+          )
+          const quality = qualityById.get(child.id) ?? null
+
+          for (let rowIndex = 0; rowIndex < monthRows.length; rowIndex++) {
+            const row = monthRows[rowIndex]
+            const currentStock = computeChildStock(row, previousStockValue, quality)
+            if (row.id) {
+              if (row.stock !== currentStock) stockUpdates.push({ id: row.id, stock: currentStock })
+            }
+            row.stock = currentStock
+            monthChildren.push(row)
           }
         }
 
-        // update main activity with entrees, sorties, stock
-        const findAllChild = await Model.findAll({
-          where: {
-            periode: {
-              [Op.between]: [startOfMonth(date), endOfMonth(date)],
-            },
-            hr_backup_id: hrBackupId,
-            contentieux_id: ref.childrens.map((r) => r.id),
-          },
-          raw: true,
-        })
-
-        const allLastStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild.map((c) => c.id), 'stock')
-
-        // calcul stock of custom stock
-        for (let i = 0; i < findAllChild.length; i++) {
-          let currentStock = findAllChild[i].stock
-          // if exist stock and is updated by user do not get previous stock
-          const getUserUpdateStock = allLastStock.find((s) => s.activityId === findAllChild[i].id)
-
-          const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
-          // do not update if updated by user
-          // or if stock is 'A_verifier'
-          if ((!getUserUpdateStock || getUserUpdateStock.value === null)) {// && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY) {
-            const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
-
-            if (previousStockValue !== null) {
-              // Si il y a un stock sur le mois précédent:
-              // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)
-              // Sinon -> stock N calculé = stock N logiciel (original) + (entrees N ajusté - entrées N logiciel) - (sorties N ajusté - sorties N logiciel)
-              if (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null || previousStockValue.type === 'calculate') {
-                const entrees = preformatActivitiesArray([findAllChild[i]], ['entrees', 'original_entrees'])
-                const sorties = preformatActivitiesArray([findAllChild[i]], ['sorties', 'original_sorties'])
-
-                if (previousStockValue.type === 'calculate') {
-                  const stock = previousStockValue.stock ?? 0
-                  currentStock = (stock ?? 0) + (entrees ?? 0) - (sorties ?? 0)
-                } else {
-                  const stock = preformatActivitiesArray([findAllChild[i]], ['original_stock'])
-                  currentStock = (stock ?? 0) + (entrees - (findAllChild[i].original_entrees ?? 0)) - (sorties - (findAllChild[i].original_sorties ?? 0))
-                }
-              } else {
-                currentStock = findAllChild[i].original_stock
-              }
-            } else if (findAllChild[i].original_stock !== null) {
-              // Update stock with original stock ONLY IF not null
-              currentStock = findAllChild[i].original_stock
-
-              if (findAllChild[i].entrees !== null) {
-                currentStock += findAllChild[i].entrees || 0
-              } else if (findAllChild[i].original_entrees !== null && findAllChild[i].sorties !== null) {
-                currentStock += findAllChild[i].original_entrees || 0
-              }
-
-              if (findAllChild[i].sorties !== null) {
-                currentStock -= findAllChild[i].sorties || 0
-              } else if (findAllChild[i].original_sorties !== null && findAllChild[i].entrees !== null) {
-                currentStock -= findAllChild[i].original_sorties || 0
-              }
-            }
-
-            // Si le stock calculé est égal au stock original
-            if (currentStock === findAllChild[i].original_stock) {
-              // Si c'est un stock à vérifier ET qu'il y a des mouvements (entrées/sorties)
-              // alors on garde le stock calculé tel quel
-              if (
-                contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY &&
-                (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)
-              ) {
-                // currentStock reste inchangé (pas d'action nécessaire)
-              }
-              // Sinon, si le stock précédent n'est pas calculé, on remet à null
-              else if (!previousStockValue || previousStockValue.type !== 'calculate') {
-                currentStock = null
-              }
-              // Si previousStockValue.type === 'calculate', currentStock reste inchangé
-            }
-
-            if (currentStock !== null && currentStock < 0) {
-              currentStock = 0
-            }
-
-            // save to database
-            findAllChild[i].stock = currentStock
-            await Model.updateById(findAllChild[i].id, {
-              stock: currentStock,
-            })
-          }
+        const totals = calculMainValuesFromChilds(monthChildren)
+        const parentRows = rowsByContentieux.get(ref.id) || []
+        let parent = null
+        for (let rowIndex = 0; rowIndex < parentRows.length; rowIndex++) {
+          const time = timeOf(parentRows[rowIndex].periode)
+          if (time < monthStart || time > monthEnd || !parentRows[rowIndex].id) continue
+          if (!parent || parentRows[rowIndex].id < parent.id) parent = parentRows[rowIndex]
         }
 
-        const findMain = await Model.findOne({
-          where: {
-            periode: {
-              [Op.between]: [startOfMonth(date), endOfMonth(date)],
-            },
-            hr_backup_id: hrBackupId,
-            contentieux_id: ref.id,
-          },
-        })
-
-        const totals = calculMainValuesFromChilds(findAllChild, childrens)
-
-        if (findMain) {
-          await findMain.update(totals)
+        if (parent) {
+          const changed = PARENT_ACTIVITY_FIELDS.some((field) => parent[field] !== totals[field])
+          if (changed) parentUpdates.push({ id: parent.id, ...totals })
         } else {
-          await Model.create({
-            periode: date,
+          toCreate.push({
+            periode: new Date(monthDate.getTime()),
             hr_backup_id: hrBackupId,
             contentieux_id: ref.id,
             ...totals,
           })
         }
+      }
 
-        // check if they are value after this periode
-        const nextPeriode = await Model.findAll({
-          attributes: ['periode'],
-          where: {
-            periode: {
-              [Op.gt]: endOfMonth(date),
-            },
-            hr_backup_id: hrBackupId,
-          },
-          raw: true,
-          order: ['periode'],
-        })
-        continueToDo = nextPeriode.length !== 0
-        if (nextPeriode.length) {
-          date.setMonth(date.getMonth() + 1)
+      for (let i = 0; i < childrens.length; i++) {
+        const rows = rowsByContentieux.get(childrens[i].id) || []
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+          if (!rows[rowIndex].id) toCreate.push(rows[rowIndex])
         }
-      } while (continueToDo)
-    }
+      }
+
+      if (toCreate.length) await Model.bulkCreate(toCreate, { transaction })
+      await applyActivityUpdates(stockUpdates, ['id', 'stock'], transaction)
+      await applyActivityUpdates(parentUpdates, ['id', ...PARENT_ACTIVITY_FIELDS], transaction)
+    })
   }
 
   /**

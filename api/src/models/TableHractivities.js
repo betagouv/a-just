@@ -165,63 +165,95 @@ export default (sequelizeInstance, Model) => {
     )
   }
 
+  /**
+   * Aligne le pourcentage d'un contentieux sur la somme de ses enfants directs.
+   * Chaque ventilation (situation + juridiction) est recalculée à part.
+   * Un enfant masqué pour la juridiction ne compte pas.
+   * Sans aucune activité enfant, la valeur saisie sur le parent est conservée.
+   * Le calcul remonte ensuite au parent, pour que chaque niveau reste la somme du sien.
+   * @param {number} contentieuxId
+   */
   Model.syncAllVentilationByContentieux = async (contentieuxId) => {
-    const listAllMainContentieux = await Model.findAll({
-      where: {
-        nac_id: {
-          [Op.gt]: 0,
-        },
-        nac_id: contentieuxId,
-      },
-    })
+    const seen = new Set()
 
-    const refElements = {}
-    for (let i = 0; i < listAllMainContentieux.length; i++) {
-      // get juridiction id
-      const juridiction = await Model.models.HumanResources.findOne({
-        attributes: ['id', 'backup_id'],
-        include: [
-          {
-            attributes: [],
-            model: Model.models.HRSituations,
-            include: [
-              {
-                attributes: ['id'],
-                model: Model.models.HRActivities,
-                where: {
-                  id: listAllMainContentieux[i].dataValues.id,
-                },
-              },
-            ],
-          },
-        ],
+    const syncOne = async (id) => {
+      if (!id || seen.has(id)) return
+      seen.add(id)
+
+      await sequelizeInstance.query(
+        `
+          WITH parents AS (
+            SELECT
+              act.id,
+              act.hr_situation_id,
+              COALESCE(act.backup_id, hr.backup_id) AS juridiction_id
+            FROM "HRActivities" act
+            INNER JOIN "HRSituations" sit
+              ON sit.id = act.hr_situation_id AND sit.deleted_at IS NULL
+            INNER JOIN "HumanResources" hr
+              ON hr.id = sit.human_id AND hr.deleted_at IS NULL
+            WHERE act.deleted_at IS NULL
+              AND act.nac_id = :contentieuxId
+          ),
+          children AS (
+            SELECT id, only_to_hr_backup
+            FROM "ContentieuxReferentiels"
+            WHERE deleted_at IS NULL
+              AND parent_id = :contentieuxId
+          ),
+          child_totals AS (
+            SELECT
+              c.hr_situation_id,
+              COALESCE(c.backup_id, hr.backup_id) AS juridiction_id,
+              c.nac_id,
+              SUM(c.percent) AS total
+            FROM "HRActivities" c
+            INNER JOIN "HRSituations" sit
+              ON sit.id = c.hr_situation_id AND sit.deleted_at IS NULL
+            INNER JOIN "HumanResources" hr
+              ON hr.id = sit.human_id AND hr.deleted_at IS NULL
+            WHERE c.deleted_at IS NULL
+              AND c.nac_id IN (SELECT id FROM children)
+            GROUP BY c.hr_situation_id, COALESCE(c.backup_id, hr.backup_id), c.nac_id
+          ),
+          next_values AS (
+            SELECT
+              p.id,
+              COALESCE(SUM(ct.total) FILTER (
+                WHERE ch.only_to_hr_backup IS NULL
+                  OR (p.juridiction_id IS NOT NULL AND ch.only_to_hr_backup @> ARRAY[p.juridiction_id]::integer[])
+              ), 0) AS percent
+            FROM parents p
+            INNER JOIN children ch ON TRUE
+            LEFT JOIN child_totals ct
+              ON ct.hr_situation_id = p.hr_situation_id
+              AND ct.juridiction_id IS NOT DISTINCT FROM p.juridiction_id
+              AND ct.nac_id = ch.id
+            GROUP BY p.id
+            HAVING COUNT(ct.nac_id) > 0
+          )
+          UPDATE "HRActivities" act
+          SET percent = next_values.percent,
+              updated_at = NOW()
+          FROM next_values
+          WHERE act.id = next_values.id
+            AND act.percent IS DISTINCT FROM next_values.percent
+        `,
+        {
+          replacements: { contentieuxId: id },
+          type: sequelizeInstance.QueryTypes.UPDATE,
+        },
+      )
+
+      const node = await Model.models.ContentieuxReferentiels.findOne({
+        attributes: ['parent_id'],
+        where: { id },
         raw: true,
       })
-
-      if (juridiction && juridiction.backup_id) {
-        const juridictionId = juridiction.backup_id
-        if (!refElements[juridictionId]) {
-          refElements[juridictionId] = await Model.models.ContentieuxReferentiels.getReferentiels(juridictionId)
-        }
-
-        const referentiel = refElements[juridictionId]
-        const findRef = referentiel.find((r) => r.id === contentieuxId)
-        if (findRef && findRef.childrens.length) {
-          const refIds = findRef.childrens.map((c) => c.id)
-
-          const sum = await Model.sum('percent', {
-            where: {
-              hr_situation_id: listAllMainContentieux[i].dataValues.hr_situation_id,
-              nac_id: refIds,
-            },
-          })
-
-          listAllMainContentieux[i].update({
-            percent: sum || listAllMainContentieux[i].dataValues.percent,
-          })
-        }
-      }
+      if (node?.parent_id) await syncOne(node.parent_id)
     }
+
+    await syncOne(contentieuxId)
   }
 
   return Model
