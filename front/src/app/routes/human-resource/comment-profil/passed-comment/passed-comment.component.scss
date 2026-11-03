@@ -1,4 +1,5 @@
 @use '../../../../styles/utils.scss' as utils;
+@use '../../../../styles/animations.scss' as animations;
 
 :host {
 
@@ -95,22 +96,26 @@
     }
 
     .unsave {
-      border: solid 1px utils.$colors-lightBorder;
-      color: utils.$colors-lightBorder;
       margin-right: 16px;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
       line-height: 24px;
-      color: utils.$colors-grayRow;
-      border-color: utils.$colors-grayRow;
       cursor: pointer;
       pointer-events: initial;
+
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+
+        &:hover {
+          background-color: transparent;
+        }
+
+      }
     }
 
     .save {
-      color: white;
-      background-color: utils.$colors-primary;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
@@ -133,16 +138,33 @@
       margin-right: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px utils.$colors-grayRow;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: utils.$colors-grayRow;
       cursor: pointer;
+      transition: color animations.$duration-normal animations.$ease-default, text-decoration-color animations.$duration-normal animations.$ease-default;
+
+      &:hover {
+        color: utils.$colors-cblack;
+        text-decoration-color: utils.$colors-cblack;
+      }
     }
 
     .delete {
       margin-left: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px utils.$colors-grayRow;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: utils.$colors-grayRow;
       cursor: pointer;
+
+      transition: color animations.$duration-normal animations.$ease-default, text-decoration-color animations.$duration-normal animations.$ease-default;
+
+      &:hover {
+        color: utils.$colors-cblack;
+        text-decoration-color: utils.$colors-cblack;
+      }
     }
   }
 }

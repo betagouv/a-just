@@ -7,7 +7,7 @@
 
     &.editing {
       padding-top: 42px;
-      background-color: white;
+      background-color: utils.$colors-white;
       border-radius: 8px;
       border: solid 1px utils.$colors-lightBorder;
       background-color: utils.$colors-white;
@@ -32,21 +32,21 @@
       padding: 0 16px;
 
       .number-circle {
-        background-color: #ededed;
+        background-color: utils.$colors-dataGreyBg;
         border-radius: 50%;
         width: 25px;
         height: 25px;
         padding: 3px 4.5px;
         text-align: center;
         font-size: 12px;
-        color: #929292;
+        color: utils.$colors-grayRow;
         margin-right: 8px;
       }
 
       label {
         font-size: 14px;
         font-weight: bold;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
         bottom: 2px;
         position: relative;
         margin-right: 8px;
@@ -89,7 +89,7 @@
     }
 
     .save {
-      color: white;
+      color: utils.$colors-white;
       background-color: utils.$colors-primary;
       height: 32px;
       padding: 4px 12px;

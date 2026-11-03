@@ -91,12 +91,12 @@
           .tooltiptext {
             visibility: hidden;
             background-color: utils.$colors-borderProgressBar;
-            color: #fff;
+            color: utils.$colors-white;
             padding: 8px;
             font-size: 14px;
             border-radius: 6px;
             position: absolute;
-            z-index: 10;
+            z-index: 100;
             top: -5px;
             left: 105%;
             width: 300px;

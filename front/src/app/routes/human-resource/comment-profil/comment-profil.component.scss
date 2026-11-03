@@ -1,4 +1,5 @@
 @use '../../../styles/utils.scss' as utils;
+@use '../../../styles/animations.scss' as animations;
 
 :host {
   overflow: hidden;
@@ -31,16 +32,18 @@
       padding: 0 24px;
       opacity: 1;
 
-
-
       .save {
-        color: white;
-        background-color: utils.$colors-primary;
         height: 32px;
         padding: 4px 12px;
         font-size: 14px;
         line-height: 24px;
         cursor: pointer;
+
+        transition: background-color animations.$duration-normal animations.$ease-default;
+
+        &:hover {
+          background-color: utils.$colors-cblue;
+        }
 
         &.disabled {
           pointer-events: none;
@@ -49,9 +52,6 @@
       }
 
       .back {
-        border: solid 1px utils.$colors-primary;
-        color: utils.$colors-primary;
-        background-color: utils.$colors-white;
         height: 32px;
         padding: 4px 12px;
         font-size: 14px;

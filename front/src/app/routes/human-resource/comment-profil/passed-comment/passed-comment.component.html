@@ -21,8 +21,8 @@
       [defaultReadOnly]="!userService.canEditHR()"></aj-text-editor>
     @if (isEditing) {
     <div class="footer-panel">
-      <div class="unsave" (click)="setOldValue()">Annuler</div>
-      <div class="save" (click)="save()">Enregistrer</div>
+      <button class="unsave outline blue strict-border" (click)="setOldValue()">Annuler</button>
+      <button class="save fill primary small" (click)="save()">Enregistrer</button>
     </div>
     }
   </div>

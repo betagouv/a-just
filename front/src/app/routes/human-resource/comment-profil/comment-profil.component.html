@@ -40,10 +40,12 @@
   }
   @if (isEditing && userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()) {
   <div class="footer-panel">
-    <div class="back" (click)="back(); $event.stopPropagation()">Annuler</div>
-    <div class="save" [ngClass]="{ disabled: !currentComment.length }" (click)="save(); $event.stopPropagation()">
+    <button class="back outline blue strict-border" (click)="back(); $event.stopPropagation()">Annuler
+    </button>
+    <button class="save fill primary small" [ngClass]="{ disabled: !currentComment.length }"
+      (click)="save(); $event.stopPropagation()">
       Enregistrer
-    </div>
+    </button>
   </div>
   }
   @for (com of comments; track com) {
