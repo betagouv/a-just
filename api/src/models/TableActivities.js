@@ -644,7 +644,7 @@ export default (sequelizeInstance, Model) => {
           }
         }
 
-        const totals = calculMainValuesFromChilds(monthChildren)
+        const totals = calculMainValuesFromChilds(monthChildren, childrens)
         const parentRows = rowsByContentieux.get(ref.id) || []
         let parent = null
         for (let rowIndex = 0; rowIndex < parentRows.length; rowIndex++) {
