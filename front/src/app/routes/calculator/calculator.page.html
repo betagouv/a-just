@@ -2,7 +2,7 @@
   class="content-margin-null action-fit-width space-help no-scroll" [isLoading]="isLoading"
   [tours]="datasFilted && datasFilted.length ? introSteps : []">
   @if (categorySelected) {
-  <div class="container">
+  <div class="container" [class.print]="duringPrint">
     <div class="sub-main-header">
       <div class="categories-switch">
         @if (canViewMagistrat) {
@@ -261,12 +261,12 @@
     </div>
     }
     @if (tabSelected === 1 && !isLoading) {
-    <aj-view-analytics [datasFilted]="datasAnalytics" [categorySelected]="categorySelected"
+    <aj-view-analytics [class.print]="duringPrint" [datasFilted]="datasAnalytics" [categorySelected]="categorySelected"
       [maxDateSelectionDate]="maxDateSelectionDate"></aj-view-analytics>
     }
     }
     @if (compareTemplates) {
-    <aj-template-analytics [lines]="compareTemplates"></aj-template-analytics>
+    <aj-template-analytics [class.print]="duringPrint" [lines]="compareTemplates"></aj-template-analytics>
     }
   </div>
   }

@@ -657,6 +657,15 @@
     overflow-y: scroll;
     padding-bottom: 80px;
   }
+
+  &.print {
+    height: auto;
+
+    .content-list {
+      flex: none;
+      overflow: visible;
+    }
+  }
 }
 
 .header-calculator {

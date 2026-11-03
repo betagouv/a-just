@@ -4,6 +4,15 @@
     display: block;
     height: calc(100% - 48px);
 
+    &.print {
+        height: auto;
+
+        .scroll-container {
+            height: auto;
+            overflow: visible;
+        }
+    }
+
     button {
         height: 24px;
         padding: 2px 9px 2px 8px;
