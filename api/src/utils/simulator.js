@@ -188,11 +188,12 @@ export async function getSituation(
   //if (referentielId.includes(49))
   //console.log(summedlastActivities)
 
-  // Calcul de totalIn et totalOut : somme des moyennes par child
+  // Un parent sélectionné utilise ses totaux déjà calculés selon « Compter ».
+  // Seule une sélection partielle additionne les moyennes des sous-contentieux choisis.
   let totalIn = null
   let totalOut = null
 
-  if (referentielId.child && referentielId.child.length > 0) {
+  if (!referentielId.parent?.length && referentielId.child && referentielId.child.length > 0) {
     const childIds = referentielId.child
     let sumOfMeansIn = 0
     let sumOfMeansOut = 0
@@ -236,7 +237,7 @@ export async function getSituation(
     totalIn = countValidIn > 0 ? sumOfMeansIn : null
     totalOut = countValidOut > 0 ? sumOfMeansOut : null
   } else {
-    // Fallback si pas de child : calcul global comme avant
+    // Moyenne des totaux du contentieux, sans réintroduire ses enfants exclus.
     const filteredIn = summedlastActivities.filter(a => a.entrees !== null && a.entrees !== undefined)
     totalIn = filteredIn.length ? meanBy(filteredIn, 'entrees') : null
 
@@ -605,7 +606,8 @@ export function getEtpByCategory(etpAffected, sufix = '') {
  */
 export async function getCSActivities(referentielId, allActivities) {
   if (allActivities.length !== 0) {
-    let filteredByContentieux = allActivities.filter((a) => (referentielId.child || referentielId.parent || []).includes(a.contentieux.id))
+    const selectedIds = referentielId.parent?.length ? referentielId.parent : referentielId.child || []
+    let filteredByContentieux = allActivities.filter((a) => selectedIds.includes(a.contentieux.id))
 
     const dateStop = filteredByContentieux.reduce((a, b) => {
       return a.periode > b.periode ? a.periode : b.periode
