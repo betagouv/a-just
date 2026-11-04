@@ -1424,7 +1424,8 @@ export class ExcelService extends MainClass {
     // garantir au moins la ligne 2
     const lastRow = Math.max(2, logCount)
 
-    console.log(report.worksheets[etptDDGIndex])
+    //console.log(report.worksheets[etptDDGIndex])
+
     // listes des plages (préfixe jusqu'à la dernière ligne)
     const ranges = ['A2:F', 'G2:N', 'I2:K', 'L2:L', 'N2:N', 'O2:O', 'O2:U', 'Q2:R', 'S2:S', 'U2:U']
 
@@ -1453,7 +1454,7 @@ export class ExcelService extends MainClass {
       type: 'list',
       allowBlank: true,
       formulae: viewModel.tProximite,
-      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      error: 'Veuillez sélectionner une valeur dans le menu déroulant',
       showErrorMessage: true,
       showInputMessage: true,
     }
@@ -1621,7 +1622,7 @@ export class ExcelService extends MainClass {
       type: 'list',
       allowBlank: false,
       formulae: viewModel.tProximite,
-      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      error: 'Veuillez sélectionner une valeur dans le menu déroulant',
       prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
       showErrorMessage: true,
       showInputMessage: true,
