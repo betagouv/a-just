@@ -56,7 +56,12 @@ export class ExtractorVentilationComponent extends MainClass {
   /**
    *  Titre du sélecteur de date « A compter du » (pour changement dynamique en fonction de la date)
    */
-  ajDateSelectTitle: string = 'Pour la période du'
+  ajDateSelectTitleFrom: string = 'Pour la période du'
+
+  /**
+   * Titre du sélecteur de date de fin « Au » ou « À »
+   */
+  ajDateSelectTitleTo: string = 'Au'
 
   /**
    * Constructeur
@@ -117,20 +122,27 @@ export class ExtractorVentilationComponent extends MainClass {
    * @param value date
    */
   selectDate(dateType: string, value: any): void {
+    let todayDate = today(new Date())
+
     if (dateType === 'start') {
       this.excelService.dateStart.next(value)
       this.dateStart = value
-      let todayDate = today(new Date())
 
       if (this.dateStart?.getTime() === todayDate.getTime()) {
-        this.ajDateSelectTitle = "Pour la période d'"
+        this.ajDateSelectTitleFrom = "Pour la période d'"
       } else {
-        this.ajDateSelectTitle = 'Pour la période du'
+        this.ajDateSelectTitleFrom = 'Pour la période du'
       }
     }
     if (dateType === 'stop') {
       this.excelService.dateStop.next(value)
       this.dateStop = value
+
+      if (this.dateStop?.getTime() === todayDate.getTime()) {
+        this.ajDateSelectTitleTo = 'À'
+      } else {
+        this.ajDateSelectTitleTo = 'Au'
+      }
     }
     this.checkValidity()
   }
