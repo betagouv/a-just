@@ -90,9 +90,12 @@ export default (sequelizeInstance, Model) => {
     if (!Array.isArray(nodesUpdated)) {
       nodesUpdated = [nodesUpdated]
     }
+    if (!activityIds.length || !nodesUpdated.length) {
+      return []
+    }
 
     const listUpdated = await Model.findAll({
-      attributes: ['user_id', 'updated_at', 'value'],
+      attributes: ['id', 'activity_id', 'activity_node_updated', 'user_id', 'updated_at', 'value'],
       where: {
         activity_id: activityIds,
         activity_node_updated: nodesUpdated,
@@ -103,23 +106,28 @@ export default (sequelizeInstance, Model) => {
           attributes: ['first_name', 'last_name'],
         },
       ],
-      order: [['updated_at', 'desc']],
-      limit: 1,
+      order: [['id', 'DESC']],
       raw: true,
     })
 
-    if (listUpdated.length > 0) {
-      return listUpdated.map((l) => ({
-        user: {
-          firstName: l['User.first_name'],
-          lastName: l['User.last_name'],
+    const seen = new Set()
+    return listUpdated.flatMap((l) => {
+      const key = `${l.activity_id}:${l.activity_node_updated}`
+      if (seen.has(key)) return []
+      seen.add(key)
+      return [
+        {
+          activityId: l.activity_id,
+          nodeUpdated: l.activity_node_updated,
+          user: {
+            firstName: l['User.first_name'],
+            lastName: l['User.last_name'],
+          },
+          value: l.value,
+          date: l.updated_at,
         },
-        value: l.value,
-        date: l.updated_at,
-      }))
-    }
-
-    return []
+      ]
+    })
   }
 
   /**
