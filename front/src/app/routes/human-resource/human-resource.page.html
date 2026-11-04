@@ -49,15 +49,13 @@
     }
     @if (!duringPrint && currentHR && onEditIndex === null) {
     <div class="new-action text-center">
-      @if (userService.canEditHR() && humanResourceService.canEditSelectedJuridiction() &&
-      humanResourceService.isBackup()) {
+      @if (userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()) {
       <button class="fill primary small" (click)="onSelectSituationToEdit()">
         Renseigner une nouvelle situation
       </button>
       }
 
-      @if(userService.canEditHR() && humanResourceService.canEditSelectedJuridiction() &&
-      humanResourceService.isBackup()){
+      @if(userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()){
       <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
         text="Qu'est-ce que c'est ?"></aj-help-button>
       }
@@ -129,7 +127,7 @@
     }
 
     @if (userService.canEditHR() && humanResourceService.canEditSelectedJuridiction() && currentHR && onEditIndex
-    === null && histories.length === 0 && humanResourceService.isBackup()) {
+    === null && histories.length === 0) {
     <div class="text-center">
       <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>
     </div>

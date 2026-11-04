@@ -1046,7 +1046,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   getNbContentieux(backupId?: number) {
-    const mainIds = this.humanResourceService.mainContentieuxReferentiel().map((c) => c.id)
+    const mainIds = this.humanResourceService.contentieuxReferentiel.getValue().map((c) => c.id)
     const activities = this.activities.filter(
       (activity) => activity.percent && (!backupId || activity.backup?.id === backupId) && mainIds.includes(activity.contentieux.id),
     )

@@ -605,7 +605,6 @@ export default (sequelizeInstance, Model) => {
       registrationId: hr.registration_number || null,
       date_entree: hr.dateStart === undefined ? undefined : hr.dateStart || null,
       date_sortie: hr.dateEnd === undefined ? undefined : hr.dateEnd || null,
-      backup_id: backupId,
       updated_at: new Date(),
     }
 
@@ -618,7 +617,6 @@ export default (sequelizeInstance, Model) => {
       hr.id = newHr.dataValues.id
     }
 
-    console.log('fx updateHR', hr.situations)
     if (hr.situations !== undefined) {
       await Model.models.HRSituations.syncSituations(hr.situations || [], hr.id)
     }
