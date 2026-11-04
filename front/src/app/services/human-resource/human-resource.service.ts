@@ -182,6 +182,10 @@ export class HumanResourceService {
    * des juridictions autorisées connue.
    */
   private pendingBackupId: number | null = null
+  /**
+   *
+   */
+  addVentilationDisplayImportLabels = signal<boolean>(false)
 
   /**
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page

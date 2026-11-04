@@ -90,7 +90,7 @@
             à vérifier
           </label>
           } @else if (
-          displayImportLabels===true) {
+          humanResourceService.addVentilationDisplayImportLabels()) {
           <label class="import-confirmation" [ngStyle]="{
                 color:
                   form.get('categoryId')?.value === null ||
@@ -119,7 +119,7 @@
 
         <div class="grid-triple">
           <div class="admin-element"
-            [ngClass]="{ error: form.get('categoryId')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: form.get('categoryId')?.value === null && humanResourceService.addVentilationDisplayImportLabels() }"
             [ngClass]="{ error: humanResourceService.alertList().includes('category') }">
             <div class="label-aj">Catégorie :</div>
             <select formControlName="categoryId">
@@ -135,7 +135,7 @@
             }
           </div>
           <div class="admin-element"
-            [ngClass]="{ error: form.get('fonctionId')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: form.get('fonctionId')?.value === null && humanResourceService.addVentilationDisplayImportLabels() }"
             [ngClass]="{ error: humanResourceService.alertList().includes('fonction') }"
             [ngStyle]="form.get('categoryId')?.value !== null ? {} : { 'pointer-events': 'none', opacity: .5 }">
             <div class="label-aj">Fonction :</div>
@@ -152,7 +152,7 @@
             }
           </div>
           <div class="admin-element"
-            [ngClass]="{ error: form.get('etp')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: form.get('etp')?.value === null && humanResourceService.addVentilationDisplayImportLabels() }"
             [ngClass]="{ error: humanResourceService.alertList().includes('etp') }" id="etpForm">
             <div class="label-aj">Temps de travail (en ETPT) :</div>
             <div class="calculatrice-button-container">
@@ -198,7 +198,7 @@
             <i class="ri-checkbox-circle-fill"></i>
             à vérifier
           </label>
-          } @else if (displayImportLabels===true) {
+          } @else if (humanResourceService.addVentilationDisplayImportLabels()) {
           <label class="import-confirmation" [ngStyle]="{
                 color: sumPercentImported !== 100 ? '#c3992a' : '#18753c',
                 'background-color': sumPercentImported !== 100 ? '#feebd0' : '#b8fec9',
@@ -258,7 +258,7 @@
       </div>
       <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"
-          [ngClass]="{ error: form.get('activitiesStartDate')?.value === null && displayImportLabels }">
+          [ngClass]="{ error: form.get('activitiesStartDate')?.value === null && humanResourceService.addVentilationDisplayImportLabels() }">
           <div class="header">
             @if (isEdit) {
             <p>Modification de la situation</p>
@@ -272,7 +272,7 @@
               <i class="ri-checkbox-circle-fill"></i>
               à vérifier
             </label>
-            } @else if (displayImportLabels===true) {
+            } @else if (humanResourceService.addVentilationDisplayImportLabels()) {
             <label class="import-confirmation" [ngStyle]="{
                   color: form.get('activitiesStartDate')?.value === null ? '#c3992a' : '#18753c',
                   'background-color': form.get('activitiesStartDate')?.value === null ? '#feebd0' : '#b8fec9',
@@ -286,7 +286,7 @@
           <div class="date-start-content" [ngClass]="{
               error:
                 humanResourceService.alertList().includes('activitiesStartDate') ||
-                (form.get('activitiesStartDate')?.value === null && displayImportLabels),
+                (form.get('activitiesStartDate')?.value === null && humanResourceService.addVentilationDisplayImportLabels()),
             }">
             <aj-date-select [title]="ajDateSelectTitle" [value]="form.get('activitiesStartDate')?.value"
               (valueChange)="onActivitiesStartDateUserChange($event)" [manualInput]="true"></aj-date-select>
@@ -354,7 +354,7 @@
     @if (saveActions) {
     <div class="actions">
       <button class="outline blue strict-border"
-        (click)="close.emit(); displayImportLabels = false; sumPercentImported = 0">
+        (click)="close.emit(); humanResourceService.addVentilationDisplayImportLabels.set(false); sumPercentImported = 0">
         Annuler
       </button>
       <button class="primary strict-border" (click)="onSave()">Enregistrer</button>

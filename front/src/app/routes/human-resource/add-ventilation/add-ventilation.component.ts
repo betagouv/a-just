@@ -250,10 +250,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   importedFunction: number | null = null
   /**
-   * Import de fichié effectué
-   */
-  displayImportLabels = false
-  /**
    * Somme des valeurs importés
    */
   sumPercentImported = 0
@@ -265,10 +261,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Afficher erreur date de début
    */
   printErrorDateStart: boolean = false
-  /**
-   * Import
-   */
-  imported = false
   /**
    * Indique si l'utilisateur a saisi manuellement la date « A compter du »
    */
@@ -306,7 +298,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('categoryId')?.valueChanges.subscribe(() => {
         this.loadCategories().then(() => {
           let fct = null
-          if (this.displayImportLabels) {
+          if (this.humanResourceService.addVentilationDisplayImportLabels()) {
             fct = this.fonctions.find((c) => c.id === this.importedFunction)
           } else {
             const currentFonctionId = this.form.get('fonctionId')?.value
@@ -797,8 +789,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       value: null,
     }
 
+    this.humanResourceService.addVentilationDisplayImportLabels.set(false)
     this.fileReader(file, classe, event)
-    this.imported = true
     element.value = ''
   }
 
@@ -832,13 +824,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       // Formated data from the Excel file imported
       const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
 
-      this.displayImportLabels = true
       let situation: importedSituation = {
         index: this.indexSituation,
         ventillation: this.affectImportedSituation(importedSituation),
       }
       this.humanResourceService.importedSituation.next(situation)
-      this.appService.notification(`L’import de vos données a bien été réalisé.`)
     }
     fileReader.readAsArrayBuffer(file)
   }

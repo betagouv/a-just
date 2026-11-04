@@ -23,6 +23,7 @@ import { importedVentillation } from '../../routes/human-resource/add-ventilatio
 import { fixDecimal } from '../../utils/numbers'
 import { CommonModule } from '@angular/common'
 import { BackupInterface } from '../../interfaces/backup'
+import { AppService } from '../../services/app/app.service'
 
 /**
  * Interface pour les référentiels avec les pourcentages filtrés
@@ -58,6 +59,10 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Service de gestion des utilisateurs
    */
   userService = inject(UserService)
+  /**
+   * Service de gestion de l'application
+   */
+  appService = inject(AppService)
   /**
    * ID de la fiche
    */
@@ -182,9 +187,25 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
       this.humanResourceService.importedSituation.subscribe((referentiel) => {
         this.activities = []
         if (referentiel?.index === this.indexSituation && referentiel?.index !== null) {
-          referentiel?.ventillation.map((elem: importedVentillation) => {
-            this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0)
-          })
+          // check if a backup is selected
+          const backup = this.filterBackupId ? { id: this.filterBackupId } : undefined
+          if (!backup) {
+            alert('Vous ne pouvez pas modifier la ventilation si vous avez sélectionné un arrondissement !')
+            return
+          }
+
+          // on selectionne les parents des referentiels selectionnés pour ne pas les appeler deux fois
+          const parentsReferentielSelectedIds = referentiel?.ventillation
+            .filter((elem: importedVentillation) => elem.parentReferentiel)
+            .map((elem: importedVentillation) => elem?.parentReferentiel?.id)
+
+          referentiel?.ventillation
+            .filter((elem: importedVentillation) => !parentsReferentielSelectedIds.includes(elem.referentiel?.id))
+            .map((elem: importedVentillation) => {
+              this.onChangePercent(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
+            })
+          this.appService.notification(`L’import de vos données a bien été réalisé.`)
+          this.humanResourceService.addVentilationDisplayImportLabels.set(true)
         }
       }),
     )
@@ -361,34 +382,6 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
     this.onTotalAffected()
   }
 
-  /**
-   * Changement du pourcentage d'une activitié sans recalcul du total
-   * @param referentiel
-   * @param percent
-   * @param parentReferentiel
-   */
-  onChangePercentWithoutTotalComputation(referentiel: ContentieuReferentielInterface, percent: number) {
-    // memorise list
-    const activity = this.activities.find((a) => a.contentieux.id === referentiel.id)
-    if (activity) {
-      activity.percent = percent
-    } else {
-      this.activities.push({
-        id: -1,
-        contentieux: {
-          id: referentiel.id,
-          label: '',
-          averageProcessingTime: 0,
-        },
-        referentielId: referentiel.id,
-        percent,
-      })
-    }
-
-    this.onLoadReferentiel()
-    this.referentielChange.emit(this.referentiel)
-    this.onTotalAffected()
-  }
   /**
    * Accélaration du rendu de la liste
    * @param index
