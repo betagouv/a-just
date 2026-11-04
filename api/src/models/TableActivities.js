@@ -2,7 +2,7 @@ import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
 import { calculMainValuesFromChilds, compareGapBetweenData, preformatActivitiesArray } from '../utils/activities'
 import { month, today } from '../utils/date'
-import { maxBy } from 'lodash'
+import { maxBy, sumBy } from 'lodash'
 import { VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_VERIFY } from '../constants/activities'
 import { REFERENTIEL_VISIBILITY_ACTIVITY } from '../constants/referentiel'
 
@@ -751,6 +751,7 @@ export default (sequelizeInstance, Model) => {
         ['original_entrees', 'originalEntrees'],
         ['original_sorties', 'originalSorties'],
         ['original_stock', 'originalStock'],
+        'hr_backup_id',
       ],
       where: {
         hr_backup_id: HrBackupIds,
@@ -777,6 +778,7 @@ export default (sequelizeInstance, Model) => {
       rawActivities.map(async (row) => {
         const contentieuxId = row['ContentieuxReferentiel.id']
         const activityId = row.id
+        const filteredRawActivities = rawActivities.filter((a) => a['ContentieuxReferentiel.id'] === contentieuxId)
 
         let updatedBy = null
 
@@ -791,12 +793,12 @@ export default (sequelizeInstance, Model) => {
         return {
           id: activityId,
           periode: row.periode,
-          entrees: row.entrees,
-          originalEntrees: row.originalEntrees,
-          sorties: row.sorties,
-          originalSorties: row.originalSorties,
-          stock: row.stock,
-          originalStock: row.originalStock,
+          entrees: sumBy(filteredRawActivities, 'entrees'),
+          originalEntrees: sumBy(filteredRawActivities, 'originalEntrees'),
+          sorties: sumBy(filteredRawActivities, 'sorties'),
+          originalSorties: sumBy(filteredRawActivities, 'originalSorties'),
+          stock: sumBy(filteredRawActivities, 'stock'),
+          originalStock: sumBy(filteredRawActivities, 'originalStock'),
           contentieux: {
             id: contentieuxId,
             label: row['ContentieuxReferentiel.label'],

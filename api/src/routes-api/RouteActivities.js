@@ -67,6 +67,7 @@ export default class RouteActivities extends Route {
     const backupIds = await this.models.HRBackups.haveAccess(this.body(ctx).hrBackupId, ctx.state.user.id)
     if (backupIds.length > 0 || Access.isAdmin(ctx)) {
       const dateLastMonth = await this.model.getLastMonth(backupIds)
+
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
       const list = await this.model.getByMonthNew(date, backupIds)
