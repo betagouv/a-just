@@ -616,7 +616,7 @@ export class ExcelService extends MainClass {
     report = this.userService.isTJ() ? await this.setJuridictionPickers(report, viewModel) : this.setMatriceJuridiction(report, viewModel)
 
     // On cache les onglets si la juridiction est une juridiction de TPRX et qu'il n'y a pas de liste de TPRX
-    if (this.humanResourceService.isTPRX() && !(viewModel.tpxlist || []).length) {
+    if (this.humanResourceService.isTPRX()) {
       report = this.hideWorksheets(report, ['ETPT_TPRX_DDG', 'ETPT_TJ_DDG', 'ETPT_CPH_DDG', 'ETPT_ATTJ_DDG'])
     }
 

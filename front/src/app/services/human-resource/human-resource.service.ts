@@ -178,7 +178,11 @@ export class HumanResourceService {
    */
   isTPRX = computed(() => {
     const backupLabel = this.hrBackupS()?.label
-    return backupLabel?.includes('TPX') || backupLabel?.includes('TPRX')
+    if (!backupLabel) {
+      return false
+    }
+    // Les labels TPRX sont de la forme « TPRX SALON DE PROVENCE », pas seulement « TPRX ».
+    return /^(TPX|TPRX)(\s|$)/.test(backupLabel.trim().toUpperCase())
   })
   /**
    * Liste des alertes
