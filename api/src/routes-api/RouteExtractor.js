@@ -390,7 +390,37 @@ export default class RouteExtractor extends Route {
       true,
     )
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
-    let juridictionName = backupId < -1 ? (await this.models.Groups.findById(backupId * -1)).label : (await this.models.HRBackups.findById(backupId)).label
+
+    let juridictionName
+    let juridictions
+    if (backupId < 0) {
+      const group = await this.models.Groups.findById(backupId * -1)
+      if (!group) ctx.throw(404, 'Groupe introuvable')
+      juridictionName = group.label
+
+      // Les listes Excel utilisent les juridictions du groupe, pas son libellé d'affichage.
+      juridictions = await this.models.HRBackups.findAll({
+        attributes: ['id', 'label'],
+        where: { id: backupIds },
+        order: [
+          ['group_id_rank', 'ASC'],
+          ['label', 'ASC'],
+        ],
+        raw: true,
+      })
+      const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
+      hr = hr.map((human) => ({
+        ...human,
+        juridiction: human.juridiction || juridictionsByBackupId.get(Number(human.backupId)),
+      }))
+    } else {
+      const hrBackup = await this.models.HRBackups.findById(backupId)
+      if (!hrBackup) ctx.throw(404, 'Juridiction introuvable')
+
+      juridictionName = typeof hrBackup === 'string' ? hrBackup : hrBackup.label
+      juridictions = [juridictionName]
+    }
+
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
     const { flatReferentiel, ctxL3, indispoL3 } = createFlatReferentiel([...referentiels])
     const mapRefIdsToLabels = buildIdToLabelMap(flatReferentiel)
@@ -446,7 +476,7 @@ export default class RouteExtractor extends Route {
     const functionList = await this.models.HRFonctions.getAllFormatDdg()
     const formatedFunctions = await formatFunctions(functionList)
     const excelRef = buildExcelRef(flatReferentielsList)
-    const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName)
+    const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictions)
 
     const onglet1Data = {
       values: onglet1,

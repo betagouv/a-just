@@ -1,4 +1,4 @@
-import { cloneDeep, groupBy, isNumber, last, orderBy, sortBy, sumBy, toUpper } from 'lodash'
+import { cloneDeep, groupBy, isNumber, last, orderBy, sortBy, sumBy, toUpper, uniqBy } from 'lodash'
 import { ABSENTEISME_LABELS, CET_LABEL, DELEGATION_TJ, INDISPO_L3 } from '../constants/referentiel'
 import { findSituation, generateHRIndexes } from './human-resource'
 import { getHRVentilation, getHRVentilationOld } from '../utils/calculator'
@@ -372,27 +372,37 @@ export function buildExcelRef(flatReferentielsList) {
   return excelRef
 }
 
-export const getJuridictionData = async (models, juridictionName) => {
-  const label = (juridictionName.label || '').toUpperCase()
+export const getJuridictionData = async (models, juridictions) => {
+  const list = Array.isArray(juridictions) ? juridictions : [juridictions]
+  const labels = [...new Set(list.map((juridiction) => (typeof juridiction === 'string' ? juridiction : juridiction?.label || '').toUpperCase()).filter(Boolean))]
 
-  let tproxs = (await models.TJ.getByTj(label, {}, { type: 'TPRX' })).map((t) => ({
-    id: t.id,
-    tj: t.tj,
-    tprox: t.tprox,
-  }))
+  const data = await Promise.all(
+    labels.map(async (label) => {
+      let tproxs = (await models.TJ.getByTj(label, {}, { type: 'TPRX' })).map((t) => ({
+        id: t.id,
+        tj: t.tj,
+        tprox: t.tprox,
+      }))
 
-  if (tproxs.length === 0) {
-    tproxs = [{ id: 0, tj: label, tprox: label }]
+      if (tproxs.length === 0) {
+        tproxs = [{ id: 0, tj: label, tprox: label }]
+      }
+
+      const allJuridiction = (await models.TJ.getByTj(label, {}, {})).map((t) => ({
+        id: t.id,
+        tj: t.tj,
+        tprox: t.tprox,
+        type: t.type,
+      }))
+
+      return { tproxs, allJuridiction }
+    }),
+  )
+
+  return {
+    tproxs: uniqBy(data.flatMap((item) => item.tproxs), 'tprox'),
+    allJuridiction: uniqBy(data.flatMap((item) => item.allJuridiction), 'id'),
   }
-
-  const allJuridiction = (await models.TJ.getByTj(label, {}, {})).map((t) => ({
-    id: t.id,
-    tj: t.tj,
-    tprox: t.tprox,
-    type: t.type,
-  }))
-
-  return { tproxs, allJuridiction }
 }
 
 export const formatFunctions = async (functionList) => {
