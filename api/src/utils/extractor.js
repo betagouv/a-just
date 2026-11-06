@@ -465,21 +465,55 @@ const activityBackupId = (activity, human) => {
 }
 
 /**
- * Conserve la situation (ses dates bornent la ventilation) et n'en garde
- * que les activités du backup demandé.
+ * Part de l'ETP d'une situation pour un backup.
+ * Un seul backup : l'ETP reste entier. Plusieurs backups : prorata des pourcentages.
+ */
+const situationEtpShare = (situation, backupId, human) => {
+  const selected = Number(backupId)
+  const byBackup = new Map()
+  for (const activity of situation.activities || []) {
+    const id = activityBackupId(activity, human)
+    byBackup.set(id, (byBackup.get(id) || 0) + (Number(activity.percent) || 0))
+  }
+
+  const localSum = byBackup.get(selected) || 0
+  if (byBackup.size <= 1) {
+    const scale = byBackup.size === 0 ? (Number(human.backupId) === selected ? 1 : 0) : byBackup.has(selected) ? 1 : 0
+    return { scale, localSum, backupCount: byBackup.size }
+  }
+
+  const total = [...byBackup.values()].reduce((sum, value) => sum + value, 0)
+  return { scale: total ? localSum / total : 0, localSum, backupCount: byBackup.size }
+}
+
+/**
+ * Ne garde que les activités du backup demandé. Le prorata d'ETP n'est écrit
+ * que sur ces copies : le calcul de périodes lit ensuite l'ETP déjà réduit.
  */
 const filterSituationsByBackup = (human, backupId) => {
   const selected = Number(backupId)
-  return (human.situations || []).map((situation) => ({
-    ...situation,
-    activities: (situation.activities || []).filter((activity) => activityBackupId(activity, human) === selected),
-  }))
+  return (human.situations || []).map((situation) => {
+    const { scale, localSum, backupCount } = situationEtpShare(situation, selected, human)
+    const activities = (situation.activities || [])
+      .filter((activity) => activityBackupId(activity, human) === selected)
+      .map((activity) => {
+        if (backupCount <= 1 || !localSum) return activity
+        return { ...activity, percent: ((Number(activity.percent) || 0) / localSum) * 100 }
+      })
+
+    return {
+      ...situation,
+      etp: scale === 1 ? situation.etp : (Number(situation.etp) || 0) * scale,
+      activities,
+    }
+  })
 }
 
 /**
  * Répète une fiche une fois par juridiction du groupe où elle est présente
  * (backup d'accueil ou ventilation). Chaque copie ne conserve, dans chaque
- * situation, que les activités de ce backup. Les index doivent être calculés
+ * situation, que les activités de ce backup, et l'ETP de la situation est
+ * réduit au prorata de ces pourcentages. Les index doivent être calculés
  * ensuite : les copies d'une même fiche portent un indexId distinct.
  * @param {Array} hr
  * @param {number[]} backupIds ordre d'affichage des juridictions
