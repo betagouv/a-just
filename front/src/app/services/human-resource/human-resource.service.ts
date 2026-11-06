@@ -174,6 +174,13 @@ export class HumanResourceService {
     return this.juridictionGroupSelected() || null
   })
   /**
+   * Vérifie si la juridiction est une juridiction de TPRX, Attention c'est une valeur basé sur le label
+   */
+  isTPRX = computed(() => {
+    const backupLabel = this.hrBackupS()?.label
+    return backupLabel?.includes('TPX') || backupLabel?.includes('TPRX')
+  })
+  /**
    * Liste des alertes
    */
   alertList: WritableSignal<string[]> = signal([])

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import * as Sentry from '@sentry/browser'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { BehaviorSubject } from 'rxjs'
@@ -31,6 +31,22 @@ const EXCEL_EXTENSION = '.xlsx'
   providedIn: 'root',
 })
 export class ExcelService extends MainClass {
+  /**
+   * Service d'human resource
+   */
+  humanResourceService = inject(HumanResourceService)
+  /**
+   * Service d'http
+   */
+  serverService = inject(ServerService)
+  /**
+   * Service d'utilisateur
+   */
+  userService = inject(UserService)
+  /**
+   * Service d'application
+   */
+  appService = inject(AppService)
   /**
    * Categories selectionnées par l'utilisateur
    */
@@ -184,12 +200,7 @@ export class ExcelService extends MainClass {
    * @param userService
    * @param appService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private serverService: ServerService,
-    private userService: UserService,
-    private appService: AppService,
-  ) {
+  constructor() {
     super()
   }
 
@@ -603,6 +614,12 @@ export class ExcelService extends MainClass {
     const indexTabAjust = this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0
 
     report = this.userService.isTJ() ? await this.setJuridictionPickers(report, viewModel) : this.setMatriceJuridiction(report, viewModel)
+
+    // On cache les onglets si la juridiction est une juridiction de TPRX et qu'il n'y a pas de liste de TPRX
+    if (this.humanResourceService.isTPRX() && !(viewModel.tpxlist || []).length) {
+      report = this.hideWorksheets(report, ['ETPT_TPRX_DDG', 'ETPT_TJ_DDG', 'ETPT_CPH_DDG', 'ETPT_ATTJ_DDG'])
+    }
+
     //console.log(report.worksheets[this.findIndexByName(report.worksheets, 'ETPT Format DDG DETAIL') || 0])
     report = this.setRedGapConditionnalFormating(report, viewModel)
     report = this.setYellowMainDetailsConditionnalFormating(report, viewModel)
@@ -962,6 +979,29 @@ export class ExcelService extends MainClass {
    */
   getArrayLength<T>(array: T[] | null | undefined): number {
     return Array.isArray(array) ? array.length : 0
+  }
+
+  /**
+   * Masque des onglets du classeur. Les formules qui les référencent restent calculées.
+   * @param report
+   * @param names
+   */
+  hideWorksheets(report: any, names: string[]) {
+    const hidden = new Set<number>()
+    names.forEach((name) => {
+      const index = this.findIndexByName(report.worksheets, name)
+      if (index == null) return
+      report.worksheets[index].state = 'hidden'
+      hidden.add(index)
+    })
+
+    const active = report.views?.[0]?.activeTab
+    if (active != null && hidden.has(active)) {
+      const next = report.worksheets.findIndex((worksheet: any, index: number) => !hidden.has(index) && worksheet.state !== 'hidden')
+      if (next >= 0) report.views[0].activeTab = next
+    }
+
+    return report
   }
 
   /**
