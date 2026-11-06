@@ -363,6 +363,7 @@ export const generateAndIndexAllStableHRPeriods = async (agents, indexIndispo = 
       // Petite pause pour ne pas bloquer l'event loop
       if (index % 50 === 0) await setImmediatePromise()
 
+      const agentKey = agent.indexId ?? agent.id
       const periods = generateStableHRPeriods(agent) // Générer les périodes pour l'agent
 
       // Pour chaque période générée, créer un ID unique et l'ajouter dans la base de données centrale
@@ -414,10 +415,11 @@ export const generateAndIndexAllStableHRPeriods = async (agents, indexIndispo = 
         }
 
         // Ajouter cette période à l'index de l'agentId
-        if (!agentIndex.has(agent.id)) {
-          agentIndex.set(agent.id, [])
+        // indexId distingue les copies d'une même fiche filtrées par backup
+        if (!agentIndex.has(agentKey)) {
+          agentIndex.set(agentKey, [])
         }
-        agentIndex.get(agent.id).push(periodId)
+        agentIndex.get(agentKey).push(periodId)
 
         // Créer un Map pour stocker les contentieux avec leur pourcentage
         const contentieuxMap = new Map()
@@ -483,7 +485,7 @@ export const generateAndIndexAllStableHRPeriods = async (agents, indexIndispo = 
             }
 
             // 3) Index par agent (push unique)
-            pushUniqueIndex(agentIndispoIndex, agent.id, indispo.id)
+            pushUniqueIndex(agentIndispoIndex, agentKey, indispo.id)
 
             // 4) Index par type (contentieux.id) (push unique)
             if (indispo.contentieux && indispo.contentieux.id != null) {
@@ -497,7 +499,7 @@ export const generateAndIndexAllStableHRPeriods = async (agents, indexIndispo = 
       })
 
       // Stocker les périodes de l'agent dans le Map resultMap
-      resultMap.set(agent.id, periods)
+      resultMap.set(agentKey, periods)
     }),
   )
 

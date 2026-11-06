@@ -8,6 +8,7 @@ import {
   buildExcelRef,
   computeExtractor,
   createFlatReferentiel,
+  expandHrByBackup,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
   generateOnglets,
@@ -380,7 +381,6 @@ export default class RouteExtractor extends Route {
     let hr = await loadOrWarmHR(backupIds, this.models)
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
 
-    const indexes = await generateHRIndexes(hr, true)
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
       backupIds,
       REFERENTIEL_VISIBILITY_EXTRACTOR,
@@ -409,10 +409,11 @@ export default class RouteExtractor extends Route {
         raw: true,
       })
       const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
-      hr = hr.map((human) => ({
-        ...human,
-        juridiction: human.juridiction || juridictionsByBackupId.get(Number(human.backupId)),
-      }))
+      hr = expandHrByBackup(
+        hr,
+        juridictions.map((juridiction) => juridiction.id),
+        juridictionsByBackupId,
+      )
     } else {
       const hrBackup = await this.models.HRBackups.findById(backupId)
       if (!hrBackup) ctx.throw(404, 'Juridiction introuvable')
@@ -422,6 +423,7 @@ export default class RouteExtractor extends Route {
     }
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
+    const indexes = await generateHRIndexes(hr, true)
     const { flatReferentiel, ctxL3, indispoL3 } = createFlatReferentiel([...referentiels])
     const mapRefIdsToLabels = buildIdToLabelMap(flatReferentiel)
 
@@ -453,8 +455,8 @@ export default class RouteExtractor extends Route {
     })
 
     // ------------------------- 3) FORMATAGE -------------------------
-    let onglet1 = orderBy(rawOnglet1, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
-    let onglet2 = orderBy(rawOnglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
+    let onglet1 = orderBy(rawOnglet1, ['Catégorie', 'Nom', 'Prénom', 'Matricule', 'Juridiction'], ['desc', 'asc', 'asc', 'asc', 'asc'])
+    let onglet2 = orderBy(rawOnglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule', 'Juridiction'], ['desc', 'asc', 'asc', 'asc', 'asc'])
 
     onglet1 = onglet1.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
     onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))

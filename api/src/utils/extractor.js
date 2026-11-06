@@ -458,6 +458,72 @@ export const getAndDeleteAbsenteisme = (obj, labels, delegation = false) => {
   else return { refObj: obj, absenteismeDetails: absDetails }
 }
 
+const activityBackupId = (activity, human) => {
+  const id = activity?.backupId ?? activity?.backup?.id
+  if (id == null || id === '') return Number(human.backupId)
+  return Number(id)
+}
+
+/**
+ * Conserve la situation (ses dates bornent la ventilation) et n'en garde
+ * que les activités du backup demandé.
+ */
+const filterSituationsByBackup = (human, backupId) => {
+  const selected = Number(backupId)
+  return (human.situations || []).map((situation) => ({
+    ...situation,
+    activities: (situation.activities || []).filter((activity) => activityBackupId(activity, human) === selected),
+  }))
+}
+
+/**
+ * Répète une fiche une fois par juridiction du groupe où elle est présente
+ * (backup d'accueil ou ventilation). Chaque copie ne conserve, dans chaque
+ * situation, que les activités de ce backup. Les index doivent être calculés
+ * ensuite : les copies d'une même fiche portent un indexId distinct.
+ * @param {Array} hr
+ * @param {number[]} backupIds ordre d'affichage des juridictions
+ * @param {Map<number, string>} labelsByBackupId
+ */
+export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
+  const order = (backupIds || []).map((id) => Number(id))
+  const selected = new Set(order)
+
+  return hr.flatMap((human) => {
+    const touched = new Set()
+    const home = Number(human.backupId)
+    if (selected.has(home)) touched.add(home)
+
+    for (const situation of human.situations || []) {
+      for (const activity of situation.activities || []) {
+        const activityBackup = activityBackupId(activity, human)
+        if (selected.has(activityBackup)) touched.add(activityBackup)
+      }
+    }
+
+    const presentOn = order.filter((id) => touched.has(id))
+    if (presentOn.length <= 1) {
+      const id = presentOn[0] ?? home
+      return [
+        {
+          ...human,
+          backupId: id,
+          juridiction: human.juridiction || labelsByBackupId.get(id) || null,
+          situations: filterSituationsByBackup(human, id),
+        },
+      ]
+    }
+
+    return presentOn.map((id) => ({
+      ...human,
+      indexId: `${human.id}:${id}`,
+      backupId: id,
+      juridiction: labelsByBackupId.get(id) || human.juridiction,
+      situations: filterSituationsByBackup(human, id),
+    }))
+  })
+}
+
 export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName) {
   const filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
 
@@ -655,14 +721,15 @@ export function generateOnglets({
     let tmpAjustFlatMapReferentiel = cloneDeep(emptyFlatMapReferentiel)
     let tmpDdgFlatMapReferentiel = cloneDeep(emptyFlatMapReferentiel)
 
-    const requestIndispo = searchAgentIndisposWithIndexes(indexes, query.start, query.end, human.id, CETId)
+    const agentKey = human.indexId ?? human.id
+    const requestIndispo = searchAgentIndisposWithIndexes(indexes, query.start, query.end, agentKey, CETId)
     const totalCETWorkingDays = getWorkingDaysFromIndispos(requestIndispo)
     const CETLessThan30days = totalCETWorkingDays <= 30
     const absLabels = [...ABSENTEISME_LABELS, ...(CETLessThan30days ? [CET_LABEL] : [])]
     const absMap = new Set(absLabels)
 
     //Récupération des ids des segments d'un agent
-    const segments = indexes.agentIndex.get(human.id)
+    const segments = indexes.agentIndex.get(agentKey)
 
     if (segments && segments.length) {
       //Filtrer parmis toutes les périodes celles de l'agent pour avoir les détails de chaque segment
