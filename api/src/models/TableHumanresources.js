@@ -563,31 +563,37 @@ export default (sequelizeInstance, Model) => {
    */
   Model.haveAccess = async (HRId, userId) => {
     const hr = await Model.findOne({
-      attributes: ['id'],
+      attributes: ['backup_id'],
       where: {
         id: HRId,
       },
+      raw: true,
+    })
+
+    if (!hr) {
+      return false
+    }
+
+    const ventilations = await Model.models.HRActivities.findAll({
+      attributes: ['backup_id'],
       include: [
         {
-          attributes: ['id'],
-          model: Model.models.HRBackups,
+          attributes: [],
+          model: Model.models.HRSituations,
           required: true,
-          include: [
-            {
-              attributes: ['id'],
-              model: Model.models.UserVentilations,
-              required: true,
-              where: {
-                user_id: userId,
-              },
-            },
-          ],
+          where: {
+            human_id: HRId,
+          },
         },
       ],
       raw: true,
     })
 
-    return hr ? true : false
+    const backupIds = [...new Set([hr.backup_id, ...ventilations.map((ventilation) => ventilation.backup_id)].filter(Boolean))]
+
+    const accesses = await Promise.all(backupIds.map((backupId) => Model.models.HRBackups.haveAccess(backupId, userId)))
+
+    return accesses.some((access) => Array.isArray(access) && access.length > 0)
   }
 
   /**
@@ -662,8 +668,8 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    // save to cache
-    await updateCacheListItem(hr.backupId, 'hrBackup', hr)
+    // Enregistre l'agent dans le cache de chaque backupId, ventilations comprises
+    await updateCacheListItem('hrBackup', hr)
 
     return hr
   }

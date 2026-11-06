@@ -228,6 +228,15 @@ export const loadOrWarmHR = async (backupIds, models, userId) => {
     hr.push(...hrBackup)
   }
 
+  // Un agent ventilé est enregistré dans le cache de chaque backup concerné.
+  const seen = new Set()
+  hr = hr.filter((person) => {
+    const id = person?.id
+    if (id == null || seen.has(id)) return false
+    seen.add(id)
+    return true
+  })
+
   // control if user has limited access to the contentieux
   if (userId) {
     const user = await models.Users.userPreview(userId)
@@ -362,6 +371,42 @@ export const loadHrWithActivityOnBackups = async (backupIds, models, userId, dat
 }
 
 /**
+ * Agents rattachés à une autre juridiction et ventilés sur les backups demandés.
+ * La fiche est renvoyée entière, ventilations comprises, pour que l'appelant
+ * puisse en calculer le prorata.
+ * @param {number[]} backupIds
+ * @param {*} models
+ * @param {*} userId
+ * @param {Array<{ id: number }>} alreadyLoaded
+ * @returns
+ */
+export const loadHrVentilatedFromOtherBackups = async (backupIds, models, userId, alreadyLoaded = []) => {
+  if (!Array.isArray(backupIds) || backupIds.length === 0) {
+    return []
+  }
+
+  const ventilated = await models.HRActivities.listHumanResourcesByActivityBackupIds(backupIds)
+  const { selectedBackupIds, missingByHomeBackup } = groupMissingVentilatedAgents(ventilated, backupIds, alreadyLoaded)
+
+  const extra = []
+  for (const [homeBackupId, ids] of missingByHomeBackup) {
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    for (const person of homeHr) {
+      if (!ids.has(Number(person.id))) continue
+
+      const hasActivityOnSelectedBackup = (person.situations || []).some((situation) =>
+        (situation.activities || []).some((activity) => activity.percent && selectedBackupIds.has(Number(activityBackupId(activity)))),
+      )
+      if (!hasActivityOnSelectedBackup) continue
+
+      extra.push(cloneDeep(person))
+    }
+  }
+
+  return extra
+}
+
+/**
  * Agents rattachés ailleurs, avec uniquement les activités ventilées sur les backups demandés.
  * Toutes les situations sont conservées : une ventilation passée reste limitée à sa période.
  * @param {number[]} backupIds
@@ -410,31 +455,62 @@ export const loadCalculatorHr = async (backupIds, models, userId) => {
 }
 
 /**
- * Met à jour ou ajoute un élément dans un tableau stocké en cache
- * @param {string} key - La clé simple (ex: backupId)
+ * Backup d'accueil et backups portés par les ventilations d'un agent.
+ * @param {*} item
+ * @returns {number[]}
+ */
+const backupIdsOfItem = (item) => {
+  const ids = []
+  if (item?.backupId != null && item.backupId !== '') ids.push(item.backupId)
+
+  for (const situation of item?.situations || []) {
+    for (const activity of situation.activities || []) {
+      const backupId = activityBackupId(activity)
+      if (backupId != null && backupId !== '') ids.push(backupId)
+    }
+  }
+
+  return [...new Set(ids.map((id) => Number(id)).filter((id) => Number.isFinite(id)))]
+}
+
+/**
+ * Met à jour ou ajoute un agent dans le cache de chacun de ses backupId
+ * (juridiction d'accueil et ventilations).
  * @param {string} cacheName - Le préfixe du cache (ex: hrBackup)
  * @param {object} item - L'élément à insérer ou remplacer (doit contenir un champ 'id')
  * @param {number} [ttl=defaultTTL] - TTL en secondes pour l'instant pas utilisé, a voir à l'usage
  */
-export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL) => {
+export const updateCacheListItem = async (cacheName, item, ttl = defaultTTL) => {
   if (!item?.id) {
     console.error(`❌ updateCacheListItem : item invalide ou sans id`, item)
     return
   }
 
-  const list = (await getCacheValue(key, cacheName)) || []
+  const backupIds = backupIdsOfItem(item)
+  const previousList = item.backupId != null ? await getCacheValue(item.backupId, cacheName) : null
+  const previous = Array.isArray(previousList) ? previousList.find((el) => el.id == item.id) : null
+  const obsoleteBackupIds = previous ? backupIdsOfItem(previous).filter((backupId) => !backupIds.includes(backupId)) : []
 
-  const index = list.findIndex((el) => el.id == item.id)
-
-  if (index !== -1) {
-    list[index] = cloneDeep(item)
-  } else {
-    list.push(item)
+  for (const backupId of obsoleteBackupIds) {
+    const existing = await getCacheValue(backupId, cacheName)
+    if (!Array.isArray(existing) || !existing.some((el) => el.id == item.id)) continue
+    await removeCacheListItem(backupId, cacheName, item.id)
   }
 
-  await setCacheValue(key, list, cacheName, ttl)
-  await invalidateAgentEverywhere(key, item.id)
-  await invalidateAjustBackup(key)
+  for (const backupId of backupIds) {
+    const list = (await getCacheValue(backupId, cacheName)) || []
+    const index = list.findIndex((el) => el.id == item.id)
+
+    if (index !== -1) {
+      list[index] = cloneDeep(item)
+    } else {
+      list.push(cloneDeep(item))
+    }
+
+    await setCacheValue(backupId, list, cacheName, ttl)
+    await invalidateAgentEverywhere(backupId, item.id)
+    await invalidateAjustBackup(backupId)
+  }
 }
 
 /**

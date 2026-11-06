@@ -23,7 +23,7 @@ import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 import { buildIdToLabelMap, updateLabels } from '../utils/referentiel'
 import { generateHRIndexes } from '../utils/human-resource'
-import { loadOrWarmHR, printKeys } from '../utils/redis'
+import { loadHrVentilatedFromOtherBackups, loadOrWarmHR, printKeys } from '../utils/redis'
 import { getJob } from '../utils/jobStore'
 import { checkAbort, withAbortTimeout } from '../utils/abordTimeout'
 import { CET_LABEL, REFERENTIEL_VISIBILITY_EXTRACTOR } from '../constants/referentiel'
@@ -379,6 +379,9 @@ export default class RouteExtractor extends Route {
     let query = { start: new Date(dateStart), end: new Date(dateStop) }
     let logs = new Array()
     let hr = await loadOrWarmHR(backupIds, this.models)
+    const ventilatedFromElsewhere = (
+      await loadHrVentilatedFromOtherBackups(backupIds, this.models, undefined, hr)
+    ).filter((h) => isHumanPresentOnInterval(h, query))
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
 
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
@@ -410,7 +413,7 @@ export default class RouteExtractor extends Route {
       })
       const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
       hr = expandHrByBackup(
-        hr,
+        hr.concat(ventilatedFromElsewhere),
         juridictions.map((juridiction) => juridiction.id),
         juridictionsByBackupId,
       )
@@ -420,6 +423,12 @@ export default class RouteExtractor extends Route {
 
       juridictionName = typeof hrBackup === 'string' ? hrBackup : hrBackup.label
       juridictions = [juridictionName]
+      hr = hr.concat(
+        expandHrByBackup(ventilatedFromElsewhere, [Number(backupId)], new Map([[Number(backupId), juridictionName]])).map((person) => ({
+          ...person,
+          juridiction: juridictionName,
+        })),
+      )
     }
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
