@@ -558,12 +558,12 @@ export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
   })
 }
 
-export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName) {
+export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName, arrondissementName) {
   const filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
 
   return {
     ['Réf.']: String(human.id),
-    ...(isCa() ? { Juridiction: juridictionName } : { Arrondissement: juridictionName }),
+    ...(isCa() ? { Juridiction: juridictionName } : { Arrondissement: arrondissementName }),
     Nom: human.lastName,
     Prénom: human.firstName,
     Matricule: human.matricule,
@@ -672,7 +672,7 @@ function isolateAbsenteismeAndDelegation(obj) {
   return { remaining, absOrdered, delegationEntry }
 }
 
-export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3) {
+export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3, arrondissementName) {
   let filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
   filledVentilations = Object.fromEntries(
     Object.entries(filledVentilations).filter(([k]) => !['14.2. COMPTE ÉPARGNE TEMPS', '12.2. COMPTE ÉPARGNE TEMPS'].includes(k)),
@@ -696,7 +696,7 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
   }
   const agentDdg = {
     ['Réf.']: String(human.id),
-    Arrondissement: juridictionName,
+    Arrondissement: isCa() ? juridictionName : arrondissementName,
     Jirs: isJirs ? 'x' : '',
     Juridiction: (human.juridiction || juridictionName).toUpperCase(),
     Nom: human.lastName,
@@ -743,6 +743,7 @@ export function generateOnglets({
   flatReferentiel,
   isJirs,
   juridictionName,
+  arrondissementName,
   logs, // la fonction continue d'alimenter les logs (effet conservé)
 }) {
   let onglet1 = new Array()
@@ -922,8 +923,20 @@ export function generateOnglets({
       tmpDdgFlatMapReferentiel.delete(CETId)
     }
 
-    let agent = fillAgentData(human, pData, etpts, tmpAjustFlatMapReferentiel, flatReferentiel, isJirs, juridictionName)
-    let resultDdg = fillAgentDataDdg(human, pData, abs, tmpDdgFlatMapReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3)
+    let agent = fillAgentData(human, pData, etpts, tmpAjustFlatMapReferentiel, flatReferentiel, isJirs, juridictionName, arrondissementName)
+    let resultDdg = fillAgentDataDdg(
+      human,
+      pData,
+      abs,
+      tmpDdgFlatMapReferentiel,
+      flatReferentiel,
+      isJirs,
+      juridictionName,
+      logs,
+      query,
+      indispoL3,
+      arrondissementName,
+    )
     let agentDdg = resultDdg.agentDdg
     logs = resultDdg.logs
 

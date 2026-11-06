@@ -395,11 +395,13 @@ export default class RouteExtractor extends Route {
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
 
     let juridictionName
+    let arrondissementName
     let juridictions
     if (backupId < 0) {
       const group = await this.models.Groups.findById(backupId * -1)
       if (!group) ctx.throw(404, 'Groupe introuvable')
       juridictionName = group.label
+      arrondissementName = group.label
 
       // Les listes Excel utilisent les juridictions du groupe, pas son libellé d'affichage.
       juridictions = await this.models.HRBackups.findAll({
@@ -422,6 +424,8 @@ export default class RouteExtractor extends Route {
       if (!hrBackup) ctx.throw(404, 'Juridiction introuvable')
 
       juridictionName = typeof hrBackup === 'string' ? hrBackup : hrBackup.label
+      const group = await this.models.Groups.getGroupsByBackupId(backupId)
+      arrondissementName = group?.label ?? ''
       juridictions = [juridictionName]
       hr = hr.concat(
         expandHrByBackup(ventilatedFromElsewhere, [Number(backupId)], new Map([[Number(backupId), juridictionName]])).map((person) => ({
@@ -460,6 +464,7 @@ export default class RouteExtractor extends Route {
       flatReferentiel,
       isJirs,
       juridictionName,
+      arrondissementName,
       logs,
     })
 
