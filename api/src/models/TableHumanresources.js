@@ -613,7 +613,7 @@ export default (sequelizeInstance, Model) => {
       await Model.updateById(hr.id, options)
     } else {
       // create
-      const newHr = await Model.create(options)
+      const newHr = await Model.create({ ...options, backup_id: backupId })
       hr.id = newHr.dataValues.id
     }
 
