@@ -476,8 +476,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.humanResourceService.removeAlert('startDate')
     }
 
-    const canUseArrivalDateAsFallback = !this.isEdit && !!this.human?.dateStart
-    if (!activitiesStartDate && !canUseArrivalDateAsFallback) {
+    if (!activitiesStartDate) {
       this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
     } else {
       this.humanResourceService.removeAlert('activitiesStartDate')
@@ -498,10 +497,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const etp = this.form.get('etp')?.value
     if (etp === null) {
       this.humanResourceService.alertList.update((list) => [...list, 'etp'])
-    }
-
-    if (!activitiesStartDate && canUseArrivalDateAsFallback && this.human?.dateStart) {
-      activitiesStartDate = new Date(this.human.dateStart)
     }
 
     if (this.humanResourceService.alertList().length > 0) {
