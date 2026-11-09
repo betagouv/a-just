@@ -621,20 +621,21 @@ export class DataPage {
     });
     //console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT);
     //console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
-    setInterval(() => {
+    const importNext = () => {
       if (index < TJ_TO_IMPORT.length) {
         this.importService.importActivities({
           file: TJ_TO_IMPORT[index].data,
           backupId: TJ_TO_IMPORT[index].tj.id,
         });
         //console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
+        index++;
+        setTimeout(importNext, 100);
+      } else {
+        form.reset();
+        this.onCancelDataImport();
       }
-      index++;
-    }, 60 * 1000);
-    if (index === this.HRBackupList.length) {
-      form.reset();
-      this.onCancelDataImport();
-    }
+    };
+    setTimeout(importNext, 100);
   }
 
   async onSendActivity(form: any, force: boolean = false) {
