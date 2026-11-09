@@ -234,7 +234,7 @@ export const getViewModel = async (params) => {
   const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map((x) => x.tprox)
   const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map((x) => x.tprox)
 
-  let uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
+  let uniqueJur = params.tproxs.map((t) => t.tprox)
   const uniqueCity = uniqueJur.map((x) => {
     const [first, rest] = x.split(/\s+(.*)/)
     return rest
