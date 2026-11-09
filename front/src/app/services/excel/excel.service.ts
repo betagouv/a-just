@@ -14,6 +14,7 @@ import { ContentieuReferentielInterface } from '../../interfaces/contentieu-refe
 import { setTimeToMidDay } from '../../utils/dates'
 import { exposeDownloadToCypress, getE2EExportMaxMs } from '../../utils/test-download'
 import { IMPORT_ETP_TEMPLATE } from '../../constants/documentation'
+import { configureEtptSummary } from './etpt-summary'
 
 /**
  * Excel file details
@@ -1657,20 +1658,12 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setAgregatAffichage(report: any, viewModel: any) {
-    // ONGLET AGREGAT
-    report.worksheets[3].getCell('A' + +3).dataValidation = {
-      type: 'list',
-      allowBlank: false,
-      formulae: viewModel.tProximite,
-      error: 'Veuillez sélectionner une valeur dans le menu déroulant',
-      prompt: 'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
-      showErrorMessage: true,
-      showInputMessage: true,
-    }
+    configureEtptSummary(report, viewModel, this.userService.isTJ())
+    const summary = report.getWorksheet('Synthèse ETPT')
 
     // ONGLET AGGREGAT MESSAGE SI ECART
-    report.worksheets[3]['_rows'][6].height = 50
-    report.worksheets[3].getCell('F7').value = {
+    summary.getRow(7).height = 50
+    summary.getCell('F7').value = {
       formula:
         "=IF(OR('Synthèse ETPT'!L6<>'Synthèse ETPT'!L7,'Synthèse ETPT'!S6<>'Synthèse ETPT'!S7,'Synthèse ETPT'!U6<>'Synthèse ETPT'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
       result:

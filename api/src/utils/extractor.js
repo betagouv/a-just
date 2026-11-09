@@ -308,6 +308,7 @@ export const getViewModel = async (params) => {
     uniqueJur,
     uniqueJurIndex,
     tProximite,
+    arrondissementExport: params.arrondissementExport ?? null,
     isolatedCPH,
     agregat,
     referentiel: params.referentiels.map((x) => {

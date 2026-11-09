@@ -6,7 +6,7 @@
     (valueChange)="selectDate('start', $event)" [manualInput]="true" [min]="minDate"
     [max]="dateStop || lastDataDate"></aj-date-select>
   <aj-date-select class="extend" title="Au" dateType="month" [value]="dateStop"
-    (valueChange)="selectDate('stop', $event)" [manualInput]="true" [min]="dateStart"
+    (valueChange)="selectDate('stop', $event)" [manualInput]="true" [min]="dateStart || minDate"
     [max]="lastDataDate"></aj-date-select>
 
   <div id="export-excel-button" class="export-button {{ classSelected }}" (click)="exportActDate()">

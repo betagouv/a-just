@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Output, EventEmitter, HostBinding, ViewChild } from '@angular/core'
+import { Component, Input, OnChanges, Output, EventEmitter, HostBinding, ViewChild, SimpleChanges } from '@angular/core'
 import { MatCalendarCellClassFunction, MatDatepickerModule } from '@angular/material/datepicker'
 import { MatDatepicker } from '@angular/material/datepicker'
 import { MainClass } from '../../libs/main-class'
@@ -114,9 +114,12 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   /**
    * Détection en cas de change de date via le père
    */
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.findRealValue()
-    this.findEditValue()
+    // Une borne chargée pendant la saisie ne doit pas effacer le texte en cours.
+    if (!this.manualFocused || changes['value'] || changes['dateType']) {
+      this.findEditValue()
+    }
     this.onReadOnly = this.readOnly
   }
 
@@ -322,15 +325,14 @@ export class DateSelectComponent extends MainClass implements OnChanges {
       return null
     }
 
-    // Comparaison au jour près : "today" en entrée min/max embarque l'heure
-    // courante, alors que la saisie produit minuit. On normalise pour ne pas
-    // rejeter à tort la date du jour.
-    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+    // Compare à la précision du sélecteur, sans tenir compte de l'heure ni,
+    // en mode "month", du jour porté par les bornes.
+    const comparableDate = (d: Date) => new Date(d.getFullYear(), d.getMonth(), this.dateType === 'month' ? 1 : d.getDate()).getTime()
 
-    if (this.min && startOfDay(date) < startOfDay(new Date(this.min))) {
+    if (this.min && comparableDate(date) < comparableDate(new Date(this.min))) {
       return null
     }
-    if (this.max && startOfDay(date) > startOfDay(new Date(this.max))) {
+    if (this.max && comparableDate(date) > comparableDate(new Date(this.max))) {
       return null
     }
 

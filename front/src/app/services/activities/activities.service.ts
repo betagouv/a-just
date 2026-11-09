@@ -82,21 +82,21 @@ export class ActivitiesService {
    * API retourne le dernier mois qui possède une activité pour une juridiction
    * @returns
    */
-  async getLastMonthActivities() {
-    if (this.hrBackupId === null) {
+  async getLastMonthActivities(hrBackupId = this.hrBackupId) {
+    if (hrBackupId === null) {
       return Promise.resolve(null)
     }
 
-    if (this.cacheLastMonthActivities[this.hrBackupId]) {
-      return Promise.resolve(this.cacheLastMonthActivities[this.hrBackupId])
+    if (this.cacheLastMonthActivities[hrBackupId]) {
+      return Promise.resolve(this.cacheLastMonthActivities[hrBackupId])
     }
 
     return this.serverService
       .post(`activities/get-last-month`, {
-        hrBackupId: this.hrBackupId,
+        hrBackupId,
       })
       .then((data) => {
-        this.cacheLastMonthActivities[this.hrBackupId ?? 0] = data.data.date || null
+        this.cacheLastMonthActivities[hrBackupId] = data.data.date || null
         return data.data.date || null
       })
   }

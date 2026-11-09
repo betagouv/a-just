@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, effect } from '@angular/core'
 import * as FileSaver from 'file-saver'
 import { orderBy } from 'lodash'
 import * as xlsx from 'xlsx'
@@ -97,11 +97,22 @@ export class ExtractorActivityComponent extends MainClass {
   ) {
     super()
 
-    this.activityService.getLastMonthActivities().then((data) => {
-      this.lastDataDate = new Date(data)
+    effect((onCleanup) => {
+      const backupId = this.humanResourceService.backupIdS()
+      this.lastDataDate = null
+      if (!backupId) return
+
+      let active = true
+      onCleanup(() => (active = false))
+      this.activityService.getLastMonthActivities(backupId).then((data) => {
+        if (!active || this.humanResourceService.backupIdS() !== backupId) return
+
+        const date = data ? new Date(data) : null
+        this.lastDataDate = date && !isNaN(date.getTime()) ? this.getMonth(date) : null
+      })
     })
 
-    this.minDate = this.userService.isCa() ? new Date('2022-01-01') : new Date('2021-01-01')
+    this.minDate = new Date(this.userService.isCa() ? 2022 : 2021, 0, 1)
   }
 
   /**

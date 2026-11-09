@@ -529,6 +529,7 @@ export default class RouteExtractor extends Route {
       onglet2: onglet2Data,
       allJuridiction,
       ongletLogs,
+      arrondissementExport: backupId < 0 ? { id: -backupId, label: arrondissementName } : null,
     })
 
     this.sendOk(ctx, {
