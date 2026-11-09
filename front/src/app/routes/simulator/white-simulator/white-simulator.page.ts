@@ -12,7 +12,7 @@ import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-r
 import { DocumentationInterface } from '../../../interfaces/documentation'
 import { tree } from '../simulator.tree'
 import { BackupInterface } from '../../../interfaces/backup'
-import { decimalToStringDate, findRealValue, monthDiffList, nbOfDays, nbOfWorkingDays, setTimeToMidDay, stringToDecimalDate, today } from '../../../utils/dates'
+import { decimalToStringDate, findRealValue, monthDiffList, nbOfWorkingDays, setTimeToMidDay, stringToDecimalDate, today } from '../../../utils/dates'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
 import { SimulatorService } from '../../../services/simulator/simulator.service'

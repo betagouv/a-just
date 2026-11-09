@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core'
+import { Component, Input, OnInit, inject } from '@angular/core'
 import { DateSelectBlueComponent } from '../../../components/date-select-blue/date-select-blue.component'
 import { CommonModule } from '@angular/common'
 import { MainClass } from '../../../libs/main-class'
@@ -15,7 +15,18 @@ import { ActivatedRoute } from '@angular/router'
   templateUrl: './period-selector.component.html',
   styleUrls: ['./period-selector.component.scss'],
 })
-export class PeriodSelectorComponent extends MainClass implements OnChanges, OnInit {
+export class PeriodSelectorComponent extends MainClass implements OnInit {
+  /**
+   * Service de simulation
+   */
+  simulatorService = inject(SimulatorService)
+  /**
+   * Service de KPI
+   */
+  kpiService = inject(KPIService)
+  /**
+   * Route
+   */
   route = inject(ActivatedRoute)
   /**
    * Mode de simulation
@@ -26,11 +37,6 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
    * Date du jour
    */
   today = new Date()
-
-  /**
-   * Indicateur de selection de paramètre de simulation
-   */
-  disabled: string = ''
 
   /**
    * Indicateur de saisie date de début de simulation
@@ -63,18 +69,11 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
   /**
    * Constructeur
    */
-  constructor(
-    private simulatorService: SimulatorService,
-    private kpiService: KPIService,
-  ) {
+  constructor() {
     super()
 
     this.watch(
       this.simulatorService.contentieuOrSubContentieuId.subscribe((ids) => {
-        if (this.whiteSimulator) {
-          if (ids === null) this.disabled = ''
-          else this.disabled = 'disabled'
-        }
         if (ids === null) {
           this.mooveClass = ''
           this.dateStop = null
@@ -103,18 +102,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
     )
 
     this.watch(
-      this.simulatorService.disabled.subscribe((disabled) => {
-        if (this.whiteSimulator && this.simulatorService.contentieuOrSubContentieuId.getValue() === null) this.disabled = ''
-        else this.disabled = disabled
-      }),
-    )
-
-    this.watch(
       this.simulatorService.situationSimulated.subscribe((situation) => {
-        if (this.whiteSimulator) {
-          if (situation === null) this.disabled = ''
-          else this.disabled = 'disabled'
-        }
         if (situation === null) {
           this.mooveClass = ''
           this.dateStop = null
@@ -136,10 +124,6 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
     }
   }
 
-  ngOnChanges(change: any) {
-    if (change.whiteSimulator && change.whiteSimulator.currentValue === true) this.disabled = ''
-  }
-
   updateDateSelected(type: string = '', event: any = null, logKPI = true) {
     if (this.whiteSimulator === false) {
       if (type === 'dateStart') {
@@ -159,13 +143,8 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
           this.mooveClass = 'future'
         else if (this.dateStop === null) this.mooveClass = ''
         else this.mooveClass = 'present'
-        this.disabled = 'disabled-date'
-        this.simulatorService.disabled.next(this.disabled)
-
         this.simulatorService.dateStart.next(this.dateStart)
       } else if (type === 'dateStop') {
-        this.disabled = 'disabled-date'
-        this.simulatorService.disabled.next(this.disabled)
         this.dateStop = event == null ? null : new Date(event)
         if (logKPI && this.dateStop) {
           this.kpiService.register(END_DATE_SIMULATOR, this.dateStop + '')
@@ -183,15 +162,11 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges, OnI
       }
     } else {
       if (type === 'dateStart') {
-        this.disabled = 'disabled-date'
-        this.simulatorService.disabled.next(this.disabled)
         this.dateStart = new Date(event)
         this.refreshDateStopMin()
         this.simulatorService.dateStart.next(this.dateStart)
         this.simulatorService.whiteSimulatorNbOfDays.next(nbOfWorkingDays(this.dateStart, this.dateStop || new Date()))
       } else if (type === 'dateStop') {
-        this.disabled = 'disabled-date'
-        this.simulatorService.disabled.next(this.disabled)
         this.dateStop = event == null ? null : new Date(event)
         this.simulatorService.dateStop.next(this.dateStop ?? undefined)
         this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart
