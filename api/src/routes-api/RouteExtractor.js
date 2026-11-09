@@ -414,6 +414,7 @@ export default class RouteExtractor extends Route {
         raw: true,
       })
       const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
+      // Export de groupe : une ligne par lieu. Le détail du prorata est dans expandHrByBackup.
       hr = expandHrByBackup(
         hr.concat(ventilatedFromElsewhere),
         juridictions.map((juridiction) => juridiction.id),
@@ -427,11 +428,27 @@ export default class RouteExtractor extends Route {
       const group = await this.models.Groups.getGroupsByBackupId(backupId)
       arrondissementName = group?.label ?? ''
       juridictions = [juridictionName]
-      hr = hr.concat(
-        expandHrByBackup(ventilatedFromElsewhere, [Number(backupId)], new Map([[Number(backupId), juridictionName]])).map((person) => ({
-          ...person,
-          juridiction: juridictionName,
-        })),
+      // Export d'un seul lieu (template4).
+      // Le cache `hrBackup` stocke la fiche entière sur chaque lieu touché
+      // (accueil et ventilations), donc l'ETPT y est encore celui de la situation,
+      // pas la part du lieu. expandHrByBackup([ce lieu]) ne garde qu'une ligne
+      // et réduit l'ETPT au prorata. On déduplique avant : la même fiche peut
+      // arriver du cache et de ventilatedFromElsewhere.
+      // Le libellé Juridiction d'un agent d'accueil est conservé ; celui d'un
+      // agent rattaché ailleurs est remplacé par le lieu exporté.
+      const selectedBackupId = Number(backupId)
+      const peopleById = new Map()
+      for (const person of hr.concat(ventilatedFromElsewhere)) {
+        const id = Number(person?.id)
+        if (!id || peopleById.has(id)) continue
+        peopleById.set(id, person)
+      }
+      hr = expandHrByBackup([...peopleById.values()], [selectedBackupId], new Map([[selectedBackupId, juridictionName]])).map(
+        (person) => {
+          const homeBackupId = Number(peopleById.get(Number(person.id))?.backupId)
+          if (homeBackupId === selectedBackupId) return person
+          return { ...person, juridiction: juridictionName }
+        },
       )
     }
 

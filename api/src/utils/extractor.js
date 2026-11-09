@@ -465,8 +465,16 @@ const activityBackupId = (activity, human) => {
 }
 
 /**
- * Part de l'ETP d'une situation pour un backup.
- * Un seul backup : l'ETP reste entier. Plusieurs backups : prorata des pourcentages.
+ * Part de l'ETP d'une situation pour un lieu (backup), export Excel template4.
+ *
+ * Une situation ventilée en même temps sur deux lieux ne doit pas compter 1 ETPT
+ * sur chacun. Exemple : ETP 1, 60 % sur le lieu 1 et 40 % sur le lieu 2
+ * → 0,6 et 0,4. Un seul lieu dans la situation : l'ETP reste entier.
+ * Aucune ventilation : l'ETP reste entier sur le lieu d'accueil, 0 ailleurs.
+ *
+ * Le ratio porte sur la somme des pourcentages par backup, pas sur le nombre de lieux.
+ * Ce ratio ne doit pas être recalculé dans generateStableHRPeriods : le générateur
+ * de périodes est commun au reste de l'application et lit l'ETP déjà réduit.
  */
 const situationEtpShare = (situation, backupId, human) => {
   const selected = Number(backupId)
@@ -487,8 +495,14 @@ const situationEtpShare = (situation, backupId, human) => {
 }
 
 /**
- * Ne garde que les activités du backup demandé. Le prorata d'ETP n'est écrit
- * que sur ces copies : le calcul de périodes lit ensuite l'ETP déjà réduit.
+ * Copie d'une situation limitée à un lieu.
+ * Les activités des autres lieux sont retirées, et leur part d'ETP aussi :
+ * la colonne « ETPT sur la période » vient de situation.etp, pas de la somme
+ * des pourcentages. Sans cette réduction, un agent coupé en deux sites sort à 1.
+ *
+ * Les pourcentages restants sont ramenés à 100 % de la part locale, pour que
+ * les colonnes de contentieux pèsent comme avant, mais sur l'ETP déjà réduit.
+ * L'absentéisme n'est pas mis à l'échelle ici : il est soustrait ensuite de cet ETP.
  */
 const filterSituationsByBackup = (human, backupId) => {
   const selected = Number(backupId)
@@ -510,13 +524,19 @@ const filterSituationsByBackup = (human, backupId) => {
 }
 
 /**
- * Répète une fiche une fois par juridiction du groupe où elle est présente
- * (backup d'accueil ou ventilation). Chaque copie ne conserve, dans chaque
- * situation, que les activités de ce backup, et l'ETP de la situation est
- * réduit au prorata de ces pourcentages. Les index doivent être calculés
- * ensuite : les copies d'une même fiche portent un indexId distinct.
- * @param {Array} hr
- * @param {number[]} backupIds ordre d'affichage des juridictions
+ * Prépare les fiches de l'extracteur d'effectifs (template4, filter-list-new).
+ *
+ * Groupe (plusieurs backupIds) : une ligne par lieu où la fiche est présente
+ * (accueil ou ventilation). Un agent sur deux lieux en même temps apparaît
+ * donc deux fois, chaque ligne avec sa part d'ETPT.
+ * Un seul backupId : une seule ligne, limitée à ce lieu. Ne pas laisser la
+ * fiche entière, sinon l'ETPT du lieu sélectionné reste à 1.
+ *
+ * Le prorata vit uniquement ici (via filterSituationsByBackup), jamais dans
+ * le calcul de périodes. Les index sont construits après : les copies d'une
+ * même fiche ont un indexId distinct (`id:backupId`) pour ne pas fusionner.
+ * @param {Array} hr fiches entières, ventilations de tous les lieux comprises
+ * @param {number[]} backupIds lieux demandés, dans l'ordre d'affichage
  * @param {Map<number, string>} labelsByBackupId
  */
 export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
