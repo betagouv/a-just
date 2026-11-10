@@ -5,6 +5,7 @@ import { promisify } from 'util'
 import { invalidateAgentEverywhere, invalidateBackup } from './hrExtractorCache'
 import { invalidateAjustBackup } from './hrExtAjustCache'
 import { findSituation } from './human-resource'
+import { agentKeptInBackupLoad } from './agent-backup'
 import { cloneDeep } from 'lodash'
 
 const gzip = promisify(zlib.gzip)
@@ -202,16 +203,24 @@ export const getObjectSizeInMB = (obj) => {
 }
 
 /**
- * Charge ou calcule la cache de la liste complète d'agent pour une juridiction
+ * Charge ou calcule la cache de la liste complète d'agent pour une juridiction.
+ * Le cache reste complet. La liste renvoyée retire, pour chaque backup demandé,
+ * les agents rattachés à ce backup mais ventilés uniquement ailleurs.
+ * Les chargements internes qui relisent la fiche d'accueil passent
+ * `excludeHomeWithoutVentilation: false`.
  * @param {*} backupId
  * @param {*} models objet d'acces bdd
+ * @param {*} userId
+ * @param {{ excludeHomeWithoutVentilation?: boolean }} options
  * @returns
  */
-export const loadOrWarmHR = async (backupIds, models, userId) => {
+export const loadOrWarmHR = async (backupIds, models, userId, options = {}) => {
   if (!Array.isArray(backupIds)) {
     // on initialise avec un tableau si ca n'en est pas un
     backupIds = [backupIds]
   }
+  const excludeHomeWithoutVentilation = options.excludeHomeWithoutVentilation !== false
+  const requestedBackupIds = new Set(backupIds.map((id) => Number(id)))
 
   const cacheKey = 'hrBackup'
   let hr = []
@@ -223,6 +232,10 @@ export const loadOrWarmHR = async (backupIds, models, userId) => {
       await setCacheValue(backupId, hrBackup, cacheKey, 3600)
       await invalidateBackup(backupId)
       await invalidateAjustBackup(backupId)
+    }
+
+    if (excludeHomeWithoutVentilation) {
+      hrBackup = hrBackup.filter((person) => agentKeptInBackupLoad(person, backupId, requestedBackupIds))
     }
 
     hr.push(...hrBackup)
@@ -349,7 +362,7 @@ export const loadHrWithActivityOnBackups = async (backupIds, models, userId, dat
 
   const extra = []
   for (const [homeBackupId, ids] of missingByHomeBackup) {
-    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId, { excludeHomeWithoutVentilation: false })
     for (const person of homeHr) {
       if (!ids.has(Number(person.id))) {
         continue
@@ -390,7 +403,7 @@ export const loadHrVentilatedFromOtherBackups = async (backupIds, models, userId
 
   const extra = []
   for (const [homeBackupId, ids] of missingByHomeBackup) {
-    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId, { excludeHomeWithoutVentilation: false })
     for (const person of homeHr) {
       if (!ids.has(Number(person.id))) continue
 
@@ -425,7 +438,7 @@ export const loadHrVentilatedOnBackups = async (backupIds, models, userId, alrea
 
   const extra = []
   for (const [homeBackupId, ids] of missingByHomeBackup) {
-    const homeHr = await loadOrWarmHR(homeBackupId, models, userId)
+    const homeHr = await loadOrWarmHR(homeBackupId, models, userId, { excludeHomeWithoutVentilation: false })
     for (const person of homeHr) {
       if (!ids.has(Number(person.id))) continue
 
