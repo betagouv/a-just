@@ -465,6 +465,31 @@ const activityBackupId = (activity, human) => {
   return Number(id)
 }
 
+const activityContentieuxId = (activity) => {
+  const id = activity?.contentieux?.id ?? activity?.referentielId
+  if (id == null || id === '') return null
+  return Number(id)
+}
+
+/**
+ * Enfant de contentieux → id de son parent de tête.
+ * La saisie enregistre les deux : le total (parent) et chaque ligne (enfant).
+ * @param {Array<{ id: number, childrens?: Array<{ id: number }> }>} referentiels
+ * @returns {Map<number, number>}
+ */
+export function contentieuxChildToParent(referentiels) {
+  const map = new Map()
+  for (const node of referentiels || []) {
+    const parentId = Number(node?.id)
+    if (!parentId) continue
+    for (const child of node.childrens || []) {
+      const childId = Number(child?.id)
+      if (childId) map.set(childId, parentId)
+    }
+  }
+  return map
+}
+
 /**
  * Part de l'ETP d'une situation pour un lieu (backup), export Excel template4.
  *
@@ -474,14 +499,31 @@ const activityBackupId = (activity, human) => {
  * Aucune ventilation : l'ETP reste entier sur le lieu d'accueil, 0 ailleurs.
  *
  * Le ratio porte sur la somme des pourcentages par backup, pas sur le nombre de lieux.
+ * Un sous-contentieux dont le parent est déjà ventilé sur le même lieu n'entre pas
+ * dans cette somme : son temps est déjà dans le pourcentage du parent. Sinon
+ * « Autres » à 10 % et sa ligne de soutien à 10 % font 110 % et ouvrent un écart.
+ * Une ligne sans parent sur ce lieu continue de compter.
  * Ce ratio ne doit pas être recalculé dans generateStableHRPeriods : le générateur
  * de périodes est commun au reste de l'application et lit l'ETP déjà réduit.
+ * @param {Map<number, number>} childToParent
  */
-const situationEtpShare = (situation, backupId, human) => {
+const situationEtpShare = (situation, backupId, human, childToParent = new Map()) => {
   const selected = Number(backupId)
+  const contentieuxByBackup = new Map()
+  for (const activity of situation.activities || []) {
+    if (!Number(activity.percent)) continue
+    const id = activityBackupId(activity, human)
+    const contentieuxId = activityContentieuxId(activity)
+    if (!contentieuxByBackup.has(id)) contentieuxByBackup.set(id, new Set())
+    if (contentieuxId) contentieuxByBackup.get(id).add(contentieuxId)
+  }
+
   const byBackup = new Map()
   for (const activity of situation.activities || []) {
     const id = activityBackupId(activity, human)
+    const contentieuxId = activityContentieuxId(activity)
+    const parentId = contentieuxId ? childToParent.get(contentieuxId) : null
+    if (parentId && contentieuxByBackup.get(id)?.has(parentId)) continue
     byBackup.set(id, (byBackup.get(id) || 0) + (Number(activity.percent) || 0))
   }
 
@@ -505,10 +547,10 @@ const situationEtpShare = (situation, backupId, human) => {
  * les colonnes de contentieux pèsent comme avant, mais sur l'ETP déjà réduit.
  * L'absentéisme n'est pas mis à l'échelle ici : il est soustrait ensuite de cet ETP.
  */
-const filterSituationsByBackup = (human, backupId) => {
+const filterSituationsByBackup = (human, backupId, childToParent) => {
   const selected = Number(backupId)
   return (human.situations || []).map((situation) => {
-    const { scale, localSum, backupCount } = situationEtpShare(situation, selected, human)
+    const { scale, localSum, backupCount } = situationEtpShare(situation, selected, human, childToParent)
     const activities = (situation.activities || [])
       .filter((activity) => activityBackupId(activity, human) === selected)
       .map((activity) => {
@@ -539,8 +581,9 @@ const filterSituationsByBackup = (human, backupId) => {
  * @param {Array} hr fiches entières, ventilations de tous les lieux comprises
  * @param {number[]} backupIds lieux demandés, dans l'ordre d'affichage
  * @param {Map<number, string>} labelsByBackupId
+ * @param {Map<number, number>} childToParent sous-contentieux → contentieux de tête
  */
-export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
+export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map(), childToParent = new Map()) {
   const order = (backupIds || []).map((id) => Number(id))
   const selected = new Set(order)
 
@@ -564,7 +607,7 @@ export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
           ...human,
           backupId: id,
           juridiction: human.juridiction || labelsByBackupId.get(id) || null,
-          situations: filterSituationsByBackup(human, id),
+          situations: filterSituationsByBackup(human, id, childToParent),
         },
       ]
     }
@@ -574,7 +617,7 @@ export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map()) {
       indexId: `${human.id}:${id}`,
       backupId: id,
       juridiction: labelsByBackupId.get(id) || human.juridiction,
-      situations: filterSituationsByBackup(human, id),
+      situations: filterSituationsByBackup(human, id, childToParent),
     }))
   })
 }

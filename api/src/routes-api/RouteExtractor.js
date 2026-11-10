@@ -7,6 +7,7 @@ import {
   autofitColumns,
   buildExcelRef,
   computeExtractor,
+  contentieuxChildToParent,
   createFlatReferentiel,
   expandHrByBackup,
   flatListOfContentieuxAndSousContentieux,
@@ -393,6 +394,7 @@ export default class RouteExtractor extends Route {
       true,
     )
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
+    const childToParent = contentieuxChildToParent(referentiels)
 
     let juridictionName
     let arrondissementName
@@ -419,6 +421,7 @@ export default class RouteExtractor extends Route {
         hr.concat(ventilatedFromElsewhere),
         juridictions.map((juridiction) => juridiction.id),
         juridictionsByBackupId,
+        childToParent,
       )
     } else {
       const hrBackup = await this.models.HRBackups.findById(backupId)
@@ -443,7 +446,7 @@ export default class RouteExtractor extends Route {
         if (!id || peopleById.has(id)) continue
         peopleById.set(id, person)
       }
-      hr = expandHrByBackup([...peopleById.values()], [selectedBackupId], new Map([[selectedBackupId, juridictionName]])).map(
+      hr = expandHrByBackup([...peopleById.values()], [selectedBackupId], new Map([[selectedBackupId, juridictionName]]), childToParent).map(
         (person) => {
           const homeBackupId = Number(peopleById.get(Number(person.id))?.backupId)
           if (homeBackupId === selectedBackupId) return person
