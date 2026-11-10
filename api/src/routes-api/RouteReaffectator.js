@@ -6,7 +6,7 @@ import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { loadHrVentilatedFromOtherBackups, loadOrWarmHR } from '../utils/redis'
+import { loadHrVentilatedFromOtherBackups, loadHrWithActivityOnBackups, loadOrWarmHR } from '../utils/redis'
 import { contentieuxChildToParent, expandHrForScope } from '../utils/extractor'
 import { filterAgentsByDateCategoryFunction, findAllSituations, findSituation, generateHRIndexes } from '../utils/human-resource'
 import { orderBy } from 'lodash'
@@ -78,19 +78,25 @@ export default class RouteReaffectator extends Route {
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupIds)
 
+    const backupId = this.body(ctx).backupId
     let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
-    const ventilatedFromElsewhere = await loadHrVentilatedFromOtherBackups(backupIds, this.models, ctx.state.user.id, hr)
-    const shared = await expandHrForScope(
-      this.models,
-      this.body(ctx).backupId,
-      backupIds,
-      hr,
-      ventilatedFromElsewhere,
-      contentieuxChildToParent(referentiel),
-    )
-    if (shared.missing === 'group') ctx.throw(404, 'Groupe introuvable')
-    if (shared.missing === 'juridiction') ctx.throw(404, 'Juridiction introuvable')
-    hr = shared.hr
+    if (backupIds.length > 1) {
+      // Arrondissement : une fiche par agent, comme le ventilateur.
+      hr = hr.concat(await loadHrWithActivityOnBackups(backupIds, this.models, ctx.state.user.id, date, hr))
+    } else {
+      const ventilatedFromElsewhere = await loadHrVentilatedFromOtherBackups(backupIds, this.models, ctx.state.user.id, hr)
+      const shared = await expandHrForScope(
+        this.models,
+        backupId,
+        backupIds,
+        hr,
+        ventilatedFromElsewhere,
+        contentieuxChildToParent(referentiel),
+      )
+      if (shared.missing === 'group') ctx.throw(404, 'Groupe introuvable')
+      if (shared.missing === 'juridiction') ctx.throw(404, 'Juridiction introuvable')
+      hr = shared.hr
+    }
     const preload = await generateHRIndexes(hr)
     let hrfiltered = filterByFonctionWithIndex(copyArray(hr), fonctionsIds, preload.functionIndex, preload.periodsDatabase)
     hrfiltered = filterByContentieuxWithIndex(hrfiltered, contentieuxIds, preload.contentieuxIndex)
