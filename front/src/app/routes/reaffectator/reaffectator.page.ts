@@ -82,6 +82,10 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
    * Is c'est modifié ou non
    */
   isModify: boolean
+  /**
+   * Distingue les lignes d'un même agent ventilé sur plusieurs lieux
+   */
+  indexId?: string
 }
 
 /**
@@ -123,7 +127,7 @@ interface listFormatedInterface {
   /**
    * Liste des id des personnes selectionnée
    */
-  personSelected: number[]
+  personSelected: Array<number | string>
   /**
    * Id de la categorie
    */
@@ -636,6 +640,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Agent can view to the page
    */
+  personKey(hr: { id: number; indexId?: string }) {
+    return hr.indexId || hr.id
+  }
+
   canViewAgent(humanResource: HumanResourceSelectedInterface) {
     let selectedFonctionsIds = null
     if (this.reaffectatorService.selectedFonctionsIds.length !== this.formFilterFonctionsSelect.length) {
@@ -1094,8 +1102,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           })
       })
 
-    const humanId = hr.id
-    const indexOfHR = this.listFormated[indexList].hrFiltered.findIndex((hr) => hr.id === humanId)
+    const humanId = this.personKey(hr)
+    const indexOfHR = this.listFormated[indexList].hrFiltered.findIndex((item) => this.personKey(item) === humanId)
 
     if (indexOfHR !== -1) {
       this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities = list
@@ -1111,9 +1119,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param hr
    */
   toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
-    const indexFinded = this.listFormated[index].personSelected.indexOf(hr.id)
+    const key = this.personKey(hr)
+    const indexFinded = this.listFormated[index].personSelected.indexOf(key)
     if (indexFinded === -1) {
-      this.listFormated[index].personSelected.push(hr.id)
+      this.listFormated[index].personSelected.push(key)
     } else {
       this.listFormated[index].personSelected.splice(indexFinded, 1)
     }
@@ -1132,7 +1141,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (this.listFormated[index].personSelected.length === this.listFormated[index].hrFiltered.length) {
       this.listFormated[index].personSelected = []
     } else {
-      this.listFormated[index].personSelected = this.listFormated[index].hrFiltered.map((h) => h.id)
+      this.listFormated[index].personSelected = this.listFormated[index].hrFiltered.map((h) => this.personKey(h))
     }
   }
 
@@ -1143,8 +1152,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onInitList(list: listFormatedInterface) {
     if (list.personSelected.length) {
       list.personSelected.map((id) => {
-        const indexOfHRFiltered = list.hrFiltered.findIndex((h) => h.id === id)
-        const indexOfAllHR = list.allHr.findIndex((h) => h.id === id)
+        const indexOfHRFiltered = list.hrFiltered.findIndex((h) => this.personKey(h) === id)
+        const indexOfAllHR = list.allHr.findIndex((h) => this.personKey(h) === id)
 
         if (indexOfHRFiltered !== -1 && indexOfAllHR !== -1) {
           list.hrFiltered[indexOfHRFiltered] = cloneDeep(list.allHr[indexOfAllHR])
@@ -1170,7 +1179,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   getOrignalHuman(hr: HumanResourceSelectedInterface, itemObject: listFormatedInterface) {
-    return itemObject.allHr.find((h) => h.id === hr.id)
+    return itemObject.allHr.find((h) => this.personKey(h) === this.personKey(hr))
   }
 
   /**

@@ -185,7 +185,7 @@
         <div class="actions"></div>
       </div>
       <div class="sub-content-list">
-        @for (hr of list.hrFiltered; track hr.id; let index = $index) {
+        @for (hr of list.hrFiltered; track personKey(hr); let index = $index) {
         @if (canViewAgent(hr)) {
         @if (duringPrint && hr.isModify) {
         <ng-container *ngTemplateOutlet="
@@ -230,14 +230,14 @@
 </ng-template>
 
 <ng-template #rowPerson let-hr="hr" let-list="list" let-mainIndex="mainIndex" let-isCheckable="isCheckable">
-  @if (!isolatePersons || (isolatePersons && (list.personSelected.indexOf(hr.id) !== -1 || hr.isModify))) {
+  @if (!isolatePersons || (isolatePersons && (list.personSelected.indexOf(personKey(hr)) !== -1 || hr.isModify))) {
   <div class="item-list" [class.is-modify]="hr.isModify"
-    [class.is-selected]="isCheckable ? list.personSelected.indexOf(hr.id) !== -1 : false"
-    [style.opacity]="isCheckable ? hr.opacity : 1" [id]="'human-' + hr.id">
+    [class.is-selected]="isCheckable ? list.personSelected.indexOf(personKey(hr)) !== -1 : false"
+    [style.opacity]="isCheckable ? hr.opacity : 1" [id]="'human-' + personKey(hr)">
     <div class="profil item">
       <div class="text">
         <div class="name">
-          <div class="check-item" [ngClass]="{ selected: isCheckable && list.personSelected.indexOf(hr.id) !== -1 }"
+          <div class="check-item" [ngClass]="{ selected: isCheckable && list.personSelected.indexOf(personKey(hr)) !== -1 }"
             (click)="toogleCheckPerson(mainIndex, hr)"></div>
           <p>{{ hr.firstName }} {{ hr.lastName }}</p>
           @if (hr.comment) {

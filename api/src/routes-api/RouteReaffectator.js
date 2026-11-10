@@ -6,7 +6,8 @@ import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { loadCalculatorHr } from '../utils/redis'
+import { loadHrVentilatedFromOtherBackups, loadOrWarmHR } from '../utils/redis'
+import { contentieuxChildToParent, expandHrForScope } from '../utils/extractor'
 import { filterAgentsByDateCategoryFunction, findAllSituations, findSituation, generateHRIndexes } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
@@ -77,7 +78,19 @@ export default class RouteReaffectator extends Route {
     let categories = await this.models.HRCategories.getAll()
     const activities = await this.models.Activities.getAll(backupIds)
 
-    let hr = await loadCalculatorHr(backupIds, this.models, ctx.state.user.id)
+    let hr = await loadOrWarmHR(backupIds, this.models, ctx.state.user.id)
+    const ventilatedFromElsewhere = await loadHrVentilatedFromOtherBackups(backupIds, this.models, ctx.state.user.id, hr)
+    const shared = await expandHrForScope(
+      this.models,
+      this.body(ctx).backupId,
+      backupIds,
+      hr,
+      ventilatedFromElsewhere,
+      contentieuxChildToParent(referentiel),
+    )
+    if (shared.missing === 'group') ctx.throw(404, 'Groupe introuvable')
+    if (shared.missing === 'juridiction') ctx.throw(404, 'Juridiction introuvable')
+    hr = shared.hr
     const preload = await generateHRIndexes(hr)
     let hrfiltered = filterByFonctionWithIndex(copyArray(hr), fonctionsIds, preload.functionIndex, preload.periodsDatabase)
     hrfiltered = filterByContentieuxWithIndex(hrfiltered, contentieuxIds, preload.contentieuxIndex)

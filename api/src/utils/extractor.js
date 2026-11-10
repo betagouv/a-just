@@ -622,6 +622,73 @@ export function expandHrByBackup(hr, backupIds, labelsByBackupId = new Map(), ch
   })
 }
 
+/**
+ * Découpe les fiches comme l'extracteur d'effectifs : une ligne par lieu,
+ * ETPT au prorata, sous-contentieux non compté deux fois.
+ * @param {*} models
+ * @param {number} backupId lieu ou groupe (négatif) demandé
+ * @param {number[]} backupIds lieux accessibles déjà résolus
+ * @param {Array} hr agents des lieux demandés
+ * @param {Array} ventilatedFromElsewhere agents rattachés ailleurs, ventilés sur ces lieux
+ * @param {Map<number, number>} childToParent
+ * @returns {Promise<{ missing?: 'group'|'juridiction', hr: Array, juridictionName: string, arrondissementName: string, juridictions: Array }>}
+ */
+export async function expandHrForScope(models, backupId, backupIds, hr, ventilatedFromElsewhere, childToParent) {
+  if (Number(backupId) < 0) {
+    const group = await models.Groups.findById(Number(backupId) * -1)
+    if (!group) return { missing: 'group', hr: [], juridictionName: '', arrondissementName: '', juridictions: [] }
+
+    const juridictions = await models.HRBackups.findAll({
+      attributes: ['id', 'label'],
+      where: { id: backupIds },
+      order: [
+        ['group_id_rank', 'ASC'],
+        ['label', 'ASC'],
+      ],
+      raw: true,
+    })
+    const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
+
+    return {
+      hr: expandHrByBackup(
+        hr.concat(ventilatedFromElsewhere),
+        juridictions.map((juridiction) => juridiction.id),
+        juridictionsByBackupId,
+        childToParent,
+      ),
+      juridictionName: group.label,
+      arrondissementName: group.label,
+      juridictions,
+    }
+  }
+
+  const hrBackup = await models.HRBackups.findById(backupId)
+  if (!hrBackup) return { missing: 'juridiction', hr: [], juridictionName: '', arrondissementName: '', juridictions: [] }
+
+  const juridictionName = typeof hrBackup === 'string' ? hrBackup : hrBackup.label
+  const group = await models.Groups.getGroupsByBackupId(backupId)
+  const selectedBackupId = Number(backupId)
+  const peopleById = new Map()
+  for (const person of hr.concat(ventilatedFromElsewhere)) {
+    const id = Number(person?.id)
+    if (!id || peopleById.has(id)) continue
+    peopleById.set(id, person)
+  }
+
+  return {
+    hr: expandHrByBackup([...peopleById.values()], [selectedBackupId], new Map([[selectedBackupId, juridictionName]]), childToParent).map(
+      (person) => {
+        const homeBackupId = Number(peopleById.get(Number(person.id))?.backupId)
+        if (homeBackupId === selectedBackupId) return person
+        return { ...person, juridiction: juridictionName }
+      },
+    ),
+    juridictionName,
+    arrondissementName: group?.label ?? '',
+    juridictions: [juridictionName],
+  }
+}
+
 export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName, arrondissementName) {
   const filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
 

@@ -9,7 +9,7 @@ import {
   computeExtractor,
   contentieuxChildToParent,
   createFlatReferentiel,
-  expandHrByBackup,
+  expandHrForScope,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
   generateOnglets,
@@ -396,64 +396,13 @@ export default class RouteExtractor extends Route {
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
     const childToParent = contentieuxChildToParent(referentiels)
 
-    let juridictionName
-    let arrondissementName
-    let juridictions
-    if (backupId < 0) {
-      const group = await this.models.Groups.findById(backupId * -1)
-      if (!group) ctx.throw(404, 'Groupe introuvable')
-      juridictionName = group.label
-      arrondissementName = group.label
-
-      // Les listes Excel utilisent les juridictions du groupe, pas son libellé d'affichage.
-      juridictions = await this.models.HRBackups.findAll({
-        attributes: ['id', 'label'],
-        where: { id: backupIds },
-        order: [
-          ['group_id_rank', 'ASC'],
-          ['label', 'ASC'],
-        ],
-        raw: true,
-      })
-      const juridictionsByBackupId = new Map(juridictions.map((juridiction) => [Number(juridiction.id), juridiction.label]))
-      // Export de groupe : une ligne par lieu. Le détail du prorata est dans expandHrByBackup.
-      hr = expandHrByBackup(
-        hr.concat(ventilatedFromElsewhere),
-        juridictions.map((juridiction) => juridiction.id),
-        juridictionsByBackupId,
-        childToParent,
-      )
-    } else {
-      const hrBackup = await this.models.HRBackups.findById(backupId)
-      if (!hrBackup) ctx.throw(404, 'Juridiction introuvable')
-
-      juridictionName = typeof hrBackup === 'string' ? hrBackup : hrBackup.label
-      const group = await this.models.Groups.getGroupsByBackupId(backupId)
-      arrondissementName = group?.label ?? ''
-      juridictions = [juridictionName]
-      // Export d'un seul lieu (template4).
-      // Le cache `hrBackup` stocke la fiche entière sur chaque lieu touché
-      // (accueil et ventilations), donc l'ETPT y est encore celui de la situation,
-      // pas la part du lieu. expandHrByBackup([ce lieu]) ne garde qu'une ligne
-      // et réduit l'ETPT au prorata. On déduplique avant : la même fiche peut
-      // arriver du cache et de ventilatedFromElsewhere.
-      // Le libellé Juridiction d'un agent d'accueil est conservé ; celui d'un
-      // agent rattaché ailleurs est remplacé par le lieu exporté.
-      const selectedBackupId = Number(backupId)
-      const peopleById = new Map()
-      for (const person of hr.concat(ventilatedFromElsewhere)) {
-        const id = Number(person?.id)
-        if (!id || peopleById.has(id)) continue
-        peopleById.set(id, person)
-      }
-      hr = expandHrByBackup([...peopleById.values()], [selectedBackupId], new Map([[selectedBackupId, juridictionName]]), childToParent).map(
-        (person) => {
-          const homeBackupId = Number(peopleById.get(Number(person.id))?.backupId)
-          if (homeBackupId === selectedBackupId) return person
-          return { ...person, juridiction: juridictionName }
-        },
-      )
-    }
+    const shared = await expandHrForScope(this.models, backupId, backupIds, hr, ventilatedFromElsewhere, childToParent)
+    if (shared.missing === 'group') ctx.throw(404, 'Groupe introuvable')
+    if (shared.missing === 'juridiction') ctx.throw(404, 'Juridiction introuvable')
+    hr = shared.hr
+    const juridictionName = shared.juridictionName
+    const arrondissementName = shared.arrondissementName
+    const juridictions = shared.juridictions
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupIds)
     const indexes = await generateHRIndexes(hr, true)
