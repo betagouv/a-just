@@ -21,9 +21,13 @@
         <div class="juridiction" [matMenuTriggerFor]="menu">
             <div class="juridiction-title">
                 @if (humanResourceService.workspaceSelected()) {
-                <h6 data-cy="backup-name" [title]="humanResourceService.workspaceSelected()?.label">
-                    {{ humanResourceService.workspaceSelected()?.isAdminLocal ? '★ ' : '' }}{{
-                    humanResourceService.workspaceSelected()?.label }}
+                <h6 [title]="humanResourceService.workspaceSelected()?.label">
+                    @if (humanResourceService.isArrondissement()) {
+                    <span class="arrondissement-label">Arrondissement</span>
+                    }
+                    <span data-cy="backup-name">{{ humanResourceService.workspaceSelected()?.isAdminLocal ? '★ ' : ''
+                        }}{{
+                        humanResourceService.workspaceSelected()?.label }}</span>
                 </h6>
                 }
                 @if (hrBackups && hrBackups.length > 1) {

@@ -107,6 +107,13 @@ export class HumanResourceService {
     return backupId > 0
   })
   /**
+   * Vérifie si la juridiction est un arrondissement
+   */
+  isArrondissement = computed(() => {
+    const backupId = this.backupIdS() ?? 0
+    return backupId < 0
+  })
+  /**
    * Liste des juridictions de l'utilisateur qui n'appartiennent à aucun groupe
    */
   backupsWithoutGroup = signal<BackupInterface[]>([])

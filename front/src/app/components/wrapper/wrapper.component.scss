@@ -370,6 +370,13 @@
             padding: 24px 16px;
             user-select: none;
 
+            .arrondissement-label {
+                color: utils.$colors-white;
+                font-size: 14px;
+                font-weight: 500;
+                display: block;
+            }
+
             .juridiction-title-text {
                 flex: 1;
                 min-width: 0;
