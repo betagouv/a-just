@@ -354,11 +354,26 @@ export class SignupPage {
   }
 
   /**
-   * Construit les options de juridictions, groupées par arrondissement non sélectionnable
+   * Construit les options de juridictions et d'arrondissements
    */
   private buildTjOptions() {
+    const list: JuridictionInterface[] = this.tjs.reduce((acc: JuridictionInterface[], tj: JuridictionInterface) => {
+      const groupId = tj.group?.id
+      if (groupId && !acc.find((t) => t.group?.id === groupId)) {
+        acc.push({
+          ...tj,
+          id: groupId * -1,
+          label: arrondissementLabel(tj.group, !this.userService.isCa()),
+        })
+      }
+
+      acc.push(tj)
+
+      return acc
+    }, [])
+
     this.tjOptions = sortBy(
-      this.tjs.map((tj) => ({
+      list.map((tj) => ({
         id: tj.id,
         label: tj.label,
         groupId: tj.group?.id ?? null,

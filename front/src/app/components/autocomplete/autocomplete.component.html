@@ -8,7 +8,7 @@
   <div #panel class="aj-autocomplete-panel">
     @for (group of filteredGroups; track group.id ?? 'ungrouped') {
     @if (group.label) {
-    <div class="group-header" (mousedown)="$event.preventDefault()">
+    <div class="group-header" (mousedown)="$event.preventDefault(); selectGroup(group)">
       <span class="item-label">{{ group.label }}</span>
     </div>
     }
