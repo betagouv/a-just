@@ -81,7 +81,7 @@ export default (sequelizeInstance, Model) => {
       where: {
         enabled: true,
         i_elst: { [Op.ne]: 0 },
-        type: { [Op.notIn]: ['CPH', 'TGI'] },
+        type: { [Op.notIn]: EXCLUDED_TJ_TYPES },
       },
       order: [['label', 'asc']],
       raw: true,

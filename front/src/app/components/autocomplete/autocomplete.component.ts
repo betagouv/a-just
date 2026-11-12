@@ -156,18 +156,6 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
   }
 
   /**
-   * L'en-tête de groupe reprend le libellé de l'arrondissement : un clic doit le sélectionner.
-   */
-  selectGroup(group: AutocompleteGroup) {
-    const option =
-      this.options.find((item) => item.groupId === group.id && item.label === group.label) ||
-      group.options.find((item) => item.label === group.label)
-    if (option) {
-      this.selectOption(option)
-    }
-  }
-
-  /**
    * Vide la sélection si l'utilisateur efface le champ
    */
   onInputBlur() {
