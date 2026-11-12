@@ -8,8 +8,10 @@ import user from "../../fixtures/user.json";
  */
 
 export function openEffectifDashboard(baseUrl: string, backupLabel: string) {
+  // Use h6 only for older sandbox markup without the dedicated label span.
+  // Selecting both the parent and child makes .text() duplicate the name.
   const selectedBackup =
-    '#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6';
+    '#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6:not(:has([data-cy="backup-name"]))';
   const escapedLabel = backupLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   // The admin star is decoration, not part of the jurisdiction name.
   const labelPattern = new RegExp(`^\\s*(?:★\\s*)?${escapedLabel}\\s*$`, 'i');

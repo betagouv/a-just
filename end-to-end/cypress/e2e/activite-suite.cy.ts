@@ -353,12 +353,15 @@ function backupLabelRe(label: string) {
 
 function selectBackup(baseUrl: string, label: string) {
   const labelRe = backupLabelRe(label);
+  // Keep the legacy h6 fallback without also selecting the label span's parent.
+  const selectedBackup =
+    '#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6:not(:has([data-cy="backup-name"]))';
 
   cy.get("#side-menu-bar .juridiction", { timeout: 20000 }).should("exist");
 
   cy.get("body").then(($body) => {
     const current = (
-      $body.find('#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6').text() || ""
+      $body.find(selectedBackup).text() || ""
     ).trim();
 
     if (labelRe.test(current)) {
@@ -375,7 +378,7 @@ function selectBackup(baseUrl: string, label: string) {
     cy.visit(`${baseUrl}/dashboard`);
   });
 
-  cy.get('#side-menu-bar .juridiction [data-cy="backup-name"], #side-menu-bar .juridiction h6', {
+  cy.get(selectedBackup, {
     timeout: 20000,
   }).should(($el) => {
     expect($el.text().trim()).to.match(labelRe);
