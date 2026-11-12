@@ -1,3 +1,8 @@
+const selectFirstFunction = () => {
+  cy.get("input#fonction-select").click();
+  cy.get(".aj-autocomplete-panel .juridiction-item").first().click();
+};
+
 describe("Signup Page", () => {
   before(() => {
     // Clear all session state to ensure clean test environment
@@ -27,77 +32,62 @@ describe("Signup Page", () => {
   //     .should('contain.text', 'Embarquer avec Pages Blanches')
   // })
 
-  it("Check that we have an error if email is different from @justice.gouv.fr or @*.gouv.fr", () => {
-    cy.on("window:alert", (alert) => {
-      expect(alert).to.equal(
-        "Vous devez saisir une adresse e-mail professionnelle"
-      );
-    });
+  it("Keeps continue disabled for a non-professional email", () => {
+    selectFirstFunction();
     cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
     cy.get('input[formControlName="lastName"]').type("UserTestLastname");
     cy.get('input[formControlName="email"]').type("userTest@test.mail.fr");
     cy.get('input[formControlName="password"]').type("1xDrv9&!");
     cy.get('input[formControlName="passwordConf"]').type("1xDrv9&!");
     cy.get('input[formControlName="checkbox"]').check();
-    cy.get(".next-step").click();
+    cy.get(".next-step").should("be.disabled");
     cy.visit(`/inscription`);
   });
 
-  it("Check that we have an error if gouv.fr is only in the local part of the email", () => {
-    cy.on("window:alert", (alert) => {
-      expect(alert).to.equal(
-        "Vous devez saisir une adresse e-mail professionnelle"
-      );
-    });
+  it("Keeps continue disabled if gouv.fr is only in the local part of the email", () => {
+    selectFirstFunction();
     cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
     cy.get('input[formControlName="lastName"]').type("UserTestLastname");
     cy.get('input[formControlName="email"]').type("test.gouv.fr@attacker-controlled-domain.example");
     cy.get('input[formControlName="password"]').type("1xDrv9&!");
     cy.get('input[formControlName="passwordConf"]').type("1xDrv9&!");
     cy.get('input[formControlName="checkbox"]').check();
-    cy.get(".next-step").click();
+    cy.get(".next-step").should("be.disabled");
     cy.visit(`/inscription`);
   });
 
-  it("Check that we have an error if password is not strong enough", () => {
+  it("Keeps continue disabled if the password is not strong enough", () => {
+    selectFirstFunction();
     cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
     cy.get('input[formControlName="lastName"]').type("UserTestLastname");
     cy.get('input[formControlName="email"]').type("userTest@justice.gouv.fr");
     cy.get('input[formControlName="password"]').type("easyPassword!");
     cy.get('input[formControlName="passwordConf"]').type("easyPassword");
     cy.get('input[formControlName="checkbox"]').check();
-    cy.get(".next-step").click();
-
-    cy.on("window:alert", (alert) => {
-      expect(alert).to.equal(
-        "Vous devez saisir un mot de passe qui remplit les critères obligatoires"
-      );
-    });
+    cy.get(".next-step").should("be.disabled");
     cy.visit(`/inscription`);
   });
 
   it("Check that we can fill the form to signup ", () => {
+    cy.get(".next-step").should("be.disabled");
     cy.get('input[formControlName="firstName"]').type("UserTestFirstname");
     cy.get('input[formControlName="lastName"]').type("UserTestLastname");
     cy.get('input[formControlName="email"]').type("userTest@justice.gouv.fr");
     cy.get('input[formControlName="password"]').type("1xDrv9&!");
     cy.get('input[formControlName="passwordConf"]').type("1xDrv9&!");
+    selectFirstFunction();
+    cy.get(".next-step").should("be.disabled");
     cy.get('input[formControlName="checkbox"]').check();
 
-    cy.get(".next-step").click();
-    cy.contains("label", /de rattachement/).should("be.visible");
-    cy.get("#rattach-select").should("be.visible").click();
+    cy.get(".next-step").should("be.enabled").click();
+    cy.get('label[for="rattach-select"]').should("be.visible");
+    cy.get("input[type=submit]").should("be.disabled");
+    cy.get("input#rattach-select").should("be.visible").click();
     cy.get(".aj-autocomplete-panel .juridiction-item")
       .not(".disabled")
       .first()
       .click();
-    cy.contains("label", "Ma fonction :").should("be.visible");
-    cy.get("#fonction-select").should("be.visible").click();
-    cy.get(".aj-autocomplete-panel .juridiction-item")
-      .not(".disabled")
-      .first()
-      .click();
-    cy.get("input[type=submit]").click();
+    cy.get("input[type=submit]").should("be.enabled").click();
     cy.location("pathname").should("eq", "/bienvenue");
   });
 });

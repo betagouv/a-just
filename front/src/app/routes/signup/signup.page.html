@@ -21,7 +21,7 @@
       <p class="steps">Étape {{ signUpStep }} sur 2</p>
       <p class="sub-title">Tous les champs de ce formulaire sont obligatoires</p>
       }
-      <p class="step-title">{{ signUpStep === 1 ? 'Je suis :' : 'Ma fonction' }}</p>
+      <p class="step-title">{{ signUpStep === 1 ? 'Je suis :' : 'Je suis rattaché à' }}</p>
       @if (!provider) {
       <div class="bordure-steps">
         <div class="step-one"></div>
@@ -31,15 +31,21 @@
       @if (signUpStep === 1) {
       <div class="grid-double">
         <div>
-          <label for="firstname-input">Prénom</label>
+          <label for="firstname-input">Prénom :</label>
           <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
             (keyup.enter)="focusNext($event)" autocomplete="off" id="firstname-input" />
         </div>
         <div>
-          <label for="lastname-input">Nom</label>
+          <label for="lastname-input">Nom :</label>
           <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
             (keyup.enter)="focusNext($event)" autocomplete="off" id="lastname-input" />
         </div>
+      </div>
+      <label [attr.for]="'fonction-select'">Ma fonction :</label>
+      <div class="tj">
+        <aj-autocomplete #fctSelect [options]="fonctionOptions()" [value]="selectedFonctionId"
+          placeholder="Choisir une fonction" (optionChange)="setFonc($event)"
+          [id]="'fonction-select'"></aj-autocomplete>
       </div>
       <label for="email-input">Courriel professionnel :</label>
       <input #input class="ethics-ui" placeholder="nom@exemple.fr" formControlName="email" type="email"
@@ -57,8 +63,8 @@
         </span>
       </div>
       <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
-        type="{{ !form.controls['checkboxPassword'].value ? 'password' : 'text' }}" (keyup)="checkStrength($event)"
-        (keyup.enter)="focusNext($event)" autocomplete="off" id="password-input" />
+        type="{{ !form.controls['checkboxPassword'].value ? 'password' : 'text' }}" (keyup.enter)="focusNext($event)"
+        autocomplete="off" id="password-input" />
       <p class="sub-title no-margin">Votre mot de passe doit contenir au moins :</p>
       <p class="sub-label password" [ngStyle]="{ color: getParamColor(0) }">
         <span [ngStyle]="{ 'background-color': getParamColor(0) }">i</span>
@@ -91,24 +97,26 @@
             d'utilisation</a>.
         </p>
       </div>
-      <div class="next-step" (click)="onStepTwo()">
-        <p>Continuer mon embarquement</p>
-      </div>
+      <button type="button" class="next-step" (click)="onStepTwo()" [disabled]="!canContinue">
+        Continuer mon embarquement
+      </button>
       }
       @if (signUpStep === 2) {
-      <label [attr.for]="'rattach-select'">{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon tribunal' }} de
-        rattachement :</label>
+      <label [attr.for]="'rattach-select'">{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon arrondissement' }}
+        :</label>
       <div class="tj">
         <aj-autocomplete #tjSelect [options]="tjOptions" [value]="selectedTjId"
           [placeholder]="'Choisir ' + (userService.interfaceType === 1 ? 'une CA' : 'un TJ')"
           (optionChange)="setTj($event)" [id]="'rattach-select'"></aj-autocomplete>
       </div>
+      @if (provider) {
       <label [attr.for]="'fonction-select'">Ma fonction :</label>
       <div class="tj">
         <aj-autocomplete #fctSelect [options]="fonctionOptions()" [value]="selectedFonctionId"
           placeholder="Choisir une fonction" (optionChange)="setFonc($event)"
           [id]="'fonction-select'"></aj-autocomplete>
       </div>
+      }
       @if (form.controls['fonction'].value === 'Autre') {
       <label>Intitulé de ma fonction :</label>
       <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" autocomplete="off" />
@@ -117,7 +125,7 @@
       <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text"
         autocomplete="off" />
       }
-      <input type="submit" class="big-button" value="Valider mon embarquement" />
+      <input type="submit" class="big-button" value="Valider mon embarquement" [disabled]="!canSubmit" />
       <p (click)="signUpStep = 1" class="back-step">
         Retour
       </p>
@@ -127,7 +135,7 @@
     <div class="login">
       <p><b>Vous avez déjà un compte</b></p>
       <a routerLink="/connexion">
-        <button class="outline white strict-border">
+        <button type="button" class="outline white strict-border">
           <i class="ri-login-box-line"></i>
           Se connecter
         </button>

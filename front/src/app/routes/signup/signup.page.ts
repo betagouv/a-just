@@ -1,5 +1,5 @@
 import { Component, ViewChildren, QueryList, ElementRef, inject, ViewChild, computed, Signal } from '@angular/core'
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
@@ -69,11 +69,14 @@ export class SignupPage {
   /**
    * Mot de passe paramètres de validation
    */
-  passwordStrength = {
-    length: false,
-    char: false,
-    number: false,
-    majuscule: false,
+  get passwordStrength() {
+    const password = this.form.controls['password'].value || ''
+    return {
+      length: password.length >= MIN_PASSWORD_LENGTH,
+      char: /[!@#$%&*_?-]/.test(password),
+      number: /\d/.test(password),
+      majuscule: /[A-Z]/.test(password),
+    }
   }
   /**
    * Liste des fonctions (1VP, VP, ...)
@@ -161,6 +164,36 @@ export class SignupPage {
   }
 
   /**
+   * Les champs requis de l'étape 1 sont renseignés et valides.
+   */
+  get canContinue(): boolean {
+    const { email, password, passwordConf, firstName, lastName, checkbox } = this.form.getRawValue()
+    return Boolean(
+      firstName?.trim() &&
+      lastName?.trim() &&
+      this.selectedFonctionId !== null &&
+      email?.trim() &&
+      Validators.email(this.form.controls['email']) === null &&
+      (this.paramsUrl?.email || isProfessionalEmailDomain(email)) &&
+      (this.provider || (Object.values(this.passwordStrength).every(Boolean) && password === passwordConf)) &&
+      checkbox,
+    )
+  }
+
+  /**
+   * Les champs requis pour terminer l'inscription sont renseignés et valides.
+   */
+  get canSubmit(): boolean {
+    const { fonction, fonctionAutre, responsable } = this.form.getRawValue()
+    return Boolean(
+      (this.provider || this.canContinue) &&
+      this.selectedTjId !== null &&
+      this.selectedFonctionId !== null &&
+      (fonction !== 'Autre' || (fonctionAutre?.trim() && responsable?.trim())),
+    )
+  }
+
+  /**
    * Envoi des informations d'inscriptions
    * @returns
    */
@@ -200,6 +233,8 @@ export class SignupPage {
       return
     }
 
+    if (!this.canSubmit) return
+
     if (fonction === 'Autre') fonction = fonctionAutre + ' - Resp hiér : ' + responsable
 
     this.userService.register({ email, password, firstName, lastName, fonction, tj }).then((returnLogin) => {
@@ -216,7 +251,7 @@ export class SignupPage {
    * @returns
    */
   onStepTwo() {
-    let { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox } = this.form.value
+    let { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox } = this.form.getRawValue()
 
     if (!firstName || !lastName) {
       alert('Vous devez saisir un nom et un prénom')
@@ -236,13 +271,13 @@ export class SignupPage {
       return
     }
 
-    if (!password) {
+    if (!this.provider && !password) {
       alert('Vous devez saisir un mot de passe')
       this.focusSoon(() => this.focusByControlName('password'))
       return
     }
 
-    if (!passwordConf) {
+    if (!this.provider && !passwordConf) {
       alert('Vous devez confirmer votre mot de passe')
       this.focusSoon(() => this.focusByControlName('passwordConf'))
       return
@@ -258,11 +293,8 @@ export class SignupPage {
       return
     }
 
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
-    var regex = '[' + arrayOfSp.join('') + ']'
-
     if (!this.paramsUrl?.provider) {
-      if (!password || password.length < MIN_PASSWORD_LENGTH || !password.match(/\d/) || !new RegExp(regex).test(password) || !password.match(/[A-Z]/g)) {
+      if (!Object.values(this.passwordStrength).every(Boolean)) {
         alert('Vous devez saisir un mot de passe qui remplit les critères obligatoires')
         this.focusSoon(() => this.focusByControlName('password'))
         return
@@ -275,7 +307,7 @@ export class SignupPage {
       }
     }
 
-    this.signUpStep = 2
+    if (this.canContinue) this.signUpStep = 2
   }
 
   /**
@@ -284,32 +316,6 @@ export class SignupPage {
    */
   getStepColor() {
     return this.signUpStep === 1 ? '#eeeeee' : '#000091'
-  }
-
-  /**
-   * Vérifie la robustesse du mot de passe
-   * @param event
-   */
-  checkStrength(event: any) {
-    const password = event.target.value
-
-    if (password && password.match(/\d/)) {
-      this.passwordStrength.number = true
-    } else this.passwordStrength.number = false
-
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
-    var regex = '[' + arrayOfSp.join('') + ']'
-    if (password && new RegExp(regex).test(password)) {
-      this.passwordStrength.char = true
-    } else this.passwordStrength.char = false
-
-    if (password && password.length > MIN_PASSWORD_LENGTH) {
-      this.passwordStrength.length = true
-    } else this.passwordStrength.length = false
-
-    if (password && password.match(/[A-Z]/g)) {
-      this.passwordStrength.majuscule = true
-    } else this.passwordStrength.majuscule = false
   }
 
   /**
@@ -423,11 +429,13 @@ export class SignupPage {
   }
 
   /**
-   * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
+   * Empêche la soumission depuis un champ, tout en gardant les boutons accessibles au clavier
    * @param event
    */
   preventSubmit(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    const target = event.target
+    const isButton = target instanceof HTMLButtonElement || (target instanceof HTMLInputElement && target.type === 'submit')
+    if (event.key === 'Enter' && !isButton) {
       event.preventDefault()
     }
   }

@@ -77,7 +77,7 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
       if (!this.isOpen) {
         this.syncInputFromValue()
       }
-      this.filteredGroups = this.filterGroups(this.isOpen ? '' : this.getQuery())
+      this.filteredGroups = this.filterGroups(this.isOpen && this.value != null ? '' : this.getQuery())
     }
   }
 
@@ -94,6 +94,9 @@ export class AutocompleteComponent implements OnChanges, OnDestroy {
     this.filteredGroups = this.filterGroups(this.getQuery())
     this.highlightedIndex = this.flatOptions().length ? 0 : -1
     this.openPanel()
+    if (this.value != null && this.selectedOption()?.label.toLowerCase() !== this.getQuery()) {
+      this.optionChange.emit(null)
+    }
   }
 
   /**
