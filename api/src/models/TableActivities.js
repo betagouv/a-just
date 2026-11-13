@@ -2,13 +2,38 @@ import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
 import { calculMainValuesFromChilds, compareGapBetweenData, preformatActivitiesArray } from '../utils/activities'
 import { month, today } from '../utils/date'
-import { maxBy, sumBy } from 'lodash'
+import { maxBy } from 'lodash'
 import { VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_VERIFY } from '../constants/activities'
 import { REFERENTIEL_VISIBILITY_ACTIVITY } from '../constants/referentiel'
 
 /**
  * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
  */
+
+/**
+ * Somme des activités en ignorant les null.
+ * Si plusieurs champs sont donnés, on prend le premier qui n'est pas null, puis on passe à la ligne suivante.
+ * Retourne null s'il n'y a aucune valeur différente de null.
+ * @param {Array} collection
+ * @param {string|string[]} keys
+ * @returns {number|null}
+ */
+const sumByOrNull = (collection, keys) => {
+  const keyList = Array.isArray(keys) ? keys : [keys]
+  let total = null
+
+  for (const item of collection || []) {
+    for (const key of keyList) {
+      const value = item[key]
+      if (value !== null && value !== undefined) {
+        total = (total ?? 0) + value
+        break
+      }
+    }
+  }
+
+  return total
+}
 
 export default (sequelizeInstance, Model) => {
   /**
@@ -793,12 +818,12 @@ export default (sequelizeInstance, Model) => {
         return {
           id: activityId,
           periode: row.periode,
-          entrees: sumBy(filteredRawActivities, 'entrees'),
-          originalEntrees: sumBy(filteredRawActivities, 'originalEntrees'),
-          sorties: sumBy(filteredRawActivities, 'sorties'),
-          originalSorties: sumBy(filteredRawActivities, 'originalSorties'),
-          stock: sumBy(filteredRawActivities, 'stock'),
-          originalStock: sumBy(filteredRawActivities, 'originalStock'),
+          entrees: sumByOrNull(filteredRawActivities, ['entrees', 'originalEntrees']),
+          originalEntrees: sumByOrNull(filteredRawActivities, ['originalEntrees']),
+          sorties: sumByOrNull(filteredRawActivities, ['sorties', 'originalSorties']),
+          originalSorties: sumByOrNull(filteredRawActivities, ['originalSorties']),
+          stock: sumByOrNull(filteredRawActivities, ['stock', 'originalStock']),
+          originalStock: sumByOrNull(filteredRawActivities, ['originalStock']),
           contentieux: {
             id: contentieuxId,
             label: row['ContentieuxReferentiel.label'],
