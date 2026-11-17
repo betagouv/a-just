@@ -1,11 +1,8 @@
-var SibApiV3Sdk = require('sib-api-v3-sdk')
+import { BrevoClient } from '@getbrevo/brevo'
 import config from 'config'
 import { SENDING_BLUE_USER_LIST_ID } from '../constants/email'
-var defaultClient = SibApiV3Sdk.ApiClient.instance
 
-// Configure API key authorization: api-key
-var apiKey = defaultClient.authentications['api-key']
-apiKey.apiKey = config.sendinblue
+const brevo = new BrevoClient({ apiKey: config.sendinblue })
 
 /**
  * Envoi de mail
@@ -26,25 +23,17 @@ export function sentEmail(to, templateId, params, options = {}) {
     })
   }
 
-  var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
-  var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
-  sendSmtpEmail = {
+  return brevo.transactionalEmails.sendTransacEmail({
     to: [to],
     templateId,
     params: { ...params, envName: config.displayEnvName },
     ...options,
-  }
-
-  return apiInstance.sendTransacEmail(sendSmtpEmail).then(
-    function () {
-      console.log('Mail sent', sendSmtpEmail)
+  }).then(
+    () => {
+      console.log('Mail sent', { to, templateId, params, options })
     },
-    function (err) {
-      if (err && err.response && err.response.body) {
-        console.error(err.response.body)
-      } else {
-        console.error(err.text || err)
-      }
+    (err) => {
+      console.error(err)
     }
   )
 }
@@ -56,46 +45,47 @@ export function sentEmail(to, templateId, params, options = {}) {
  * @returns
  */
 export function sentEmailSendinblueUserList(user, addToList = true) {
-  let apiInstance = new SibApiV3Sdk.ContactsApi()
-
   if (addToList) {
-    let requestContactImport = new SibApiV3Sdk.RequestContactImport()
+    const isCA = Number(config.juridictionType) === 1
+    const isTJ = Number(config.juridictionType) === 0
 
-    requestContactImport.fileBody = `EMAIL;NOM;PRENOM;SMS;PUBLIC_TOKEN;\n${user.email};${user.first_name};${user.last_name};;`
-    requestContactImport.listIds = [SENDING_BLUE_USER_LIST_ID]
-    requestContactImport.emailBlacklist = false
-    requestContactImport.smsBlacklist = false
-    requestContactImport.updateExistingContacts = true
-    requestContactImport.emptyContactsAttributes = false
+    const colonnes = []
+    const values = []
+    if (isCA) {
+      colonnes.push('CA');
+      values.push('Yes');
+    }
+    if (isTJ) {
+      colonnes.push('TJ');
+      values.push('Yes');
+    }
 
-    return apiInstance.importContacts(requestContactImport).then(
-      function (data) {
+    return brevo.contacts.importContacts({
+      fileBody: `EMAIL; NOM; PRENOM; SMS; PUBLIC_TOKEN; ${colonnes.join(';')}\n${user.email};${user.first_name};${user.last_name};;;${values.join(';')}`,
+      listIds: [SENDING_BLUE_USER_LIST_ID],
+      emailBlacklist: false,
+      smsBlacklist: false,
+      updateExistingContacts: true,
+      emptyContactsAttributes: false,
+    }).then(
+      (data) => {
         console.log('ADD - API called successfully. Returned data: ' + JSON.stringify(data))
       },
-      function (err) {
-        if (err && err.response && err.response.body) {
-          console.log(err.response.body)
-        } else {
-          console.error(err.text || err)
-        }
-      }
-    )
-  } else {
-    let contactEmails = new SibApiV3Sdk.RemoveContactFromList()
-
-    contactEmails.emails = [user.email]
-
-    return apiInstance.removeContactFromList(SENDING_BLUE_USER_LIST_ID, contactEmails).then(
-      function (data) {
-        console.log('REMOVE - API called successfully. Returned data: ' + JSON.stringify(data))
-      },
-      function (err) {
-        if (err && err.response && err.response.body) {
-          console.log(err.response.body)
-        } else {
-          console.error(err.text || err)
-        }
+      (err) => {
+        console.error(err)
       }
     )
   }
+
+  return brevo.contacts.removeContactFromList({
+    listId: SENDING_BLUE_USER_LIST_ID,
+    body: { emails: [user.email] },
+  }).then(
+    (data) => {
+      console.log('REMOVE - API called successfully. Returned data: ' + JSON.stringify(data))
+    },
+    (err) => {
+      console.error(err)
+    }
+  )
 }
