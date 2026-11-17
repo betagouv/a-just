@@ -34,6 +34,14 @@ interface ContentieuReferentielInterfaceWithPercentFiltered extends ContentieuRe
    */
   percentFiltered?: number
   /**
+   * Pourcentage affiché pour le site survolé ou sélectionné
+   */
+  displayPercent?: number
+  /**
+   * ETP affiché pour le site survolé ou sélectionné
+   */
+  displayTotalAffected?: number
+  /**
    * Liste des sous référentiels avec les pourcentages filtrés
    */
   childrens?: ContentieuReferentielInterfaceWithPercentFiltered[]
@@ -175,6 +183,18 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Current backups
    */
   currentBackups: BackupInterface[] = []
+  /**
+   * Pourcentage ventilé par site
+   */
+  backupPercents: Record<number, number> = {}
+  /**
+   * Site mis en évidence au survol ou au clic. Null = tous les sites
+   */
+  activeBackupId: number | null = null
+  /**
+   * Taux affiché pour le site en évidence
+   */
+  displayedPercentAffected = 0
 
   /**
    * Constructeur
@@ -302,6 +322,93 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
       this.referentielChange.emit(this.referentiel)
     }
     this.onTotalAffected()
+    this.updateBackupPercents()
+    this.refreshDisplayedValues()
+  }
+
+  /**
+   * Libellé du site mis en évidence
+   */
+  get activeBackupLabel(): string | null {
+    if (this.activeBackupId == null) return null
+    const label = this.currentBackups.find((backup) => backup.id === this.activeBackupId)?.label
+    return label ? label.toUpperCase() : null
+  }
+
+  /**
+   * Taux affiché dans la phrase et la barre du bas
+   */
+  get footerPercent(): number {
+    return this.activeBackupId != null ? this.displayedPercentAffected : this.percentAffected
+  }
+
+  /**
+   * Affiche le sélecteur de sites lorsqu'il y a plusieurs juridictions
+   */
+  hasSeveralSites() {
+    if (!this.showSubBackups || this.showPlaceHolder) return false
+    if (this.currentBackups.length >= 2) return true
+    return this.currentBackups.length === 1 && this.humanResourceService.backupIdS() !== this.currentBackups[0].id
+  }
+
+  /**
+   * Pourcentage à dessiner pour un contentieux
+   */
+  shownPercent(ref: ContentieuReferentielInterfaceWithPercentFiltered) {
+    if (this.activeBackupId != null) return ref.displayPercent || 0
+    return ref.percentFiltered || 0
+  }
+
+  /**
+   * ETP à afficher pour un contentieux
+   */
+  shownTotal(ref: ContentieuReferentielInterfaceWithPercentFiltered) {
+    if (this.activeBackupId != null) return ref.displayTotalAffected || 0
+    return ref.totalAffected || 0
+  }
+
+  /**
+   * Survol ou clic d'un site. Null = tous les sites
+   */
+  onSiteSelect(backupId: number | null) {
+    this.activeBackupId = backupId
+    this.refreshDisplayedValues()
+  }
+
+  /**
+   * Calcule le taux de chaque site à partir des contentieux de premier niveau
+   */
+  updateBackupPercents() {
+    this.backupPercents = {}
+    this.currentBackups.forEach((backup) => {
+      const activities = this.activities.filter((activity) => activity.backup?.id === backup.id)
+      const percent = sumBy(this.referentiel, (ref) => this.getPercentAffected(ref, activities).percent)
+      this.backupPercents[backup.id] = fixDecimal(percent)
+    })
+  }
+
+  /**
+   * Recalcule les valeurs affichées pour le site en évidence
+   */
+  refreshDisplayedValues() {
+    const backupId = this.activeBackupId
+    if (backupId == null) {
+      this.displayedPercentAffected = this.percentAffected
+      return
+    }
+
+    const activities = this.activities.filter((activity) => activity.backup?.id === backupId)
+    this.referentiel.forEach((ref) => {
+      const values = this.getPercentAffected(ref, activities)
+      ref.displayPercent = values.percent
+      ref.displayTotalAffected = values.totalAffected
+      ;(ref.childrens || []).forEach((child) => {
+        const childValues = this.getPercentAffected(child, activities)
+        child.displayPercent = childValues.percent
+        child.displayTotalAffected = childValues.totalAffected
+      })
+    })
+    this.displayedPercentAffected = fixDecimal(sumBy(this.referentiel, 'displayPercent'), 1000)
   }
 
   /**

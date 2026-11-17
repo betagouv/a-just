@@ -93,11 +93,12 @@ export class HumanResourceService {
    * un arrondissement (id négatif) seulement avec un accès complet au groupe.
    */
   canEditSelectedJuridiction = computed(() => {
-    const backupId = this.backupIdS() ?? 0
-    if (backupId > 0) {
+    const currentArr = this.juridictionGroupSelected()
+    if (currentArr) {
+      return currentArr.fullAccess === true
+    } else {
       return true
     }
-    return this.juridictionGroupSelected()?.fullAccess === true
   })
   /**
    * Vérifie si la juridiction est une juridiction et non un arrondissement

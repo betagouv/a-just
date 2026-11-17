@@ -1,7 +1,22 @@
+@if (hasSeveralSites()) {
+<div class="sites-panel">
+  <button type="button" class="site-item all" [class.active]="activeBackupId === null" (mouseenter)="onSiteSelect(null)"
+    (click)="onSiteSelect(null)">
+    Tous les sites ({{ percentAffected | number: '1.0-2' }}%)
+  </button>
+  @for (backup of currentBackups; track backup.id) {
+  <button type="button" class="site-item" [class.active]="activeBackupId === backup.id"
+    (mouseenter)="onSiteSelect(backup.id)" (click)="onSiteSelect(backup.id)">
+    {{ backup.label }} ({{ backupPercents[backup.id] || 0 | number: '1.0-2' }}%)
+  </button>
+  }
+</div>
+}
+
 @if (header) {
 <div class="header-panel" [ngClass]="{ ca: getInterfaceType() }">
   @for (ref of referentiel; track ref.id) {
-  <div class="sub-item">
+  <div class="sub-item" [class.is-off]="activeBackupId !== null && !shownPercent(ref)">
     <div class="text">
       <div class="label">
         <p>
@@ -9,7 +24,7 @@
         </p>
       </div>
       <div class="etp">
-        <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
+        <p>{{ shownTotal(ref) | number: '0.2-2' }}</p>
       </div>
       <div class="flex-1"></div>
     </div>
@@ -25,13 +40,13 @@
 
 <div class="activities-panel" [ngStyle]="{ 'grid-template-columns': 'repeat(' + referentiel.length + ', 1fr)' }">
   @for (ref of referentiel; track ref.id; let index = $index) {
-  <div class="sub-item">
+  <div class="sub-item" [class.is-off]="activeBackupId !== null && !shownPercent(ref)">
     @if (showPlaceHolder) {
     <progression-bar [readonly]="readonly" [color]="PLACEHOLDER_COLOR"
       class="no-opacity-to-background"></progression-bar>
     }
     @if (!showPlaceHolder) {
-    <progression-bar [readonly]="readonly" [percent]="ref.percentFiltered" [selected]="canSelectedTopReferentiel"
+    <progression-bar [readonly]="readonly" [percent]="shownPercent(ref)" [selected]="canSelectedTopReferentiel"
       [color]="
             userService.referentielMappingColorActivityByInterface(
               userService.referentielMappingNameByInterface(ref.label)
@@ -48,25 +63,6 @@
   }
 </div>
 
-<!-- Show backups -->
-@if (showSubBackups) {
-@if (currentBackups.length >= 2) {
-<div class="backups-panel">
-  @for (backup of currentBackups; track backup.id) {
-  <p class="backup-item">
-    {{ backup.label }}
-  </p>
-  }
-</div>
-} @else if (currentBackups.length === 1 && humanResourceService.backupIdS() !== currentBackups[0].id) {
-<div class="backups-panel">
-  <p class="backup-item">
-    {{ currentBackups[0].label }}
-  </p>
-</div>
-}
-}
-
 @if (!forceToShowContentieuxDetail && refIndexSelected !== -1) {
 <div class="sub-panel-activites" [ngStyle]="{
       'border-top-color': userService.referentielMappingColorActivityByInterface(
@@ -74,7 +70,7 @@
       ),
     }">
   <div class="sub-item">
-    <progression-bar [readonly]="readonly" [percent]="referentiel[refIndexSelected].percentFiltered"
+    <progression-bar [readonly]="readonly" [percent]="shownPercent(referentiel[refIndexSelected])"
       [ddg]="isDdgContentieux(referentiel[refIndexSelected].label)" [lockedMessage]="
           selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1
             ? 'Pour les “' +
@@ -107,7 +103,7 @@
     <!-- Add element to put the next to an other line -->
     <div class="sub-item" (mouseover)="setMouseHovering(userService.referentielMappingNameByInterface(ref.label))"
       (mouseout)="setMouseHovering()">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percentFiltered"
+      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="shownPercent(ref)"
         [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
@@ -145,7 +141,7 @@
 }
 @if (forceToShowContentieuxDetail) {
 @for (mainReferentiel of referentiel; track mainReferentiel.id) {
-@if (mainReferentiel.percentFiltered) {
+@if (shownPercent(mainReferentiel)) {
 <div class="sub-panel-activites" [ngStyle]="{
           'border-top-color': userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(mainReferentiel.label)
@@ -154,7 +150,7 @@
   <div class="sub-item">
     <progression-bar [readonly]="readonly"
       [ddg]="isDdgContentieux(userService.referentielMappingNameByInterface(mainReferentiel.label))"
-      [percent]="mainReferentiel.percentFiltered" [color]="
+      [percent]="shownPercent(mainReferentiel)" [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(mainReferentiel.label)
               )
@@ -177,9 +173,9 @@
     <div class="sub-item"></div>
     }
     <!-- Add element to put the next to an other line -->
-    @if (ref.percentFiltered) {
+    @if (shownPercent(ref)) {
     <div class="sub-item">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percentFiltered"
+      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="shownPercent(ref)"
         [color]="
                     userService.referentielMappingColorActivityByInterface(
                       userService.referentielMappingNameByInterface(mainReferentiel.label)
@@ -199,9 +195,10 @@
 }
 }
 }
-<div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100, placeholder: showPlaceHolder }">
-  <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>
+<div class="progress-bar"
+  [ngClass]="{ 'low-completion': activeBackupId === null && percentAffected !== 100, placeholder: showPlaceHolder }">
+  <p>Taux d'affectation du temps disponible : {{ footerPercent | number: '0.0-2' }}%{{ activeBackupLabel ? ' (' + activeBackupLabel + ')' : '' }}</p>
   <div class="progress-bar-line">
-    <div [style.width.%]="percentAffected <= 100 ? percentAffected : 100"></div>
+    <div [style.width.%]="footerPercent <= 100 ? footerPercent : 100"></div>
   </div>
 </div>
