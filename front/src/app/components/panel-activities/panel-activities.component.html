@@ -5,10 +5,11 @@
     Tous les sites ({{ percentAffected | number: '1.0-2' }}%)
   </button>
   @for (backup of currentBackups; track backup.id) {
-  @if (backupPercents[backup.id]) {
+  @let sitePercent = ((backupPercents[backup.id] || 0) | number: '1.0-2');
+  @if (sitePercent !== '0') {
   <button type="button" class="site-item" [class.active]="activeBackupId === backup.id"
     (mouseenter)="onSiteSelect(backup.id)" (click)="onSiteSelect(backup.id)">
-    {{ backup.label }} ({{ backupPercents[backup.id] | number: '1.0-2' }}%)
+    {{ backup.label }} ({{ sitePercent }}%)
   </button>
   }
   }
