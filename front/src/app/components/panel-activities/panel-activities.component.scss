@@ -37,16 +37,18 @@
     padding: 6px 12px;
     cursor: pointer;
     border-radius: 8px;
+  }
 
-    &:hover:not(.all) {
+  &:has(.site-item:hover) {
+    .site-item:hover {
       background: utils.$colors-primary;
       color: utils.$colors-white;
     }
-  }
 
-  &:has(.site-item:not(.all):hover) .site-item:not(:hover):not(.all) {
-    background: rgba(utils.$colors-cblue, 0.55);
-    color: utils.$colors-white;
+    .site-item:not(:hover) {
+      background: rgba(utils.$colors-cblue, 0.55);
+      color: utils.$colors-white;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
+import { Component, computed, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
 import { cloneDeep, groupBy, sumBy, uniqBy } from 'lodash'
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component'
 import { MainClass } from '../../libs/main-class'
@@ -195,6 +195,13 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Taux affiché pour le site en évidence
    */
   displayedPercentAffected = 0
+  /**
+   * Locked backup Id
+   */
+  lockedBackupId = computed(() => {
+    const backupId = this.humanResourceService.backupIdS()
+    return backupId != null && backupId > 0 ? backupId : null
+  })
 
   /**
    * Constructeur
