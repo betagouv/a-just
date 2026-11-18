@@ -818,11 +818,11 @@ export default (sequelizeInstance, Model) => {
         return {
           id: activityId,
           periode: row.periode,
-          entrees: sumByOrNull(filteredRawActivities, ['entrees']),
+          entrees: sumByOrNull(filteredRawActivities, filteredRawActivities.length > 1 ? ['entrees'] : ['entrees', 'originalEntrees']),
           originalEntrees: sumByOrNull(filteredRawActivities, ['originalEntrees']),
-          sorties: sumByOrNull(filteredRawActivities, ['sorties']),
+          sorties: sumByOrNull(filteredRawActivities, filteredRawActivities.length > 1 ? ['sorties'] : ['sorties', 'originalSorties']),
           originalSorties: sumByOrNull(filteredRawActivities, ['originalSorties']),
-          stock: sumByOrNull(filteredRawActivities, ['stock']),
+          stock: sumByOrNull(filteredRawActivities, filteredRawActivities.length > 1 ? ['stock'] : ['stock', 'originalStock']),
           originalStock: sumByOrNull(filteredRawActivities, ['originalStock']),
           contentieux: {
             id: contentieuxId,
