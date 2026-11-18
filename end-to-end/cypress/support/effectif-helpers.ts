@@ -28,6 +28,15 @@ export function openEffectifDashboard(baseUrl: string, backupLabel: string) {
         labelPattern,
         { timeout: 20000 },
       )
+        .closest('button.juridiction-item')
+        .scrollIntoView();
+      // Re-query after scrolling: the menu may update its rendered items.
+      cy.contains(
+        '.cdk-overlay-pane .juridiction-item .item-label',
+        labelPattern,
+        { timeout: 20000 },
+      )
+        .closest('button.juridiction-item')
         .should('be.visible')
         .click();
       cy.location('pathname', { timeout: 20000 }).should('eq', '/panorama');
