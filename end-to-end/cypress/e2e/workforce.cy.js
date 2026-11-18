@@ -26,19 +26,27 @@ describe("Ventilateur", () => {
     cy.go("back");
   });
 
-  it('Check that the button on top "Ajouter un agent" is there and when clicked, opens the right pag ', () => {
-    cy.get(".header")
-      .get(".top-header")
-      .get(".actions")
-      .find("button")
-      .get(".add-collaborator")
-      .should("contain.text", "Ajouter un agent")
-      .click();
+  it('Check that "Ajouter un agent" is absent for an Arrondissement and opens the right page otherwise', () => {
+    cy.get('#side-menu-bar .juridiction [data-cy="backup-name"]')
+      .should("be.visible")
+      .and("not.be.empty");
 
-    cy.wait(10000);
+    cy.get("#side-menu-bar .juridiction .juridiction-title").then(($title) => {
+      const addAgentButton = ".header .top-header .actions button.add-collaborator";
 
-    cy.url().should("include", "/resource-humaine");
-    cy.go("back");
+      if ($title.find(".arrondissement-label").length) {
+        cy.get(addAgentButton).should("not.exist");
+        return;
+      }
+
+      cy.get(addAgentButton)
+        .should("be.visible")
+        .and("contain.text", "Ajouter un agent")
+        .click();
+
+      cy.location("pathname").should("include", "/resource-humaine");
+      cy.go("back");
+    });
   });
 
   it("Check that when an agent’s card is clicked, it redirects to the full agent’s profile", () => {
