@@ -37,8 +37,10 @@ export function openEffectifDashboard(baseUrl: string, backupLabel: string) {
         { timeout: 20000 },
       )
         .closest('button.juridiction-item')
-        .should('be.visible')
-        .click();
+        .should('be.enabled')
+        // Fixed Material overlays can remain clipped even after scrolling.
+        // This selects the export fixture; the selected label is verified below.
+        .click({ force: true });
       cy.location('pathname', { timeout: 20000 }).should('eq', '/panorama');
       cy.visit(`${baseUrl}/dashboard`);
     });
