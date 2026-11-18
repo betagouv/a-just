@@ -1,4 +1,3 @@
-// import { JURIDICTION_TEST_NAME } from '../../../test/constants/juridiction'
 import { JURIDICTION_TEST_NAME } from '../../../../test/constants/juridiction'
 
 module.exports = {
