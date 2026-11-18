@@ -37,6 +37,7 @@ import { DateSelectComponent } from '../../../components/date-select/date-select
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
 import { ExcelService } from '../../../services/excel/excel.service'
 import { UserService } from '../../../services/user/user.service'
+import { AutocompleteComponent, AutocompleteOption } from '../../../components/autocomplete/autocomplete.component'
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface
@@ -68,6 +69,7 @@ export interface importedSituation {
     DateSelectComponent,
     HelpButtonComponent,
     AlertSmallComponent,
+    AutocompleteComponent,
   ],
   templateUrl: './add-ventilation.component.html',
   styleUrls: ['./add-ventilation.component.scss'],
@@ -713,10 +715,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
-  setFonc(event: any) {
-    const fonctions = this.humanResourceService.fonctions.getValue()
-    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value, event.value)
-    if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
+  setCategory(option: AutocompleteOption | null) {
+    this.form.controls.categoryId.setValue(option?.id ?? null)
+  }
+
+  setFonc(option: AutocompleteOption | null) {
+    this.form.controls.fonctionId.setValue(option?.id ?? null)
+    const fonct = this.fonctions.find((c) => c.id === option?.id)
+    this.calculatriceIsActive = fonct?.calculatrice_is_active || false
   }
 
   async downloadAsset(type: string, download = false) {

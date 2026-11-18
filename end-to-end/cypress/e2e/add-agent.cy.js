@@ -108,7 +108,9 @@ describe("Ajout d'un agent", () => {
       .get(".admin-element")
       .first()
       .within(() => {
-        cy.get("select").select("Magistrat");
+        cy.get("aj-autocomplete input").click().clear().type("Magistrat");
+        cy.contains(".aj-autocomplete-panel .juridiction-item", "Magistrat").click();
+        cy.get("aj-autocomplete input").should("have.value", "Magistrat");
       });
   });
 
@@ -117,7 +119,9 @@ describe("Ajout d'un agent", () => {
       .get(".admin-element")
       .eq(1)
       .within(() => {
-        cy.get("select").select("JUGE");
+        cy.get("aj-autocomplete input").click().clear().type("JUGE");
+        cy.contains(".aj-autocomplete-panel .juridiction-item", /^JUGE$/).click();
+        cy.get("aj-autocomplete input").should("have.value", "JUGE");
       });
   });
 

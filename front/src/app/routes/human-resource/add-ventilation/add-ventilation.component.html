@@ -122,13 +122,8 @@
             [ngClass]="{ error: form.get('categoryId')?.value === null && humanResourceService.addVentilationDisplayImportLabels() }"
             [ngClass]="{ error: humanResourceService.alertList().includes('category') }">
             <div class="label-aj">Catégorie :</div>
-            <select formControlName="categoryId">
-              @for (cat of categories; track cat.id) {
-              <option [value]="cat.id">
-                {{ cat.label }}
-              </option>
-              }
-            </select>
+            <aj-autocomplete id="ventilation-category" [options]="categories" [value]="form.controls.categoryId.value"
+              (optionChange)="setCategory($event)"></aj-autocomplete>
             @if (humanResourceService.alertList().includes('category')) {
             <aj-alert-small alertMessage="Vous devez saisir une catégorie !"
               (onClose)="removeAlertItem('category')"></aj-alert-small>
@@ -139,13 +134,8 @@
             [ngClass]="{ error: humanResourceService.alertList().includes('fonction') }"
             [ngStyle]="form.get('categoryId')?.value !== null ? {} : { 'pointer-events': 'none', opacity: .5 }">
             <div class="label-aj">Fonction :</div>
-            <select formControlName="fonctionId" (change)="setFonc($event.target)">
-              @for (fonc of fonctions; track fonc.id) {
-              <option [value]="fonc.id">
-                {{ fonc.label }}
-              </option>
-              }
-            </select>
+            <aj-autocomplete id="ventilation-fonction" [options]="fonctions" [value]="form.controls.fonctionId.value"
+              (optionChange)="setFonc($event)"></aj-autocomplete>
             @if (humanResourceService.alertList().includes('fonction')) {
             <aj-alert-small alertMessage="Vous devez saisir une fonction !"
               (onClose)="removeAlertItem('fonction')"></aj-alert-small>
