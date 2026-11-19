@@ -46,6 +46,12 @@ export class HumanResourceService {
    */
   contentieuxReferentielOnlyFiltered: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
   /**
+   * Référentiel de l'arrondissement. Sans arrondissement, c'est celui du backup.
+   * Les pastilles de ventilation s'en servent : il contient les contentieux
+   * réservés aux autres juridictions du groupe.
+   */
+  contentieuxReferentielArrondissement: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
+  /**
    * Liste des juridictions dont à accès l'utilisateur
    */
   backups: BehaviorSubject<BackupInterface[]> = new BehaviorSubject<BackupInterface[]>([])

@@ -50,6 +50,36 @@
       color: utils.$colors-white;
     }
   }
+
+  &.is-locked {
+    .site-item {
+      cursor: default;
+    }
+
+    .site-item.is-locked-target {
+      background: utils.$colors-primary;
+      color: utils.$colors-white;
+    }
+
+    .site-item:not(.is-locked-target) {
+      background: rgba(utils.$colors-cblue, 0.55);
+      color: utils.$colors-white;
+    }
+
+    &:has(.site-item:hover) {
+      .site-item:hover,
+      .site-item:not(:hover) {
+        background: rgba(utils.$colors-cblue, 0.55);
+        color: utils.$colors-white;
+      }
+
+      .site-item.is-locked-target,
+      .site-item.is-locked-target:hover {
+        background: utils.$colors-primary;
+        color: utils.$colors-white;
+      }
+    }
+  }
 }
 
 .header-panel {

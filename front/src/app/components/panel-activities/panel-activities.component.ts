@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
 import { cloneDeep, groupBy, sumBy, uniqBy } from 'lodash'
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component'
 import { MainClass } from '../../libs/main-class'
@@ -136,6 +136,10 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    */
   @Input() forceErrorOnEditElement: string | null = null
   /**
+   * Juridiction sélectionnée : le survol reste bloqué sur ce backup
+   */
+  @Input() lockedBackupId: number | null = null
+  /**
    * Informe le parent d'une modification
    */
   @Output() referentielChange: EventEmitter<ContentieuReferentielInterface[]> = new EventEmitter()
@@ -184,9 +188,13 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    */
   currentBackups: BackupInterface[] = []
   /**
-   * Pourcentage ventilé par site
+   * Pourcentage ventilé par site, calculé sur le référentiel de l'arrondissement
    */
   backupPercents: Record<number, number> = {}
+  /**
+   * Pourcentage de la pastille « Tous les sites », sur le référentiel de l'arrondissement
+   */
+  allSitesTagPercent = 0
   /**
    * Site mis en évidence au survol ou au clic. Null = tous les sites
    */
@@ -195,13 +203,6 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Taux affiché pour le site en évidence
    */
   displayedPercentAffected = 0
-  /**
-   * Locked backup Id
-   */
-  lockedBackupId = computed(() => {
-    const backupId = this.humanResourceService.backupIdS()
-    return backupId != null && backupId > 0 ? backupId : null
-  })
 
   /**
    * Constructeur
@@ -238,6 +239,12 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
     )
 
     this.referentiel = cloneDeep(this.humanResourceService.contentieuxReferentielOnly.getValue())
+
+    this.watch(
+      this.humanResourceService.contentieuxReferentielArrondissement.subscribe(() => {
+        this.updateBackupPercents()
+      }),
+    )
   }
 
   ngOnInit() {}
@@ -334,11 +341,18 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
   }
 
   /**
+   * Site réellement affiché. Si une juridiction est sélectionnée, le survol reste sur son backup.
+   */
+  get displayedBackupId(): number | null {
+    return this.lockedBackupId ?? this.activeBackupId
+  }
+
+  /**
    * Libellé du site mis en évidence
    */
   get activeBackupLabel(): string | null {
-    if (this.activeBackupId == null) return null
-    const label = this.currentBackups.find((backup) => backup.id === this.activeBackupId)?.label
+    if (this.displayedBackupId == null) return null
+    const label = this.currentBackups.find((backup) => backup.id === this.displayedBackupId)?.label
     return label ? label.toUpperCase() : null
   }
 
@@ -346,7 +360,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Taux affiché dans la phrase et la barre du bas
    */
   get footerPercent(): number {
-    return this.activeBackupId != null ? this.displayedPercentAffected : this.percentAffected
+    return this.displayedBackupId != null ? this.displayedPercentAffected : this.percentAffected
   }
 
   /**
@@ -362,7 +376,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * Pourcentage à dessiner pour un contentieux
    */
   shownPercent(ref: ContentieuReferentielInterfaceWithPercentFiltered) {
-    if (this.activeBackupId != null) return ref.displayPercent || 0
+    if (this.displayedBackupId != null) return ref.displayPercent || 0
     return ref.percentFiltered || 0
   }
 
@@ -370,35 +384,48 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    * ETP à afficher pour un contentieux
    */
   shownTotal(ref: ContentieuReferentielInterfaceWithPercentFiltered) {
-    if (this.activeBackupId != null) return ref.displayTotalAffected || 0
+    if (this.displayedBackupId != null) return ref.displayTotalAffected || 0
     return ref.totalAffected || 0
   }
 
   /**
-   * Survol ou clic d'un site. Null = tous les sites
+   * Survol ou clic d'un site. Null = tous les sites.
+   * Ignoré tant qu'une juridiction est sélectionnée : le survol reste sur son backup.
    */
   onSiteSelect(backupId: number | null) {
+    if (this.lockedBackupId != null) return
     this.activeBackupId = backupId
     this.refreshDisplayedValues()
   }
 
   /**
-   * Calcule le taux de chaque site à partir des contentieux de premier niveau
+   * Référentiel utilisé par les pastilles. L'arrondissement inclut les contentieux
+   * des autres juridictions du groupe ; à défaut, c'est le référentiel affiché.
+   */
+  private tagReferentiel(): ContentieuReferentielInterface[] {
+    const arrondissement = this.humanResourceService.contentieuxReferentielArrondissement.getValue()
+    return arrondissement.length ? arrondissement : this.referentiel
+  }
+
+  /**
+   * Calcule le pourcentage affiché dans chaque pastille, sur le référentiel de l'arrondissement
    */
   updateBackupPercents() {
+    const referentiel = this.tagReferentiel()
     this.backupPercents = {}
     this.currentBackups.forEach((backup) => {
       const activities = this.activities.filter((activity) => activity.backup?.id === backup.id)
-      const percent = sumBy(this.referentiel, (ref) => this.getPercentAffected(ref, activities).percent)
+      const percent = sumBy(referentiel, (ref) => this.getPercentAffected(ref, activities).percent)
       this.backupPercents[backup.id] = fixDecimal(percent)
     })
+    this.allSitesTagPercent = fixDecimal(sumBy(referentiel, (ref) => this.getPercentAffected(ref, this.activities).percent), 1000)
   }
 
   /**
    * Recalcule les valeurs affichées pour le site en évidence
    */
   refreshDisplayedValues() {
-    const backupId = this.activeBackupId
+    const backupId = this.displayedBackupId
     if (backupId == null) {
       this.displayedPercentAffected = this.percentAffected
       return

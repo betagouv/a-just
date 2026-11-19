@@ -32,7 +32,7 @@
     </div>
   </a>
   <div class="read-etp">
-    <p class="label" [ngClass]="{ red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED }">ETP Travaillé :</p>
+    <p class="label" [ngClass]="{ red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED }">ETPT Arr. :</p>
     <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [forceAlert]="false"
       [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility"></etp-preview>
     @if (hr.hasIndisponibility) {
@@ -48,7 +48,8 @@
   @if (!isHmr) {
   @defer (on viewport; prefetch on idle;) {
   <panel-activities [id]="hr.id" [category]="hr.category" [activities]="hr.currentActivities" [header]="false"
-    [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"></panel-activities>
+    [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"
+    [lockedBackupId]="lockedBackupId"></panel-activities>
   @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
   <div class="activities-button">
     <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
@@ -59,7 +60,8 @@
   }
   } @else {
   <panel-activities [id]="hr.id" [category]="hr.category" [activities]="hr.currentActivities" [header]="false"
-    [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"></panel-activities>
+    [selected]="false" [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"
+    [lockedBackupId]="lockedBackupId"></panel-activities>
   @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
   <div class="activities-button">
     <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>

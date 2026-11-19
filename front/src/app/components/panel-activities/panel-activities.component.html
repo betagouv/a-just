@@ -1,13 +1,14 @@
 @if (hasSeveralSites()) {
-<div class="sites-panel">
-  <button type="button" class="site-item all" [class.active]="activeBackupId === null" (mouseenter)="onSiteSelect(null)"
-    (click)="onSiteSelect(null)">
-    Tous les sites ({{ percentAffected | number: '1.0-2' }}%)
+<div class="sites-panel" [class.is-locked]="lockedBackupId !== null">
+  <button type="button" class="site-item all" [class.active]="displayedBackupId === null"
+    (mouseenter)="onSiteSelect(null)" (click)="onSiteSelect(null)">
+    Tous les sites ({{ allSitesTagPercent | number: '1.0-2' }}%)
   </button>
   @for (backup of currentBackups; track backup.id) {
   @let sitePercent = ((backupPercents[backup.id] || 0) | number: '1.0-2');
-  <button type="button" class="site-item" [class.active]="activeBackupId === backup.id"
-    (mouseenter)="onSiteSelect(backup.id)" (click)="onSiteSelect(backup.id)">
+  <button type="button" class="site-item" [class.active]="displayedBackupId === backup.id"
+    [class.is-locked-target]="lockedBackupId === backup.id" (mouseenter)="onSiteSelect(backup.id)"
+    (click)="onSiteSelect(backup.id)">
     {{ backup.label }} ({{ sitePercent }}%)
   </button>
   }
@@ -17,7 +18,7 @@
 @if (header) {
 <div class="header-panel" [ngClass]="{ ca: getInterfaceType() }">
   @for (ref of referentiel; track ref.id) {
-  <div class="sub-item" [class.is-off]="activeBackupId !== null && !shownPercent(ref)">
+  <div class="sub-item" [class.is-off]="displayedBackupId !== null && !shownPercent(ref)">
     <div class="text">
       <div class="label">
         <p>
@@ -41,7 +42,7 @@
 
 <div class="activities-panel" [ngStyle]="{ 'grid-template-columns': 'repeat(' + referentiel.length + ', 1fr)' }">
   @for (ref of referentiel; track ref.id; let index = $index) {
-  <div class="sub-item" [class.is-off]="activeBackupId !== null && !shownPercent(ref)">
+  <div class="sub-item" [class.is-off]="displayedBackupId !== null && !shownPercent(ref)">
     @if (showPlaceHolder) {
     <progression-bar [readonly]="readonly" [color]="PLACEHOLDER_COLOR"
       class="no-opacity-to-background"></progression-bar>
@@ -194,7 +195,7 @@
 }
 }
 <div class="progress-bar"
-  [ngClass]="{ 'low-completion': activeBackupId === null && percentAffected !== 100, placeholder: showPlaceHolder }">
+  [ngClass]="{ 'low-completion': displayedBackupId === null && percentAffected !== 100, placeholder: showPlaceHolder }">
   <p>Taux d'affectation du temps disponible : {{ footerPercent | number: '0.0-2' }}%{{ activeBackupLabel ? ' (' +
     activeBackupLabel + ')' : '' }}</p>
   <div class="progress-bar-line">

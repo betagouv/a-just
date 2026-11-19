@@ -63,6 +63,8 @@ export class ReferentielService {
   constructor() {
     effect(() => {
       const backupId = this.humanResourceService.backupIdS()
+      // Les groupes arrivent après le premier backup : on relance pour charger l'arrondissement.
+      this.humanResourceService.juridictionGroups()
       const visibleIn = untracked(() => this.pageVisibleIn())
       if (backupId != null) {
         void this.loadReferentiel(backupId, visibleIn)
@@ -99,12 +101,18 @@ export class ReferentielService {
   }
 
   /**
-   * Récupération du référentiel en fonction de l'id du backup et de la page.
-   * @param backupId
-   * @param visibleIn
+   * Id négatif de l'arrondissement du backup. Null si on est déjà sur l'arrondissement
+   * ou si la juridiction n'appartient à aucun groupe.
    */
+  private arrondissementBackupId(backupId: number): number | null {
+    if (backupId <= 0) return null
+    const group = this.humanResourceService.juridictionGroups().find((item) => item.backups?.some((backup) => backup.id === backupId))
+    return group?.id != null ? group.id * -1 : null
+  }
+
   private loadReferentiel(backupId: number, visibleIn: ReferentielPageVisibility | null): Promise<void> {
-    const key = `${backupId}:${visibleIn ?? ''}`
+    const arrondissementId = this.arrondissementBackupId(backupId)
+    const key = `${backupId}:${arrondissementId ?? ''}:${visibleIn ?? ''}`
     if (this.pending && this.pendingKey === key) return this.pending
     if (this.appliedKey === key) {
       this.generation++
@@ -121,10 +129,16 @@ export class ReferentielService {
       })
     }
 
-    void this.onGetReferentiel(backupId || 0, visibleIn)
-      .then((datas) => {
+    const arrondissementRequest = arrondissementId != null ? this.onGetReferentiel(arrondissementId, visibleIn) : Promise.resolve(null)
+
+    void Promise.all([this.onGetReferentiel(backupId || 0, visibleIn), arrondissementRequest])
+      .then(([datas, arrondissementDatas]) => {
         if (generation !== this.generation) return
         this.formatDatas(datas.referentielsComplete, datas.referentiels)
+        const arrondissementList = arrondissementDatas?.referentielsComplete ?? datas.referentielsComplete
+        this.humanResourceService.contentieuxReferentielArrondissement.next(
+          (arrondissementList || []).filter((referentiel: ContentieuReferentielInterface) => referentiel.label !== 'Indisponibilité'),
+        )
         this.referentielIsComplete.set(datas.isComplete)
         this.appliedKey = key
         this.pendingKey = null

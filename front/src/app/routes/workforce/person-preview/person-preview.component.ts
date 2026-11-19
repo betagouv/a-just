@@ -62,6 +62,14 @@ export class PersonPreviewComponent extends MainClass implements OnInit, OnDestr
   isHmr: boolean = typeof import.meta !== 'undefined' && !!(import.meta as any).hot
 
   /**
+   * Juridiction sélectionnée. Null si aucune ou si un arrondissement est affiché.
+   */
+  get lockedBackupId(): number | null {
+    const backupId = this.humanResourceService.backupIdS()
+    return backupId != null && backupId > 0 ? backupId : null
+  }
+
+  /**
    * Constructeur
    */
   constructor(
