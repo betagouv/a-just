@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, inject } from '@angular/core'
 import { cloneDeep, groupBy, sumBy, uniqBy } from 'lodash'
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component'
 import { MainClass } from '../../libs/main-class'
@@ -132,6 +132,10 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
    */
   @Input() filterBackupId: number | null = null
   /**
+   * Référentiel de l'onglet en cours. Absent : on garde celui de la page.
+   */
+  @Input() referentielList: ContentieuReferentielInterface[] | null = null
+  /**
    * Force l'erreur sur l'élément en cours d'édition
    */
   @Input() forceErrorOnEditElement: string | null = null
@@ -243,6 +247,7 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
     this.watch(
       this.humanResourceService.contentieuxReferentielArrondissement.subscribe(() => {
         this.updateBackupPercents()
+        if (this.referentielList) this.onTotalAffected()
       }),
     )
   }
@@ -252,9 +257,16 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
   /**
    * Détection d'un changement et génération des données du rendu
    */
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     if (this.etp < 0) {
       this.etp = 0
+    }
+
+    if (changes['referentielList'] && this.referentielList) {
+      const previousIds = this.referentiel.map((item) => item.id).join(',')
+      this.referentiel = cloneDeep(this.referentielList)
+      const nextIds = this.referentiel.map((item) => item.id).join(',')
+      if (previousIds !== nextIds) this.refIndexSelected = -1
     }
 
     // copy list of activities
@@ -446,10 +458,24 @@ export class PanelActivitiesComponent extends MainClass implements OnChanges, On
   }
 
   /**
-   * Conversion de la somme des réferentiel en pourcent
+   * Conversion de la somme des réferentiel en pourcent.
+   * Avec un référentiel d'onglet, le taux reste celui de l'arrondissement.
    */
   onTotalAffected() {
-    this.percentAffected = fixDecimal(sumBy(this.referentiel, 'percent'), 1000)
+    const source = this.totalReferentiel()
+    this.percentAffected = fixDecimal(sumBy(source, (ref) => this.getPercentAffected(ref).percent), 1000)
+  }
+
+  /**
+   * Référentiel du taux global. Sur une fiche à onglets, c'est l'arrondissement :
+   * le total ne dépend pas des contentieux de l'onglet affiché.
+   */
+  private totalReferentiel(): ContentieuReferentielInterface[] {
+    if (this.referentielList) {
+      const arrondissement = this.humanResourceService.contentieuxReferentielArrondissement.getValue()
+      if (arrondissement.length) return arrondissement
+    }
+    return this.referentiel
   }
 
   /**

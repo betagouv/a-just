@@ -116,6 +116,13 @@ export class ActualPanelSituationComponent extends MainClass implements OnChange
    * Detection d'une destruction de la composante
    */
   isDestroyed: boolean = false
+  /**
+   * Juridiction sélectionnée. Null si aucune ou si un arrondissement est affiché.
+   */
+  get lockedBackupId(): number | null {
+    const backupId = this.humanResourceService.backupIdS()
+    return backupId != null && backupId > 0 ? backupId : null
+  }
 
   /**
    * Constructeur

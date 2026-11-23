@@ -1,4 +1,5 @@
 import { effect, inject, Injectable, signal, untracked } from '@angular/core'
+import { cloneDeep } from 'lodash'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { ServerService } from '../http-server/server.service'
@@ -56,6 +57,15 @@ export class ReferentielService {
    * Clé (juridiction + page) du référentiel déjà appliqué
    */
   private appliedKey: string | null = null
+  /**
+   * Référentiels déjà chargés, par backup et par visibilité de page.
+   * Les onglets d'une fiche s'en servent pour éviter un nouvel appel.
+   */
+  private referentielCache = new Map<string, ContentieuReferentielInterface[]>()
+  /**
+   * Demandes en cours, pour ne lancer qu'un appel par backup.
+   */
+  private referentielRequests = new Map<string, Promise<ContentieuReferentielInterface[]>>()
 
   /**
    * Constructor
@@ -134,8 +144,10 @@ export class ReferentielService {
     void Promise.all([this.onGetReferentiel(backupId || 0, visibleIn), arrondissementRequest])
       .then(([datas, arrondissementDatas]) => {
         if (generation !== this.generation) return
-        this.formatDatas(datas.referentielsComplete, datas.referentiels)
         const arrondissementList = arrondissementDatas?.referentielsComplete ?? datas.referentielsComplete
+        this.rememberReferentiel(backupId, visibleIn, datas.referentielsComplete)
+        if (arrondissementId != null) this.rememberReferentiel(arrondissementId, visibleIn, arrondissementList)
+        this.formatDatas(datas.referentielsComplete, datas.referentiels)
         this.humanResourceService.contentieuxReferentielArrondissement.next(
           (arrondissementList || []).filter((referentiel: ContentieuReferentielInterface) => referentiel.label !== 'Indisponibilité'),
         )
@@ -228,6 +240,73 @@ export class ReferentielService {
   isDroitLocal() {
     const ref = this.humanResourceService.contentieuxReferentiel.getValue()
     return ref.find((r) => r.code_import === '13.') ? true : false
+  }
+
+  /**
+   * Référentiel d'un backup (id négatif pour un arrondissement), sans les indisponibilités.
+   * Retourne la copie en cache si ce backup a déjà été chargé pour la page courante.
+   * @param backupId
+   */
+  getReferentiel(backupId: number): Promise<ContentieuReferentielInterface[]> {
+    const visibleIn = untracked(() => this.pageVisibleIn())
+    const key = this.cacheKey(backupId, visibleIn)
+    const cached = this.referentielCache.get(key)
+    if (cached) return Promise.resolve(cloneDeep(cached))
+
+    const pending = this.referentielRequests.get(key)
+    if (pending) return pending.then((list) => cloneDeep(list))
+
+    const request = this.onGetReferentiel(backupId, visibleIn)
+      .then((datas) => {
+        const list = cloneDeep(this.contentieuxOnly(datas?.referentielsComplete || []))
+        this.referentielCache.set(key, list)
+        this.referentielRequests.delete(key)
+        return list
+      })
+      .catch((error) => {
+        this.referentielRequests.delete(key)
+        throw error
+      })
+
+    this.referentielRequests.set(key, request)
+    return request.then((list) => cloneDeep(list))
+  }
+
+  /**
+   * Mémorise le référentiel renvoyé au chargement de la page.
+   * @param backupId
+   * @param visibleIn
+   * @param list
+   */
+  private rememberReferentiel(
+    backupId: number,
+    visibleIn: ReferentielPageVisibility | null,
+    list: ContentieuReferentielInterface[] | null | undefined,
+  ) {
+    this.referentielCache.set(this.cacheKey(backupId, visibleIn), cloneDeep(this.contentieuxOnly(list || [])))
+  }
+
+  /**
+   * Clé de cache : backup et visibilité de la page.
+   * @param backupId
+   * @param visibleIn
+   */
+  private cacheKey(backupId: number, visibleIn: ReferentielPageVisibility | null) {
+    return `${backupId}:${visibleIn ?? ''}`
+  }
+
+  /**
+   * Retire les indisponibilités, comme le référentiel affiché dans les ventilations.
+   * @param list
+   */
+  private contentieuxOnly(list: ContentieuReferentielInterface[]) {
+    const indispo = list.find((item) => item.label === 'Indisponibilité')
+    const excluded = new Set<number>()
+    if (indispo) {
+      excluded.add(indispo.id)
+      for (const child of indispo.childrens || []) excluded.add(child.id)
+    }
+    return list.filter((item) => !excluded.has(item.id))
   }
 
   /**

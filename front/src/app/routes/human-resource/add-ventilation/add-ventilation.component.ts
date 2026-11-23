@@ -203,6 +203,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   backupIdSelected = signal<number | null>(null)
   /**
+   * Référentiel de l'onglet sélectionné
+   */
+  tabReferentiel = signal<ContentieuReferentielInterface[] | null>(null)
+  /**
+   * Dernière demande de référentiel, pour ignorer une réponse périmée
+   */
+  private referentielRequestId = 0
+  /**
+   * Vrai une fois le panneau détruit
+   */
+  private destroyed = false
+  /**
    * Réferentiel des indispo
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
@@ -278,8 +290,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     super()
 
     effect(() => {
-      this.backupIdSelected()
+      const backupId = this.selectedReferentielBackupId()
       this.scrollToArrondissementHeader()
+      if (backupId == null) return
+
+      const requestId = ++this.referentielRequestId
+      void this.referentielService.getReferentiel(backupId).then(
+        (list) => {
+          if (this.destroyed || requestId !== this.referentielRequestId) return
+          this.tabReferentiel.set(list)
+        },
+        () => undefined,
+      )
     })
   }
 
@@ -428,6 +450,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Destruction des observables
    */
   ngOnDestroy(): void {
+    this.destroyed = true
     this.watcherDestroy()
   }
 
@@ -536,7 +559,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     if (!withoutPercentControl) {
-      const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
+      const totalAffected = this.ventilationTotalPercent()
       if (totalAffected > 100) {
         this.appService.alert.next({
           title: 'Attention',
@@ -1042,12 +1065,44 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   /**
+   * Backup dont on affiche le référentiel.
+   * L'onglet Arrondissement correspond à l'id négatif du groupe.
+   */
+  private selectedReferentielBackupId() {
+    const selected = this.backupIdSelected()
+    if (selected != null) return selected
+
+    const group = this.humanResourceService.juridictionGroupSelected()
+    if (group?.id != null) return group.id * -1
+
+    return this.humanResourceService.backupIdS()
+  }
+
+  /**
+   * Référentiel complet de la situation : l'arrondissement s'il existe, sinon celui de la page.
+   * Les pastilles et le contrôle des 100 % s'appuient dessus, pas sur l'onglet affiché.
+   */
+  private fullReferentiel() {
+    const arrondissement = this.humanResourceService.contentieuxReferentielArrondissement.getValue()
+    if (arrondissement.length) return arrondissement
+    return this.humanResourceService.contentieuxReferentielOnly.getValue()
+  }
+
+  /**
+   * Somme des ventilations de la situation, tous sites confondus.
+   */
+  private ventilationTotalPercent() {
+    const ids = new Set(this.fullReferentiel().map((item) => item.id))
+    return fixDecimal(sumBy(this.activities.filter((activity) => activity.percent && ids.has(activity.contentieux?.id)), 'percent'))
+  }
+
+  /**
    * Calcul le nombre de contentieux pour un backup
    * @param backupId
    * @returns
    */
   getNbContentieux(backupId?: number) {
-    const mainIds = this.humanResourceService.contentieuxReferentiel.getValue().map((c) => c.id)
+    const mainIds = this.fullReferentiel().map((c) => c.id)
     const activities = this.activities.filter(
       (activity) => activity.percent && (!backupId || activity.backup?.id === backupId) && mainIds.includes(activity.contentieux.id),
     )

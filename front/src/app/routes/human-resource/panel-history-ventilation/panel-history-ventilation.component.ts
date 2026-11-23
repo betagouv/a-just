@@ -12,6 +12,7 @@ import { fixDecimal } from '../../../utils/numbers'
 import { etpLabel } from '../../../utils/referentiel'
 import { MatIconModule } from '@angular/material/icon'
 import { UserService } from '../../../services/user/user.service'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 
 /**
  * Paneau d'une situation
@@ -25,7 +26,14 @@ import { UserService } from '../../../services/user/user.service'
   styleUrls: ['./panel-history-ventilation.component.scss'],
 })
 export class PanelHistoryVentilationComponent extends MainClass implements OnChanges {
+  /**
+   * Service de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de la ressource humaine
+   */
+  humanResourceService = inject(HumanResourceService)
   /**
    * Date de début de situation
    */
@@ -106,6 +114,13 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
    * ETP need to be updated
    */
   warningETP: boolean = false
+  /**
+   * Juridiction sélectionnée. Null si aucune ou si un arrondissement est affiché.
+   */
+  get lockedBackupId(): number | null {
+    const backupId = this.humanResourceService.backupIdS()
+    return backupId != null && backupId > 0 ? backupId : null
+  }
 
   /**
    * Constructeur

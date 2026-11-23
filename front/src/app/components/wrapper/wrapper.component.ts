@@ -455,11 +455,20 @@ export class WrapperComponent extends MainClass implements OnDestroy, AfterViewI
   }
 
   /**
-   * Changement de la juridiction
+   * Changement de la juridiction.
+   * Le ventilateur et la fiche agent restent sur leur URL, rechargés avec la nouvelle juridiction.
+   * Les autres pages reviennent au panorama.
    * @param id
    */
   onChangeHRBackup(id: number) {
     this.humanResourceService.backupId.next(id)
+    const path = this.router.url.split(/[?#]/)[0]
+    if (path === '/ventilations' || path.startsWith('/resource-humaine/')) {
+      // L'effet qui écrit le backup dans le localStorage n'a pas encore tourné : on le pose avant le rechargement.
+      localStorage.setItem('backupId', String(id))
+      window.location.reload()
+      return
+    }
     this.router.navigate(['/panorama'])
   }
 
