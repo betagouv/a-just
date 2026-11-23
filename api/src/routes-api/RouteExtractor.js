@@ -259,7 +259,7 @@ export default class RouteExtractor extends Route {
     const flatReferentielsList = _buildOrderedFlatList([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupIds)
-    const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
+    const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.flatMap((i) => i.ids || [i.id]))
 
     let activities = await this.models.Activities.getAll(backupIds)
     activities = activities.map((r) => ({ ...r, periode: today(r.periode) }))

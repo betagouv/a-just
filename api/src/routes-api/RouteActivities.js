@@ -74,7 +74,7 @@ export default class RouteActivities extends Route {
 
       this.sendOk(ctx, {
         list,
-        lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id)),
+        lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.flatMap((i) => i.ids || [i.id])),
         date,
       })
     } else {

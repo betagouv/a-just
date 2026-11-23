@@ -794,45 +794,64 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    const contentieuxIds = [...new Set(rawActivities.map((a) => a['ContentieuxReferentiel.id']))]
+    const byContentieux = new Map()
+    for (let i = 0; i < rawActivities.length; i++) {
+      const row = rawActivities[i]
+      const id = row['ContentieuxReferentiel.id']
+      const bucket = byContentieux.get(id)
+      if (bucket) bucket.push(row)
+      else byContentieux.set(id, [row])
+    }
+
+    const contentieuxIds = [...byContentieux.keys()]
     const commentsMap = await Model.models.Comments.getNbByActivityTypes(contentieuxIds, HrBackupIds)
-    const allLastActivitesByTypes = (await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(rawActivities.map((a) => a.id), ['entrees', 'sorties', 'stock'])) || []
+    const allLastActivitesByTypes =
+      (await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(
+        rawActivities.map((a) => a.id),
+        ['entrees', 'sorties', 'stock'],
+      )) || []
 
-    // ⏬ Construction finale avec mêmes valeurs que l’ancienne méthode
-    return await Promise.all(
-      rawActivities.map(async (row) => {
-        const contentieuxId = row['ContentieuxReferentiel.id']
-        const activityId = row.id
-        const filteredRawActivities = rawActivities.filter((a) => a['ContentieuxReferentiel.id'] === contentieuxId)
+    const latestUpdate = (updates) => {
+      let latest = null
+      for (let i = 0; i < updates.length; i++) {
+        const current = updates[i]
+        if (!latest || new Date(current.date).getTime() >= new Date(latest.date).getTime()) latest = current
+      }
+      return latest
+    }
 
-        let updatedBy = null
+    // Une ligne par contentieux. Sur chaque juridiction, la valeur ajustée prime sur la valeur logiciel.
+    return [...byContentieux.entries()].map(([contentieuxId, rows]) => {
+      const ids = rows.map((row) => row.id)
+      let updatedBy = null
 
-        if (details) {
-          const entrees = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'entrees')
-          const sorties = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'sorties')
-          const stock = allLastActivitesByTypes.find((e) => e.activityId === activityId && e.nodeUpdated === 'stock')
-
-          updatedBy = { entrees, sorties, stock }
+      if (details) {
+        const updates = allLastActivitesByTypes.filter((entry) => ids.includes(entry.activityId))
+        updatedBy = {
+          entrees: latestUpdate(updates.filter((entry) => entry.nodeUpdated === 'entrees')),
+          sorties: latestUpdate(updates.filter((entry) => entry.nodeUpdated === 'sorties')),
+          stock: latestUpdate(updates.filter((entry) => entry.nodeUpdated === 'stock')),
         }
+      }
 
-        return {
-          id: activityId,
-          periode: row.periode,
-          entrees: sumByOrNull(filteredRawActivities, ['entrees']), //filteredRawActivities.length > 1 ? ['entrees'] : ['entrees', 'originalEntrees']),
-          originalEntrees: sumByOrNull(filteredRawActivities, ['originalEntrees']),
-          sorties: sumByOrNull(filteredRawActivities, ['sorties']), //filteredRawActivities.length > 1 ? ['sorties'] : ['sorties', 'originalSorties']),
-          originalSorties: sumByOrNull(filteredRawActivities, ['originalSorties']),
-          stock: sumByOrNull(filteredRawActivities, ['stock']), //filteredRawActivities.length > 1 ? ['stock'] : ['stock', 'originalStock']),
-          originalStock: sumByOrNull(filteredRawActivities, ['originalStock']),
-          contentieux: {
-            id: contentieuxId,
-            label: row['ContentieuxReferentiel.label'],
-          },
-          nbComments: commentsMap.get(contentieuxId) || 0,
-          updatedBy,
-        }
-      }),
-    )
+      return {
+        id: ids[0],
+        ids,
+        periode: rows[0].periode,
+        entrees: sumByOrNull(rows, ['entrees', 'originalEntrees']),
+        originalEntrees: sumByOrNull(rows, ['originalEntrees']),
+        sorties: sumByOrNull(rows, ['sorties', 'originalSorties']),
+        originalSorties: sumByOrNull(rows, ['originalSorties']),
+        stock: sumByOrNull(rows, ['stock', 'originalStock']),
+        originalStock: sumByOrNull(rows, ['originalStock']),
+        contentieux: {
+          id: contentieuxId,
+          label: rows[0]['ContentieuxReferentiel.label'],
+        },
+        nbComments: commentsMap.get(contentieuxId) || 0,
+        updatedBy,
+      }
+    })
   }
 
   /**
