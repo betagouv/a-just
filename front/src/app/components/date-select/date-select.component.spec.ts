@@ -73,6 +73,35 @@ describe('DateSelectComponent manual input', () => {
     expect(component.editValue).toBe('')
   })
 
+  it('commits the visible date on blur when the masked state is stale', () => {
+    component.dateType = 'date'
+    const emitted: Date[] = []
+    component.valueChange.subscribe((value: Date) => emitted.push(value))
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input.manual-input')
+
+    input.dispatchEvent(new Event('focus'))
+    fixture.detectChanges()
+    component.editValue = ''
+    input.value = '23/11/2026'
+    input.dispatchEvent(new Event('blur'))
+    fixture.detectChanges()
+
+    expect(emitted.length).toBe(1)
+    expect(emitted[0].getFullYear()).toBe(2026)
+    expect(emitted[0].getMonth()).toBe(10)
+    expect(emitted[0].getDate()).toBe(23)
+  })
+
+  it('keeps a draft when the parent pushes an empty value while typing', () => {
+    component.dateType = 'date'
+    component.onEditFocus()
+    component.editValue = '23/11/2026'
+    fixture.componentRef.setInput('value', null)
+    fixture.detectChanges()
+
+    expect(component.editValue).toBe('23/11/2026')
+  })
+
   it('synchronizes an external value change even while the input is focused', () => {
     component.onEditFocus()
     component.editValue = '05/2024'

@@ -17,6 +17,28 @@ const expectSavedDate = (value, expectedDate, label) => {
   expect(toInputDate(new Date(value)), label).to.eq(toInputDate(expectedDate));
 };
 
+/**
+ * L'autosave de l'identité (nom, prénom, matricule) poste aussi sur update-hr,
+ * souvent sans la date qui vient d'être saisie. On ignore ces requêtes-là.
+ */
+const waitForSubmittedDate = (alias, field, expectedDate, label, deadline = Date.now() + 60000) => {
+  const remaining = deadline - Date.now();
+  if (remaining <= 0) {
+    throw new Error(`${label}: timed out waiting for ${field}`);
+  }
+
+  return cy.wait(alias, { timeout: remaining }).then((interception) => {
+    const value = interception.request?.body?.hr?.[field];
+    if (typeof value !== "string" || !value) {
+      return waitForSubmittedDate(alias, field, expectedDate, label, deadline);
+    }
+
+    expect(interception.response?.statusCode).to.eq(200);
+    expectSavedDate(value, expectedDate, label);
+    return interception;
+  });
+};
+
 describe("Ajout d'un agent", () => {
   let arrivalDate;
   let leavingDate;
@@ -72,11 +94,11 @@ describe("Ajout d'un agent", () => {
       .should("have.value", toMaskedDate(arrivalDate))
       .blur();
 
-    cy.wait("@saveArrivalDate", { timeout: 60000 }).then(({ request, response }) => {
-      expect(response.statusCode).to.eq(200);
-      expectSavedDate(request.body.hr.dateStart, arrivalDate, "submitted arrival date");
-      expectSavedDate(response.body.data.dateStart, arrivalDate, "saved arrival date");
-    });
+    waitForSubmittedDate("@saveArrivalDate", "dateStart", arrivalDate, "submitted arrival date").then(
+      ({ response }) => {
+        expectSavedDate(response.body.data.dateStart, arrivalDate, "saved arrival date");
+      }
+    );
     cy.get("cover-profil-details .dates aj-date-select")
       .first()
       .find("input.manual-input")
@@ -95,12 +117,12 @@ describe("Ajout d'un agent", () => {
       .should("have.value", toMaskedDate(leavingDate))
       .blur();
 
-    cy.wait("@saveLeavingDate", { timeout: 60000 }).then(({ request, response }) => {
-      expect(response.statusCode).to.eq(200);
-      expectSavedDate(request.body.hr.dateEnd, leavingDate, "submitted leaving date");
-      expectSavedDate(response.body.data.dateEnd, leavingDate, "saved leaving date");
-      expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
-    });
+    waitForSubmittedDate("@saveLeavingDate", "dateEnd", leavingDate, "submitted leaving date").then(
+      ({ response }) => {
+        expectSavedDate(response.body.data.dateEnd, leavingDate, "saved leaving date");
+        expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
+      }
+    );
   });
 
   it("Select Catégorie", () => {

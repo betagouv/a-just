@@ -117,7 +117,9 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.findRealValue()
     // Une borne chargée pendant la saisie ne doit pas effacer le texte en cours.
-    if (!this.manualFocused || changes['value'] || changes['dateType']) {
+    // Un value vide poussé par le parent non plus : la frappe n'est pas encore commitée.
+    const parentClearedDraft = this.manualFocused && !!changes['value'] && !changes['value'].currentValue && !!this.editValue
+    if ((!this.manualFocused || changes['value'] || changes['dateType']) && !parentClearedDraft) {
       this.findEditValue()
     }
     this.onReadOnly = this.readOnly
@@ -264,15 +266,20 @@ export class DateSelectComponent extends MainClass implements OnChanges {
 
   /**
    * Valide la saisie manuelle (à la perte de focus ou à la validation par "Entrée")
-   * et rebascule sur le label lisible ("Aujourd'hui", "15 juin 2026")
+   * et rebascule sur le label lisible ("Aujourd'hui", "15 juin 2026").
+   * On lit d'abord le texte affiché : le masque peut l'avoir réécrit sans que
+   * `editValue` ait suivi le dernier caractère.
    */
-  onEditBlur() {
-    const date = this.parseEditValue(this.editValue)
+  onEditBlur(input?: HTMLInputElement) {
+    const typed = input?.value?.trim() || ''
+    const date = this.parseEditValue(typed) || this.parseEditValue(this.editValue)
 
     if (date) {
-      this.value = date
-      this.valueChange.emit(this.value)
-    } else if (!this.editValue) {
+      if (!this.isSameCalendarDay(this.value, date)) {
+        this.value = date
+        this.valueChange.emit(this.value)
+      }
+    } else if (!typed && !this.editValue && this.value) {
       this.value = null
       this.valueChange.emit(this.value)
     }
@@ -280,6 +287,28 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     this.findRealValue()
     this.findEditValue()
     this.manualFocused = false
+  }
+
+  /**
+   * Compare deux dates au jour près, sans tenir compte de l'heure.
+   */
+  isSameCalendarDay(left: Date | string | null | undefined, right: Date | string | null | undefined): boolean {
+    const first = this.asCalendarDate(left)
+    const second = this.asCalendarDate(right)
+    if (!first || !second) {
+      return false
+    }
+
+    return first.getFullYear() === second.getFullYear() && first.getMonth() === second.getMonth() && first.getDate() === second.getDate()
+  }
+
+  private asCalendarDate(value: Date | string | null | undefined): Date | null {
+    if (!value) {
+      return null
+    }
+
+    const date = value instanceof Date ? value : new Date(value)
+    return Number.isNaN(date.getTime()) ? null : date
   }
 
   /**
