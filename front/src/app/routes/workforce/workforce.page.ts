@@ -429,6 +429,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             "Téléchargeable dans chaque fiche agent, la <b>calculatrice</b> vous permet d'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.",
         },
       ]
+  /**
+   * Juridiction sélectionnée. Null si aucune ou si un arrondissement est affiché.
+   */
+  get lockedBackupId(): number | null {
+    const backupId = this.humanResourceService.backupIdS()
+    return backupId != null && backupId > 0 ? backupId : null
+  }
 
   /**
    * Constructor
@@ -1085,9 +1092,19 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
+   * Activité prise en compte pour le total d'un contentieux.
+   * Sur une juridiction, seules les ventilations de ce backup comptent.
+   */
+  activityMatchesBackup(activity: RHActivityInterface, backupId: number | null) {
+    if (backupId == null) return true
+    return (activity.backup?.id ?? activity.backupId) === backupId
+  }
+
+  /**
    * Calcul de l'ETP total
    */
   calculateTotalAffected() {
+    const lockedBackupId = this.lockedBackupId
     this.listFormated = this.listFormated.map((group) => {
       group.referentiel = group.referentiel.map((r) => ({
         ...r,
@@ -1099,7 +1116,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         hr.tmpActivities = {}
 
         group.referentiel = group.referentiel.map((ref) => {
-          hr.tmpActivities[ref.id] = hr.currentActivities.filter((r) => r.contentieux && r.contentieux.id === ref.id)
+          hr.tmpActivities[ref.id] = hr.currentActivities.filter(
+            (activity) =>
+              activity.contentieux &&
+              activity.contentieux.id === ref.id &&
+              this.activityMatchesBackup(activity, lockedBackupId),
+          )
           if (hr.tmpActivities[ref.id].length) {
             const timeAffected = sumBy(hr.tmpActivities[ref.id], 'percent')
             if (timeAffected) {
