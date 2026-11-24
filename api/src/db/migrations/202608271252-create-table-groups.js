@@ -27,8 +27,6 @@ module.exports = {
       },
     })
 
-    await queryInterface.addIndex('Groups', ['label'])
-
     await queryInterface.addColumn('HRBackups', 'group_id', {
       type: Sequelize.INTEGER,
       allowNull: true,
