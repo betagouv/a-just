@@ -1,4 +1,6 @@
 @use "../../../../styles/utils.scss";
+@use '../../../../styles/shadows.scss' as shadows;
+
 
 :host {
     background-color: white;
@@ -15,7 +17,7 @@
     .title {
         height: 96px;
         padding: 24px 24px;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        box-shadow: shadows.$box-shadow-default;
         background-color: #fff;
         position: relative;
         z-index: 1;
@@ -35,7 +37,7 @@
 
     .loaders {
         padding: 0 0 13px;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        box-shadow: shadows.$box-shadow-default;
         background-color: #fff;
         display: flex;
         position: relative;

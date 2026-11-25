@@ -1,5 +1,5 @@
 @use '../../styles/utils.scss' as utils;
-
+@use '../../styles/shadows.scss' as shadows;
 
 :host {
   button {
@@ -9,6 +9,10 @@
 
   .content {
     padding: 24px;
+  }
+
+  .content-list {
+    box-shadow: shadows.$box-shadow-default;
   }
 
   .top-right-header {
@@ -80,10 +84,10 @@
     display: flex;
     align-items: center;
     font-size: 14px;
+    box-shadow: shadows.$box-shadow-default;
 
     label {
       font-size: 16px;
-      font-weight: bold;
       color: utils.$colors-cblack;
     }
 
@@ -92,7 +96,6 @@
       height: 32px;
       margin-right: 8px;
       padding: 4px 12px 4px 8px;
-      border: solid 1px utils.$colors-lightBorder;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -100,17 +103,15 @@
       label {
         cursor: pointer;
         font-size: 14px;
-        font-weight: 500;
         line-height: 1.71;
         text-align: center;
-        color: utils.$colors-primary;
+        color: utils.$colors-creddark;
         margin-left: 8px;
       }
 
       i {
         cursor: pointer;
         font-size: 16px;
-        color: utils.$colors-primary;
       }
 
     }
@@ -132,6 +133,7 @@
     color: utils.$colors-cgray;
     border-bottom: none;
     font-size: 12px;
+    box-shadow: shadows.$box-shadow-default;
   }
 
   .line-item {
@@ -213,7 +215,6 @@
       padding: 0 10px;
       color: utils.$colors-primary;
       font-size: 14px;
-      font-weight: 500;
       line-height: 1.71;
 
       i {
@@ -224,6 +225,27 @@
 
     .duplicate {
       margin-right: 16px;
+    }
+
+    .save {
+
+      &.enable {
+        cursor: pointer;
+        pointer-events: initial;
+        background-color: utils.$colors-primary;
+      }
+
+      background-color: utils.$colors-grayRow;
+      cursor: none;
+      pointer-events: none;
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 35px;
+      text-align: center;
+      color: utils.$colors-white;
+      height: 40px;
+      padding: 0 16px;
     }
   }
 

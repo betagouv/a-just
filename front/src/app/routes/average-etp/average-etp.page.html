@@ -47,10 +47,11 @@
     }
     <div class="actions">
       @if (onUpload) {
-      <div [ngClass]="{ enable: enableImport === true }" class="save" (click)="import()">Importer</div>
+      <button [ngClass]="{ enable: enableImport === true }" class="save small outline blue strict-border"
+        (click)="import()">Importer</button>
       }
       @if (!onUpload) {
-      <div class="save enable" (click)="create(name.value, type.name)">Enregistrer</div>
+      <button class="small primary strict-border" (click)="create(name.value, type.name)">Enregistrer</button>
       }
     </div>
   </aj-popup>
@@ -81,7 +82,7 @@
         <div class="flex-1"></div>
         @if(userService.canEditTempsMoyens() && humanResourceService.canEditSelectedJuridiction()){
         @if(this.getSelectedBackups().length > 0){
-        <button class="delete-action small outline blue" (click)="onRemove()">
+        <button class="delete-action small outline red" (click)="onRemove()">
           <i class="ri-delete-bin-6-line"></i>
           <label>Supprimer</label>
         </button>
@@ -105,42 +106,44 @@
       </div>
     </div>
 
-    @for (backup of backups; track backup.label; let i = $index) {
-    <div class="line-item" (click)="goTo(backup.id)">
-      @if(userService.canEditTempsMoyens() && humanResourceService.canEditSelectedJuridiction()){<aj-checkbox
-        [(value)]="checkList[i]" (click)="$event.stopPropagation()"></aj-checkbox>}
-      <label class="name">{{ backup.label }}</label>
-      <div class="apply">
-        <label class="tag" [ngStyle]="{
+    <div class="content-list">
+      @for (backup of backups; track backup.label; let i = $index) {
+      <div class="line-item" (click)="goTo(backup.id)">
+        @if(userService.canEditTempsMoyens() && humanResourceService.canEditSelectedJuridiction()){<aj-checkbox
+          [(value)]="checkList[i]" (click)="$event.stopPropagation()"></aj-checkbox>}
+        <label class="name">{{ backup.label }}</label>
+        <div class="apply">
+          <label class="tag" [ngStyle]="{
             'background-color': backup.type === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
             color: backup.type === 'GREFFE' ? '#a558a0' : '#000091',
           }">
-          {{ backup.type === 'GREFFE' ? 'Greffe' : 'Siège' }}
-        </label>
-      </div>
-      <label class="create">{{ realValue(backup.date) }}</label>
-      <label class="modify">{{ backup.update ? (backup.update.date | dateAgo) : '' }}</label>
-      <div class="status">
-        <label class="tag"
-          [ngStyle]="{ 'background-color': getBackgroundColor(backup.status ?? ''), color: getColor(backup.status ?? '') }">
-          {{ backup.status }}
-        </label>
-      </div>
-      @if(userService.canEditTempsMoyens() && humanResourceService.canEditSelectedJuridiction()) {
-      <div class="actions">
-        <button class="rename small outline blue" (click)="rename(backup.id); $event.stopPropagation()">
-          <i class="ri-edit-line"></i>
-          Renommer
-        </button>
-        <button class="duplicate small outline blue"
-          (click)="duplicate(backup.id, backup.type ?? ''); $event.stopPropagation()">
-          <i class="ri-file-copy-line"></i>
-          Dupliquer
-        </button>
+            {{ backup.type === 'GREFFE' ? 'Greffe' : 'Siège' }}
+          </label>
+        </div>
+        <label class="create">{{ realValue(backup.date) }}</label>
+        <label class="modify">{{ backup.update ? (backup.update.date | dateAgo) : '' }}</label>
+        <div class="status">
+          <label class="tag"
+            [ngStyle]="{ 'background-color': getBackgroundColor(backup.status ?? ''), color: getColor(backup.status ?? '') }">
+            {{ backup.status }}
+          </label>
+        </div>
+        @if(userService.canEditTempsMoyens() && humanResourceService.canEditSelectedJuridiction()) {
+        <div class="actions">
+          <button class="rename small outline blue" (click)="rename(backup.id); $event.stopPropagation()">
+            <i class="ri-edit-line"></i>
+            Renommer
+          </button>
+          <button class="duplicate small outline blue"
+            (click)="duplicate(backup.id, backup.type ?? ''); $event.stopPropagation()">
+            <i class="ri-file-copy-line"></i>
+            Dupliquer
+          </button>
+        </div>
+        }
       </div>
       }
     </div>
-    }
   </div>
 </aj-wrapper>
 

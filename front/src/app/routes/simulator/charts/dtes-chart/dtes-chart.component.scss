@@ -1,5 +1,7 @@
 @use '../../../../styles/utils.scss' as utils;
 @use '../../../../styles/animations.scss' as animations;
+@use '../../../../styles/shadows.scss' as shadows;
+
 
 :host {
     display: flex;
@@ -233,14 +235,14 @@
         .title {
             height: 73px;
             padding: 24px 24px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow: shadows.$box-shadow-default;
             background-color: #fff;
             position: relative;
 
             p {
                 font-size: 16px;
                 font-weight: bold;
-                color: #3a3a3a;
+                color: utils.$colors-cblack;
             }
 
             label {
@@ -255,7 +257,7 @@
             flex: 1;
             z-index: 1;
             background-color: #fff;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow: shadows.$box-shadow-default;
             position: relative;
             align-items: center;
             display: flex;
@@ -277,7 +279,7 @@
         flex: 1;
         padding: 24px;
         background-color: #f5f5fe;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        box-shadow: shadows.$box-shadow-default;
         align-items: center;
 
         .space {
