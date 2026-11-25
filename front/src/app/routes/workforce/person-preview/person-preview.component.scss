@@ -11,7 +11,7 @@
   margin-top: 8px;
   box-shadow: shadows.$box-shadow-default;
   min-height: 140px;
-  background-color: white;
+  background-color: utils.$colors-white;
   transition: background-color animations.$duration-normal animations.$ease-default;
 
   &:hover {
@@ -124,7 +124,7 @@
           margin-bottom: 4px;
 
           &.function {
-            color: white;
+            color: utils.$colors-white;
             background-color: utils.$colors-cbluelight;
 
             mat-icon {

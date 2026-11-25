@@ -199,7 +199,6 @@
   }
 
   .actions {
-    cursor: pointer;
     display: flex;
     align-items: center;
     width: 257.05px;
@@ -228,29 +227,28 @@
     }
 
     .save {
-
       &.enable {
         cursor: pointer;
         pointer-events: initial;
         background-color: utils.$colors-primary;
+
+        &:hover {
+          background-color: utils.$colors-cblue;
+        }
       }
 
       background-color: utils.$colors-grayRow;
+      border: none;
       cursor: none;
       pointer-events: none;
       margin-top: 12px;
-      font-size: 16px;
-      font-weight: 500;
-      line-height: 35px;
       text-align: center;
       color: utils.$colors-white;
-      height: 40px;
       padding: 0 16px;
     }
   }
 
   aj-popup {
-
     .text {
       padding: 0 8px;
       margin-top: 12px;

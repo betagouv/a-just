@@ -47,11 +47,12 @@
     }
     <div class="actions">
       @if (onUpload) {
-      <button [ngClass]="{ enable: enableImport === true }" class="save small outline blue strict-border"
+      <button [ngClass]="{ enable: enableImport === true && nameLength > 0 }" class="save small"
         (click)="import()">Importer</button>
       }
       @if (!onUpload) {
-      <button class="small primary strict-border" (click)="create(name.value, type.name)">Enregistrer</button>
+      <button class="save small" [ngClass]="{ enable: nameLength > 0 }" (click)=" create(name.value,
+        type.name)">Enregistrer</button>
       }
     </div>
   </aj-popup>
