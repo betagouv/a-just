@@ -1,5 +1,6 @@
 @use "../../../styles/utils.scss" as utils;
 @use '../../../styles/shadows.scss' as shadows;
+@use '../../../styles/animations.scss' as animations;
 
 
 :host {
@@ -11,6 +12,11 @@
   box-shadow: shadows.$box-shadow-default;
   min-height: 140px;
   background-color: white;
+  transition: background-color animations.$duration-normal animations.$ease-default;
+
+  &:hover {
+    background-color: utils.$colors-bgSelect;
+  }
 
   &:last-child {
     margin-bottom: 16px;
