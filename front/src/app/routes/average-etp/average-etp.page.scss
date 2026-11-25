@@ -2,10 +2,13 @@
 
 
 :host {
-
   button {
     display: flex;
     justify-content: center;
+  }
+
+  .content {
+    padding: 24px;
   }
 
   .top-right-header {
@@ -87,11 +90,12 @@
     .delete-action {
       cursor: pointer;
       height: 32px;
-      margin-right: 32px;
+      margin-right: 8px;
       padding: 4px 12px 4px 8px;
       border: solid 1px utils.$colors-lightBorder;
       display: flex;
       align-items: center;
+      justify-content: center;
 
       label {
         cursor: pointer;
@@ -112,24 +116,7 @@
     }
 
     .import-action {
-      cursor: pointer;
-      height: 32px;
       margin-right: 8px;
-      padding: 4px 12px;
-      border: solid 1px utils.$colors-primary;
-      color: utils.$colors-primary;
-      align-items: center;
-      display: flex;
-    }
-
-    .create-action {
-      cursor: pointer;
-      height: 32px;
-      padding: 4px 12px;
-      background-color: utils.$colors-primary;
-      color: white;
-      align-items: center;
-      display: flex;
     }
   }
 
@@ -157,6 +144,11 @@
     display: flex;
     align-items: center;
     font-size: 12px;
+
+    &:hover {
+      background-color: utils.$colors-ventilationCurrentSituationBg;
+    }
+
   }
 
   aj-checkbox {
@@ -235,7 +227,6 @@
     }
   }
 
-
   aj-popup {
 
     .text {
@@ -245,8 +236,7 @@
       color: utils.$colors-grayRow;
 
       .follow {
-        margin-top: 32px;
-        margin-bottom: 12px;
+        margin: 32px 0px;
         display: block;
         color: utils.$colors-cblack;
       }
@@ -257,42 +247,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-
-      .back {
-        cursor: pointer;
-        margin-top: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 35px;
-        text-align: center;
-        color: utils.$colors-primary;
-        height: 40px;
-        padding: 0 16px;
-        border: solid 1px utils.$colors-primary;
-        margin-right: 8px;
-      }
-
-
-      .save {
-
-        &.enable {
-          cursor: pointer;
-          pointer-events: initial;
-          background-color: utils.$colors-primary;
-        }
-
-        background-color: utils.$colors-grayRow;
-        cursor: none;
-        pointer-events: none;
-        margin-top: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 35px;
-        text-align: center;
-        color: utils.$colors-white;
-        height: 40px;
-        padding: 0 16px;
-      }
+      gap: 4px;
     }
 
 
