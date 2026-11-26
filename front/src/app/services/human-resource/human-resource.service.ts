@@ -107,6 +107,44 @@ export class HumanResourceService {
     }
   })
   /**
+   * Juridictions portées par une fiche : rattachement et ventilations.
+   */
+  agentBackupIds(hr: HumanResourceInterface | null | undefined): number[] {
+    const ids = new Set<number>()
+    if (!hr) return []
+
+    if (hr.backupId) ids.add(hr.backupId)
+    for (const situation of hr.situations || []) {
+      for (const activity of situation.activities || []) {
+        const id = activity.backup?.id ?? activity.backupId
+        if (id) ids.add(id)
+      }
+    }
+
+    return [...ids]
+  }
+  /**
+   * Sur une juridiction, la fiche est modifiable lorsque chaque affectation
+   * de l'agent porte sur une juridiction accessible.
+   * La vue arrondissement reste réservée à l'accès complet du groupe.
+   */
+  canEditAgent(hr: HumanResourceInterface | null | undefined): boolean {
+    const backupId = this.backupIdS() ?? 0
+    if (backupId <= 0 || this.canEditSelectedJuridiction()) {
+      return this.canEditSelectedJuridiction()
+    }
+
+    const accessible = new Set(this.backupsS().map((backup) => backup.id))
+    return this.agentBackupIds(hr).every((id) => accessible.has(id))
+  }
+  /**
+   * Sans accès complet au groupe, la ventilation ne se modifie que sur la juridiction affichée.
+   */
+  ventilationLockedToCurrentBackup(): boolean {
+    const backupId = this.backupIdS() ?? 0
+    return backupId > 0 && !this.canEditSelectedJuridiction()
+  }
+  /**
    * Vérifie si la juridiction est une juridiction et non un arrondissement
    */
   isBackup = computed(() => {

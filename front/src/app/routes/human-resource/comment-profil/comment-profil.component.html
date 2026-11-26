@@ -24,7 +24,7 @@
       </div></label>
   </div>
   }
-  @if(userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()) {
+  @if(userService.canEditHR() && humanResourceService.canEditAgent(currentHR)) {
   <div id="panel-content" class="panel-content">
     @if (!isEditing) {
     <div class="placeholder">
@@ -38,7 +38,7 @@
       (click)="$event.stopPropagation()"></aj-text-editor>
   </div>
   }
-  @if (isEditing && userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()) {
+  @if (isEditing && userService.canEditHR() && humanResourceService.canEditAgent(currentHR)) {
   <div class="footer-panel">
     <button class="back outline blue strict-border" (click)="back(); $event.stopPropagation()">Annuler
     </button>

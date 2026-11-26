@@ -27,6 +27,12 @@
   gap: 8px;
 }
 
+.readonly-notice {
+  margin: 0;
+  color: utils.$colors-cgray;
+  font-size: 14px;
+}
+
 .panel-history-group {
   display: flex;
   flex-direction: column;

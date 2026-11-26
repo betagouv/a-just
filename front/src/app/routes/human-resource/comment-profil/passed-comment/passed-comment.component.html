@@ -18,7 +18,7 @@
     <aj-text-editor #editor [ngClass]="{ editing: isEditing }" [value]="commentContent || ''" class="no-main-style"
       (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire" [hideToolbar]="true"
       (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing" (resetField)="reset()"
-      [defaultReadOnly]="!userService.canEditHR()"></aj-text-editor>
+      [defaultReadOnly]="!(userService.canEditHR() && humanResourceService.canEditAgent(currentHR))"></aj-text-editor>
     @if (isEditing) {
     <div class="footer-panel">
       <button class="unsave outline blue strict-border" (click)="setOldValue()">Annuler</button>
@@ -27,7 +27,7 @@
     }
   </div>
 
-  @if (!isEditing && userService.canEditHR()) {
+  @if (!isEditing && userService.canEditHR() && humanResourceService.canEditAgent(currentHR)) {
   <div class="actions">
     <label class="modify" (click)="getFocusOn(true)">Modifier</label>
     <span class="dot">•</span>

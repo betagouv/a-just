@@ -51,6 +51,34 @@ export default class RouteHumanResources extends Route {
     }
   }
 
+  /**
+   * Refus si l'agent est ventilé sur une juridiction inaccessible.
+   * @param {*} ctx
+   * @param {number} hrId
+   */
+  async assertCanEditAgent(ctx, hrId) {
+    const backupIds = await this.model.listAssignedBackupIds(hrId)
+    if (!backupIds) {
+      ctx.throw(404, 'Fiche introuvable')
+    }
+    if (!(await this.model.hasAccessToEveryBackup(backupIds, ctx.state.user.id))) {
+      ctx.throw(403, "Cet agent est affecté sur des juridictions auxquelles vous n'avez pas accès")
+    }
+  }
+
+  /**
+   * L'accès complet du groupe autorise à modifier toutes les juridictions d'un agent.
+   * Une juridiction hors groupe s'édite entièrement.
+   * @param {number} userId
+   * @param {number} backupId
+   */
+  async userHasFullGroupAccess(userId, backupId) {
+    const { groups } = await this.models.Groups.listGroupsForUser(userId)
+    const group = (groups || []).find((item) => (item.backups || []).some((backup) => backup.id === Number(backupId)))
+    if (!group) return true
+    return group.fullAccess === true
+  }
+
   async writeLog(ctx, code, payload) {
     await this.models.Logs.addLog(code, ctx.state.user.id, payload)
     this.sendOk(ctx, 'Ok')
@@ -145,7 +173,25 @@ export default class RouteHumanResources extends Route {
 
     await this.assertBackupAccess(ctx, backupId)
 
-    const updatedAgent = await this.model.updateHR(hr, backupId)
+    const scopedToBackup = Number(backupId) > 0 && !(await this.userHasFullGroupAccess(ctx.state.user.id, backupId))
+    if (hr?.id > 0) {
+      await this.assertCanEditAgent(ctx, hr.id)
+    }
+
+    let hrToSave = hr
+    if (scopedToBackup && hr?.situations) {
+      try {
+        hrToSave = {
+          ...hr,
+          situations: await this.model.scopeSituationsToBackup(hr.situations, hr.id, backupId),
+        }
+      } catch (error) {
+        if (error.status === 403) ctx.throw(403, error.message)
+        throw error
+      }
+    }
+
+    const updatedAgent = await this.model.updateHR(hrToSave, backupId)
 
     if (!updatedAgent?.id) {
       console.error('❌ Impossible de récupérer un agent valide après updateHR', updatedAgent)
@@ -167,6 +213,7 @@ export default class RouteHumanResources extends Route {
 
     // Vérifie l'accès
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      await this.assertCanEditAgent(ctx, hrId)
       const removedAgent = await this.model.removeHR(hrId)
 
       if (removedAgent && removedAgent.backupId) {
@@ -221,6 +268,7 @@ export default class RouteHumanResources extends Route {
 
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
+      await this.assertCanEditAgent(ctx, hrId)
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
         this.sendOk(ctx, agent)

@@ -556,12 +556,11 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Control si une utilisateur a accès à une fiche
+   * Juridictions d'une fiche : rattachement et ventilations.
    * @param {*} HRId
-   * @param {*} userId
-   * @returns
+   * @returns {Promise<number[] | null>}
    */
-  Model.haveAccess = async (HRId, userId) => {
+  Model.listAssignedBackupIds = async (HRId) => {
     const hr = await Model.findOne({
       attributes: ['backup_id'],
       where: {
@@ -571,7 +570,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (!hr) {
-      return false
+      return null
     }
 
     const ventilations = await Model.models.HRActivities.findAll({
@@ -589,11 +588,110 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    const backupIds = [...new Set([hr.backup_id, ...ventilations.map((ventilation) => ventilation.backup_id)].filter(Boolean))]
+    return [...new Set([hr.backup_id, ...ventilations.map((ventilation) => ventilation.backup_id)].filter(Boolean))]
+  }
+
+  /**
+   * L'utilisateur a accès à chacune des juridictions demandées.
+   * @param {number[]} backupIds
+   * @param {*} userId
+   * @returns {Promise<boolean>}
+   */
+  Model.hasAccessToEveryBackup = async (backupIds, userId) => {
+    if (!backupIds.length) return true
 
     const accesses = await Promise.all(backupIds.map((backupId) => Model.models.HRBackups.haveAccess(backupId, userId)))
+    return accesses.every((access) => Array.isArray(access) && access.length > 0)
+  }
 
+  Model.haveAccess = async (HRId, userId) => {
+    const backupIds = await Model.listAssignedBackupIds(HRId)
+    if (!backupIds) return false
+
+    const accesses = await Promise.all(backupIds.map((backupId) => Model.models.HRBackups.haveAccess(backupId, userId)))
     return accesses.some((access) => Array.isArray(access) && access.length > 0)
+  }
+
+  /**
+   * Conserve les ventilations des autres juridictions.
+   * Seules les activités de la juridiction éditée sont reprises du payload.
+   * @param {Array} situations
+   * @param {number} humanId
+   * @param {number} backupId
+   */
+  Model.scopeSituationsToBackup = async (situations, humanId, backupId) => {
+    const editedBackupId = Number(backupId)
+    const existing = humanId > 0 ? await Model.models.HRSituations.getListByHumanId(humanId) : []
+    const existingById = new Map(existing.map((situation) => [situation.id, situation]))
+    const activityBackupId = (activity) => Number(activity?.backupId || activity?.backup?.id || 0)
+    const contentieuxId = (activity) => Number(activity?.contentieux?.id || activity?.referentielId || 0)
+
+    const otherActivities = (situation) =>
+      (situation?.activities || []).filter((activity) => {
+        const id = activityBackupId(activity)
+        return id && id !== editedBackupId
+      })
+
+    const signature = (activities) =>
+      otherActivities({ activities })
+        .map((activity) => `${activityBackupId(activity)}:${contentieuxId(activity)}:${Number(activity.percent)}`)
+        .sort()
+        .join('|')
+
+    const knownSignatures = new Set(existing.map((situation) => signature(situation.activities)))
+
+    return (situations || []).map((situation) => {
+      const ownActivities = (situation.activities || [])
+        .filter((activity) => {
+          const id = Number(activity.backupId || activity.backup?.id || 0)
+          return !id || id === editedBackupId
+        })
+        .map((activity) => ({
+          ...activity,
+          backupId: editedBackupId,
+          backup: activity.backup?.id ? activity.backup : { id: editedBackupId },
+        }))
+
+      const stored = situation.id > 0 ? existingById.get(situation.id) : null
+      if (stored) {
+        return {
+          ...situation,
+          activities: [...otherActivities(stored), ...ownActivities],
+        }
+      }
+
+      const incomingSignature = signature(situation.activities)
+      if (existing.length === 0) {
+        if (incomingSignature !== '') {
+          const error = new Error("La ventilation d'une autre juridiction ne peut pas être modifiée depuis celle-ci")
+          error.status = 403
+          throw error
+        }
+        return { ...situation, activities: ownActivities }
+      }
+
+      // Une nouvelle situation sans ventilation extérieure reprend la dernière connue,
+      // pour ne pas effacer les autres juridictions.
+      if (incomingSignature === '') {
+        const latestWithForeign = existing.find((item) => otherActivities(item).length)
+        return {
+          ...situation,
+          activities: [...otherActivities(latestWithForeign), ...ownActivities],
+        }
+      }
+
+      if (!knownSignatures.has(incomingSignature)) {
+        const error = new Error("La ventilation d'une autre juridiction ne peut pas être modifiée depuis celle-ci")
+        error.status = 403
+        throw error
+      }
+
+      const source = existing.find((item) => signature(item.activities) === incomingSignature)
+      return {
+        ...situation,
+        activities: [...otherActivities(source), ...ownActivities],
+      }
+    })
   }
 
   /**
