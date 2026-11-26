@@ -236,6 +236,7 @@ describe("Ajout d'un agent", () => {
   });
 
   it("Checking that we can add unavailabilities", () => {
+    const reason = "Congé maladie ordinaire";
     const startDate = new Date(leavingDate);
     const endDate = new Date(leavingDate);
 
@@ -248,7 +249,9 @@ describe("Ajout d'un agent", () => {
       .click();
 
     cy.get("aj-popup").within(() => {
-      cy.get("select").select("Congé maladie ordinaire");
+      cy.get("#indisponibility-reason").should("not.have.value", "").click().clear().type("maladie");
+      cy.contains(".aj-autocomplete-panel .juridiction-item", reason).click();
+      cy.get("#indisponibility-reason").should("have.value", reason);
 
       cy.get("aj-date-select")
         .first()
@@ -271,6 +274,7 @@ describe("Ajout d'un agent", () => {
 
     cy.wait("@saveUnavailability", { timeout: 60000 }).then(({ response }) => {
       expect(response.statusCode).to.eq(200);
+      expect(response.body.data.indisponibilities[0].contentieux.label).to.eq(reason);
       expectSavedDate(response.body.data.dateStart, arrivalDate, "retained arrival date");
     });
     cy.get("aj-popup .popup").should("not.exist");

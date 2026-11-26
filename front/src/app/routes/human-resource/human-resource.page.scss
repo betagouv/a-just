@@ -137,11 +137,6 @@ add-ventilation {
   }
 }
 
-mat-form-field {
-  width: 100%;
-  padding-bottom: 0px;
-}
-
 ::ng-deep mdc-text-field {
   background-color: #eeeeee;
 }
@@ -184,5 +179,7 @@ mat-form-field {
 }
 
 .first-bloc {
-  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
 }

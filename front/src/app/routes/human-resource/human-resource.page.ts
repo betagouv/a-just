@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild, ElementRef, inject } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import _, { maxBy, minBy, orderBy } from 'lodash'
+import { groupBy, maxBy, minBy, orderBy } from 'lodash'
 import { debounceTime } from 'rxjs'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 import { HRSituationInterface } from '../../interfaces/hr-situation'
@@ -13,6 +13,7 @@ import { ActualPanelSituationComponent } from './actual-panel-situation/actual-p
 import { CommentProfilComponent } from './comment-profil/comment-profil.component'
 import { PanelHistoryVentilationComponent } from './panel-history-ventilation/panel-history-ventilation.component'
 import { ActionsInterface, PopupComponent } from '../../components/popup/popup.component'
+import { AutocompleteComponent, AutocompleteOption } from '../../components/autocomplete/autocomplete.component'
 import { DateSelectComponent } from '../../components/date-select/date-select.component'
 import { MainClass } from '../../libs/main-class'
 import { HRCategoryInterface } from '../../interfaces/hr-category'
@@ -29,11 +30,12 @@ import { dateAddDays, getTime, isDateBiggerThan, setTimeToMidDay, today } from '
 import { copy } from '../../utils'
 import { HelpButtonComponent } from '../../components/help-button/help-button.component'
 import { CommonModule } from '@angular/common'
-import { MatSelectModule } from '@angular/material/select'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatInputModule } from '@angular/material/input'
 import { ExcelService } from '../../services/excel/excel.service'
 import { findRealValue } from '../../utils/dates'
+
+type IndisponibilityDraft = Omit<RHActivityInterface, 'contentieux'> & {
+  contentieux: AutocompleteOption | null
+}
 
 /**
  * Interface d'une situation
@@ -72,9 +74,7 @@ export interface HistoryInterface extends HRSituationInterface {
     HelpButtonComponent,
     CommonModule,
     FormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
+    AutocompleteComponent,
   ],
   templateUrl: './human-resource.page.html',
   styleUrls: ['./human-resource.page.scss'],
@@ -152,15 +152,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Indispo en court d'édition
    */
-  updateIndisponiblity: RHActivityInterface | null = null
+  updateIndisponiblity: IndisponibilityDraft | null = null
   /**
    * Référentiel des indispo
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   /**
-   * Référentiel des indispo groupedByCategory
+   * Motifs d'indisponibilité regroupés par catégorie
    */
-  groupedIndispo: any[] = []
+  indisponibilityOptions: AutocompleteOption[] = []
   /**
    * Indispos en error (chevauchement de date ou plus de 100%)
    */
@@ -278,7 +278,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.humanResourceService.contentieuxReferentiel.subscribe((list) => {
         this.contentieuxReferentiel = list
         this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1)
-        this.groupedIndispo = this.groupIndispoByCategory()
+        const categories = groupBy(this.allIndisponibilityReferentiel, (reason) => reason.category)
+        this.indisponibilityOptions = Object.entries(categories).flatMap(([groupLabel, reasons], groupId) =>
+          reasons.map(({ id, label }) => ({ id, label, groupId, groupLabel })),
+        )
       }),
     )
 
@@ -697,9 +700,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       : {
           id: this.allIndisponibilities.length * -1 - 1,
           percent: 0,
-          contentieux: {
-            ...this.allIndisponibilityReferentiel[0],
-          },
+          contentieux: this.allIndisponibilityReferentiel[0] ?? null,
           dateStart: null,
         }
   }
@@ -740,7 +741,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             return false
           }
 
-          if (this.updateIndisponiblity && !this.allIndisponibilityReferentiel.find((i) => i.id == this.updateIndisponiblity?.contentieux.id)) {
+          const contentieux = this.allIndisponibilityReferentiel.find((reason) => reason.id == this.updateIndisponiblity?.contentieux?.id)
+          if (this.updateIndisponiblity && !contentieux) {
             alert("Vous devez saisir un type d'indisponibilité !")
             return false
           }
@@ -798,17 +800,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             }
           }
 
-          if (this.updateIndisponiblity) {
-            // force id to int with selector
-            this.updateIndisponiblity.contentieux.id = +this.updateIndisponiblity.contentieux.id
-
+          if (this.updateIndisponiblity && contentieux) {
             const index = this.allIndisponibilities.findIndex((i) => i.id === this.updateIndisponiblity?.id)
-            const contentieux = this.allIndisponibilityReferentiel.find((c) => c.id === this.updateIndisponiblity?.contentieux.id)
-
-            if (!contentieux) {
-              alert("Il y a un problème avec l'indisponibilitiés choisie.")
-              return false
-            }
 
             const cacheOldIndispo = [...this.allIndisponibilities]
             if (index !== -1) {
@@ -1055,11 +1048,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentETP = etp
     }
   }
-  groupIndispoByCategory(): any {
-    const grouped = _.groupBy(this.allIndisponibilityReferentiel, (indispo) => indispo.category)
-    return grouped
-  }
-
   setToMidDay(elem: Date) {
     return setTimeToMidDay(elem)
   }

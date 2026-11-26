@@ -82,14 +82,10 @@
 
 .group-header {
   background-color: utils.$colors-bgSelect;
-  cursor: pointer;
+  cursor: default;
 
   .item-label {
     font-weight: 700;
-  }
-
-  &:hover {
-    background-color: #d8e7fc;
   }
 }
 

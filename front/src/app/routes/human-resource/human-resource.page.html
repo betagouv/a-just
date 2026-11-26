@@ -59,8 +59,10 @@
       <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
         text="Qu'est-ce que c'est ?"></aj-help-button>
       }
-      @if (userService.canEditHR() && humanResourceService.isBackup() && !humanResourceService.canEditAgent(currentHR)) {
-      <p class="readonly-notice">Cet agent est affecté sur une juridiction à laquelle vous n'avez pas accès. Sa fiche reste en lecture seule.</p>
+      @if (userService.canEditHR() && humanResourceService.isBackup() && !humanResourceService.canEditAgent(currentHR))
+      {
+      <p class="readonly-notice">Cet agent est affecté sur une juridiction à laquelle vous n'avez pas accès. Sa fiche
+        reste en lecture seule.</p>
       }
     </div>
     }
@@ -150,7 +152,7 @@
 </aj-wrapper>
 
 @if (updateIndisponiblity) {
-<aj-popup [actions]="[
+<aj-popup class="overflow-visible" [actions]="[
       { id: 'close', content: 'Annuler' },
       { id: 'modify', content: 'Enregistrer', fill: true },
     ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
@@ -159,18 +161,10 @@
     ">
   <div class="form">
     <div class="first-bloc">
-      <div class="label-aj">Motif d'indisponibilité</div>
-      <mat-form-field>
-        <select matNativeControl [(ngModel)]="updateIndisponiblity.contentieux.id">
-          @for (category of groupedIndispo | keyvalue; track category) {
-          <optgroup label="{{ category.key }}">
-            @for (item of category.value; track item) {
-            <option [value]="item.id">{{ item.label }}</option>
-            }
-          </optgroup>
-          }
-        </select>
-      </mat-form-field>
+      <label class="label-aj" for="indisponibility-reason">Motif d'indisponibilité</label>
+      <aj-autocomplete [id]="'indisponibility-reason'" [options]="indisponibilityOptions"
+        [value]="updateIndisponiblity.contentieux ? +updateIndisponiblity.contentieux.id : null"
+        (optionChange)="updateIndisponiblity.contentieux = $event"></aj-autocomplete>
     </div>
     <div class="grid-double">
       <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
