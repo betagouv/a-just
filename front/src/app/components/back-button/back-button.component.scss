@@ -1,5 +1,7 @@
 @use "../../styles/utils.scss" as utils;
 @use "../../styles/animations.scss" as animations;
+@use '../../styles/shadows.scss' as shadows;
+
 
 :host {
   &.is-dark-screen {
@@ -21,7 +23,7 @@
     height: 32px;
     padding: 4px 8px 4px 6px;
     border-radius: 4px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: shadows.$box-shadow-default;
     background-color: utils.$colors-white;
     text-decoration: none;
     color: utils.$colors-cblack;

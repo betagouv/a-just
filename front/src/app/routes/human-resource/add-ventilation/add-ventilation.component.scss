@@ -292,6 +292,13 @@ input[type="number"] {
       border: solid 1px utils.$colors-lightBorder;
       background-color: utils.$colors-white;
 
+      .jurisdiction-lock {
+        margin: 0;
+        padding: 8px 12px 0;
+        color: utils.$colors-cgray;
+        font-size: 14px;
+      }
+
       .arrondissement-header-container {
         display: flex;
         flex-direction: row;

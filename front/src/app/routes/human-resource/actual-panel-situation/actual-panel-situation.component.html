@@ -36,7 +36,7 @@
       </div>
     </div>
   </div>
-  @if(userService.canEditHR() && humanResourceService.canEditSelectedJuridiction()){
+  @if(userService.canEditHR() && humanResourceService.canEditAgent(currentHR)){
   <div class="right-panel">
     @if (canEdit) {
     <button class="primary light small outline no-print class-export-situation" (click)="exportSituation.emit()">

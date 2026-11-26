@@ -1,4 +1,6 @@
 @use "../../../styles/utils.scss" as utils;
+@use '../../../styles/shadows.scss' as shadows;
+@use '../../../styles/animations.scss' as animations;
 
 
 :host {
@@ -7,9 +9,14 @@
   margin-left: 16px;
   border-radius: 4px;
   margin-top: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: shadows.$box-shadow-default;
   min-height: 140px;
-  background-color: white;
+  background-color: utils.$colors-white;
+  transition: background-color animations.$duration-normal animations.$ease-default;
+
+  &:hover {
+    background-color: utils.$colors-bgSelect;
+  }
 
   &:last-child {
     margin-bottom: 16px;
@@ -117,7 +124,7 @@
           margin-bottom: 4px;
 
           &.function {
-            color: white;
+            color: utils.$colors-white;
             background-color: utils.$colors-cbluelight;
 
             mat-icon {

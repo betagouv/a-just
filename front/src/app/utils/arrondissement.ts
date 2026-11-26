@@ -25,3 +25,11 @@ export function arrondissementLabel(group: { label?: string } | null | undefined
   const name = formatGroupLabel(group)
   return name ? `Arr. ${isTJ ? 'du TJ' : 'de la CA'} ${name}` : 'Arr.'
 }
+
+/**
+ * Intitulé complet d'un arrondissement pour un document : "Arrondissement du TJ / de la CA" + nom
+ */
+export function arrondissementDocumentLabel(group: { label?: string } | null | undefined, isTJ: boolean) {
+  const name = formatGroupLabel(group)
+  return name ? `Arrondissement ${isTJ ? 'du TJ' : 'de la CA'} ${name}` : 'Arrondissement'
+}

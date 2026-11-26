@@ -1,5 +1,7 @@
 @use "../../../styles/utils.scss" as utils;
 @use "../../../styles/animations.scss" as animations;
+@use '../../../styles/shadows.scss' as shadows;
+
 
 :host {
   mat-icon {
@@ -9,7 +11,7 @@
 
   .title {
     padding: 24px 24px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: shadows.$box-shadow-default;
     background-color: utils.$colors-white;
     position: relative;
     z-index: 1;
@@ -32,7 +34,7 @@
     display: flex;
     padding: 36px 16px 36px 16px;
     background-color: utils.$colors-white;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: shadows.$box-shadow-default;
 
     .space {
       flex: 1

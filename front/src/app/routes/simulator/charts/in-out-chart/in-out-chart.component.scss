@@ -1,5 +1,7 @@
 @use '../../../../styles/utils.scss' as utils;
 @use '../../../../styles/animations.scss' as animations;
+@use '../../../../styles/shadows.scss' as shadows;
+
 
 :host {
     display: flex;
@@ -233,7 +235,7 @@
         .title {
             height: 73px;
             padding: 24px 24px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow: shadows.$box-shadow-default;
             background-color: utils.$colors-white;
             position: relative;
 
@@ -255,7 +257,7 @@
             flex: 1;
             z-index: 1;
             background-color: utils.$colors-white;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            box-shadow: shadows.$box-shadow-default;
             position: relative;
             align-items: center;
             display: flex;
@@ -273,7 +275,7 @@
         flex: 1;
         padding: 24px;
         background-color: utils.$colors-bgProgressBar;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        box-shadow: shadows.$box-shadow-default;
         align-items: center;
 
         .space {

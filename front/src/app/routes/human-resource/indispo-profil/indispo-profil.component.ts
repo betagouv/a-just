@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, injec
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
 import { MainClass } from '../../../libs/main-class'
 import { RHActivityInterface } from '../../../interfaces/rh-activity'
+import { HumanResourceInterface } from '../../../interfaces/human-resource-interface'
 import { MatIconModule } from '@angular/material/icon'
 import { UserService } from '../../../services/user/user.service'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
@@ -31,6 +32,10 @@ export class IndispoProfilComponent extends MainClass implements OnChanges {
    * Liste des indispo courrante
    */
   @Input() indisponibilities: RHActivityInterface[] = []
+  /**
+   * Fiche courante, pour limiter l'édition à ses juridictions accessibles
+   */
+  @Input() currentHR: HumanResourceInterface | null = null
   /**
    * Indispo en erreur si doublon d'indispo
    */

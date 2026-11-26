@@ -6,6 +6,7 @@ import { HRCommentService } from '../../../../services/hr-comment/hr-comment.ser
 import { FormsModule } from '@angular/forms'
 import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component'
 import { UserService } from '../../../../services/user/user.service'
+import { HumanResourceService } from '../../../../services/human-resource/human-resource.service'
 
 /**
  * Composant de prévisualisation des ETP
@@ -21,6 +22,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
   changeDetectorRef = inject(ChangeDetectorRef)
   hRCommentService = inject(HRCommentService)
   userService = inject(UserService)
+  humanResourceService = inject(HumanResourceService)
   /**
    * Editor
    */

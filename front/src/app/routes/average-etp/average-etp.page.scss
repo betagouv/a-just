@@ -1,11 +1,18 @@
 @use '../../styles/utils.scss' as utils;
-
+@use '../../styles/shadows.scss' as shadows;
 
 :host {
-
   button {
     display: flex;
     justify-content: center;
+  }
+
+  .content {
+    padding: 24px;
+  }
+
+  .content-list {
+    box-shadow: shadows.$box-shadow-default;
   }
 
   .top-right-header {
@@ -77,59 +84,40 @@
     display: flex;
     align-items: center;
     font-size: 14px;
+    box-shadow: shadows.$box-shadow-default;
 
     label {
       font-size: 16px;
-      font-weight: bold;
       color: utils.$colors-cblack;
     }
 
     .delete-action {
       cursor: pointer;
       height: 32px;
-      margin-right: 32px;
+      margin-right: 8px;
       padding: 4px 12px 4px 8px;
-      border: solid 1px utils.$colors-lightBorder;
       display: flex;
       align-items: center;
+      justify-content: center;
 
       label {
         cursor: pointer;
         font-size: 14px;
-        font-weight: 500;
         line-height: 1.71;
         text-align: center;
-        color: utils.$colors-primary;
+        color: utils.$colors-creddark;
         margin-left: 8px;
       }
 
       i {
         cursor: pointer;
         font-size: 16px;
-        color: utils.$colors-primary;
       }
 
     }
 
     .import-action {
-      cursor: pointer;
-      height: 32px;
       margin-right: 8px;
-      padding: 4px 12px;
-      border: solid 1px utils.$colors-primary;
-      color: utils.$colors-primary;
-      align-items: center;
-      display: flex;
-    }
-
-    .create-action {
-      cursor: pointer;
-      height: 32px;
-      padding: 4px 12px;
-      background-color: utils.$colors-primary;
-      color: white;
-      align-items: center;
-      display: flex;
     }
   }
 
@@ -145,6 +133,7 @@
     color: utils.$colors-cgray;
     border-bottom: none;
     font-size: 12px;
+    box-shadow: shadows.$box-shadow-default;
   }
 
   .line-item {
@@ -157,6 +146,11 @@
     display: flex;
     align-items: center;
     font-size: 12px;
+
+    &:hover {
+      background-color: utils.$colors-ventilationCurrentSituationBg;
+    }
+
   }
 
   aj-checkbox {
@@ -205,7 +199,6 @@
   }
 
   .actions {
-    cursor: pointer;
     display: flex;
     align-items: center;
     width: 257.05px;
@@ -221,7 +214,6 @@
       padding: 0 10px;
       color: utils.$colors-primary;
       font-size: 14px;
-      font-weight: 500;
       line-height: 1.71;
 
       i {
@@ -233,11 +225,30 @@
     .duplicate {
       margin-right: 16px;
     }
+
+    .save {
+      &.enable {
+        cursor: pointer;
+        pointer-events: initial;
+        background-color: utils.$colors-primary;
+
+        &:hover {
+          background-color: utils.$colors-cblue;
+        }
+      }
+
+      background-color: utils.$colors-grayRow;
+      border: none;
+      cursor: none;
+      pointer-events: none;
+      margin-top: 12px;
+      text-align: center;
+      color: utils.$colors-white;
+      padding: 0 16px;
+    }
   }
 
-
   aj-popup {
-
     .text {
       padding: 0 8px;
       margin-top: 12px;
@@ -245,8 +256,7 @@
       color: utils.$colors-grayRow;
 
       .follow {
-        margin-top: 32px;
-        margin-bottom: 12px;
+        margin: 32px 0px;
         display: block;
         color: utils.$colors-cblack;
       }
@@ -257,42 +267,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-
-      .back {
-        cursor: pointer;
-        margin-top: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 35px;
-        text-align: center;
-        color: utils.$colors-primary;
-        height: 40px;
-        padding: 0 16px;
-        border: solid 1px utils.$colors-primary;
-        margin-right: 8px;
-      }
-
-
-      .save {
-
-        &.enable {
-          cursor: pointer;
-          pointer-events: initial;
-          background-color: utils.$colors-primary;
-        }
-
-        background-color: utils.$colors-grayRow;
-        cursor: none;
-        pointer-events: none;
-        margin-top: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 35px;
-        text-align: center;
-        color: utils.$colors-white;
-        height: 40px;
-        padding: 0 16px;
-      }
+      gap: 4px;
     }
 
 

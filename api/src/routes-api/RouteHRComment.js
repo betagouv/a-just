@@ -75,6 +75,10 @@ export default class RouteHrComment extends Route {
   async updateHrComment(ctx) {
     const { hrId, comment, userId, commentId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      const backupIds = await this.models.HumanResources.listAssignedBackupIds(hrId)
+      if (!(await this.models.HumanResources.hasAccessToEveryBackup(backupIds || [], ctx.state.user.id))) {
+        ctx.throw(403, "Cet agent est affecté sur des juridictions auxquelles vous n'avez pas accès")
+      }
       this.sendOk(ctx, await this.model.updateComment(hrId, comment, userId, commentId))
     } else {
       ctx.throw(403, "Vous n'avez pas accès")
@@ -96,6 +100,10 @@ export default class RouteHrComment extends Route {
   async deleteHrComment(ctx) {
     const { hrId, commentId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
+      const backupIds = await this.models.HumanResources.listAssignedBackupIds(hrId)
+      if (!(await this.models.HumanResources.hasAccessToEveryBackup(backupIds || [], ctx.state.user.id))) {
+        ctx.throw(403, "Cet agent est affecté sur des juridictions auxquelles vous n'avez pas accès")
+      }
       this.sendOk(ctx, await this.model.deleteComment(commentId, hrId))
     } else {
       ctx.throw(403, "Vous n'avez pas accès")

@@ -215,7 +215,10 @@
           </div>
         </div>
 
-        @if(humanResourceService.juridictionGroupSelected()) {
+        @if(humanResourceService.ventilationLockedToCurrentBackup()) {
+        <p class="jurisdiction-lock">Vous modifiez uniquement l'affectation de {{ humanResourceService.hrBackupS()?.label }}.</p>
+        }
+        @if(humanResourceService.juridictionGroupSelected() && !humanResourceService.ventilationLockedToCurrentBackup()) {
         <!-- // Temp values waiting for the backend to provide the dynamic values -->
         <div class="arrondissement-header-container" #arrondissementHeader>
           @if(humanResourceService.juridictionGroupSelected()?.fullAccess) {

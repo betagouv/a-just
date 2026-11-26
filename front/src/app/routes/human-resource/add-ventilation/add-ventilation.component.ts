@@ -289,6 +289,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   constructor() {
     super()
 
+    const currentBackupId = this.humanResourceService.backupId.getValue()
+    if (this.humanResourceService.ventilationLockedToCurrentBackup() && currentBackupId) {
+      this.backupIdSelected.set(currentBackupId)
+    }
+
     effect(() => {
       const backupId = this.selectedReferentielBackupId()
       this.scrollToArrondissementHeader()

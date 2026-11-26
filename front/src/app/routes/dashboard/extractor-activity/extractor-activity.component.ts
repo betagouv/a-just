@@ -11,6 +11,7 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { AppService } from '../../../services/app/app.service'
 import { UserService } from '../../../services/user/user.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { arrondissementDocumentLabel } from '../../../utils/arrondissement'
 import { getShortMonthString, setTimeToMidDay, today } from '../../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { Renderer } from 'xlsx-renderer'
@@ -240,11 +241,24 @@ export class ExtractorActivityComponent extends MainClass {
   }
 
   /**
+   * Nom du périmètre extrait.
+   * Une juridiction garde son libellé. Un arrondissement devient « Arrondissement du TJ de … ».
+   */
+  getScopeName() {
+    const workspace = this.humanResourceService.workspaceSelected()
+    if (this.humanResourceService.isArrondissement()) {
+      return arrondissementDocumentLabel(workspace, this.userService.isTJ())
+    }
+    return workspace?.label || ''
+  }
+
+  /**
    * Génère le nom du ficher téléchargé
    * @returns
    */
   getExportFileName() {
-    return `Extraction_données_d_activité_${this.humanResourceService.workspaceSelected()?.label}_${this.getTotalPeriodeLabel(
+    const scopeName = this.humanResourceService.isArrondissement() ? this.getScopeName().replaceAll(' ', '_') : this.getScopeName()
+    return `Extraction_données_d_activité_${scopeName}_${this.getTotalPeriodeLabel(
       this.dateStart || new Date(),
       this.dateStop || new Date(),
       true,
@@ -293,7 +307,7 @@ export class ExtractorActivityComponent extends MainClass {
           )
 
         this.sumTab = this.removeTemporaryProperties(this.sumTab)
-        const viewModel = { sumTab: this.sumTab, data: this.data }
+        const viewModel = { sumTab: this.sumTab, data: this.data || {} }
 
         fetch('/assets/emptyTemplate_.xlsx')
           // 2. Get template as ArrayBuffer.
@@ -305,10 +319,7 @@ export class ExtractorActivityComponent extends MainClass {
           // 4. Prepare workbook and write buffer.
           .then(async (report) => {
             report = await this.getReport(report, viewModel)
-            if (this.sumTab.length === 0) {
-              alert('Une erreur est survenue lors de la génération de votre fichier.')
-              throw 'no values'
-            } else if (viewModel.data && viewModel.data.length > 49) {
+            if (viewModel.data && Object.keys(viewModel.data).length > 49) {
               alert('Vous ne pouvez pas extraire plus de 4 années sur une même extraction.')
               throw 'no values'
             }
@@ -338,13 +349,14 @@ export class ExtractorActivityComponent extends MainClass {
     report = this.setWidthForAllTabs(report, Object.keys(viewModel.data).length + 1)
     report = this.hideEmptyTabs(report, Object.keys(viewModel.data).length + 1)
     report.worksheets[0].name = 'Total sur la période '
-    report = this.setHeaderText(report, 0, 2, ' ' + this.lowercaseFirstLetter(this.sumTab[0]['Période']) || '', true)
+    const periode = this.getTotalPeriodeLabel(this.dateStart || new Date(), this.dateStop || new Date())
+    report = this.setHeaderText(report, 0, 2, ' ' + this.lowercaseFirstLetter(periode), true)
 
     let conditionnalFormating = report.worksheets[0].conditionalFormattings
     let views = report.worksheets[0].views
 
     // FORMAT DATA TABS
-    this.data = Object.keys(this.data).map((key: any, index) => {
+    this.data = Object.keys(this.data || {}).map((key: any, index) => {
       let monthTabName = ''
       this.data[key] = this.data[key]
         .map((act: any) => {
@@ -402,11 +414,11 @@ export class ExtractorActivityComponent extends MainClass {
       'Stock après A-JUSTements',
     ]
 
-    let tabTitle =
-      (sumTab ? '                    ' : '     ') +
-      "Extraction de données d'activité " +
-      (this.userService.isTJ() ? ' du ' : ' de la ') +
-      this.humanResourceService.workspaceSelected()?.label
+    const scopeName = this.getScopeName()
+    const scope = this.humanResourceService.isArrondissement()
+      ? `de l'${scopeName}`
+      : (this.userService.isTJ() ? ' du ' : ' de la ') + scopeName
+    let tabTitle = (sumTab ? '                    ' : '     ') + "Extraction de données d'activité " + scope
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix
 
     report.worksheets[tabIndex]._rows[headerIndex - 1].height = 80
